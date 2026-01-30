@@ -187,15 +187,20 @@
 <body>
     <div class="portal">
         <header class="portal-header">
-            <h1>📊 MVL Supply Intel Hub <span class="version-badge">v2.0</span></h1>
-            <p>Procurement Analytics & Business Intelligence Platform</p>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+                <div style="display:flex;align-items:center;gap:16px;">
+                    <img src="shared/images/logo.png" alt="MVL Logo" style="height:50px;">
+                    <h1 style="margin:0;">MVL Supply Intel Hub</h1>
+                </div>
+                <p style="margin:0;">Procurement Analytics & Business Intelligence Platform</p>
+            </div>
         </header>
         
         <main class="portal-content">
             <!-- Quick Stats -->
             <div class="stats-bar">
                 <div class="stat-item">
-                    <div class="stat-value">12,532</div>
+                    <div class="stat-value">12,134</div>
                     <div class="stat-label">Total Quotations</div>
                 </div>
                 <div class="stat-item">
@@ -203,12 +208,12 @@
                     <div class="stat-label">Purchase Orders</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">$421.9M</div>
+                    <div class="stat-value">$397.4M</div>
                     <div class="stat-label">Total PO Spend</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">97.7%</div>
-                    <div class="stat-label">Win Rate</div>
+                    <div class="stat-value">28</div>
+                    <div class="stat-label">Disciplines</div>
                 </div>
             </div>
             
@@ -232,11 +237,11 @@
                     <div class="card-cta">Open Dashboard</div>
                 </a>
                 
-                <!-- Global Spend Analysis - Coming Soon -->
-                <div class="dashboard-card" style="opacity: 0.6; cursor: not-allowed;">
+                <!-- Global Spend Analysis -->
+                <a href="global-spend-analysis/index.html" class="dashboard-card">
                     <div class="card-icon spend">💰</div>
                     <div class="card-body">
-                        <h2 class="card-title">Global Spend Analysis <span style="background:#ffc107;color:#000;padding:2px 8px;border-radius:4px;font-size:11px;margin-left:8px;">Coming Soon</span></h2>
+                        <h2 class="card-title">Global Spend Analysis</h2>
                         <p class="card-description">
                             Analyze overall procurement spend, track annual trends, and compare Base PO vs Change Order expenditure.
                         </p>
@@ -247,26 +252,26 @@
                             <li>Full PO details with 3,539 orders</li>
                         </ul>
                     </div>
-                    <div class="card-cta" style="background:#e0e0e0;color:#666;">🚧 In Development</div>
-                </div>
+                    <div class="card-cta">Open Dashboard</div>
+                </a>
                 
-                <!-- Disciplines Consolidated - Coming Soon -->
-                <div class="dashboard-card" style="opacity: 0.6; cursor: not-allowed;">
+                <!-- Disciplines Consolidated -->
+                <a href="disciplines-consolidated/index.html" class="dashboard-card">
                     <div class="card-icon disciplines">📊</div>
                     <div class="card-body">
-                        <h2 class="card-title">Disciplines Consolidated <span style="background:#ffc107;color:#000;padding:2px 8px;border-radius:4px;font-size:11px;margin-left:8px;">Coming Soon</span></h2>
+                        <h2 class="card-title">Disciplines Consolidated</h2>
                         <p class="card-description">
                             Compare budgeted (quoted) vs actual (ordered) spend by material discipline with utilization analysis.
                         </p>
                         <ul class="card-features">
                             <li>Budget vs Actual comparison</li>
                             <li>Utilization rate gauges</li>
-                            <li>13 active disciplines</li>
+                            <li>28 active disciplines</li>
                             <li>Card & table view toggle</li>
                         </ul>
                     </div>
-                    <div class="card-cta" style="background:#e0e0e0;color:#666;">🚧 In Development</div>
-                </div>
+                    <div class="card-cta">Open Dashboard</div>
+                </a>
             </div>
         </main>
         

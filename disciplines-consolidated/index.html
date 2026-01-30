@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVL Supply Intel Hub – Disciplines Consolidated</title>
+    <link rel="stylesheet" href="../shared/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #0f3d5e;
+            --primary-light: #1a5a8a;
+            --accent-color: #00B7C3;
+            --success-color: #107C10;
+            --warning-color: #FFB900;
+            --danger-color: #D13438;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f7fa;
+            color: #323130;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #004578 0%, #003359 100%);
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .header-left p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-right span {
+            font-size: 11px;
+        }
+
+        .header-right a {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .header-right a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: white;
+            padding: 12px 24px;
+            border-bottom: 2px solid #e1dfdd;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            min-width: 160px;
+        }
+
+        .filter-item label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #605e5c;
+            margin-bottom: 4px;
+        }
+
+        .filter-item select {
+            padding: 8px 10px;
+            border: 1px solid #d2d0ce;
+            border-radius: 4px;
+            font-size: 12px;
+            background: white;
+        }
+
+        .filter-item select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn-reset {
+            padding: 8px 16px;
+            background: #605e5c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .btn-reset:hover {
+            background: #484644;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+        }
+
+        .view-toggle button {
+            padding: 8px 14px;
+            border: 1px solid #d2d0ce;
+            background: white;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .view-toggle button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 16px 24px;
+        }
+
+        /* KPI Row */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-color);
+        }
+
+        .kpi-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #605e5c;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #323130;
+        }
+
+        .kpi-sub {
+            font-size: 11px;
+            color: #605e5c;
+            margin-top: 4px;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #edebe9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Discipline Cards Grid */
+        .disciplines-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .discipline-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .discipline-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .discipline-card.active {
+            border: 2px solid var(--primary-color);
+        }
+
+        .discipline-header {
+            padding: 12px 16px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .discipline-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .discipline-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+
+        .discipline-body {
+            padding: 16px;
+        }
+
+        .discipline-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .discipline-label {
+            font-size: 11px;
+            color: #605e5c;
+        }
+
+        .discipline-value {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .utilization-bar {
+            height: 8px;
+            background: #edebe9;
+            border-radius: 4px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .utilization-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .utilization-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 10px;
+            color: #605e5c;
+        }
+
+        /* Variance indicator */
+        .variance-positive { color: var(--success-color); }
+        .variance-negative { color: var(--danger-color); }
+
+        /* Table View */
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            background: #f3f2f1;
+        }
+
+        th {
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #d2d0ce;
+            cursor: pointer;
+        }
+
+        th:hover {
+            background: #e1dfdd;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #edebe9;
+        }
+
+        tr:hover {
+            background: #f8f8f8;
+        }
+
+        .progress-mini {
+            width: 60px;
+            height: 6px;
+            background: #edebe9;
+            border-radius: 3px;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .progress-mini-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        /* Entity Section */
+        .entity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .entity-item {
+            background: #f8f8f8;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .entity-item:hover {
+            background: #f0f0f0;
+        }
+
+        .entity-item.active {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        .entity-name {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .entity-stats {
+            font-size: 11px;
+            color: #605e5c;
+        }
+
+        .entity-item.active .entity-stats {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .kpi-row { grid-template-columns: repeat(3, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .disciplines-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left" style="display:flex;align-items:center;gap:16px;">
+                <img src="../shared/images/logo.png" alt="MVL Logo" style="height:44px;">
+                <div>
+                    <h1>Disciplines Consolidated</h1>
+                    <p id="headerSubtitle">Budget vs Actual Spend Analysis</p>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:20px;font-size:12px;">
+                <span>Last Refresh: 30 Jan 2026</span>
+                <a href="../index.html" style="color:white;text-decoration:none;background:rgba(255,255,255,0.2);padding:8px 14px;border-radius:4px;white-space:nowrap;">← Back to Portal</a>
+            </div>
+        </header>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="filter-item">
+                <label>Entity</label>
+                <select id="filterEntity">
+                    <option value="">All Entities</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>Discipline</label>
+                <select id="filterDiscipline">
+                    <option value="">All Disciplines</option>
+                </select>
+            </div>
+            <div class="view-toggle">
+                <button class="active" onclick="setView('cards')">📊 Cards</button>
+                <button onclick="setView('table')">📋 Table</button>
+            </div>
+            <button class="btn-reset" onclick="resetFilters()">Reset Filters</button>
+        </div>
+
+        <!-- Content -->
+        <main class="content">
+            <!-- KPI Row -->
+            <div class="kpi-row">
+                <div class="kpi-card">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-label">Total Quoted (Budget)</div>
+                    <div class="kpi-value" id="kpiQuoted">--</div>
+                    <div class="kpi-sub" id="kpiQuotedSub">All quotations</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon">📦</div>
+                    <div class="kpi-label">Total Ordered (Actual)</div>
+                    <div class="kpi-value" id="kpiOrdered">--</div>
+                    <div class="kpi-sub" id="kpiOrderedSub">All POs</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon">📈</div>
+                    <div class="kpi-label">Utilization Rate</div>
+                    <div class="kpi-value" id="kpiUtilization">--</div>
+                    <div class="kpi-sub">Ordered vs Quoted</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon">🔧</div>
+                    <div class="kpi-label">Disciplines</div>
+                    <div class="kpi-value" id="kpiDisciplines">--</div>
+                    <div class="kpi-sub">Material categories</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon">🏢</div>
+                    <div class="kpi-label">Entities</div>
+                    <div class="kpi-value" id="kpiEntities">--</div>
+                    <div class="kpi-sub">Business units</div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">📊 Quoted vs Ordered by Discipline</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🎯 Utilization by Discipline</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="utilizationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discipline Cards / Table -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🔧 Discipline Breakdown</span>
+                    <span id="disciplineCount" style="font-size:12px;color:#605e5c;">-- disciplines</span>
+                </div>
+                <div class="card-body">
+                    <!-- Cards View -->
+                    <div id="cardsView" class="disciplines-grid"></div>
+                    
+                    <!-- Table View -->
+                    <div id="tableView" class="table-container" style="display:none;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th onclick="sortTable('name')">Discipline ↕</th>
+                                    <th onclick="sortTable('quotedValue')">Quoted (USD) ↕</th>
+                                    <th onclick="sortTable('orderedValue')">Ordered (USD) ↕</th>
+                                    <th onclick="sortTable('utilization')">Utilization ↕</th>
+                                    <th onclick="sortTable('variance')">Variance ↕</th>
+                                    <th>Quotes</th>
+                                    <th>POs</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entity Breakdown -->
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-header">
+                    <span class="card-title">🏢 Entity Breakdown</span>
+                </div>
+                <div class="card-body">
+                    <div id="entityGrid" class="entity-grid"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

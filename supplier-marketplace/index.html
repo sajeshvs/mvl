@@ -287,13 +287,19 @@
     <div class="dashboard">
         <!-- Header -->
         <header class="dashboard-header">
-            <div class="dashboard-title">
-                <h1>🏪 Supplier Marketplace</h1>
-                <span class="subtitle">Quotation-to-PO Pipeline Analysis | From RFQ to Purchase Order</span>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <img src="../shared/images/logo.png" alt="MVL Logo" style="height:44px;">
+                <div class="dashboard-title">
+                    <h1>Supplier Marketplace</h1>
+                    <span class="subtitle">Quotation-to-PO Pipeline Analysis | From RFQ to Purchase Order</span>
+                </div>
             </div>
-            <div class="dashboard-meta">
-                <div class="refresh-time">Last Refresh: <span id="lastRefresh">Loading...</span></div>
-                <div class="entity-info" id="entityInfo">Entity: All | Currency: USD</div>
+            <div style="display:flex;align-items:center;gap:20px;font-size:12px;">
+                <div style="text-align:right;">
+                    <div>Last Refresh: <span id="lastRefresh">Loading...</span></div>
+                    <div id="entityInfo" style="opacity:0.85;">Entity: All | Currency: USD</div>
+                </div>
+                <a href="../index.html" style="color:white;text-decoration:none;background:rgba(255,255,255,0.2);padding:8px 14px;border-radius:4px;white-space:nowrap;">← Back to Portal</a>
             </div>
         </header>
 
