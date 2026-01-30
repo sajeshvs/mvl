@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Marketplace | MVL Supply Intel Hub</title>
+    <link rel="stylesheet" href="../shared/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* Dashboard-specific styles */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr 1.1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+        }
+        
+        /* Search input */
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            padding-left: 32px;
+            border: 1px solid var(--color-border-dark);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+        }
+        
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            opacity: 0.5;
+        }
+        
+        /* Mini KPI row */
+        .mini-kpi-row {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .mini-kpi {
+            flex: 1;
+            text-align: center;
+            padding: var(--space-sm);
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+        }
+        
+        .mini-kpi .value {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+        
+        .mini-kpi .label {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+        }
+        
+        /* Active filters display */
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            margin-left: var(--space-md);
+        }
+        
+        .filter-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: var(--color-primary-light);
+            color: white;
+            border-radius: 12px;
+            font-size: var(--font-size-xs);
+        }
+        
+        .filter-tag button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            opacity: 0.8;
+        }
+        
+        .filter-tag button:hover {
+            opacity: 1;
+        }
+        
+        /* Card height control - NO nested scrollbars */
+        .card.fixed-height {
+            max-height: 420px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card.fixed-height .card-body {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        /* Hide scrollbar but keep functionality */
+        .card.fixed-height .card-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .card.fixed-height .card-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .card.fixed-height .card-body::-webkit-scrollbar-thumb {
+            background: var(--color-border-dark);
+            border-radius: 3px;
+        }
+        
+        /* Supplier list - single scroll */
+        .supplier-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        /* Chart toggle buttons */
+        .chart-toggle-group {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .chart-toggle-btn {
+            padding: 4px 8px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-bg);
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+        
+        .chart-toggle-btn:hover {
+            background: var(--color-border);
+        }
+        
+        .chart-toggle-btn.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+        
+        /* Top supplier ranks */
+        .supplier-rank.top-1 { background: gold; color: #333; }
+        .supplier-rank.top-2 { background: silver; color: #333; }
+        .supplier-rank.top-3 { background: #cd7f32; color: white; }
+        
+        .no-data {
+            padding: 20px;
+            text-align: center;
+            color: var(--color-text-secondary);
+        }
+        
+        .filtered-label {
+            color: var(--color-primary);
+            margin-left: 4px;
+        }
+        
+        /* Quick stats row inside card */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .quick-stat {
+            background: var(--color-bg);
+            padding: var(--space-sm);
+            border-radius: var(--radius-sm);
+            text-align: center;
+        }
+        
+        .quick-stat .value {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+        }
+        
+        .quick-stat .label {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+        }
+        
+        /* Workbench specific */
+        .workbench-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+        
+        .workbench-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+        
+        .btn {
+            padding: var(--space-xs) var(--space-md);
+            border: 1px solid var(--color-border-dark);
+            border-radius: var(--radius-sm);
+            background: var(--color-card);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .btn:hover {
+            background: var(--color-bg);
+        }
+        
+        .btn-primary {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--color-primary-dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .main-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 1000px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .kpi-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .kpi-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="dashboard-title">
+                <h1>🏪 Supplier Marketplace</h1>
+                <span class="subtitle">Quotation-to-PO Pipeline Analysis | From RFQ to Purchase Order</span>
+            </div>
+            <div class="dashboard-meta">
+                <div class="refresh-time">Last Refresh: <span id="lastRefresh">Loading...</span></div>
+                <div class="entity-info" id="entityInfo">Entity: All | Currency: USD</div>
+            </div>
+        </header>
+
+        <!-- Filters Bar -->
+        <div class="filters-bar">
+            <div class="filter-group">
+                <label>Entity</label>
+                <select id="filterEntity">
+                    <option value="">All Entities</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="filterStatus">
+                    <option value="">All Status</option>
+                    <option value="Order">Order</option>
+                    <option value="Waiting">Waiting</option>
+                    <option value="Quotation">Quotation</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Material</label>
+                <select id="filterMaterial">
+                    <option value="">All Materials</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Quote Type</label>
+                <select id="filterQuoteType">
+                    <option value="">All Types</option>
+                    <option value="RFQ">RFQ</option>
+                    <option value="IQ">IQ</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" id="searchInput" placeholder="Search quotes, projects...">
+            </div>
+            <div class="active-filters" id="activeFilters"></div>
+            <button class="filter-reset" id="resetFilters">Reset All</button>
+        </div>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <!-- KPI Row -->
+            <div class="kpi-row" id="kpiRow">
+                <!-- KPIs will be rendered here -->
+                <div class="kpi-card skeleton" style="height: 100px;"></div>
+                <div class="kpi-card skeleton" style="height: 100px;"></div>
+                <div class="kpi-card skeleton" style="height: 100px;"></div>
+                <div class="kpi-card skeleton" style="height: 100px;"></div>
+                <div class="kpi-card skeleton" style="height: 100px;"></div>
+            </div>
+
+            <!-- Main Grid: 3 columns -->
+            <div class="main-grid">
+                <!-- Left Column: Funnel & Quick Stats -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📊 Status Funnel</h2>
+                    </div>
+                    <div id="funnelChart">
+                        <div class="loading-spinner"><div class="spinner"></div></div>
+                    </div>
+                    <div class="mini-kpi-row">
+                        <div class="mini-kpi">
+                            <div class="value" id="conversionRate">-</div>
+                            <div class="label">Conversion Rate</div>
+                        </div>
+                        <div class="mini-kpi">
+                            <div class="value" id="openQuotes">-</div>
+                            <div class="label">Open Quotes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center Column: Charts -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📈 Material Distribution</h2>
+                        <div class="chart-toggle-group">
+                            <button class="chart-toggle-btn material-chart-btn active" data-type="bar">Bar</button>
+                            <button class="chart-toggle-btn material-chart-btn" data-type="pie">Pie</button>
+                            <button class="chart-toggle-btn material-chart-btn" data-type="line">Line</button>
+                            <button class="chart-toggle-btn material-chart-btn" data-type="radar">Radar</button>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 280px;">
+                        <canvas id="materialChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Right Column: Top Suppliers -->
+                <div class="card fixed-height">
+                    <div class="card-header">
+                        <h2 class="card-title">🏆 Top Suppliers</h2>
+                        <span class="badge badge-info">By Spend</span>
+                    </div>
+                    <div class="search-box" style="margin-bottom: var(--space-sm);">
+                        <input type="text" id="supplierSearch" placeholder="Search suppliers...">
+                    </div>
+                    <div class="card-body">
+                        <ul class="supplier-list" id="supplierList">
+                            <li class="loading-spinner"><div class="spinner"></div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Row: Charts -->
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📈 Entity Comparison</h2>
+                        <div class="chart-toggle-group">
+                            <button class="chart-toggle-btn entity-chart-btn active" data-type="horizontal">Horizontal</button>
+                            <button class="chart-toggle-btn entity-chart-btn" data-type="grouped">Grouped</button>
+                            <button class="chart-toggle-btn entity-chart-btn" data-type="stacked">Stacked</button>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="entityChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📊 Status by Value</h2>
+                        <div class="chart-toggle-group">
+                            <button class="chart-toggle-btn status-chart-btn active" data-type="doughnut">Donut</button>
+                            <button class="chart-toggle-btn status-chart-btn" data-type="bar">Bar</button>
+                            <button class="chart-toggle-btn status-chart-btn" data-type="polar">Polar</button>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Trend Chart Row -->
+            <div class="card full-width" id="trendChartContainer">
+                <div class="card-header">
+                    <h2 class="card-title">📉 Monthly Trend</h2>
+                    <span class="badge badge-info">Quote & Order Activity</span>
+                </div>
+                <div class="chart-container" style="height: 250px;">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Workbench Table (Full Width) -->
+            <div class="card full-width">
+                <div class="workbench-header">
+                    <h2 class="card-title">📋 Marketplace Workbench</h2>
+                    <div class="workbench-actions">
+                        <button class="btn" id="exportCSV">📥 Export CSV</button>
+                        <button class="btn" id="exportJSON">📥 Export JSON</button>
+                    </div>
+                </div>
+                <div class="table-container" id="workbenchTable">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+                <div class="pagination" id="workbenchPagination"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../shared/data-utils.js"></script>
+    <script src="../shared/charts.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
