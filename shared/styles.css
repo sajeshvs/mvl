@@ -448,12 +448,32 @@ body {
     background: rgba(0,120,212,0.04);
 }
 
+/* Clickable row enhancements */
+.data-table tbody tr.clickable-row {
+    cursor: pointer;
+    transition: background var(--transition-fast), transform 0.1s ease;
+}
+
+.data-table tbody tr.clickable-row:hover {
+    background: rgba(0,120,212,0.08);
+    box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+.data-table tbody tr.clickable-row:active {
+    background: rgba(0,120,212,0.12);
+    transform: scale(0.998);
+}
+
 .data-table tbody tr:nth-child(even) {
     background: rgba(0,0,0,0.015);
 }
 
 .data-table tbody tr:nth-child(even):hover {
     background: rgba(0,120,212,0.04);
+}
+
+.data-table tbody tr.clickable-row:nth-child(even):hover {
+    background: rgba(0,120,212,0.08);
 }
 
 /* Table cell formatting */
@@ -879,7 +899,7 @@ body {
 
 @media (max-width: 600px) {
     .dashboard-content {
-        padding: var(--space-md);
+        padding: var(--space-sm);
     }
     
     .kpi-grid {
@@ -887,16 +907,77 @@ body {
     }
     
     .card {
-        padding: var(--space-md);
+        padding: var(--space-sm);
     }
     
     .filters-bar {
         flex-direction: column;
         align-items: stretch;
+        gap: var(--space-sm);
     }
     
     .filter-group select {
         width: 100%;
+    }
+    
+    /* Data table mobile scroll */
+    .data-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .data-table {
+        min-width: 600px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 8px 6px;
+        font-size: 12px;
+    }
+    
+    /* Pagination mobile */
+    .pagination {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    
+    .pagination-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .page-size-select {
+        margin-left: 0;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 400px) {
+    :root {
+        --font-size-4xl: 24px;
+        --font-size-3xl: 20px;
+        --font-size-2xl: 18px;
+    }
+    
+    .dashboard-content {
+        padding: var(--space-xs);
+    }
+    
+    .card {
+        padding: var(--space-xs);
+        border-radius: var(--radius-sm);
+    }
+    
+    .card-header h3 {
+        font-size: var(--font-size-md);
+    }
+    
+    .pagination-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
     }
 }
 

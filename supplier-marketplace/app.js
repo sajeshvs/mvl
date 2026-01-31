@@ -1,6 +1,6 @@
 /**
- * MVL Supply Intel Hub - Supplier Marketplace Dashboard v2.1
- * FULLY DYNAMIC - All components update based on filters
+ * MVL Supply Intel Hub - Supplier Marketplace Dashboard v3.0
+ * FULLY DYNAMIC with Modal Details & Enhanced Interactivity
  */
 
 // Global state
@@ -26,6 +26,48 @@ let appState = {
         trend: 'line'
     }
 };
+
+// =====================================
+// ROW CLICK HANDLERS - Show Detail Modals
+// =====================================
+
+function showQuotationDetailsFromRow(row) {
+    // Build comprehensive quotation data for modal
+    const quotationData = {
+        QuotationNumber: row.QuotationNumber || 'N/A',
+        status: row.StatusCategory || row.Status || 'Unknown',
+        date: row.CreatedDate || row.QuoteDate || 'N/A',
+        supplier: row.SupplierName || row.Supplier || 'Unknown Supplier',
+        value: row.QuotationValue || 0,
+        currency: row.Currency || 'USD',
+        entity: row.Entity || 'N/A',
+        material: row.MaterialGroup || row.Material || 'N/A',
+        type: row.QuoteType || 'Standard',
+        description: row.Description || '',
+        validity: row.ValidityDays || 30,
+        deliveryTerms: row.DeliveryTerms || 'TBD',
+        paymentTerms: row.PaymentTerms || 'Net 30',
+        linkedPO: row.PONumber || row.LinkedPO || null
+    };
+    
+    if (typeof showQuotationDetails === 'function') {
+        showQuotationDetails(quotationData);
+    } else {
+        // Fallback if modal system not loaded
+        console.log('Quotation Details:', quotationData);
+        alert('Quotation: ' + quotationData.QuotationNumber + '\nSupplier: ' + quotationData.supplier + '\nValue: ' + formatCurrency(quotationData.value));
+    }
+}
+
+function showSupplierDetailsFromRow(supplierName) {
+    if (typeof showSupplierProfile === 'function') {
+        // Get supplier data from our data
+        const supplierData = appState.data?.suppliers?.find(s => s.name === supplierName);
+        showSupplierProfile(supplierName, supplierData);
+    } else {
+        alert('Supplier: ' + supplierName);
+    }
+}
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', initDashboard);
@@ -712,8 +754,8 @@ function renderWorkbenchTable() {
             <tbody>
                 ${paginated.data.length === 0 ? `
                     <tr><td colspan="${columns.length}" class="text-center text-secondary" style="padding: 40px;">No records match the current filters</td></tr>
-                ` : paginated.data.map(row => `
-                    <tr>
+                ` : paginated.data.map((row, idx) => `
+                    <tr class="clickable-row" data-row-index="${idx}" style="cursor:pointer;" title="Click to view details">
                         ${columns.map(col => {
                             let value = row[col.key];
                             if (col.format) value = col.format(value, row);
@@ -724,6 +766,14 @@ function renderWorkbenchTable() {
             </tbody>
         </table>
     `;
+    
+    // Add click handlers for rows
+    container.querySelectorAll('.clickable-row').forEach((tr, idx) => {
+        tr.addEventListener('click', () => {
+            const rowData = paginated.data[idx];
+            showQuotationDetailsFromRow(rowData);
+        });
+    });
     
     container.querySelectorAll('th[data-key]').forEach(th => {
         th.addEventListener('click', () => {

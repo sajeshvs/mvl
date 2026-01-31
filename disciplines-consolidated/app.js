@@ -1,6 +1,6 @@
 /**
- * MVL Supply Intel Hub - Disciplines Consolidated Dashboard
- * Quoted vs Ordered Analysis by Discipline
+ * MVL Supply Intel Hub - Disciplines Consolidated Dashboard v3.0
+ * Quoted vs Ordered Analysis by Discipline with Modal Details
  */
 
 let DATA = null;
@@ -33,6 +33,118 @@ const formatCurrency = (val) => {
 
 const formatNumber = (n) => new Intl.NumberFormat().format(n);
 const formatPercent = (n) => n.toFixed(1) + '%';
+
+// =====================================
+// DISCIPLINE DETAILS MODAL
+// =====================================
+
+function showDisciplineDetails(discipline) {
+    const d = discipline;
+    const variance = d.quotedValue - d.orderedValue;
+    const variancePercent = d.quotedValue > 0 ? (variance / d.quotedValue) * 100 : 0;
+    
+    const modal = new Modal({
+        title: `Discipline: ${d.name}`,
+        size: 'large'
+    });
+    
+    modal.create();
+    
+    const getUtilColor = (util) => {
+        if (util > 80) return 'danger';
+        if (util > 50) return 'warning';
+        return 'success';
+    };
+    
+    const content = `
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-label">Discipline Name</div>
+                <div class="detail-value">${d.name}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Quoted (Budget)</div>
+                <div class="detail-value large info">${formatCurrency(d.quotedValue)}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Ordered (Actual)</div>
+                <div class="detail-value large">${formatCurrency(d.orderedValue)}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Utilization</div>
+                <div class="detail-value large ${getUtilColor(d.utilization)}">${d.utilization.toFixed(1)}%</div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3 class="detail-section-title">📊 Variance Analysis</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Variance Amount</div>
+                    <div class="detail-value ${variance >= 0 ? 'success' : 'danger'}">
+                        ${variance >= 0 ? '+' : ''}${formatCurrency(variance)}
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Variance Percent</div>
+                    <div class="detail-value ${variance >= 0 ? 'success' : 'danger'}">
+                        ${variancePercent >= 0 ? '+' : ''}${variancePercent.toFixed(1)}%
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">
+                        <span class="badge badge-${variance >= 0 ? 'success' : 'danger'}">
+                            ${variance >= 0 ? 'Under Budget' : 'Over Budget'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3 class="detail-section-title">📋 Activity Summary</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Total Quotations</div>
+                    <div class="detail-value">${formatNumber(d.quoteCount || 0)}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Purchase Orders</div>
+                    <div class="detail-value">${formatNumber(d.poCount || 0)}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Conversion Rate</div>
+                    <div class="detail-value">${d.quoteCount > 0 ? ((d.poCount || 0) / d.quoteCount * 100).toFixed(1) : 0}%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3 class="detail-section-title">🔗 Quick Actions</h3>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-outline" onclick="viewDisciplineInSpend('${d.name}')">
+                    📊 View in Global Spend
+                </button>
+                <button class="btn btn-outline" onclick="viewDisciplineQuotes('${d.name}')">
+                    📋 View Quotations
+                </button>
+            </div>
+        </div>
+    `;
+    
+    modal.setBody(content);
+    
+    return modal;
+}
+
+function viewDisciplineInSpend(disciplineName) {
+    window.location.href = `../global-spend-analysis/index.html?material=${encodeURIComponent(disciplineName)}`;
+}
+
+function viewDisciplineQuotes(disciplineName) {
+    window.location.href = `../supplier-marketplace/index.html?material=${encodeURIComponent(disciplineName)}`;
+}
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
@@ -275,6 +387,8 @@ function renderDisciplineCards() {
         
         const card = document.createElement('div');
         card.className = 'discipline-card';
+        card.style.cursor = 'pointer';
+        card.title = 'Click to view discipline details';
         card.innerHTML = `
             <div class="discipline-header" style="background: ${baseColor};">
                 <span class="discipline-name">${d.name}</span>
@@ -304,6 +418,9 @@ function renderDisciplineCards() {
                 </div>
             </div>
         `;
+        card.addEventListener('click', () => {
+            showDisciplineDetails(d);
+        });
         container.appendChild(card);
     });
 }
@@ -321,6 +438,9 @@ function renderTable() {
     filteredDisciplines.forEach(d => {
         const variance = d.quotedValue - d.orderedValue;
         const row = document.createElement('tr');
+        row.className = 'clickable-row';
+        row.style.cursor = 'pointer';
+        row.title = 'Click to view discipline details';
         row.innerHTML = `
             <td><strong>${d.name}</strong></td>
             <td>${formatCurrency(d.quotedValue)}</td>
@@ -337,6 +457,9 @@ function renderTable() {
             <td>${formatNumber(d.quoteCount || 0)}</td>
             <td>${formatNumber(d.poCount || 0)}</td>
         `;
+        row.addEventListener('click', () => {
+            showDisciplineDetails(d);
+        });
         tbody.appendChild(row);
     });
 }

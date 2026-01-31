@@ -1,6 +1,6 @@
 /**
- * Global Spend Analysis Dashboard - app.js
- * Full dynamic filtering with Chart.js visualizations
+ * Global Spend Analysis Dashboard - app.js v3.0
+ * Full dynamic filtering with Chart.js visualizations and Modal Details
  */
 
 // Global state
@@ -41,6 +41,41 @@ const colors = {
         '#038387', '#881798', '#4A154B', '#E74856', '#00CC6A'
     ]
 };
+
+// =====================================
+// ROW CLICK HANDLERS - Show Detail Modals
+// =====================================
+
+function showPODetailsFromRow(po) {
+    const poData = {
+        poNumber: po.poNumber || po.po_number || 'N/A',
+        valueUSD: po.valueUSD || po.value_usd || 0,
+        originalValue: po.originalValue || po.valueUSD || 0,
+        currency: po.currency || 'USD',
+        poType: po.poType || po.po_type || 'Base PO',
+        entity: po.entity || 'N/A',
+        supplier: po.supplier || po.vendor || 'Unknown',
+        poDate: po.poDate || po.date || 'N/A',
+        year: po.year || new Date(po.poDate || po.date).getFullYear(),
+        materialGroup: po.materialGroup || po.material || 'N/A',
+        description: po.description || po.text || ''
+    };
+    
+    if (typeof showPODetails === 'function') {
+        showPODetails(poData);
+    } else {
+        console.log('PO Details:', poData);
+        alert('PO: ' + poData.poNumber + '\nSupplier: ' + poData.supplier + '\nValue: ' + formatCurrency(poData.valueUSD));
+    }
+}
+
+function showSupplierDetailsFromRow(supplierName) {
+    if (typeof showSupplierProfile === 'function') {
+        showSupplierProfile(supplierName);
+    } else {
+        alert('Supplier: ' + supplierName);
+    }
+}
 
 // Format helpers
 function formatCurrency(value) {
@@ -446,9 +481,9 @@ function renderPOTable() {
     const endIdx = startIdx + PAGE_SIZE;
     const pageData = sorted.slice(startIdx, endIdx);
     
-    // Render rows
-    tbody.innerHTML = pageData.map(po => `
-        <tr>
+    // Render rows with click handlers
+    tbody.innerHTML = pageData.map((po, idx) => `
+        <tr class="clickable-row" data-po-index="${idx}" style="cursor:pointer;" title="Click to view PO details">
             <td><strong>${po.poNumber}</strong></td>
             <td>${po.poDate}</td>
             <td title="${po.supplier}">${po.supplier.length > 25 ? po.supplier.substring(0, 25) + '...' : po.supplier}</td>
@@ -457,6 +492,14 @@ function renderPOTable() {
             <td class="${po.valueUSD > 100000 ? 'value-large' : ''}">${formatCurrency(po.valueUSD)}</td>
         </tr>
     `).join('');
+    
+    // Add click handlers for PO rows
+    tbody.querySelectorAll('.clickable-row').forEach((tr, idx) => {
+        tr.addEventListener('click', () => {
+            const poData = pageData[idx];
+            showPODetailsFromRow(poData);
+        });
+    });
     
     // Update pagination info
     document.getElementById('tableInfo').textContent = `${formatNumber(filteredData.length)} POs | ${formatCurrency(filteredData.reduce((s, p) => s + p.valueUSD, 0))}`;
