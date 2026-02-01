@@ -26,13 +26,13 @@ import json
 from msal import ConfidentialClientApplication
 
 # ============================================
-# CONFIGURATION - UPDATE THESE VALUES
+# CONFIGURATION - MVL Supply Intel Hub
 # ============================================
 CONFIG = {
-    # Azure AD App Registration
-    "tenant_id": "YOUR_TENANT_ID",  # e.g., "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    "client_id": "YOUR_CLIENT_ID",  # App (client) ID
-    "client_secret": "YOUR_CLIENT_SECRET",  # Client secret value
+    # Azure AD App Registration - MVL-SupplyIntelHub-Integration
+    "tenant_id": "416328e6-260f-438f-bf3c-9c4f15b6a1ca",  # MVL USA Inc
+    "client_id": "1b9540e1-6c1e-4214-8d97-6116394ef72c",  # App (client) ID
+    "client_secret": "cZ28Q~TRKFUzdsnK459ud.tV3Xh05hJGuvl0NcK4",  # Expires: Jan 2, 2028
     
     # SharePoint Configuration
     "sharepoint_site_url": "https://yourtenant.sharepoint.com/sites/YourSite",
