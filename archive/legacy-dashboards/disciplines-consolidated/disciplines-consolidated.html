@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MVL Supply Intel Hub – Disciplines Consolidated</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+      color: #323130;
+      overflow-x: hidden;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header - Dark Blue Theme */
+    .header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-left h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .header-left p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    .header-right strong {
+      font-size: 13px;
+    }
+
+    /* Main Content */
+    .content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* Left Panel - Summary */
+    .summary-panel h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e3a5f;
+      margin-bottom: 16px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+      border-radius: 8px;
+      padding: 16px;
+      border-left: 4px solid #2c5282;
+    }
+
+    .kpi-card.budget { border-left-color: #0078d4; }
+    .kpi-card.actual { border-left-color: #107c10; }
+    .kpi-card.variance { border-left-color: #faa916; }
+    .kpi-card.warning { border-left-color: #a80000; }
+
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #605e5c;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #323130;
+      margin-top: 4px;
+    }
+
+    .kpi-value.positive { color: #107c10; }
+    .kpi-value.negative { color: #a80000; }
+
+    .kpi-subtext {
+      font-size: 11px;
+      color: #605e5c;
+      margin-top: 4px;
+    }
+
+    /* Section Title */
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #323130;
+      margin: 16px 0 12px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #cbd5e0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Entity Stats */
+    .entity-list {
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .entity-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-bottom: 1px solid #f3f2f1;
+    }
+
+    .entity-item:hover {
+      background: #f0f4f8;
+    }
+
+    .entity-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #323130;
+    }
+
+    .entity-value {
+      font-size: 12px;
+      font-weight: 700;
+      color: #2c5282;
+    }
+
+    /* Right Panel - Disciplines Grid */
+    .disciplines-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .discipline-card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      transition: all 0.2s;
+    }
+
+    .discipline-card:hover {
+      border-color: #2c5282;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .discipline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .discipline-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e3a5f;
+    }
+
+    .discipline-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-high { background: #d4edda; color: #155724; }
+    .badge-medium { background: #fff4ce; color: #8a6914; }
+    .badge-low { background: #f8d7da; color: #721c24; }
+
+    .discipline-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 10px;
+      background: #f0f4f8;
+      border-radius: 6px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #605e5c;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #323130;
+      margin-top: 4px;
+    }
+
+    .stat-value.budget { color: #0078d4; }
+    .stat-value.actual { color: #107c10; }
+
+    /* Progress Bar */
+    .progress-container {
+      margin-top: 12px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      margin-bottom: 6px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .progress-fill.under { background: linear-gradient(90deg, #107c10, #32a852); }
+    .progress-fill.over { background: linear-gradient(90deg, #faa916, #ff6b35); }
+    .progress-fill.critical { background: linear-gradient(90deg, #a80000, #c13535); }
+
+    /* Chart Container */
+    .chart-container {
+      margin-top: 20px;
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #323130;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .chart-wrapper {
+      height: 250px;
+      position: relative;
+    }
+
+    .chart {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f3f2f1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c8c6c4;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #8a8886;
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #605e5c;
+    }
+
+    .data-updated {
+      margin-top: 12px;
+      font-size: 11px;
+      color: #107c10;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <h1>MVL Supply Intel Hub – Disciplines Consolidated</h1>
+        <p id="headerSubtitle">Budget vs Actual Analysis by Material Discipline</p>
+      </div>
+      <div class="header-right">
+        <div id="lastRefresh">Loading...</div>
+        <div><strong>Powered by Real Data</strong></div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <!-- Left Panel: Summary -->
+      <div class="panel summary-panel">
+        <h2>📊 Overall Summary</h2>
+        
+        <div class="kpi-grid">
+          <div class="kpi-card budget">
+            <div class="kpi-label">Total Budget (Quotations)</div>
+            <div class="kpi-value" id="kpiTotalBudget">-</div>
+          </div>
+          <div class="kpi-card actual">
+            <div class="kpi-label">Total Actual (POs)</div>
+            <div class="kpi-value" id="kpiTotalActual">-</div>
+          </div>
+          <div class="kpi-card variance">
+            <div class="kpi-label">Total Variance</div>
+            <div class="kpi-value" id="kpiVariance">-</div>
+            <div class="kpi-subtext" id="kpiVarianceText">-</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Overall Utilization</div>
+            <div class="kpi-value" id="kpiUtilization">-</div>
+            <div class="kpi-subtext" id="kpiActiveDisciplines">- active disciplines</div>
+          </div>
+        </div>
+
+        <div class="section-title">🏢 By Entity</div>
+        <div class="entity-list" id="entityList">
+          <div class="loading">Loading...</div>
+        </div>
+
+        <div class="chart-container">
+          <div class="chart-title">📈 Budget vs Actual Overview</div>
+          <div class="chart-wrapper">
+            <canvas id="overviewChart" class="chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Disciplines Grid -->
+      <div class="panel">
+        <div class="section-title">🔧 Disciplines Breakdown</div>
+        <div class="disciplines-grid" id="disciplinesGrid">
+          <div class="loading">Loading disciplines...</div>
+        </div>
+        <div class="data-updated" id="resultCount">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Global data store
+    let dashboardData = null;
+    let overviewChart = null;
+
+    // Load data from JSON
+    async function loadData() {
+      try {
+        const response = await fetch('data.json');
+        dashboardData = await response.json();
+        initializeDashboard();
+      } catch (error) {
+        console.error('Error loading data:', error);
+        document.getElementById('disciplinesGrid').innerHTML = 
+          '<div style="color: red;">Error loading data. Please check if data.json exists.</div>';
+      }
+    }
+
+    function initializeDashboard() {
+      // Update last refresh
+      document.getElementById('lastRefresh').textContent = `Last Refresh: ${dashboardData.lastRefresh}`;
+
+      // Update KPIs
+      document.getElementById('kpiTotalBudget').textContent = formatCurrency(dashboardData.summary.totalBudget);
+      document.getElementById('kpiTotalActual').textContent = formatCurrency(dashboardData.summary.totalActual);
+      
+      const variance = dashboardData.summary.totalVariance;
+      const varianceEl = document.getElementById('kpiVariance');
+      varianceEl.textContent = formatCurrency(Math.abs(variance));
+      varianceEl.className = 'kpi-value ' + (variance >= 0 ? 'positive' : 'negative');
+      document.getElementById('kpiVarianceText').textContent = variance >= 0 ? 'Under budget' : 'Over budget';
+      
+      document.getElementById('kpiUtilization').textContent = `${dashboardData.summary.overallUtilization}%`;
+      document.getElementById('kpiActiveDisciplines').textContent = `${dashboardData.summary.activeDisciplines} active disciplines`;
+
+      // Render entity list
+      renderEntityList();
+
+      // Render disciplines grid
+      renderDisciplinesGrid();
+
+      // Render overview chart
+      renderOverviewChart();
+    }
+
+    function renderEntityList() {
+      const container = document.getElementById('entityList');
+      const entities = dashboardData.byEntity
+        .filter(e => e.TotalValueUSD > 0)
+        .sort((a, b) => b.TotalValueUSD - a.TotalValueUSD)
+        .slice(0, 10);
+
+      container.innerHTML = entities.map(e => `
+        <div class="entity-item">
+          <span class="entity-name">${truncate(e.Entity, 22)}</span>
+          <span class="entity-value">${formatCurrency(e.TotalValueUSD)}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderDisciplinesGrid() {
+      const container = document.getElementById('disciplinesGrid');
+      const disciplines = dashboardData.disciplines
+        .filter(d => d.Discipline && d.Discipline !== 'Unknown')
+        .sort((a, b) => (b.Budget || 0) - (a.Budget || 0));
+
+      container.innerHTML = disciplines.map(d => {
+        const utilization = d.Utilization || 0;
+        let badgeClass, badgeText, progressClass;
+        
+        if (utilization <= 80) {
+          badgeClass = 'badge-low';
+          badgeText = 'Under';
+          progressClass = 'under';
+        } else if (utilization <= 100) {
+          badgeClass = 'badge-high';
+          badgeText = 'On Track';
+          progressClass = 'under';
+        } else if (utilization <= 120) {
+          badgeClass = 'badge-medium';
+          badgeText = 'Over';
+          progressClass = 'over';
+        } else {
+          badgeClass = 'badge-low';
+          badgeText = 'Critical';
+          progressClass = 'critical';
+        }
+
+        const progressWidth = Math.min(utilization, 150);
+
+        return `
+          <div class="discipline-card">
+            <div class="discipline-header">
+              <span class="discipline-name">${d.Discipline}</span>
+              <span class="discipline-badge ${badgeClass}">${badgeText}</span>
+            </div>
+            <div class="discipline-stats">
+              <div class="stat-item">
+                <div class="stat-label">Budget</div>
+                <div class="stat-value budget">${formatCurrency(d.Budget || 0)}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Actual</div>
+                <div class="stat-value actual">${formatCurrency(d.Actual || 0)}</div>
+              </div>
+            </div>
+            <div class="progress-container">
+              <div class="progress-label">
+                <span>Utilization</span>
+                <span>${utilization.toFixed(1)}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill ${progressClass}" style="width: ${progressWidth}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('resultCount').textContent = `✓ Showing ${disciplines.length} disciplines`;
+    }
+
+    function renderOverviewChart() {
+      const disciplines = dashboardData.disciplines
+        .filter(d => d.Discipline && d.Discipline !== 'Unknown' && (d.Budget > 0 || d.Actual > 0))
+        .sort((a, b) => (b.Budget || 0) - (a.Budget || 0))
+        .slice(0, 8);
+
+      const ctx = document.getElementById('overviewChart').getContext('2d');
+
+      if (overviewChart) overviewChart.destroy();
+
+      overviewChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: disciplines.map(d => d.Discipline),
+          datasets: [
+            {
+              label: 'Budget',
+              data: disciplines.map(d => d.Budget || 0),
+              backgroundColor: '#0078d4',
+              borderRadius: 4
+            },
+            {
+              label: 'Actual',
+              data: disciplines.map(d => d.Actual || 0),
+              backgroundColor: '#107c10',
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { 
+                padding: 12, 
+                font: { size: 11, weight: '600' }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { 
+                font: { size: 10, weight: '600' },
+                maxRotation: 45
+              }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: '#f3f2f1' },
+              ticks: {
+                callback: (value) => formatCurrency(value),
+                font: { size: 10, weight: '600' }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Utility functions
+    function formatNumber(num) {
+      if (!num) return '0';
+      return num.toLocaleString();
+    }
+
+    function formatCurrency(value) {
+      if (!value) return '$0';
+      if (value >= 1000000000) {
+        return '$' + (value / 1000000000).toFixed(2) + 'B';
+      } else if (value >= 1000000) {
+        return '$' + (value / 1000000).toFixed(2) + 'M';
+      } else if (value >= 1000) {
+        return '$' + (value / 1000).toFixed(1) + 'K';
+      }
+      return '$' + value.toLocaleString();
+    }
+
+    function truncate(str, len) {
+      if (!str) return '';
+      return str.length > len ? str.substring(0, len) + '...' : str;
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

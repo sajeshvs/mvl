@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MVL Supply Intel Hub – Consolidated Disciplines</title>
+  <style>
+    :root {
+      --brand-primary: #0f3d5e;
+      --brand-accent: #2f73c9;
+      --brand-success: #42b883;
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --text: #1f2933;
+      --muted: #66707a;
+      --line: #e0e5ea;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(90deg, var(--brand-primary), #0c2f48);
+      color: #fff;
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      margin: 0 0 4px 0;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .header .subtitle {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .header .meta {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.4;
+      opacity: 0.9;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(140px, 1fr));
+      gap: 8px;
+      padding: 10px 20px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .filter {
+      border: 1px solid #cfd6dd;
+      border-radius: 6px;
+      padding: 6px 8px;
+      background: #fafbfc;
+      font-size: 11px;
+    }
+
+    .filter label {
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .filter select {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 11px;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 12px 20px;
+    }
+
+    .kpi {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      font-size: 11px;
+    }
+
+    .kpi-title {
+      text-transform: uppercase;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .kpi-value {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+      padding: 0 20px 20px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .chart {
+      width: 100%;
+      height: 220px;
+      border: 1px solid #d7dde3;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10.5px;
+      margin-top: 6px;
+    }
+
+    .table th {
+      text-align: left;
+      padding: 6px 6px;
+      background: #f2f4f7;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .table td {
+      padding: 6px 6px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .insight {
+      background: #eef6ff;
+      border-left: 4px solid var(--brand-accent);
+      padding: 8px 10px;
+      font-size: 11px;
+      color: #2a3b4d;
+      border-radius: 6px;
+    }
+
+    .reference img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+    }
+
+    @media (max-width: 1200px) {
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+      .main { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div>
+        <h1>Consolidated Disciplines</h1>
+        <div class="subtitle">Real-time Budget & Cost Analysis · 10 Disciplines</div>
+      </div>
+      <div class="meta">
+        MVL Supply Intel Hub<br />
+        Last Updated: 23 Jan 2026<br />
+        Project: All · Currency: USD
+      </div>
+    </header>
+
+    <section class="filters">
+      <div class="filter"><label>Discipline</label><select><option>All (10)</option></select></div>
+      <div class="filter"><label>Date Range</label><select><option>FY2024–FY2026</option></select></div>
+      <div class="filter"><label>Project</label><select><option>All Projects</option></select></div>
+    </section>
+
+    <section class="kpis">
+      <div class="kpi"><div class="kpi-title">Total Project Cost</div><div class="kpi-value">$2.4M</div></div>
+      <div class="kpi"><div class="kpi-title">Disciplines</div><div class="kpi-value">10</div></div>
+      <div class="kpi"><div class="kpi-title">Materials Mapped</div><div class="kpi-value">29</div></div>
+      <div class="kpi"><div class="kpi-title">Budget Utilization</div><div class="kpi-value">87%</div></div>
+    </section>
+
+    <section class="main">
+      <div>
+        <div class="card">
+          <div class="card-title">Cost Distribution by Discipline</div>
+          <svg class="chart" id="disciplineCards" viewBox="0 0 520 220" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Material Distribution Across Disciplines</div>
+          <svg class="chart" id="disciplineDonut" viewBox="0 0 520 220" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Detailed Cost Analysis by Discipline</div>
+          <table class="table">
+            <tr>
+              <th>Discipline</th><th>Materials</th><th>Budget</th><th>Actual Cost</th><th>Variance</th><th>Status</th>
+            </tr>
+            <tr><td>STRUCTURAL</td><td>5</td><td>$650K</td><td>$542K</td><td>-16.6%</td><td>Under Budget</td></tr>
+            <tr><td>ARCHITECTURAL</td><td>5</td><td>$420K</td><td>$385K</td><td>-8.3%</td><td>Under Budget</td></tr>
+            <tr><td>EQUIPMENT & TOOLS</td><td>5</td><td>$450K</td><td>$428K</td><td>-4.9%</td><td>Under Budget</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title">Key Insight</div>
+          <div class="insight">
+            STRUCTURAL, ARCHITECTURAL, and EQUIPMENT & TOOLS represent the largest discipline categories, totaling 51.6% of mapped materials.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">MEP Integration</div>
+          <svg class="chart" id="mepCards" viewBox="0 0 420 220" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Safety & Compliance</div>
+          <svg class="chart" id="safetyCards" viewBox="0 0 420 220" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Procurement & Vendor Management</div>
+          <svg class="chart" id="procurementCards" viewBox="0 0 420 220" preserveAspectRatio="none"></svg>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    const disciplineCards = [
+      { label: "STRUCTURAL", value: 542, color: "#2f73c9" },
+      { label: "ARCHITECT", value: 385, color: "#3fbf8f" },
+      { label: "EQUIP & TOOLS", value: 428, color: "#ff9e2b" },
+      { label: "MEP", value: 312, color: "#0f3d5e" },
+      { label: "SAFETY", value: 198, color: "#e05a5a" },
+      { label: "IT & SERVICES", value: 142, color: "#8a93a0" }
+    ];
+
+    const donutData = [
+      { label: "STRUCT", value: 17.2, color: "#2f73c9" },
+      { label: "ARCH", value: 17.2, color: "#3fbf8f" },
+      { label: "EQUIP", value: 17.2, color: "#ff9e2b" },
+      { label: "MEP", value: 10.3, color: "#0f3d5e" },
+      { label: "SAFE", value: 10.3, color: "#e05a5a" },
+      { label: "IT/SVC", value: 10.3, color: "#8a93a0" },
+      { label: "PROC", value: 6.9, color: "#b5bcc6" }
+    ];
+
+    const mepData = [
+      { label: "Electrical", value: 128, color: "#2f73c9" },
+      { label: "Mechanical", value: 156, color: "#3fbf8f" },
+      { label: "Plumbing", value: 28, color: "#ff9e2b" }
+    ];
+
+    const safetyData = [
+      { label: "Firestop", value: 78, color: "#e05a5a" },
+      { label: "PPE", value: 45, color: "#ff9e2b" },
+      { label: "LSA", value: 75, color: "#2f73c9" }
+    ];
+
+    const procurementData = [
+      { label: "Subcontract", value: 62, color: "#3fbf8f" },
+      { label: "Rental", value: 33, color: "#2f73c9" }
+    ];
+
+    function renderCardGrid(svgId, data, columns) {
+      const svg = document.getElementById(svgId);
+      const width = 520;
+      const height = 220;
+      svg.innerHTML = "";
+      const gap = 12;
+      const rows = Math.ceil(data.length / columns);
+      const cardW = (width - gap * (columns + 1)) / columns;
+      const cardH = (height - gap * (rows + 1)) / rows;
+
+      data.forEach((d, i) => {
+        const col = i % columns;
+        const row = Math.floor(i / columns);
+        const x = gap + col * (cardW + gap);
+        const y = gap + row * (cardH + gap);
+
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", x);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", cardW);
+        rect.setAttribute("height", cardH);
+        rect.setAttribute("rx", 10);
+        rect.setAttribute("fill", d.color);
+        rect.setAttribute("opacity", "0.85");
+        svg.appendChild(rect);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", x + 10);
+        label.setAttribute("y", y + 18);
+        label.setAttribute("font-size", "11");
+        label.setAttribute("fill", "#fff");
+        label.textContent = d.label;
+        svg.appendChild(label);
+
+        const value = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        value.setAttribute("x", x + 10);
+        value.setAttribute("y", y + 40);
+        value.setAttribute("font-size", "16");
+        value.setAttribute("fill", "#fff");
+        value.setAttribute("font-weight", "700");
+        value.textContent = `$${d.value}K`;
+        svg.appendChild(value);
+      });
+    }
+
+    function renderDonut(svgId, data) {
+      const svg = document.getElementById(svgId);
+      const width = 520;
+      const height = 220;
+      const centerX = 140;
+      const centerY = 110;
+      const radius = 80;
+      const inner = 45;
+      svg.innerHTML = "";
+
+      const total = data.reduce((acc, d) => acc + d.value, 0);
+      let angle = -Math.PI / 2;
+      data.forEach(d => {
+        const slice = (d.value / total) * Math.PI * 2;
+        const end = angle + slice;
+        const x1 = centerX + Math.cos(angle) * radius;
+        const y1 = centerY + Math.sin(angle) * radius;
+        const x2 = centerX + Math.cos(end) * radius;
+        const y2 = centerY + Math.sin(end) * radius;
+        const large = slice > Math.PI ? 1 : 0;
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const dPath = [
+          `M ${centerX} ${centerY}`,
+          `L ${x1} ${y1}`,
+          `A ${radius} ${radius} 0 ${large} 1 ${x2} ${y2}`,
+          "Z"
+        ].join(" ");
+        path.setAttribute("d", dPath);
+        path.setAttribute("fill", d.color);
+        svg.appendChild(path);
+        angle = end;
+      });
+
+      const hole = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      hole.setAttribute("cx", centerX);
+      hole.setAttribute("cy", centerY);
+      hole.setAttribute("r", inner);
+      hole.setAttribute("fill", "#fff");
+      svg.appendChild(hole);
+
+      data.forEach((d, i) => {
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", 280);
+        label.setAttribute("y", 40 + i * 20);
+        label.setAttribute("font-size", "10");
+        label.setAttribute("fill", "#5f6975");
+        label.textContent = `${d.label} ${d.value}%`;
+        svg.appendChild(label);
+      });
+    }
+
+    renderCardGrid("disciplineCards", disciplineCards, 3);
+    renderDonut("disciplineDonut", donutData);
+    renderCardGrid("mepCards", mepData, 3);
+    renderCardGrid("safetyCards", safetyData, 3);
+    renderCardGrid("procurementCards", procurementData, 2);
+  </script>
+</body>
+</html>

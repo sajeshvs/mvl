@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MVL Supply Intel Hub – Global Spend Analysis</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+      color: #323130;
+      overflow-x: hidden;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #d96f3c 0%, #e8824a 100%);
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-left h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .header-left p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    .header-right strong {
+      font-size: 13px;
+    }
+
+    /* Filter Bar - 2 Tiers */
+    .filter-bar {
+      background: white;
+      border-bottom: 2px solid #e1dfdd;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .filter-tier {
+      padding: 12px 24px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tier:first-child {
+      background: linear-gradient(135deg, #f8f9fa 0%, #f3f4f6 100%);
+      border-bottom: 1px solid #d2d0ce;
+    }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      min-width: 140px;
+    }
+
+    .filter-item label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #605e5c;
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-item select {
+      padding: 8px 10px;
+      border: 2px solid #d2d0ce;
+      border-radius: 4px;
+      font-size: 13px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .filter-item select:hover {
+      border-color: #d96f3c;
+      background: #fef8f5;
+    }
+
+    .filter-item select:focus {
+      outline: none;
+      border-color: #d96f3c;
+      box-shadow: 0 0 0 3px rgba(217, 111, 60, 0.1);
+    }
+
+    /* Main Content */
+    .content {
+      flex: 1;
+      padding: 20px;
+    }
+
+    /* KPI Row */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #d96f3c 0%, #e8824a 100%);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #605e5c;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #d96f3c;
+      margin-bottom: 6px;
+    }
+
+    .kpi-change {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .kpi-change.positive {
+      background: #dff6dd;
+      color: #107c10;
+    }
+
+    .kpi-change.negative {
+      background: #fde7e9;
+      color: #a80000;
+    }
+
+    /* Chart Grid */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .chart-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #323130;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #d96f3c;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 320px;
+      max-height: 320px;
+      width: 100%;
+      background: #fafbfc;
+      border-radius: 6px;
+      padding: 10px;
+    }
+
+    .chart {
+      width: 100% !important;
+      height: 300px !important;
+      max-height: 300px;
+    }
+
+    /* Table Sections */
+    .table-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th {
+      background: linear-gradient(135deg, #f3f2f1 0%, #e8e6e4 100%);
+      padding: 10px 8px;
+      text-align: left;
+      font-weight: 700;
+      color: #323130;
+      border-bottom: 2px solid #d2d0ce;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #edebe9;
+    }
+
+    tr:hover {
+      background: #fef8f5;
+    }
+
+    .rank-badge {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d96f3c 0%, #e8824a 100%);
+      color: white;
+      text-align: center;
+      line-height: 24px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .data-updated {
+      text-align: center;
+      padding: 8px;
+      background: #fef8f5;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #d96f3c;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1400px) {
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .chart-grid { grid-template-columns: 1fr; }
+      .table-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1>💰 Global Spend Analysis</h1>
+        <p>Annual Trends, Change Orders, and Project Procurement Insights</p>
+      </div>
+      <div class="header-right">
+        <div><strong>MVL Supply Intel Hub</strong></div>
+        <div id="lastRefresh">Last Refresh: 23 Jan 2026 06:08 AM</div>
+        <div id="headerFilterStatus">Year: 2025-2026 · Currency: USD</div>
+      </div>
+    </header>
+
+    <!-- Filter Bar - Tier 1 -->
+    <div class="filter-bar">
+      <div class="filter-tier">
+        <div class="filter-item">
+          <label>Year</label>
+          <select id="filterYear" onchange="applyFilters()">
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="All">All Years</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>Entity</label>
+          <select id="filterEntity" onchange="applyFilters()">
+            <option value="All">All</option>
+          <option value="MVL Abu Dhabi">MVL Abu Dhabi</option>
+          <option value="MVL Dubai">MVL Dubai</option>
+          <option value="MVL Energy">MVL Energy</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>Currency</label>
+          <select id="filterCurrency" onchange="applyFilters()">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="AED">AED</option>
+            <option value="All">All</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Filter Bar - Tier 2 -->
+      <div class="filter-tier">
+        <div class="filter-item">
+          <label>PO Type</label>
+          <select id="filterPOType" onchange="applyFilters()">
+            <option value="All">All</option>
+            <option value="Base">PO (Base)</option>
+            <option value="Change">PO (Change)</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>Project</label>
+          <select id="filterProject" onchange="applyFilters()">
+            <option value="All">All</option>
+            <option value="PE108">PE108</option>
+            <option value="PX210">PX210</option>
+            <option value="LK411">LK411</option>
+            <option value="AD300">AD300</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>Discipline</label>
+          <select id="filterDiscipline" onchange="applyFilters()">
+            <option value="All">All</option>
+            <option value="Mechanical">Mechanical</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Structural">Structural</option>
+            <option value="MEP">MEP</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>Supplier</label>
+          <select id="filterSupplier" onchange="applyFilters()">
+            <option value="All">All</option>
+            <option value="L&T ECC">L&T Engineering</option>
+            <option value="Samsung">Samsung</option>
+            <option value="Siemens">Siemens</option>
+            <option value="ABB">ABB</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <!-- KPI Cards -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Spend (Base)</div>
+          <div class="kpi-value" id="kpiBaseSpend">$2.45M</div>
+          <span class="kpi-change positive" id="kpiBaseChange">+12.5% YoY</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Change Order Spend</div>
+          <div class="kpi-value" id="kpiChangeSpend">$385K</div>
+          <span class="kpi-change negative" id="kpiChangePercent">15.7% of Base</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Total POs</div>
+          <div class="kpi-value" id="kpiTotalPOs">127</div>
+          <span class="kpi-change positive" id="kpiPOChange">+8 this month</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg PO Value</div>
+          <div class="kpi-value" id="kpiAvgPO">$19.3K</div>
+          <span class="kpi-change positive" id="kpiAvgChange">+5.2%</span>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="chart-grid">
+        <div class="panel">
+          <div class="chart-title">Annual Spend Trend (Base vs Change Orders)</div>
+          <div class="chart-wrapper">
+            <canvas id="trendChart" class="chart"></canvas>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="chart-title">Spend by Project</div>
+          <div class="chart-wrapper">
+            <canvas id="projectChart" class="chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tables Row -->
+      <div class="table-grid">
+        <div class="panel">
+          <div class="chart-title">Top 5 Suppliers by Spend</div>
+          <table id="topSuppliersTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Supplier</th>
+                <th>Total Spend</th>
+                <th>POs</th>
+              </tr>
+            </thead>
+            <tbody id="topSuppliersBody"></tbody>
+          </table>
+          <div class="data-updated">✓ Ranked by total spend</div>
+        </div>
+
+        <div class="panel">
+          <div class="chart-title">Bottom 5 Suppliers</div>
+          <table id="bottomSuppliersTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Supplier</th>
+                <th>Total Spend</th>
+                <th>POs</th>
+              </tr>
+            </thead>
+            <tbody id="bottomSuppliersBody"></tbody>
+          </table>
+          <div class="data-updated">✓ Smallest spenders</div>
+        </div>
+
+        <div class="panel">
+          <div class="chart-title">PO Details</div>
+          <table id="poDetailsTable">
+            <thead>
+              <tr>
+                <th>PO ID</th>
+                <th>Project</th>
+                <th>Supplier</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody id="poDetailsBody"></tbody>
+          </table>
+          <div class="data-updated" id="resultCount">✓ Showing filtered POs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Data Model
+    const rawData = {
+      pos: [
+        { id: "RFPO-2026-001-1", type: "PO (Base)", project: "PE108", supplier: "L&T ECC", entity: "MVL Abu Dhabi", discipline: "Mechanical", value: 118000, currency: "USD", month: "Jan", year: 2026 },
+        { id: "RFPO-2026-012-1", type: "PO (Base)", project: "PX210", supplier: "Samsung", entity: "MVL Dubai", discipline: "Electrical", value: 245000, currency: "USD", month: "Jan", year: 2026 },
+        { id: "RFPO-2026-012-2", type: "PO (Change)", project: "PX210", supplier: "Samsung", entity: "MVL Dubai", discipline: "Electrical", value: 35000, currency: "USD", month: "Jan", year: 2026 },
+        { id: "RFPO-2025-998-1", type: "PO (Base)", project: "LK411", supplier: "Samsung", entity: "MVL Dubai", discipline: "MEP", value: 342000, currency: "USD", month: "Dec", year: 2025 },
+        { id: "RFPO-2025-998-2", type: "PO (Change)", project: "LK411", supplier: "Samsung", entity: "MVL Dubai", discipline: "MEP", value: 42000, currency: "USD", month: "Dec", year: 2025 },
+        { id: "RFPO-2025-945-1", type: "PO (Base)", project: "AD300", supplier: "Siemens", entity: "MVL Energy", discipline: "Electrical", value: 275000, currency: "EUR", month: "Nov", year: 2025 },
+        { id: "RFPO-2025-888-1", type: "PO (Base)", project: "PE108", supplier: "ABB", entity: "MVL Abu Dhabi", discipline: "Mechanical", value: 198000, currency: "USD", month: "Oct", year: 2025 },
+        { id: "RFPO-2025-888-2", type: "PO (Change)", project: "PE108", supplier: "ABB", entity: "MVL Abu Dhabi", discipline: "Mechanical", value: 28000, currency: "USD", month: "Oct", year: 2025 },
+        { id: "RFPO-2025-820-1", type: "PO (Base)", project: "PX210", supplier: "L&T ECC", entity: "MVL Dubai", discipline: "Structural", value: 412000, currency: "USD", month: "Sep", year: 2025 },
+        { id: "RFPO-2025-755-1", type: "PO (Base)", project: "LK411", supplier: "Siemens", entity: "MVL Dubai", discipline: "Electrical", value: 156000, currency: "EUR", month: "Aug", year: 2025 }
+      ],
+      timeline: {
+        months: ["Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],
+        base: [568000, 412000, 198000, 275000, 342000, 363000],
+        change: [48000, 35000, 28000, 38000, 42000, 35000],
+        running: [568000, 980000, 1178000, 1453000, 1795000, 2158000]
+      }
+    };
+
+    let trendChart, projectChart;
+
+    function applyFilters() {
+      const year = document.getElementById('filterYear').value;
+      const entity = document.getElementById('filterEntity').value;
+      const currency = document.getElementById('filterCurrency').value;
+      const poType = document.getElementById('filterPOType').value;
+      const project = document.getElementById('filterProject').value;
+      const discipline = document.getElementById('filterDiscipline').value;
+      const supplier = document.getElementById('filterSupplier').value;
+
+      // Filter POs
+      let filtered = rawData.pos.filter(po => {
+        return (year === "All" || po.year == year) &&
+               (entity === "All" || po.entity === entity) &&
+               (currency === "All" || po.currency === currency) &&
+               (poType === "All" || po.type.includes(poType)) &&
+               (project === "All" || po.project === project) &&
+               (discipline === "All" || po.discipline === discipline) &&
+               (supplier === "All" || po.supplier === supplier);
+      });
+
+      // Update KPIs
+      const baseSpend = filtered.filter(p => p.type === "PO (Base)").reduce((sum, p) => sum + p.value, 0);
+      const changeSpend = filtered.filter(p => p.type === "PO (Change)").reduce((sum, p) => sum + p.value, 0);
+      const totalPOs = filtered.length;
+      const avgPO = totalPOs > 0 ? baseSpend / filtered.filter(p => p.type === "PO (Base)").length : 0;
+      const changePercent = baseSpend > 0 ? ((changeSpend / baseSpend) * 100).toFixed(1) : 0;
+
+      document.getElementById('kpiBaseSpend').textContent = `$${(baseSpend / 1000).toFixed(0)}K`;
+      document.getElementById('kpiChangeSpend').textContent = `$${(changeSpend / 1000).toFixed(0)}K`;
+      document.getElementById('kpiTotalPOs').textContent = totalPOs;
+      document.getElementById('kpiAvgPO').textContent = `$${(avgPO / 1000).toFixed(1)}K`;
+      document.getElementById('kpiChangePercent').textContent = `${changePercent}% of Base`;
+
+      // Update charts
+      updateTrendChart(filtered);
+      updateProjectChart(filtered);
+
+      // Update tables
+      updateSupplierTables(filtered);
+      updatePOTable(filtered);
+
+      // Update status
+      document.getElementById('headerFilterStatus').textContent = `Year: ${year} · Currency: ${currency}`;
+      document.getElementById('resultCount').textContent = `✓ Showing ${filtered.length} POs`;
+    }
+
+    function updateTrendChart(data) {
+      if (trendChart) trendChart.destroy();
+
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      trendChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: rawData.timeline.months,
+          datasets: [
+            {
+              label: 'Base Spend',
+              data: rawData.timeline.base,
+              backgroundColor: '#d96f3c',
+              borderRadius: 6
+            },
+            {
+              label: 'Change Orders',
+              data: rawData.timeline.change,
+              backgroundColor: '#faa916',
+              borderRadius: 6
+            },
+            {
+              label: 'Running Total',
+              data: rawData.timeline.running,
+              type: 'line',
+              borderColor: '#0078d4',
+              backgroundColor: 'rgba(0, 120, 212, 0.1)',
+              borderWidth: 3,
+              fill: true,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { padding: 12, font: { size: 11, weight: '700' } }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true,
+              grid: { display: false },
+              ticks: { font: { size: 11, weight: '600' } }
+            },
+            y: {
+              stacked: true,
+              beginAtZero: true,
+              position: 'left',
+              grid: { color: '#f3f2f1' },
+              ticks: {
+                callback: function(value) { return '$' + (value/1000) + 'K'; },
+                font: { size: 11, weight: '600' }
+              }
+            },
+            y1: {
+              beginAtZero: true,
+              position: 'right',
+              grid: { display: false },
+              ticks: {
+                callback: function(value) { return '$' + (value/1000) + 'K'; },
+                font: { size: 11, weight: '600' }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function updateProjectChart(data) {
+      const projectSpend = {};
+      data.forEach(po => {
+        projectSpend[po.project] = (projectSpend[po.project] || 0) + po.value;
+      });
+
+      const labels = Object.keys(projectSpend);
+      const values = Object.values(projectSpend);
+      const colors = ['#d96f3c', '#0078d4', '#107c10', '#faa916'];
+
+      if (projectChart) projectChart.destroy();
+
+      const ctx = document.getElementById('projectChart').getContext('2d');
+      projectChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: colors,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { padding: 10, font: { size: 11, weight: '700' } }
+            }
+          }
+        }
+      });
+    }
+
+    function updateSupplierTables(data) {
+      const supplierSpend = {};
+      data.forEach(po => {
+        supplierSpend[po.supplier] = supplierSpend[po.supplier] || { spend: 0, count: 0 };
+        supplierSpend[po.supplier].spend += po.value;
+        supplierSpend[po.supplier].count++;
+      });
+
+      const sorted = Object.entries(supplierSpend)
+        .map(([name, data]) => ({ name, spend: data.spend, count: data.count }))
+        .sort((a, b) => b.spend - a.spend);
+
+      const top5 = sorted.slice(0, 5);
+      const bottom5 = sorted.slice(-5).reverse();
+
+      document.getElementById('topSuppliersBody').innerHTML = top5.map((s, i) => `
+        <tr>
+          <td><span class="rank-badge">${i + 1}</span></td>
+          <td><strong>${s.name}</strong></td>
+          <td><strong>$${(s.spend / 1000).toFixed(0)}K</strong></td>
+          <td>${s.count}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('bottomSuppliersBody').innerHTML = bottom5.map((s, i) => `
+        <tr>
+          <td>${sorted.length - i}</td>
+          <td>${s.name}</td>
+          <td>$${(s.spend / 1000).toFixed(0)}K</td>
+          <td>${s.count}</td>
+        </tr>
+      `).join('');
+    }
+
+    function updatePOTable(data) {
+      document.getElementById('poDetailsBody').innerHTML = data.slice(0, 8).map(po => `
+        <tr>
+          <td><strong>${po.id}</strong></td>
+          <td>${po.project}</td>
+          <td>${po.supplier}</td>
+          <td><strong>$${(po.value / 1000).toFixed(0)}K</strong></td>
+        </tr>
+      `).join('');
+    }
+
+    // Initialize
+    applyFilters();
+
+    // Update timestamp
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById('lastRefresh').textContent = 
+        `Last Refresh: ${now.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}`;
+    }, 60000);
+  </script>
+</body>
+</html>

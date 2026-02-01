@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVL Supply Intel Hub | Dashboard Portal</title>
+    <link rel="stylesheet" href="shared/styles.css">
+    <style>
+        .portal {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .portal-header {
+            background: linear-gradient(135deg, #004578 0%, #003359 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .portal-header h1 {
+            font-size: 32px;
+            margin: 0 0 10px 0;
+        }
+        
+        .portal-header p {
+            opacity: 0.85;
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .portal-content {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        
+        .card-icon {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+        }
+        
+        .card-icon.supplier { background: linear-gradient(135deg, #0078D4 0%, #00A4EF 100%); }
+        .card-icon.spend { background: linear-gradient(135deg, #107C10 0%, #00B7C3 100%); }
+        .card-icon.disciplines { background: linear-gradient(135deg, #881798 0%, #D83B01 100%); }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: #323130;
+        }
+        
+        .card-description {
+            font-size: 14px;
+            color: #605E5C;
+            margin: 0 0 16px 0;
+            line-height: 1.5;
+        }
+        
+        .card-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .card-features li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #605E5C;
+            padding: 4px 0;
+        }
+        
+        .card-features li::before {
+            content: '✓';
+            color: #107C10;
+            font-weight: bold;
+        }
+        
+        .card-cta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: #f4f6f8;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0078D4;
+        }
+        
+        .card-cta::after {
+            content: '→';
+            font-size: 18px;
+        }
+        
+        .stats-bar {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0078D4;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #605E5C;
+            margin-top: 4px;
+        }
+        
+        .portal-footer {
+            background: #f4f6f8;
+            padding: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #605E5C;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: #0078D4;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .portal-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="portal">
+        <header class="portal-header">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+                <div style="display:flex;align-items:center;gap:16px;">
+                    <img src="shared/images/logo.png" alt="MVL Logo" style="height:50px;">
+                    <h1 style="margin:0;">MVL Supply Intel Hub</h1>
+                </div>
+                <p style="margin:0;">Procurement Analytics & Business Intelligence Platform</p>
+            </div>
+        </header>
+        
+        <main class="portal-content">
+            <!-- Quick Stats -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value">12,134</div>
+                    <div class="stat-label">Total Quotations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">3,539</div>
+                    <div class="stat-label">Purchase Orders</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">$397.4M</div>
+                    <div class="stat-label">Total PO Spend</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">28</div>
+                    <div class="stat-label">Disciplines</div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Cards -->
+            <div class="dashboard-grid">
+                <!-- Supplier Marketplace -->
+                <a href="supplier-marketplace/index.html" class="dashboard-card">
+                    <div class="card-icon supplier">🏪</div>
+                    <div class="card-body">
+                        <h2 class="card-title">Supplier Marketplace</h2>
+                        <p class="card-description">
+                            Track quotation-to-PO pipeline, analyze supplier performance, and monitor the procurement funnel from RFQ to Purchase Order.
+                        </p>
+                        <ul class="card-features">
+                            <li>Status funnel visualization</li>
+                            <li>Top supplier rankings</li>
+                            <li>Material distribution analysis</li>
+                            <li>Full workbench with 12,532 quotes</li>
+                        </ul>
+                    </div>
+                    <div class="card-cta">Open Dashboard</div>
+                </a>
+                
+                <!-- Global Spend Analysis -->
+                <a href="global-spend-analysis/index.html" class="dashboard-card">
+                    <div class="card-icon spend">💰</div>
+                    <div class="card-body">
+                        <h2 class="card-title">Global Spend Analysis</h2>
+                        <p class="card-description">
+                            Analyze overall procurement spend, track annual trends, and compare Base PO vs Change Order expenditure.
+                        </p>
+                        <ul class="card-features">
+                            <li>Annual spend trends (2012-2026)</li>
+                            <li>Base PO vs Change Order split</li>
+                            <li>Top & bottom supplier rankings</li>
+                            <li>Full PO details with 3,539 orders</li>
+                        </ul>
+                    </div>
+                    <div class="card-cta">Open Dashboard</div>
+                </a>
+                
+                <!-- Disciplines Consolidated -->
+                <a href="disciplines-consolidated/index.html" class="dashboard-card">
+                    <div class="card-icon disciplines">📊</div>
+                    <div class="card-body">
+                        <h2 class="card-title">Disciplines Consolidated</h2>
+                        <p class="card-description">
+                            Compare budgeted (quoted) vs actual (ordered) spend by material discipline with utilization analysis.
+                        </p>
+                        <ul class="card-features">
+                            <li>Budget vs Actual comparison</li>
+                            <li>Utilization rate gauges</li>
+                            <li>28 active disciplines</li>
+                            <li>Card & table view toggle</li>
+                        </ul>
+                    </div>
+                    <div class="card-cta">Open Dashboard</div>
+                </a>
+            </div>
+        </main>
+        
+        <footer class="portal-footer">
+            <p>MVL Supply Intel Hub v2.0 | Built with HTML5, CSS3, JavaScript & Chart.js</p>
+            <p>Last Data Refresh: 30 Jan 2026</p>
+        </footer>
+    </div>
+</body>
+</html>

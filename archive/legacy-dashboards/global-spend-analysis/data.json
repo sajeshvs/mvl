@@ -1,0 +1,5824 @@
+{
+  "lastRefresh": "30 Jan 2026 04:05 PM",
+  "summary": {
+    "totalSpendUSD": 421900017.5,
+    "totalBasePOs": 3221,
+    "totalChangeOrders": 304,
+    "baseSpendUSD": 385487420.62,
+    "changeSpendUSD": 30528165.33,
+    "changeOrderPercent": 7.3,
+    "activeSuppliers": 1093,
+    "avgPOValueUSD": 119214.47
+  },
+  "annualSpend": [
+    {
+      "Year": 2012,
+      "POCount": 1,
+      "TotalSpendUSD": 26750.0
+    },
+    {
+      "Year": 2013,
+      "POCount": 76,
+      "TotalSpendUSD": 4909818.82
+    },
+    {
+      "Year": 2014,
+      "POCount": 214,
+      "TotalSpendUSD": 7854818.61
+    },
+    {
+      "Year": 2015,
+      "POCount": 298,
+      "TotalSpendUSD": 36365711.68
+    },
+    {
+      "Year": 2016,
+      "POCount": 139,
+      "TotalSpendUSD": 1317621.3699999999
+    },
+    {
+      "Year": 2017,
+      "POCount": 87,
+      "TotalSpendUSD": 4371712.28
+    },
+    {
+      "Year": 2018,
+      "POCount": 115,
+      "TotalSpendUSD": 4110386.61
+    },
+    {
+      "Year": 2019,
+      "POCount": 119,
+      "TotalSpendUSD": 29401245.55
+    },
+    {
+      "Year": 2020,
+      "POCount": 175,
+      "TotalSpendUSD": 112243399.19
+    },
+    {
+      "Year": 2021,
+      "POCount": 252,
+      "TotalSpendUSD": 138733910.96
+    },
+    {
+      "Year": 2022,
+      "POCount": 95,
+      "TotalSpendUSD": 6449247.4
+    },
+    {
+      "Year": 2023,
+      "POCount": 482,
+      "TotalSpendUSD": 12069058.15
+    },
+    {
+      "Year": 2024,
+      "POCount": 564,
+      "TotalSpendUSD": 24658186.66
+    },
+    {
+      "Year": 2025,
+      "POCount": 860,
+      "TotalSpendUSD": 36076745.1
+    },
+    {
+      "Year": 2026,
+      "POCount": 62,
+      "TotalSpendUSD": 3311405.12
+    }
+  ],
+  "annualByType": [
+    {
+      "Year": 2012,
+      "POType": "Base",
+      "Count": 1,
+      "SpendUSD": 26750.0
+    },
+    {
+      "Year": 2013,
+      "POType": "Base",
+      "Count": 67,
+      "SpendUSD": 2153231.37
+    },
+    {
+      "Year": 2013,
+      "POType": "Change Order",
+      "Count": 2,
+      "SpendUSD": 11592.0
+    },
+    {
+      "Year": 2013,
+      "POType": "Change Order 3",
+      "Count": 1,
+      "SpendUSD": 12888.21
+    },
+    {
+      "Year": 2013,
+      "POType": "Change Order 4",
+      "Count": 2,
+      "SpendUSD": 56230.1
+    },
+    {
+      "Year": 2013,
+      "POType": "Change Order 5",
+      "Count": 1,
+      "SpendUSD": 11200.0
+    },
+    {
+      "Year": 2013,
+      "POType": "Change Order 6",
+      "Count": 1,
+      "SpendUSD": 7505.17
+    },
+    {
+      "Year": 2013,
+      "POType": "Unknown",
+      "Count": 2,
+      "SpendUSD": 2657171.97
+    },
+    {
+      "Year": 2014,
+      "POType": "Base",
+      "Count": 200,
+      "SpendUSD": 7599861.26
+    },
+    {
+      "Year": 2014,
+      "POType": "Change Order",
+      "Count": 3,
+      "SpendUSD": 2613.0
+    },
+    {
+      "Year": 2014,
+      "POType": "Change Order 3",
+      "Count": 1,
+      "SpendUSD": 0.27
+    },
+    {
+      "Year": 2014,
+      "POType": "Unknown",
+      "Count": 10,
+      "SpendUSD": 252344.08
+    },
+    {
+      "Year": 2015,
+      "POType": "Base",
+      "Count": 269,
+      "SpendUSD": 22378541.79
+    },
+    {
+      "Year": 2015,
+      "POType": "Change Order",
+      "Count": 20,
+      "SpendUSD": 11774143.44
+    },
+    {
+      "Year": 2015,
+      "POType": "Change Order 3",
+      "Count": 6,
+      "SpendUSD": 1987033.86
+    },
+    {
+      "Year": 2015,
+      "POType": "Change Order 4",
+      "Count": 2,
+      "SpendUSD": 117827.59
+    },
+    {
+      "Year": 2015,
+      "POType": "Change Order 5",
+      "Count": 1,
+      "SpendUSD": 108165.0
+    },
+    {
+      "Year": 2016,
+      "POType": "Base",
+      "Count": 109,
+      "SpendUSD": 983438.47
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order",
+      "Count": 13,
+      "SpendUSD": 125609.25
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 10",
+      "Count": 1,
+      "SpendUSD": 8169.0
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 11",
+      "Count": 1,
+      "SpendUSD": 1123.24
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 12",
+      "Count": 1,
+      "SpendUSD": 13196.2
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 13",
+      "Count": 1,
+      "SpendUSD": 10424.05
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 14",
+      "Count": 1,
+      "SpendUSD": 3781.84
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 16",
+      "Count": 1,
+      "SpendUSD": 6834.19
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 3",
+      "Count": 4,
+      "SpendUSD": 115962.38
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 4",
+      "Count": 2,
+      "SpendUSD": 6867.41
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 5",
+      "Count": 1,
+      "SpendUSD": 13509.48
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 6",
+      "Count": 1,
+      "SpendUSD": 8169.0
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 7",
+      "Count": 1,
+      "SpendUSD": 8054.63
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 8",
+      "Count": 1,
+      "SpendUSD": 5446.0
+    },
+    {
+      "Year": 2016,
+      "POType": "Change Order 9",
+      "Count": 1,
+      "SpendUSD": 7036.23
+    },
+    {
+      "Year": 2017,
+      "POType": "Base",
+      "Count": 74,
+      "SpendUSD": 1370667.6400000001
+    },
+    {
+      "Year": 2017,
+      "POType": "Change Order",
+      "Count": 5,
+      "SpendUSD": 5140.0
+    },
+    {
+      "Year": 2017,
+      "POType": "Change Order 17",
+      "Count": 1,
+      "SpendUSD": 2623.61
+    },
+    {
+      "Year": 2017,
+      "POType": "Change Order 18",
+      "Count": 1,
+      "SpendUSD": 3935.42
+    },
+    {
+      "Year": 2017,
+      "POType": "Change Order 19",
+      "Count": 1,
+      "SpendUSD": 8158.11
+    },
+    {
+      "Year": 2017,
+      "POType": "Change Order 3",
+      "Count": 2,
+      "SpendUSD": 532.0
+    },
+    {
+      "Year": 2017,
+      "POType": "Change Order 4",
+      "Count": 2,
+      "SpendUSD": 5740.0
+    },
+    {
+      "Year": 2017,
+      "POType": "Unknown",
+      "Count": 1,
+      "SpendUSD": 2974915.5
+    },
+    {
+      "Year": 2018,
+      "POType": "Base",
+      "Count": 103,
+      "SpendUSD": 3981933.22
+    },
+    {
+      "Year": 2018,
+      "POType": "Change Order",
+      "Count": 7,
+      "SpendUSD": 117255.56
+    },
+    {
+      "Year": 2018,
+      "POType": "Change Order 3",
+      "Count": 2,
+      "SpendUSD": 771.83
+    },
+    {
+      "Year": 2018,
+      "POType": "Change Order 4",
+      "Count": 2,
+      "SpendUSD": 10426.0
+    },
+    {
+      "Year": 2018,
+      "POType": "Unknown",
+      "Count": 1,
+      "SpendUSD": 0.0
+    },
+    {
+      "Year": 2019,
+      "POType": "Base",
+      "Count": 114,
+      "SpendUSD": 29213195.35
+    },
+    {
+      "Year": 2019,
+      "POType": "Change Order",
+      "Count": 4,
+      "SpendUSD": 141550.2
+    },
+    {
+      "Year": 2019,
+      "POType": "Change Order 3",
+      "Count": 1,
+      "SpendUSD": 46500.0
+    },
+    {
+      "Year": 2020,
+      "POType": "Base",
+      "Count": 164,
+      "SpendUSD": 112126269.86
+    },
+    {
+      "Year": 2020,
+      "POType": "Change Order",
+      "Count": 6,
+      "SpendUSD": 94999.56
+    },
+    {
+      "Year": 2020,
+      "POType": "Change Order 3",
+      "Count": 2,
+      "SpendUSD": 14589.97
+    },
+    {
+      "Year": 2020,
+      "POType": "Change Order 4",
+      "Count": 2,
+      "SpendUSD": 6425.0
+    },
+    {
+      "Year": 2020,
+      "POType": "Change Order 5",
+      "Count": 1,
+      "SpendUSD": 1114.8
+    },
+    {
+      "Year": 2021,
+      "POType": "Base",
+      "Count": 235,
+      "SpendUSD": 134028813.6
+    },
+    {
+      "Year": 2021,
+      "POType": "Change Order",
+      "Count": 11,
+      "SpendUSD": 3701388.2
+    },
+    {
+      "Year": 2021,
+      "POType": "Change Order 3",
+      "Count": 6,
+      "SpendUSD": 1003709.16
+    },
+    {
+      "Year": 2022,
+      "POType": "Base",
+      "Count": 87,
+      "SpendUSD": 6000616.86
+    },
+    {
+      "Year": 2022,
+      "POType": "Change Order",
+      "Count": 5,
+      "SpendUSD": 441274.26
+    },
+    {
+      "Year": 2022,
+      "POType": "Change Order 3",
+      "Count": 2,
+      "SpendUSD": 7176.28
+    },
+    {
+      "Year": 2022,
+      "POType": "Change Order 4",
+      "Count": 1,
+      "SpendUSD": 180.0
+    },
+    {
+      "Year": 2023,
+      "POType": "Base",
+      "Count": 451,
+      "SpendUSD": 10732261.16
+    },
+    {
+      "Year": 2023,
+      "POType": "Change Order",
+      "Count": 23,
+      "SpendUSD": 926318.25
+    },
+    {
+      "Year": 2023,
+      "POType": "Change Order 3",
+      "Count": 4,
+      "SpendUSD": 131841.88
+    },
+    {
+      "Year": 2023,
+      "POType": "Change Order 4",
+      "Count": 2,
+      "SpendUSD": 132932.44999999998
+    },
+    {
+      "Year": 2023,
+      "POType": "Change Order 5",
+      "Count": 2,
+      "SpendUSD": 145704.40999999997
+    },
+    {
+      "Year": 2024,
+      "POType": "Base",
+      "Count": 517,
+      "SpendUSD": 21106222.95
+    },
+    {
+      "Year": 2024,
+      "POType": "Change Order",
+      "Count": 36,
+      "SpendUSD": 1892784.3
+    },
+    {
+      "Year": 2024,
+      "POType": "Change Order 3",
+      "Count": 9,
+      "SpendUSD": 1047033.54
+    },
+    {
+      "Year": 2024,
+      "POType": "Change Order 4",
+      "Count": 1,
+      "SpendUSD": 1784.22
+    },
+    {
+      "Year": 2024,
+      "POType": "Change Order 6",
+      "Count": 1,
+      "SpendUSD": 610361.65
+    },
+    {
+      "Year": 2025,
+      "POType": "Base",
+      "Count": 775,
+      "SpendUSD": 30822793.02
+    },
+    {
+      "Year": 2025,
+      "POType": "Change Order",
+      "Count": 79,
+      "SpendUSD": 4842373.359999999
+    },
+    {
+      "Year": 2025,
+      "POType": "Change Order 3",
+      "Count": 5,
+      "SpendUSD": 115277.71999999999
+    },
+    {
+      "Year": 2025,
+      "POType": "Change Order 4",
+      "Count": 1,
+      "SpendUSD": 296301.0
+    },
+    {
+      "Year": 2026,
+      "POType": "Base",
+      "Count": 55,
+      "SpendUSD": 2962824.07
+    },
+    {
+      "Year": 2026,
+      "POType": "Change Order",
+      "Count": 6,
+      "SpendUSD": 175191.62
+    },
+    {
+      "Year": 2026,
+      "POType": "Change Order 3",
+      "Count": 1,
+      "SpendUSD": 173389.43
+    }
+  ],
+  "topSuppliers": [
+    {
+      "SupplierName": "Rastra Bhusan Construction and Suppliers Pvt Ltd",
+      "POCount": 21,
+      "TotalSpendUSD": 74651899.82
+    },
+    {
+      "SupplierName": "KATKUWA SUPPLIERS",
+      "POCount": 10,
+      "TotalSpendUSD": 49013084.05
+    },
+    {
+      "SupplierName": "Shivam Traders",
+      "POCount": 13,
+      "TotalSpendUSD": 41259202.910000004
+    },
+    {
+      "SupplierName": "TATEKAN Constructions and Services",
+      "POCount": 2,
+      "TotalSpendUSD": 19319779.18
+    },
+    {
+      "SupplierName": "GODAWARI STEEL PVT. LTD.",
+      "POCount": 3,
+      "TotalSpendUSD": 14027445.92
+    },
+    {
+      "SupplierName": "Oman Cables Industry (SAOG)",
+      "POCount": 5,
+      "TotalSpendUSD": 7628484.51
+    },
+    {
+      "SupplierName": "Fox Logistics and Construction",
+      "POCount": 1,
+      "TotalSpendUSD": 7046365.01
+    },
+    {
+      "SupplierName": "J.M.T. GROUP PVT. LTD.",
+      "POCount": 5,
+      "TotalSpendUSD": 6705229.04
+    },
+    {
+      "SupplierName": "World Gate Engineering & Construction",
+      "POCount": 8,
+      "TotalSpendUSD": 5930216.14
+    },
+    {
+      "SupplierName": "BATH N ROOM TRADE CONCERN PVT LTD",
+      "POCount": 14,
+      "TotalSpendUSD": 5431263.1
+    }
+  ],
+  "bottomSuppliers": [
+    {
+      "SupplierName": "ARABIAN FALCON ELECTRICAL EQUIPMENT LLC",
+      "POCount": 1,
+      "TotalSpendUSD": 40.84
+    },
+    {
+      "SupplierName": "IMPRESA PERCASSI S.P.A.",
+      "POCount": 2,
+      "TotalSpendUSD": 1.0
+    },
+    {
+      "SupplierName": "HBCC - HABILE BUILDER CONSTRUCTION COMPANY",
+      "POCount": 1,
+      "TotalSpendUSD": 1.0
+    },
+    {
+      "SupplierName": "Innovative Business Solution General Trading",
+      "POCount": 1,
+      "TotalSpendUSD": 0.0
+    },
+    {
+      "SupplierName": "Quliyev Alekber",
+      "POCount": 2,
+      "TotalSpendUSD": 0.0
+    },
+    {
+      "SupplierName": "INCOP ME",
+      "POCount": 1,
+      "TotalSpendUSD": 0.0
+    },
+    {
+      "SupplierName": "Debet Uniform MMC",
+      "POCount": 1,
+      "TotalSpendUSD": 0.0
+    },
+    {
+      "SupplierName": "GEMMO SPA",
+      "POCount": 1,
+      "TotalSpendUSD": 0.0
+    },
+    {
+      "SupplierName": "A F Husain L.L.C",
+      "POCount": 1,
+      "TotalSpendUSD": 0.0
+    },
+    {
+      "SupplierName": "(ATC) Asr Taqa Contracting",
+      "POCount": 1,
+      "TotalSpendUSD": 0.0
+    }
+  ],
+  "poDetails": [
+    {
+      "PONumber": "RFPO-5829-M4004-1",
+      "POType": "Base",
+      "PODate": "2026-01-23 00:00:00",
+      "SupplierName": "WECARE MACHINERY TRADING \u2013 Sole Proprietorship LLC",
+      "MaterialCode": "Mechanical",
+      "POValue": 42000.0,
+      "Currency": "AED",
+      "POValueUSD": 11436.6
+    },
+    {
+      "PONumber": "RFPO-1569-O121-1",
+      "POType": "Base",
+      "PODate": "2026-01-23 00:00:00",
+      "SupplierName": "Al Waseem Computer Devices Tr LLC SP",
+      "MaterialCode": "Office Assets",
+      "POValue": 5150.0,
+      "Currency": "AED",
+      "POValueUSD": 1402.35
+    },
+    {
+      "PONumber": "RFPO-5532-M4050-2",
+      "POType": "Change Order",
+      "PODate": "2026-01-22 00:00:00",
+      "SupplierName": "FASTWIN GROUP CO.,LIMITED",
+      "MaterialCode": "Mechanical",
+      "POValue": 1247.28,
+      "Currency": "USD",
+      "POValueUSD": 1247.28
+    },
+    {
+      "PONumber": "RFPO-6705-V40168-1",
+      "POType": "Base",
+      "PODate": "2026-01-22 00:00:00",
+      "SupplierName": "HOME DEPOT USA",
+      "MaterialCode": "Various",
+      "POValue": 3752.65,
+      "Currency": "USD",
+      "POValueUSD": 3752.65
+    },
+    {
+      "PONumber": "RFPO-6705-V4363-1",
+      "POType": "Base",
+      "PODate": "2026-01-22 00:00:00",
+      "SupplierName": "COPY EXPRESS",
+      "MaterialCode": "Various",
+      "POValue": 2442.8,
+      "Currency": "USD",
+      "POValueUSD": 2442.8
+    },
+    {
+      "PONumber": "RFPO-7139-V4359-1",
+      "POType": "Base",
+      "PODate": "2026-01-22 00:00:00",
+      "SupplierName": "Safety 1st Systems Inc",
+      "MaterialCode": "Various",
+      "POValue": 790.0,
+      "Currency": "USD",
+      "POValueUSD": 790.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6845-1",
+      "POType": "Base",
+      "PODate": "2026-01-22 00:00:00",
+      "SupplierName": "Americas Best Electricmart Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 394.95,
+      "Currency": "USD",
+      "POValueUSD": 394.95
+    },
+    {
+      "PONumber": "RFPO-7139-V40071-1",
+      "POType": "Base",
+      "PODate": "2026-01-21 00:00:00",
+      "SupplierName": "Nucor Rebar Fabrication",
+      "MaterialCode": "Various",
+      "POValue": 3044.0,
+      "Currency": "USD",
+      "POValueUSD": 3044.0
+    },
+    {
+      "PONumber": "RFPO-7120-V40005-1",
+      "POType": "Base",
+      "PODate": "2026-01-21 00:00:00",
+      "SupplierName": "Global Services Vertiv Japan GK",
+      "MaterialCode": "Various",
+      "POValue": 2146477.0,
+      "Currency": "JPY",
+      "POValueUSD": 2146477.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40167-1",
+      "POType": "Base",
+      "PODate": "2026-01-21 00:00:00",
+      "SupplierName": "Scott & From Co., Inc.",
+      "MaterialCode": "Various",
+      "POValue": 31.98,
+      "Currency": "USD",
+      "POValueUSD": 31.98
+    },
+    {
+      "PONumber": "RFPO-7073-V40014-1",
+      "POType": "Base",
+      "PODate": "2026-01-21 00:00:00",
+      "SupplierName": "Crossweld Metal Trading Co.LLC",
+      "MaterialCode": "Various",
+      "POValue": 6111.0,
+      "Currency": "USD",
+      "POValueUSD": 6111.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6844-1",
+      "POType": "Base",
+      "PODate": "2026-01-21 00:00:00",
+      "SupplierName": "Flight Light Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 588.81,
+      "Currency": "USD",
+      "POValueUSD": 588.81
+    },
+    {
+      "PONumber": "RFPO-7139-V40070-1",
+      "POType": "Base",
+      "PODate": "2026-01-21 00:00:00",
+      "SupplierName": "American International Supply Inc.",
+      "MaterialCode": "Various",
+      "POValue": 1449.99,
+      "Currency": "USD",
+      "POValueUSD": 1449.99
+    },
+    {
+      "PONumber": "RFPO-5829-V40043-1",
+      "POType": "Base",
+      "PODate": "2026-01-21 00:00:00",
+      "SupplierName": "Technofab Steel Fabrication & Welding LLC",
+      "MaterialCode": "Various",
+      "POValue": 42500.0,
+      "Currency": "AED",
+      "POValueUSD": 11572.75
+    },
+    {
+      "PONumber": "RFPO-7616-V40001-1",
+      "POType": "Base",
+      "PODate": "2026-01-21 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 35434.15,
+      "Currency": "USD",
+      "POValueUSD": 35434.15
+    },
+    {
+      "PONumber": "RFPO-5532-V4379-1",
+      "POType": "Base",
+      "PODate": "2026-01-21 00:00:00",
+      "SupplierName": "FOSHAN SOEASY MODULAR HOUSING CO LTD",
+      "MaterialCode": "Various",
+      "POValue": 12050.0,
+      "Currency": "USD",
+      "POValueUSD": 12050.0
+    },
+    {
+      "PONumber": "RFPO-7139-V40068-1",
+      "POType": "Base",
+      "PODate": "2026-01-20 00:00:00",
+      "SupplierName": "Uline",
+      "MaterialCode": "Various",
+      "POValue": 2114.89,
+      "Currency": "USD",
+      "POValueUSD": 2114.89
+    },
+    {
+      "PONumber": "RFPO-6705-V40161-2",
+      "POType": "Change Order",
+      "PODate": "2026-01-20 00:00:00",
+      "SupplierName": "SMITHBRIDGE GUAM",
+      "MaterialCode": "Various",
+      "POValue": 92284.55,
+      "Currency": "USD",
+      "POValueUSD": 92284.55
+    },
+    {
+      "PONumber": "RFPO-7139-V40069-1",
+      "POType": "Base",
+      "PODate": "2026-01-20 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 9513.64,
+      "Currency": "USD",
+      "POValueUSD": 9513.64
+    },
+    {
+      "PONumber": "RFPO-5829-V40042-1",
+      "POType": "Base",
+      "PODate": "2026-01-19 00:00:00",
+      "SupplierName": "X-Calibur Emirates LLC",
+      "MaterialCode": "Various",
+      "POValue": 31456.0,
+      "Currency": "AED",
+      "POValueUSD": 8565.47
+    },
+    {
+      "PONumber": "RFPO-5829-M4003-1",
+      "POType": "Base",
+      "PODate": "2026-01-19 00:00:00",
+      "SupplierName": "WECARE MACHINERY TRADING \u2013 Sole Proprietorship LLC",
+      "MaterialCode": "Mechanical",
+      "POValue": 1360.0,
+      "Currency": "AED",
+      "POValueUSD": 370.33
+    },
+    {
+      "PONumber": "RFPO-1569-O117-1",
+      "POType": "Base",
+      "PODate": "2026-01-15 00:00:00",
+      "SupplierName": "Managed Solution LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 199837.439,
+      "Currency": "USD",
+      "POValueUSD": 199837.44
+    },
+    {
+      "PONumber": "RFPO-7878-V40007-1",
+      "POType": "Base",
+      "PODate": "2026-01-15 00:00:00",
+      "SupplierName": "INTEGRATED CONTRACTING SUPPLIERS",
+      "MaterialCode": "Various",
+      "POValue": 2088.0,
+      "Currency": "USD",
+      "POValueUSD": 2088.0
+    },
+    {
+      "PONumber": "RFPO-1569-O118-1",
+      "POType": "Base",
+      "PODate": "2026-01-15 00:00:00",
+      "SupplierName": "AllCAD Solutions LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 925.0,
+      "Currency": "AED",
+      "POValueUSD": 251.88
+    },
+    {
+      "PONumber": "RFPO-7616-A5301-1",
+      "POType": "Base",
+      "PODate": "2026-01-15 00:00:00",
+      "SupplierName": "BM Middle East FZC",
+      "MaterialCode": "Architectural",
+      "POValue": 6631.86,
+      "Currency": "USD",
+      "POValueUSD": 6631.86
+    },
+    {
+      "PONumber": "RFPO-7878-V40006-1",
+      "POType": "Base",
+      "PODate": "2026-01-14 00:00:00",
+      "SupplierName": "INTEGRATED CONTRACTING SUPPLIERS",
+      "MaterialCode": "Various",
+      "POValue": 25321.32,
+      "Currency": "USD",
+      "POValueUSD": 25321.32
+    },
+    {
+      "PONumber": "RFPO-7139-E6825-1",
+      "POType": "Base",
+      "PODate": "2026-01-14 00:00:00",
+      "SupplierName": "AL GHANDI SWITCHGEARS INDUSTRY",
+      "MaterialCode": "Electrical",
+      "POValue": 310.0,
+      "Currency": "USD",
+      "POValueUSD": 310.0
+    },
+    {
+      "PONumber": "RFPO-7878-V40005-1",
+      "POType": "Base",
+      "PODate": "2026-01-14 00:00:00",
+      "SupplierName": "INTEGRATED CONTRACTING SUPPLIERS",
+      "MaterialCode": "Various",
+      "POValue": 2235.0,
+      "Currency": "USD",
+      "POValueUSD": 2235.0
+    },
+    {
+      "PONumber": "RFPO-7139-E6824-1",
+      "POType": "Base",
+      "PODate": "2026-01-14 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 4367.0,
+      "Currency": "USD",
+      "POValueUSD": 4367.0
+    },
+    {
+      "PONumber": "RFPO-7139-V40067-1",
+      "POType": "Base",
+      "PODate": "2026-01-14 00:00:00",
+      "SupplierName": "EJ USA Inc.",
+      "MaterialCode": "Various",
+      "POValue": 2904.16,
+      "Currency": "USD",
+      "POValueUSD": 2904.16
+    },
+    {
+      "PONumber": "RFPO-7098-V40001-1",
+      "POType": "Base",
+      "PODate": "2026-01-14 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 326.4,
+      "Currency": "USD",
+      "POValueUSD": 326.4
+    },
+    {
+      "PONumber": "RFPO-6705-A5202-2",
+      "POType": "Change Order",
+      "PODate": "2026-01-14 00:00:00",
+      "SupplierName": "Lakshmi Metal Tech LLC",
+      "MaterialCode": "Architectural",
+      "POValue": 1925.0,
+      "Currency": "AED",
+      "POValueUSD": 524.18
+    },
+    {
+      "PONumber": "RFPO-1569-O114-1",
+      "POType": "Base",
+      "PODate": "2026-01-14 00:00:00",
+      "SupplierName": "RivYv Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 6000.0,
+      "Currency": "USD",
+      "POValueUSD": 6000.0
+    },
+    {
+      "PONumber": "RFPO-5153-S9116-1",
+      "POType": "Base",
+      "PODate": "2026-01-13 00:00:00",
+      "SupplierName": "GEMMO SPA",
+      "MaterialCode": "Services",
+      "POValue": 0.0,
+      "Currency": "USD",
+      "POValueUSD": 0.0
+    },
+    {
+      "PONumber": "RFPO-7139-M4104-1",
+      "POType": "Base",
+      "PODate": "2026-01-13 00:00:00",
+      "SupplierName": "Dongguan Haiyuan Water Treatment Co., LTD",
+      "MaterialCode": "Mechanical",
+      "POValue": 99710.0,
+      "Currency": "USD",
+      "POValueUSD": 99710.0
+    },
+    {
+      "PONumber": "RFPO-1569-O115-1",
+      "POType": "Base",
+      "PODate": "2026-01-13 00:00:00",
+      "SupplierName": "RivYv Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 4230.0,
+      "Currency": "USD",
+      "POValueUSD": 4230.0
+    },
+    {
+      "PONumber": "RFPO-5829-V40041-1",
+      "POType": "Base",
+      "PODate": "2026-01-13 00:00:00",
+      "SupplierName": "Lomeq Technical Services Co. L.L.C",
+      "MaterialCode": "Various",
+      "POValue": 28000.0,
+      "Currency": "AED",
+      "POValueUSD": 7624.4
+    },
+    {
+      "PONumber": "RFPO-5153-S9115-1",
+      "POType": "Base",
+      "PODate": "2026-01-13 00:00:00",
+      "SupplierName": "IMPRESA PERCASSI S.P.A.",
+      "MaterialCode": "Services",
+      "POValue": 1.0,
+      "Currency": "USD",
+      "POValueUSD": 1.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40166-1",
+      "POType": "Base",
+      "PODate": "2026-01-13 00:00:00",
+      "SupplierName": "American International Supply Inc.",
+      "MaterialCode": "Various",
+      "POValue": 300.0,
+      "Currency": "USD",
+      "POValueUSD": 300.0
+    },
+    {
+      "PONumber": "RFPO-1569-O116-1",
+      "POType": "Base",
+      "PODate": "2026-01-13 00:00:00",
+      "SupplierName": "Managed Solution LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 1909.2,
+      "Currency": "USD",
+      "POValueUSD": 1909.2
+    },
+    {
+      "PONumber": "RFPO-6705-A5202-1",
+      "POType": "Base",
+      "PODate": "2026-01-12 00:00:00",
+      "SupplierName": "Lakshmi Metal Tech LLC",
+      "MaterialCode": "Architectural",
+      "POValue": 1811.0,
+      "Currency": "AED",
+      "POValueUSD": 493.14
+    },
+    {
+      "PONumber": "RFPO-6705-V40165-1",
+      "POType": "Base",
+      "PODate": "2026-01-12 00:00:00",
+      "SupplierName": "Tsang Brothers Corporation",
+      "MaterialCode": "Various",
+      "POValue": 570.56,
+      "Currency": "USD",
+      "POValueUSD": 570.56
+    },
+    {
+      "PONumber": "RFPO-7139-V40066-1",
+      "POType": "Base",
+      "PODate": "2026-01-12 00:00:00",
+      "SupplierName": "White Cap Supply Holdings, LLC",
+      "MaterialCode": "Various",
+      "POValue": 822.97,
+      "Currency": "USD",
+      "POValueUSD": 822.97
+    },
+    {
+      "PONumber": "RFPO-7139-M4103-1",
+      "POType": "Base",
+      "PODate": "2026-01-12 00:00:00",
+      "SupplierName": "M.A.H.Y. KHOORY & CO. LLC",
+      "MaterialCode": "Mechanical",
+      "POValue": 100378.08,
+      "Currency": "AED",
+      "POValueUSD": 27332.95
+    },
+    {
+      "PONumber": "RFPO-6705-V40164-1",
+      "POType": "Base",
+      "PODate": "2026-01-08 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 4681.19,
+      "Currency": "USD",
+      "POValueUSD": 4681.19
+    },
+    {
+      "PONumber": "RFPO-7139-V40065-1",
+      "POType": "Base",
+      "PODate": "2026-01-08 00:00:00",
+      "SupplierName": "Nucor Rebar Fabrication",
+      "MaterialCode": "Various",
+      "POValue": 21534.0,
+      "Currency": "USD",
+      "POValueUSD": 21534.0
+    },
+    {
+      "PONumber": "RFPO-1005-V7263-2",
+      "POType": "Change Order",
+      "PODate": "2026-01-08 00:00:00",
+      "SupplierName": "Cimmaron International Corporation",
+      "MaterialCode": "Various",
+      "POValue": 26544.46,
+      "Currency": "USD",
+      "POValueUSD": 26544.46
+    },
+    {
+      "PONumber": "RFPO-5829-R1512-1",
+      "POType": "Base",
+      "PODate": "2026-01-07 00:00:00",
+      "SupplierName": "JOHNSON ARABIA LLC",
+      "MaterialCode": "Rental",
+      "POValue": 70000.0,
+      "Currency": "AED",
+      "POValueUSD": 19061.0
+    },
+    {
+      "PONumber": "RFPO-5829-R1512-2",
+      "POType": "Change Order",
+      "PODate": "2026-01-07 00:00:00",
+      "SupplierName": "JOHNSON ARABIA LLC",
+      "MaterialCode": "Rental",
+      "POValue": 72000.0,
+      "Currency": "AED",
+      "POValueUSD": 19605.6
+    },
+    {
+      "PONumber": "RFPO-7139-V40064-2",
+      "POType": "Change Order",
+      "PODate": "2026-01-07 00:00:00",
+      "SupplierName": "ALLEN TRENCH SAFETY CORPORATION",
+      "MaterialCode": "Various",
+      "POValue": 34985.55,
+      "Currency": "USD",
+      "POValueUSD": 34985.55
+    },
+    {
+      "PONumber": "RFPO-5829-V40039-1",
+      "POType": "Base",
+      "PODate": "2026-01-07 00:00:00",
+      "SupplierName": "Unitech Di Pipes & Fittings Mfg. LLC",
+      "MaterialCode": "Various",
+      "POValue": 127922.86,
+      "Currency": "AED",
+      "POValueUSD": 34833.39
+    },
+    {
+      "PONumber": "RFPO-6705-V40005-3",
+      "POType": "Change Order 3",
+      "PODate": "2026-01-07 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 173389.43,
+      "Currency": "USD",
+      "POValueUSD": 173389.43
+    },
+    {
+      "PONumber": "RFPO-5829-V40040-1",
+      "POType": "Base",
+      "PODate": "2026-01-07 00:00:00",
+      "SupplierName": "Unitech Di Pipes & Fittings Mfg. LLC",
+      "MaterialCode": "Various",
+      "POValue": 51732.0,
+      "Currency": "AED",
+      "POValueUSD": 14086.62
+    },
+    {
+      "PONumber": "RFPO-7878-V40003-1",
+      "POType": "Base",
+      "PODate": "2026-01-07 00:00:00",
+      "SupplierName": "INTEGRATED CONTRACTING SUPPLIERS",
+      "MaterialCode": "Various",
+      "POValue": 8957.0,
+      "Currency": "USD",
+      "POValueUSD": 8957.0
+    },
+    {
+      "PONumber": "RFPO-7139-V40064-1",
+      "POType": "Base",
+      "PODate": "2026-01-06 00:00:00",
+      "SupplierName": "ALLEN TRENCH SAFETY CORPORATION",
+      "MaterialCode": "Various",
+      "POValue": 33102.75,
+      "Currency": "USD",
+      "POValueUSD": 33102.75
+    },
+    {
+      "PONumber": "RFPO-1005-V7264-1",
+      "POType": "Base",
+      "PODate": "2026-01-06 00:00:00",
+      "SupplierName": "HOLBROOK PIPE SUPPLY INC.",
+      "MaterialCode": "Various",
+      "POValue": 11906.665,
+      "Currency": "USD",
+      "POValueUSD": 11906.67
+    },
+    {
+      "PONumber": "RFPO-7139-V4358-1",
+      "POType": "Base",
+      "PODate": "2026-01-06 00:00:00",
+      "SupplierName": "YSAIR HONGKONG HOLDINGS LIMITED",
+      "MaterialCode": "Various",
+      "POValue": 995.7,
+      "Currency": "USD",
+      "POValueUSD": 995.7
+    },
+    {
+      "PONumber": "RFPO-7212-V40019-1",
+      "POType": "Base",
+      "PODate": "2026-01-06 00:00:00",
+      "SupplierName": "South-Tek Systems, LLC",
+      "MaterialCode": "Various",
+      "POValue": 40826.8,
+      "Currency": "USD",
+      "POValueUSD": 40826.8
+    },
+    {
+      "PONumber": "RFPO-6705-A5301-1",
+      "POType": "Base",
+      "PODate": "2026-01-06 00:00:00",
+      "SupplierName": "BM Middle East FZC",
+      "MaterialCode": "Architectural",
+      "POValue": 2212.0,
+      "Currency": "USD",
+      "POValueUSD": 2212.0
+    },
+    {
+      "PONumber": "RFPO-7139-E6823-1",
+      "POType": "Base",
+      "PODate": "2026-01-06 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 7116.68,
+      "Currency": "USD",
+      "POValueUSD": 7116.68
+    },
+    {
+      "PONumber": "RFPO-7139-E6822-1",
+      "POType": "Base",
+      "PODate": "2026-01-05 00:00:00",
+      "SupplierName": "Benfield Electric International Ltd.",
+      "MaterialCode": "Electrical",
+      "POValue": 54944.13,
+      "Currency": "USD",
+      "POValueUSD": 54944.13
+    },
+    {
+      "PONumber": "RFPO-5829-V40038-1",
+      "POType": "Base",
+      "PODate": "2026-01-02 00:00:00",
+      "SupplierName": "Unitech Di Pipes & Fittings Mfg. LLC",
+      "MaterialCode": "Various",
+      "POValue": 57755.5,
+      "Currency": "USD",
+      "POValueUSD": 57755.5
+    },
+    {
+      "PONumber": "RFPO-6705-V4362-2",
+      "POType": "Change Order",
+      "PODate": "2025-12-24 00:00:00",
+      "SupplierName": "Industrial Safety Products",
+      "MaterialCode": "Various",
+      "POValue": 1756.9,
+      "Currency": "USD",
+      "POValueUSD": 1756.9
+    },
+    {
+      "PONumber": "RFPO-8206-O1-1",
+      "POType": "Base",
+      "PODate": "2025-12-24 00:00:00",
+      "SupplierName": "Kyoto Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 47400.0,
+      "Currency": "AED",
+      "POValueUSD": 12907.02
+    },
+    {
+      "PONumber": "RFPO-7073-V40013-1",
+      "POType": "Base",
+      "PODate": "2025-12-19 00:00:00",
+      "SupplierName": "Smith International Gulf Services, LLC",
+      "MaterialCode": "Various",
+      "POValue": 18553.5,
+      "Currency": "AED",
+      "POValueUSD": 5052.12
+    },
+    {
+      "PONumber": "RFPO-5532-V4378-1",
+      "POType": "Base",
+      "PODate": "2025-12-19 00:00:00",
+      "SupplierName": "Green Figure Technique",
+      "MaterialCode": "Various",
+      "POValue": 7380.0,
+      "Currency": "AED",
+      "POValueUSD": 2009.57
+    },
+    {
+      "PONumber": "RFPO-6852-V40037-1",
+      "POType": "Base",
+      "PODate": "2025-12-19 00:00:00",
+      "SupplierName": "Jet Fuel Specialists LLC",
+      "MaterialCode": "Various",
+      "POValue": 23112.64,
+      "Currency": "USD",
+      "POValueUSD": 23112.64
+    },
+    {
+      "PONumber": "RFPO-6705-V40163-1",
+      "POType": "Base",
+      "PODate": "2025-12-18 00:00:00",
+      "SupplierName": "PENN STAINLESS PRODUCTS",
+      "MaterialCode": "Various",
+      "POValue": 2830.61,
+      "Currency": "USD",
+      "POValueUSD": 2830.61
+    },
+    {
+      "PONumber": "RFPO-7139-V40063-1",
+      "POType": "Base",
+      "PODate": "2025-12-18 00:00:00",
+      "SupplierName": "V-Trust Inspection Service Co. Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 268.0,
+      "Currency": "USD",
+      "POValueUSD": 268.0
+    },
+    {
+      "PONumber": "RFPO-7864-V40004-1",
+      "POType": "Base",
+      "PODate": "2025-12-17 00:00:00",
+      "SupplierName": "Right Choice Equipment Trading (LLC)",
+      "MaterialCode": "Various",
+      "POValue": 440.0,
+      "Currency": "AED",
+      "POValueUSD": 119.81
+    },
+    {
+      "PONumber": "RFPO-6705-V40162-1",
+      "POType": "Base",
+      "PODate": "2025-12-17 00:00:00",
+      "SupplierName": "Cimmaron International Corporation",
+      "MaterialCode": "Various",
+      "POValue": 7472.62,
+      "Currency": "USD",
+      "POValueUSD": 7472.62
+    },
+    {
+      "PONumber": "RFPO-7139-V40062-1",
+      "POType": "Base",
+      "PODate": "2025-12-17 00:00:00",
+      "SupplierName": "Cimmaron International Corporation",
+      "MaterialCode": "Various",
+      "POValue": 23402.52,
+      "Currency": "USD",
+      "POValueUSD": 23402.52
+    },
+    {
+      "PONumber": "RFPO-7139-V40036-2",
+      "POType": "Change Order",
+      "PODate": "2025-12-17 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 32410.31,
+      "Currency": "USD",
+      "POValueUSD": 32410.31
+    },
+    {
+      "PONumber": "RFPO-7139-V40059-1",
+      "POType": "Base",
+      "PODate": "2025-12-17 00:00:00",
+      "SupplierName": "V-Trust Inspection Service Co. Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 268.0,
+      "Currency": "USD",
+      "POValueUSD": 268.0
+    },
+    {
+      "PONumber": "RFPO-5532-V4377-1",
+      "POType": "Base",
+      "PODate": "2025-12-17 00:00:00",
+      "SupplierName": "Alelham Consultancy LLC",
+      "MaterialCode": "Various",
+      "POValue": 3660.0,
+      "Currency": "AED",
+      "POValueUSD": 996.62
+    },
+    {
+      "PONumber": "RFPO-7212-V40017-1",
+      "POType": "Base",
+      "PODate": "2025-12-17 00:00:00",
+      "SupplierName": "BMS Btech Switchgear",
+      "MaterialCode": "Various",
+      "POValue": 29600.0,
+      "Currency": "AED",
+      "POValueUSD": 8060.08
+    },
+    {
+      "PONumber": "RFPO-7139-M4020-1",
+      "POType": "Base",
+      "PODate": "2025-12-16 00:00:00",
+      "SupplierName": "Henan XunHu Equipment Co., Ltd",
+      "MaterialCode": "Mechanical",
+      "POValue": 29778.0,
+      "Currency": "USD",
+      "POValueUSD": 29778.0
+    },
+    {
+      "PONumber": "RFPO-7139-S9144-1",
+      "POType": "Base",
+      "PODate": "2025-12-16 00:00:00",
+      "SupplierName": "MORRICO EQUIPMENT LLC",
+      "MaterialCode": "Services",
+      "POValue": 502.47,
+      "Currency": "USD",
+      "POValueUSD": 502.47
+    },
+    {
+      "PONumber": "RFPO-5829-V40037-1",
+      "POType": "Base",
+      "PODate": "2025-12-16 00:00:00",
+      "SupplierName": "Oasis Metal Manufacturing LLC",
+      "MaterialCode": "Various",
+      "POValue": 28200.0,
+      "Currency": "AED",
+      "POValueUSD": 7678.86
+    },
+    {
+      "PONumber": "RFPO-5532-M4052-1",
+      "POType": "Base",
+      "PODate": "2025-12-16 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 25000.0,
+      "Currency": "USD",
+      "POValueUSD": 25000.0
+    },
+    {
+      "PONumber": "RFPO-7139-V40060-1",
+      "POType": "Base",
+      "PODate": "2025-12-16 00:00:00",
+      "SupplierName": "American International Supply Inc.",
+      "MaterialCode": "Various",
+      "POValue": 15822.14,
+      "Currency": "USD",
+      "POValueUSD": 15822.14
+    },
+    {
+      "PONumber": "RFPO-7139-V40061-1",
+      "POType": "Base",
+      "PODate": "2025-12-16 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 20217.63,
+      "Currency": "USD",
+      "POValueUSD": 20217.63
+    },
+    {
+      "PONumber": "RFPO-1569-O113-1",
+      "POType": "Base",
+      "PODate": "2025-12-15 00:00:00",
+      "SupplierName": "AllCAD Solutions LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 925.0,
+      "Currency": "AED",
+      "POValueUSD": 251.88
+    },
+    {
+      "PONumber": "RFPO-7212-V40016-1",
+      "POType": "Base",
+      "PODate": "2025-12-15 00:00:00",
+      "SupplierName": "Fastener Point LLC",
+      "MaterialCode": "Various",
+      "POValue": 1181.84,
+      "Currency": "AED",
+      "POValueUSD": 321.82
+    },
+    {
+      "PONumber": "RFPO-6705-V40161-1",
+      "POType": "Base",
+      "PODate": "2025-12-15 00:00:00",
+      "SupplierName": "SMITHBRIDGE GUAM",
+      "MaterialCode": "Various",
+      "POValue": 92054.4,
+      "Currency": "USD",
+      "POValueUSD": 92054.4
+    },
+    {
+      "PONumber": "RFPO-7864-A5201-1",
+      "POType": "Base",
+      "PODate": "2025-12-15 00:00:00",
+      "SupplierName": "Lakshmi Metal Tech LLC",
+      "MaterialCode": "Architectural",
+      "POValue": 257077.04,
+      "Currency": "AED",
+      "POValueUSD": 70002.08
+    },
+    {
+      "PONumber": "RFPO-1569-O112-1",
+      "POType": "Base",
+      "PODate": "2025-12-15 00:00:00",
+      "SupplierName": "AllCAD Solutions LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 1850.0,
+      "Currency": "AED",
+      "POValueUSD": 503.75
+    },
+    {
+      "PONumber": "RFPO-5532-V4376-1",
+      "POType": "Base",
+      "PODate": "2025-12-15 00:00:00",
+      "SupplierName": "Alelham Consultancy LLC",
+      "MaterialCode": "Various",
+      "POValue": 2475.0,
+      "Currency": "AED",
+      "POValueUSD": 673.94
+    },
+    {
+      "PONumber": "RFPO-5532-M4057-1",
+      "POType": "Base",
+      "PODate": "2025-12-11 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 12800.0,
+      "Currency": "USD",
+      "POValueUSD": 12800.0
+    },
+    {
+      "PONumber": "RFPO-1569-O111-1",
+      "POType": "Base",
+      "PODate": "2025-12-11 00:00:00",
+      "SupplierName": "Managed Solution LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 667.9,
+      "Currency": "USD",
+      "POValueUSD": 667.9
+    },
+    {
+      "PONumber": "RFPO-6705-V4362-1",
+      "POType": "Base",
+      "PODate": "2025-12-11 00:00:00",
+      "SupplierName": "Industrial Safety Products",
+      "MaterialCode": "Various",
+      "POValue": 1589.0,
+      "Currency": "USD",
+      "POValueUSD": 1589.0
+    },
+    {
+      "PONumber": "RFPO-7139-V4357-1",
+      "POType": "Base",
+      "PODate": "2025-12-11 00:00:00",
+      "SupplierName": "Van De Pol Enterprises Inc",
+      "MaterialCode": "Various",
+      "POValue": 18167.57,
+      "Currency": "USD",
+      "POValueUSD": 18167.57
+    },
+    {
+      "PONumber": "RFPO-6705-V40159-2",
+      "POType": "Change Order",
+      "PODate": "2025-12-11 00:00:00",
+      "SupplierName": "JW Supply House, Inc",
+      "MaterialCode": "Various",
+      "POValue": 749.96,
+      "Currency": "USD",
+      "POValueUSD": 749.96
+    },
+    {
+      "PONumber": "RFPO-5532-M4056-1",
+      "POType": "Base",
+      "PODate": "2025-12-10 00:00:00",
+      "SupplierName": "FASTWIN GROUP CO.,LIMITED",
+      "MaterialCode": "Mechanical",
+      "POValue": 1595.54,
+      "Currency": "USD",
+      "POValueUSD": 1595.54
+    },
+    {
+      "PONumber": "RFPO-6705-V40160-1",
+      "POType": "Base",
+      "PODate": "2025-12-10 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 3854.01,
+      "Currency": "USD",
+      "POValueUSD": 3854.01
+    },
+    {
+      "PONumber": "RFPO-6705-E6843-1",
+      "POType": "Base",
+      "PODate": "2025-12-10 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 380.47,
+      "Currency": "USD",
+      "POValueUSD": 380.47
+    },
+    {
+      "PONumber": "RFPO-7139-V40058-1",
+      "POType": "Base",
+      "PODate": "2025-12-10 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 467.0,
+      "Currency": "USD",
+      "POValueUSD": 467.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6842-1",
+      "POType": "Base",
+      "PODate": "2025-12-09 00:00:00",
+      "SupplierName": "Benfield Electric International Ltd.",
+      "MaterialCode": "Electrical",
+      "POValue": 2605.39,
+      "Currency": "USD",
+      "POValueUSD": 2605.39
+    },
+    {
+      "PONumber": "RFPO-7208-V40027-1",
+      "POType": "Base",
+      "PODate": "2025-12-09 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 13126.16,
+      "Currency": "USD",
+      "POValueUSD": 13126.16
+    },
+    {
+      "PONumber": "RFPO-5532-M4055-1",
+      "POType": "Base",
+      "PODate": "2025-12-09 00:00:00",
+      "SupplierName": "FASTWIN GROUP CO.,LIMITED",
+      "MaterialCode": "Mechanical",
+      "POValue": 1735.96,
+      "Currency": "USD",
+      "POValueUSD": 1735.96
+    },
+    {
+      "PONumber": "RFPO-1569-O110-1",
+      "POType": "Base",
+      "PODate": "2025-12-09 00:00:00",
+      "SupplierName": "Kyoto Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 14700.0,
+      "Currency": "AED",
+      "POValueUSD": 4002.81
+    },
+    {
+      "PONumber": "RFPO-7139-V40055-1",
+      "POType": "Base",
+      "PODate": "2025-12-08 00:00:00",
+      "SupplierName": "HOLBROOK PIPE SUPPLY INC.",
+      "MaterialCode": "Various",
+      "POValue": 641.44,
+      "Currency": "USD",
+      "POValueUSD": 641.44
+    },
+    {
+      "PONumber": "RFPO-7616-V40000-2",
+      "POType": "Change Order",
+      "PODate": "2025-12-08 00:00:00",
+      "SupplierName": "Rapid Scaffolding (Engineering) Co., Ltd",
+      "MaterialCode": "Various",
+      "POValue": 60810.24,
+      "Currency": "USD",
+      "POValueUSD": 60810.24
+    },
+    {
+      "PONumber": "RFPO-5532-M4050-1",
+      "POType": "Base",
+      "PODate": "2025-12-08 00:00:00",
+      "SupplierName": "FASTWIN GROUP CO.,LIMITED",
+      "MaterialCode": "Mechanical",
+      "POValue": 1371.88,
+      "Currency": "USD",
+      "POValueUSD": 1371.88
+    },
+    {
+      "PONumber": "RFPO-6705-V40159-1",
+      "POType": "Base",
+      "PODate": "2025-12-08 00:00:00",
+      "SupplierName": "JW Supply House, Inc",
+      "MaterialCode": "Various",
+      "POValue": 664.66,
+      "Currency": "USD",
+      "POValueUSD": 664.66
+    },
+    {
+      "PONumber": "RFPO-7139-V40056-1",
+      "POType": "Base",
+      "PODate": "2025-12-08 00:00:00",
+      "SupplierName": "Nucor Rebar Fabrication",
+      "MaterialCode": "Various",
+      "POValue": 348872.4,
+      "Currency": "USD",
+      "POValueUSD": 348872.4
+    },
+    {
+      "PONumber": "RFPO-5532-M4053-1",
+      "POType": "Base",
+      "PODate": "2025-12-08 00:00:00",
+      "SupplierName": "FASTWIN GROUP CO.,LIMITED",
+      "MaterialCode": "Mechanical",
+      "POValue": 927.54,
+      "Currency": "USD",
+      "POValueUSD": 927.54
+    },
+    {
+      "PONumber": "RFPO-7139-V40057-1",
+      "POType": "Base",
+      "PODate": "2025-12-08 00:00:00",
+      "SupplierName": "EJ USA Inc.",
+      "MaterialCode": "Various",
+      "POValue": 7364.09,
+      "Currency": "USD",
+      "POValueUSD": 7364.09
+    },
+    {
+      "PONumber": "RFPO-5532-M4054-1",
+      "POType": "Base",
+      "PODate": "2025-12-08 00:00:00",
+      "SupplierName": "FASTWIN GROUP CO.,LIMITED",
+      "MaterialCode": "Mechanical",
+      "POValue": 4020.43,
+      "Currency": "USD",
+      "POValueUSD": 4020.43
+    },
+    {
+      "PONumber": "RFPO-7139-V40054-1",
+      "POType": "Base",
+      "PODate": "2025-12-04 00:00:00",
+      "SupplierName": "American International Supply Inc.",
+      "MaterialCode": "Various",
+      "POValue": 9819.85,
+      "Currency": "USD",
+      "POValueUSD": 9819.85
+    },
+    {
+      "PONumber": "RFPO-5532-M4051-1",
+      "POType": "Base",
+      "PODate": "2025-12-04 00:00:00",
+      "SupplierName": "FASTWIN GROUP CO.,LIMITED",
+      "MaterialCode": "Mechanical",
+      "POValue": 1953.44,
+      "Currency": "USD",
+      "POValueUSD": 1953.44
+    },
+    {
+      "PONumber": "RFPO-7139-S9102-1",
+      "POType": "Base",
+      "PODate": "2025-12-04 00:00:00",
+      "SupplierName": "TUV SUD MIDDLE EAST LLC",
+      "MaterialCode": "Services",
+      "POValue": 1200.0,
+      "Currency": "AED",
+      "POValueUSD": 326.76
+    },
+    {
+      "PONumber": "RFPO-6705-V4361-1",
+      "POType": "Base",
+      "PODate": "2025-12-04 00:00:00",
+      "SupplierName": "Triple J Ebeye Wholesale",
+      "MaterialCode": "Various",
+      "POValue": 353.69,
+      "Currency": "USD",
+      "POValueUSD": 353.69
+    },
+    {
+      "PONumber": "RFPO-6705-V40158-1",
+      "POType": "Base",
+      "PODate": "2025-12-03 00:00:00",
+      "SupplierName": "American International Supply Inc.",
+      "MaterialCode": "Various",
+      "POValue": 17210.22,
+      "Currency": "USD",
+      "POValueUSD": 17210.22
+    },
+    {
+      "PONumber": "RFPO-6705-O3-1",
+      "POType": "Base",
+      "PODate": "2025-12-03 00:00:00",
+      "SupplierName": "AllCAD Solutions LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 925.0,
+      "Currency": "AED",
+      "POValueUSD": 251.88
+    },
+    {
+      "PONumber": "RFPO-6705-V4360-1",
+      "POType": "Base",
+      "PODate": "2025-12-03 00:00:00",
+      "SupplierName": "Total Industries",
+      "MaterialCode": "Various",
+      "POValue": 3736.6,
+      "Currency": "USD",
+      "POValueUSD": 3736.6
+    },
+    {
+      "PONumber": "RFPO-7139-V40053-1",
+      "POType": "Base",
+      "PODate": "2025-12-03 00:00:00",
+      "SupplierName": "V-Trust Inspection Service Co. Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 268.0,
+      "Currency": "USD",
+      "POValueUSD": 268.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40157-1",
+      "POType": "Base",
+      "PODate": "2025-12-03 00:00:00",
+      "SupplierName": "Tsang Brothers Corporation",
+      "MaterialCode": "Various",
+      "POValue": 6983.0,
+      "Currency": "USD",
+      "POValueUSD": 6983.0
+    },
+    {
+      "PONumber": "RFPO-7616-M4001-2",
+      "POType": "Change Order",
+      "PODate": "2025-12-03 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 122648.0,
+      "Currency": "USD",
+      "POValueUSD": 122648.0
+    },
+    {
+      "PONumber": "RFPO-7139-M4018-1",
+      "POType": "Base",
+      "PODate": "2025-11-28 00:00:00",
+      "SupplierName": "Modena Machinery Trading LLC",
+      "MaterialCode": "Mechanical",
+      "POValue": 37300.0,
+      "Currency": "AED",
+      "POValueUSD": 10156.79
+    },
+    {
+      "PONumber": "RFPO-7139-M4019-1",
+      "POType": "Base",
+      "PODate": "2025-11-28 00:00:00",
+      "SupplierName": "Crux Transformers L.L.C",
+      "MaterialCode": "Mechanical",
+      "POValue": 4000.0,
+      "Currency": "AED",
+      "POValueUSD": 1089.2
+    },
+    {
+      "PONumber": "RFPO-7212-M4101-1",
+      "POType": "Base",
+      "PODate": "2025-11-27 00:00:00",
+      "SupplierName": "Asia Electro Mechanical Company Limited",
+      "MaterialCode": "Mechanical",
+      "POValue": 215573.061,
+      "Currency": "AED",
+      "POValueUSD": 58700.54
+    },
+    {
+      "PONumber": "RFPO-5829-E6818B-1",
+      "POType": "Base",
+      "PODate": "2025-11-27 00:00:00",
+      "SupplierName": "Dubai Cable Company (Private) Limited",
+      "MaterialCode": "Electrical",
+      "POValue": 3998398.763,
+      "Currency": "AED",
+      "POValueUSD": 1088763.98
+    },
+    {
+      "PONumber": "RFPO-5829-M4002-1",
+      "POType": "Base",
+      "PODate": "2025-11-27 00:00:00",
+      "SupplierName": "WECARE MACHINERY TRADING \u2013 Sole Proprietorship LLC",
+      "MaterialCode": "Mechanical",
+      "POValue": 7070.0,
+      "Currency": "AED",
+      "POValueUSD": 1925.16
+    },
+    {
+      "PONumber": "RFPO-5532-M4049-1",
+      "POType": "Base",
+      "PODate": "2025-11-27 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 556.0,
+      "Currency": "USD",
+      "POValueUSD": 556.0
+    },
+    {
+      "PONumber": "RFPO-7212-V40013-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-27 00:00:00",
+      "SupplierName": "Technopro Middle East FZCO",
+      "MaterialCode": "Various",
+      "POValue": 15708.358,
+      "Currency": "AED",
+      "POValueUSD": 4277.39
+    },
+    {
+      "PONumber": "RFPO-6718-V40039-1",
+      "POType": "Base",
+      "PODate": "2025-11-27 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 2855.0,
+      "Currency": "USD",
+      "POValueUSD": 2855.0
+    },
+    {
+      "PONumber": "RFPO-7208-E6800-1",
+      "POType": "Base",
+      "PODate": "2025-11-26 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Electrical",
+      "POValue": 12638.94,
+      "Currency": "USD",
+      "POValueUSD": 12638.94
+    },
+    {
+      "PONumber": "RFPO-5829-S9105-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-26 00:00:00",
+      "SupplierName": "OHIO GENERAL CONTRACTING LLC",
+      "MaterialCode": "Services",
+      "POValue": 55000.0,
+      "Currency": "AED",
+      "POValueUSD": 14976.5
+    },
+    {
+      "PONumber": "RFPO-7139-V40052-1",
+      "POType": "Base",
+      "PODate": "2025-11-26 00:00:00",
+      "SupplierName": "Cresset Chemical Company",
+      "MaterialCode": "Various",
+      "POValue": 3193.65,
+      "Currency": "USD",
+      "POValueUSD": 3193.65
+    },
+    {
+      "PONumber": "RFPO-5532-M4048-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-25 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 939.0,
+      "Currency": "USD",
+      "POValueUSD": 939.0
+    },
+    {
+      "PONumber": "RFPO-5153-S9111-1",
+      "POType": "Base",
+      "PODate": "2025-11-25 00:00:00",
+      "SupplierName": "IMPRESA PERCASSI S.P.A.",
+      "MaterialCode": "Services",
+      "POValue": 0.0,
+      "Currency": "USD",
+      "POValueUSD": 0.0
+    },
+    {
+      "PONumber": "RFPO-5532-M4047-1",
+      "POType": "Base",
+      "PODate": "2025-11-24 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 140800.0,
+      "Currency": "AED",
+      "POValueUSD": 38339.84
+    },
+    {
+      "PONumber": "RFPO-5532-M4106-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-24 00:00:00",
+      "SupplierName": "Alwan Zamzam Trading Co. L.L.C",
+      "MaterialCode": "Mechanical",
+      "POValue": 4731.45,
+      "Currency": "AED",
+      "POValueUSD": 1288.37
+    },
+    {
+      "PONumber": "RFPO-5532-M4048-1",
+      "POType": "Base",
+      "PODate": "2025-11-24 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 620.0,
+      "Currency": "USD",
+      "POValueUSD": 620.0
+    },
+    {
+      "PONumber": "RFPO-7212-V40012-1",
+      "POType": "Base",
+      "PODate": "2025-11-24 00:00:00",
+      "SupplierName": "Al Asam Mechanical Services (LLC)",
+      "MaterialCode": "Various",
+      "POValue": 33600.0,
+      "Currency": "AED",
+      "POValueUSD": 9149.28
+    },
+    {
+      "PONumber": "RFPO-7212-V40014-1",
+      "POType": "Base",
+      "PODate": "2025-11-24 00:00:00",
+      "SupplierName": "Cla-Val Europe Sarl",
+      "MaterialCode": "Various",
+      "POValue": 560.0,
+      "Currency": "USD",
+      "POValueUSD": 560.0
+    },
+    {
+      "PONumber": "RFPO-7212-V40015-1",
+      "POType": "Base",
+      "PODate": "2025-11-24 00:00:00",
+      "SupplierName": "Al Khoory International Products FZE",
+      "MaterialCode": "Various",
+      "POValue": 4000.0,
+      "Currency": "AED",
+      "POValueUSD": 1089.2
+    },
+    {
+      "PONumber": "RFPO-1005-V7262-1",
+      "POType": "Base",
+      "PODate": "2025-11-21 00:00:00",
+      "SupplierName": "Cimmaron International Corporation",
+      "MaterialCode": "Various",
+      "POValue": 10922.4,
+      "Currency": "USD",
+      "POValueUSD": 10922.4
+    },
+    {
+      "PONumber": "RFPO-5532-M4106-1",
+      "POType": "Base",
+      "PODate": "2025-11-21 00:00:00",
+      "SupplierName": "Alwan Zamzam Trading Co. L.L.C",
+      "MaterialCode": "Mechanical",
+      "POValue": 1900.0,
+      "Currency": "USD",
+      "POValueUSD": 1900.0
+    },
+    {
+      "PONumber": "RFPO-5532-V4374-1",
+      "POType": "Base",
+      "PODate": "2025-11-21 00:00:00",
+      "SupplierName": "TSI International FZC",
+      "MaterialCode": "Various",
+      "POValue": 3200.0,
+      "Currency": "AED",
+      "POValueUSD": 871.36
+    },
+    {
+      "PONumber": "RFPO-6705-V40156-1",
+      "POType": "Base",
+      "PODate": "2025-11-20 00:00:00",
+      "SupplierName": "Scott & From Co., Inc.",
+      "MaterialCode": "Various",
+      "POValue": 1689.999999,
+      "Currency": "USD",
+      "POValueUSD": 1690.0
+    },
+    {
+      "PONumber": "RFPO-7139-V40051-1",
+      "POType": "Base",
+      "PODate": "2025-11-20 00:00:00",
+      "SupplierName": "SMITHBRIDGE GUAM",
+      "MaterialCode": "Various",
+      "POValue": 10875.71007,
+      "Currency": "USD",
+      "POValueUSD": 10875.71
+    },
+    {
+      "PONumber": "RFPO-1569-O106-1",
+      "POType": "Base",
+      "PODate": "2025-11-20 00:00:00",
+      "SupplierName": "Kyoto Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 4964.5,
+      "Currency": "AED",
+      "POValueUSD": 1351.83
+    },
+    {
+      "PONumber": "RFPO-7139-E6821-1",
+      "POType": "Base",
+      "PODate": "2025-11-19 00:00:00",
+      "SupplierName": "Giatec Scientific Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 5080.0,
+      "Currency": "USD",
+      "POValueUSD": 5080.0
+    },
+    {
+      "PONumber": "RFPO-6646-V40004-1",
+      "POType": "Base",
+      "PODate": "2025-11-19 00:00:00",
+      "SupplierName": "MCELROY METAL",
+      "MaterialCode": "Various",
+      "POValue": 5000.0,
+      "Currency": "USD",
+      "POValueUSD": 5000.0
+    },
+    {
+      "PONumber": "RFPO-7039-E6802B-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-19 00:00:00",
+      "SupplierName": "Oman Cables Industry (SAOG)",
+      "MaterialCode": "Electrical",
+      "POValue": 1815495.687,
+      "Currency": "USD",
+      "POValueUSD": 1815495.69
+    },
+    {
+      "PONumber": "RFPO-7039-V40029-1",
+      "POType": "Base",
+      "PODate": "2025-11-19 00:00:00",
+      "SupplierName": "BLACK CONSTRUCTION CORPORATION",
+      "MaterialCode": "Various",
+      "POValue": 31888.5,
+      "Currency": "USD",
+      "POValueUSD": 31888.5
+    },
+    {
+      "PONumber": "RFPO-7212-V40010-1",
+      "POType": "Base",
+      "PODate": "2025-11-19 00:00:00",
+      "SupplierName": "INTEGRATED CONTRACTING SUPPLIERS",
+      "MaterialCode": "Various",
+      "POValue": 344.0,
+      "Currency": "USD",
+      "POValueUSD": 344.0
+    },
+    {
+      "PONumber": "RFPO-7212-V40011-1",
+      "POType": "Base",
+      "PODate": "2025-11-19 00:00:00",
+      "SupplierName": "Blue Line Trading Group LLC",
+      "MaterialCode": "Various",
+      "POValue": 3512.65,
+      "Currency": "USD",
+      "POValueUSD": 3512.65
+    },
+    {
+      "PONumber": "RFPO-7212-V40008-1",
+      "POType": "Base",
+      "PODate": "2025-11-18 00:00:00",
+      "SupplierName": "Fastener Point LLC",
+      "MaterialCode": "Various",
+      "POValue": 8610.5,
+      "Currency": "AED",
+      "POValueUSD": 2344.64
+    },
+    {
+      "PONumber": "RFPO-7212-V40009-1",
+      "POType": "Base",
+      "PODate": "2025-11-18 00:00:00",
+      "SupplierName": "Al Khoory International Products FZE",
+      "MaterialCode": "Various",
+      "POValue": 68000.0,
+      "Currency": "AED",
+      "POValueUSD": 18516.4
+    },
+    {
+      "PONumber": "RFPO-7212-V40007-1",
+      "POType": "Base",
+      "PODate": "2025-11-18 00:00:00",
+      "SupplierName": "NATIONAL FIRE FIGHTING MANUFACTURING FZCO",
+      "MaterialCode": "Various",
+      "POValue": 9053.0,
+      "Currency": "USD",
+      "POValueUSD": 9053.0
+    },
+    {
+      "PONumber": "RFPO-7212-V40006-1",
+      "POType": "Base",
+      "PODate": "2025-11-18 00:00:00",
+      "SupplierName": "New Horizon Building Materials Trading LLC",
+      "MaterialCode": "Various",
+      "POValue": 66640.0,
+      "Currency": "AED",
+      "POValueUSD": 18146.07
+    },
+    {
+      "PONumber": "RFPO-6705-V40155-1",
+      "POType": "Base",
+      "PODate": "2025-11-17 00:00:00",
+      "SupplierName": "Tsang Brothers Corporation",
+      "MaterialCode": "Various",
+      "POValue": 558.0,
+      "Currency": "USD",
+      "POValueUSD": 558.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40149-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-17 00:00:00",
+      "SupplierName": "Nucor Rebar Fabrication",
+      "MaterialCode": "Various",
+      "POValue": 234184.0,
+      "Currency": "USD",
+      "POValueUSD": 234184.0
+    },
+    {
+      "PONumber": "RFPO-7212-V40005B-1",
+      "POType": "Base",
+      "PODate": "2025-11-17 00:00:00",
+      "SupplierName": "Technopro Middle East FZCO",
+      "MaterialCode": "Various",
+      "POValue": 243665.552,
+      "Currency": "AED",
+      "POValueUSD": 66350.13
+    },
+    {
+      "PONumber": "RFPO-5503-A5205-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-17 00:00:00",
+      "SupplierName": "PETROUTSOS BROS LTD",
+      "MaterialCode": "Architectural",
+      "POValue": 23560.0,
+      "Currency": "EURO",
+      "POValueUSD": 23560.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6841-1",
+      "POType": "Base",
+      "PODate": "2025-11-17 00:00:00",
+      "SupplierName": "CPS ELECTRIC",
+      "MaterialCode": "Electrical",
+      "POValue": 6040.3,
+      "Currency": "USD",
+      "POValueUSD": 6040.3
+    },
+    {
+      "PONumber": "RFPO-6705-V40154A-1",
+      "POType": "Base",
+      "PODate": "2025-11-14 00:00:00",
+      "SupplierName": "PENN STAINLESS PRODUCTS",
+      "MaterialCode": "Various",
+      "POValue": 14256.3914,
+      "Currency": "USD",
+      "POValueUSD": 14256.39
+    },
+    {
+      "PONumber": "RFPO-6705-V40154-1",
+      "POType": "Base",
+      "PODate": "2025-11-13 00:00:00",
+      "SupplierName": "PENN STAINLESS PRODUCTS",
+      "MaterialCode": "Various",
+      "POValue": 12256.39,
+      "Currency": "USD",
+      "POValueUSD": 12256.39
+    },
+    {
+      "PONumber": "RFPO-7139-V40049-1",
+      "POType": "Base",
+      "PODate": "2025-11-13 00:00:00",
+      "SupplierName": "PENN STAINLESS PRODUCTS",
+      "MaterialCode": "Various",
+      "POValue": 18730.35,
+      "Currency": "USD",
+      "POValueUSD": 18730.35
+    },
+    {
+      "PONumber": "RFPO-6705-E6839-1",
+      "POType": "Base",
+      "PODate": "2025-11-13 00:00:00",
+      "SupplierName": "WESCO Distribution Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 12225.36,
+      "Currency": "USD",
+      "POValueUSD": 12225.36
+    },
+    {
+      "PONumber": "RFPO-6705-E6840-1",
+      "POType": "Base",
+      "PODate": "2025-11-13 00:00:00",
+      "SupplierName": "CPS ELECTRIC",
+      "MaterialCode": "Electrical",
+      "POValue": 11962.65,
+      "Currency": "USD",
+      "POValueUSD": 11962.65
+    },
+    {
+      "PONumber": "RFPO-7039-E6808-1",
+      "POType": "Base",
+      "PODate": "2025-11-13 00:00:00",
+      "SupplierName": "Benfield Electric International Ltd.",
+      "MaterialCode": "Electrical",
+      "POValue": 97694.97,
+      "Currency": "USD",
+      "POValueUSD": 97694.97
+    },
+    {
+      "PONumber": "RFPO-6705-V40151-1",
+      "POType": "Base",
+      "PODate": "2025-11-12 00:00:00",
+      "SupplierName": "Tsang Brothers Corporation",
+      "MaterialCode": "Various",
+      "POValue": 31561.0,
+      "Currency": "USD",
+      "POValueUSD": 31561.0
+    },
+    {
+      "PONumber": "RFPO-1569-O103-3",
+      "POType": "Change Order 3",
+      "PODate": "2025-11-12 00:00:00",
+      "SupplierName": "Kyoto Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 12364.0,
+      "Currency": "AED",
+      "POValueUSD": 3366.72
+    },
+    {
+      "PONumber": "RFPO-7208-V40026-1",
+      "POType": "Base",
+      "PODate": "2025-11-12 00:00:00",
+      "SupplierName": "Sunshine Supply Co Inc",
+      "MaterialCode": "Various",
+      "POValue": 2517.15,
+      "Currency": "USD",
+      "POValueUSD": 2517.15
+    },
+    {
+      "PONumber": "RFPO-7139-V4356-1",
+      "POType": "Base",
+      "PODate": "2025-11-12 00:00:00",
+      "SupplierName": "TSI International FZC",
+      "MaterialCode": "Various",
+      "POValue": 3539.25,
+      "Currency": "AED",
+      "POValueUSD": 963.74
+    },
+    {
+      "PONumber": "RFPO-1569-O103-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-12 00:00:00",
+      "SupplierName": "Kyoto Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 12078.6,
+      "Currency": "AED",
+      "POValueUSD": 3289.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6836A-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-12 00:00:00",
+      "SupplierName": "WESCO Distribution Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 3626.53,
+      "Currency": "USD",
+      "POValueUSD": 3626.53
+    },
+    {
+      "PONumber": "RFPO-6705-V40153-1",
+      "POType": "Base",
+      "PODate": "2025-11-12 00:00:00",
+      "SupplierName": "Humboldt Mfg Co",
+      "MaterialCode": "Various",
+      "POValue": 16494.7,
+      "Currency": "USD",
+      "POValueUSD": 16494.7
+    },
+    {
+      "PONumber": "RFPO-6705-V40152-1",
+      "POType": "Base",
+      "PODate": "2025-11-11 00:00:00",
+      "SupplierName": "Nucor Rebar Fabrication",
+      "MaterialCode": "Various",
+      "POValue": 12092.0,
+      "Currency": "USD",
+      "POValueUSD": 12092.0
+    },
+    {
+      "PONumber": "RFPO-7139-V40047-1",
+      "POType": "Base",
+      "PODate": "2025-11-11 00:00:00",
+      "SupplierName": "V-Trust Inspection Service Co. Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 268.0,
+      "Currency": "USD",
+      "POValueUSD": 268.0
+    },
+    {
+      "PONumber": "RFPO-7139-V40048-1",
+      "POType": "Base",
+      "PODate": "2025-11-11 00:00:00",
+      "SupplierName": "V-Trust Inspection Service Co. Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 268.0,
+      "Currency": "USD",
+      "POValueUSD": 268.0
+    },
+    {
+      "PONumber": "RFPO-6718-V40038-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-11 00:00:00",
+      "SupplierName": "Jet Fuel Specialists LLC",
+      "MaterialCode": "Various",
+      "POValue": 316.22,
+      "Currency": "USD",
+      "POValueUSD": 316.22
+    },
+    {
+      "PONumber": "RFPO-6705-V40070-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-11 00:00:00",
+      "SupplierName": "LOWES",
+      "MaterialCode": "Various",
+      "POValue": 2538.99,
+      "Currency": "USD",
+      "POValueUSD": 2538.99
+    },
+    {
+      "PONumber": "RFPO-6705-V4359-1",
+      "POType": "Base",
+      "PODate": "2025-11-11 00:00:00",
+      "SupplierName": "Warai Equipment Services",
+      "MaterialCode": "Various",
+      "POValue": 4131.0,
+      "Currency": "USD",
+      "POValueUSD": 4131.0
+    },
+    {
+      "PONumber": "RFPO-5829-V40036-1",
+      "POType": "Base",
+      "PODate": "2025-11-10 00:00:00",
+      "SupplierName": "IDEAL FLOORING LLC",
+      "MaterialCode": "Various",
+      "POValue": 94096.4,
+      "Currency": "AED",
+      "POValueUSD": 25622.45
+    },
+    {
+      "PONumber": "RFPO-7616-S9100-1",
+      "POType": "Base",
+      "PODate": "2025-11-10 00:00:00",
+      "SupplierName": "TUV SUD MIDDLE EAST LLC",
+      "MaterialCode": "Services",
+      "POValue": 1200.0,
+      "Currency": "AED",
+      "POValueUSD": 326.76
+    },
+    {
+      "PONumber": "RFPO-7864-V40003-1",
+      "POType": "Base",
+      "PODate": "2025-11-10 00:00:00",
+      "SupplierName": "Welspun Global Brands Limited",
+      "MaterialCode": "Various",
+      "POValue": 1160.952,
+      "Currency": "USD",
+      "POValueUSD": 1160.95
+    },
+    {
+      "PONumber": "RFPO-5657-M4106-1",
+      "POType": "Base",
+      "PODate": "2025-11-10 00:00:00",
+      "SupplierName": "Zoeller Pump Company",
+      "MaterialCode": "Mechanical",
+      "POValue": 183.6,
+      "Currency": "USD",
+      "POValueUSD": 183.6
+    },
+    {
+      "PONumber": "RFPO-7139-E6820-1",
+      "POType": "Base",
+      "PODate": "2025-11-10 00:00:00",
+      "SupplierName": "Haji Commercial Company LLC",
+      "MaterialCode": "Electrical",
+      "POValue": 2202.0,
+      "Currency": "AED",
+      "POValueUSD": 599.6
+    },
+    {
+      "PONumber": "RFPO-1569-O103-1",
+      "POType": "Base",
+      "PODate": "2025-11-07 00:00:00",
+      "SupplierName": "Kyoto Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 11460.6,
+      "Currency": "AED",
+      "POValueUSD": 3120.72
+    },
+    {
+      "PONumber": "RFPO-7139-M4016-1",
+      "POType": "Base",
+      "PODate": "2025-11-06 00:00:00",
+      "SupplierName": "AIMIX GROUP CO., LTD",
+      "MaterialCode": "Mechanical",
+      "POValue": 52220.0,
+      "Currency": "USD",
+      "POValueUSD": 52220.0
+    },
+    {
+      "PONumber": "RFPO-7616-M4001-1",
+      "POType": "Base",
+      "PODate": "2025-11-06 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 122000.0,
+      "Currency": "USD",
+      "POValueUSD": 122000.0
+    },
+    {
+      "PONumber": "RFPO-7139-M4017-1",
+      "POType": "Base",
+      "PODate": "2025-11-06 00:00:00",
+      "SupplierName": "Lamphere Construction Ltd dba Heavy Equipment Hunters",
+      "MaterialCode": "Mechanical",
+      "POValue": 88028.37,
+      "Currency": "USD",
+      "POValueUSD": 88028.37
+    },
+    {
+      "PONumber": "RFPO-7073-M4101-1",
+      "POType": "Base",
+      "PODate": "2025-11-06 00:00:00",
+      "SupplierName": "Harrington Industrial Plastics LLC",
+      "MaterialCode": "Mechanical",
+      "POValue": 2273.48,
+      "Currency": "USD",
+      "POValueUSD": 2273.48
+    },
+    {
+      "PONumber": "RFPO-7208-V40025-1",
+      "POType": "Base",
+      "PODate": "2025-11-05 00:00:00",
+      "SupplierName": "Petrocoat Construction Chemicals Trading LLC",
+      "MaterialCode": "Various",
+      "POValue": 3860.0,
+      "Currency": "AED",
+      "POValueUSD": 1051.08
+    },
+    {
+      "PONumber": "RFPO-6705-E6838-1",
+      "POType": "Base",
+      "PODate": "2025-11-05 00:00:00",
+      "SupplierName": "EMSI Inc.",
+      "MaterialCode": "Electrical",
+      "POValue": 2943.7,
+      "Currency": "USD",
+      "POValueUSD": 2943.7
+    },
+    {
+      "PONumber": "RFPO-7878-V40002-1",
+      "POType": "Base",
+      "PODate": "2025-11-05 00:00:00",
+      "SupplierName": "KEPCO Building Materials Trading LLC",
+      "MaterialCode": "Various",
+      "POValue": 1804.32,
+      "Currency": "AED",
+      "POValueUSD": 491.32
+    },
+    {
+      "PONumber": "RFPO-7139-V40046-1",
+      "POType": "Base",
+      "PODate": "2025-11-05 00:00:00",
+      "SupplierName": "V-Trust Inspection Service Co. Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 268.0,
+      "Currency": "USD",
+      "POValueUSD": 268.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6837-1",
+      "POType": "Base",
+      "PODate": "2025-11-04 00:00:00",
+      "SupplierName": "ARABIAN FALCON ELECTRICAL EQUIPMENT LLC",
+      "MaterialCode": "Electrical",
+      "POValue": 150.0,
+      "Currency": "AED",
+      "POValueUSD": 40.84
+    },
+    {
+      "PONumber": "RFPO-7878-V40001-1",
+      "POType": "Base",
+      "PODate": "2025-11-04 00:00:00",
+      "SupplierName": "Scott & From Co., Inc.",
+      "MaterialCode": "Various",
+      "POValue": 2351.818,
+      "Currency": "USD",
+      "POValueUSD": 2351.82
+    },
+    {
+      "PONumber": "RFPO-7039-S9102-1",
+      "POType": "Base",
+      "PODate": "2025-11-04 00:00:00",
+      "SupplierName": "TUV SUD MIDDLE EAST LLC",
+      "MaterialCode": "Services",
+      "POValue": 1131.0,
+      "Currency": "USD",
+      "POValueUSD": 1131.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40150-1",
+      "POType": "Base",
+      "PODate": "2025-11-04 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 589.97,
+      "Currency": "USD",
+      "POValueUSD": 589.97
+    },
+    {
+      "PONumber": "RFPO-6705-V40149-1",
+      "POType": "Base",
+      "PODate": "2025-11-04 00:00:00",
+      "SupplierName": "Nucor Rebar Fabrication",
+      "MaterialCode": "Various",
+      "POValue": 232234.0,
+      "Currency": "USD",
+      "POValueUSD": 232234.0
+    },
+    {
+      "PONumber": "RFPO-7039-V40028-2",
+      "POType": "Change Order",
+      "PODate": "2025-11-04 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 3932.98,
+      "Currency": "USD",
+      "POValueUSD": 3932.98
+    },
+    {
+      "PONumber": "RFPO-6705-E6836A-1",
+      "POType": "Base",
+      "PODate": "2025-11-03 00:00:00",
+      "SupplierName": "WESCO Distribution Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 2519.88,
+      "Currency": "USD",
+      "POValueUSD": 2519.88
+    },
+    {
+      "PONumber": "RFPO-6718-V40037-1",
+      "POType": "Base",
+      "PODate": "2025-10-31 00:00:00",
+      "SupplierName": "Fastener Point LLC",
+      "MaterialCode": "Various",
+      "POValue": 858.72,
+      "Currency": "AED",
+      "POValueUSD": 233.83
+    },
+    {
+      "PONumber": "RFPO-1569-14853-1",
+      "POType": "Base",
+      "PODate": "2025-10-30 00:00:00",
+      "SupplierName": "Keen Eye Technical Services LLC",
+      "MaterialCode": "Unknown",
+      "POValue": 25646.35,
+      "Currency": "AED",
+      "POValueUSD": 6983.5
+    },
+    {
+      "PONumber": "RFPO-6718-V40036-1",
+      "POType": "Base",
+      "PODate": "2025-10-30 00:00:00",
+      "SupplierName": "Smith International Gulf Services, LLC",
+      "MaterialCode": "Various",
+      "POValue": 4516.2,
+      "Currency": "AED",
+      "POValueUSD": 1229.76
+    },
+    {
+      "PONumber": "RFPO-6542-V40044-1",
+      "POType": "Base",
+      "PODate": "2025-10-29 00:00:00",
+      "SupplierName": "Larson Electronics LLC",
+      "MaterialCode": "Various",
+      "POValue": 4290.68,
+      "Currency": "USD",
+      "POValueUSD": 4290.68
+    },
+    {
+      "PONumber": "RFPO-6705-V40147-1",
+      "POType": "Base",
+      "PODate": "2025-10-29 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 3239.06,
+      "Currency": "USD",
+      "POValueUSD": 3239.06
+    },
+    {
+      "PONumber": "RFPO-6705-M4109-1",
+      "POType": "Base",
+      "PODate": "2025-10-29 00:00:00",
+      "SupplierName": "FERGUSON ENTERPRISES, LLC",
+      "MaterialCode": "Mechanical",
+      "POValue": 3027.504,
+      "Currency": "USD",
+      "POValueUSD": 3027.5
+    },
+    {
+      "PONumber": "RFPO-6705-V40148-1",
+      "POType": "Base",
+      "PODate": "2025-10-29 00:00:00",
+      "SupplierName": "TOOLS PLUS",
+      "MaterialCode": "Various",
+      "POValue": 1296.5,
+      "Currency": "USD",
+      "POValueUSD": 1296.5
+    },
+    {
+      "PONumber": "RFPO-7616-M4000-1",
+      "POType": "Base",
+      "PODate": "2025-10-28 00:00:00",
+      "SupplierName": "Abdullah Hashim Industrial Gases & Equipment Co. Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 97000.0,
+      "Currency": "AED",
+      "POValueUSD": 26413.1
+    },
+    {
+      "PONumber": "RFPO-7139-S9138-1",
+      "POType": "Base",
+      "PODate": "2025-10-28 00:00:00",
+      "SupplierName": "MORRICO EQUIPMENT LLC",
+      "MaterialCode": "Services",
+      "POValue": 25179.0,
+      "Currency": "USD",
+      "POValueUSD": 25179.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6804-2",
+      "POType": "Change Order",
+      "PODate": "2025-10-27 00:00:00",
+      "SupplierName": "EMSI Inc.",
+      "MaterialCode": "Electrical",
+      "POValue": 122856.16,
+      "Currency": "USD",
+      "POValueUSD": 122856.16
+    },
+    {
+      "PONumber": "RFPO-6705-M4108-1",
+      "POType": "Base",
+      "PODate": "2025-10-27 00:00:00",
+      "SupplierName": "FERGUSON ENTERPRISES, LLC",
+      "MaterialCode": "Mechanical",
+      "POValue": 11452.12,
+      "Currency": "USD",
+      "POValueUSD": 11452.12
+    },
+    {
+      "PONumber": "RFPO-6705-M4107-1",
+      "POType": "Base",
+      "PODate": "2025-10-27 00:00:00",
+      "SupplierName": "FERGUSON ENTERPRISES, LLC",
+      "MaterialCode": "Mechanical",
+      "POValue": 105.142,
+      "Currency": "USD",
+      "POValueUSD": 105.14
+    },
+    {
+      "PONumber": "RFPO-7878-V40000-1",
+      "POType": "Base",
+      "PODate": "2025-10-24 00:00:00",
+      "SupplierName": "Trane Technologies",
+      "MaterialCode": "Various",
+      "POValue": 135030.0,
+      "Currency": "USD",
+      "POValueUSD": 135030.0
+    },
+    {
+      "PONumber": "RFPO-5532-M4046-1",
+      "POType": "Base",
+      "PODate": "2025-10-23 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 2830.0,
+      "Currency": "USD",
+      "POValueUSD": 2830.0
+    },
+    {
+      "PONumber": "RFPO-7208-V40022A-1",
+      "POType": "Base",
+      "PODate": "2025-10-23 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 322338.71,
+      "Currency": "USD",
+      "POValueUSD": 322338.71
+    },
+    {
+      "PONumber": "RFPO-6705-V40145-1",
+      "POType": "Base",
+      "PODate": "2025-10-22 00:00:00",
+      "SupplierName": "White Cap Supply Holdings, LLC",
+      "MaterialCode": "Various",
+      "POValue": 2377.0,
+      "Currency": "USD",
+      "POValueUSD": 2377.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40146-1",
+      "POType": "Base",
+      "PODate": "2025-10-22 00:00:00",
+      "SupplierName": "Tsang Brothers Corporation",
+      "MaterialCode": "Various",
+      "POValue": 16.0,
+      "Currency": "USD",
+      "POValueUSD": 16.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40136-2",
+      "POType": "Change Order",
+      "PODate": "2025-10-22 00:00:00",
+      "SupplierName": "LOWES",
+      "MaterialCode": "Various",
+      "POValue": 2581.19,
+      "Currency": "USD",
+      "POValueUSD": 2581.19
+    },
+    {
+      "PONumber": "RFPO-5829-S9105-1",
+      "POType": "Base",
+      "PODate": "2025-10-22 00:00:00",
+      "SupplierName": "OHIO GENERAL CONTRACTING LLC",
+      "MaterialCode": "Services",
+      "POValue": 55000.0,
+      "Currency": "AED",
+      "POValueUSD": 14976.5
+    },
+    {
+      "PONumber": "RFPO-7139-V40045-1",
+      "POType": "Base",
+      "PODate": "2025-10-21 00:00:00",
+      "SupplierName": "V-Trust Inspection Service Co. Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 268.0,
+      "Currency": "USD",
+      "POValueUSD": 268.0
+    },
+    {
+      "PONumber": "RFPO-5532-V40089-1",
+      "POType": "Base",
+      "PODate": "2025-10-21 00:00:00",
+      "SupplierName": "V-Trust Inspection Service Co. Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 268.0,
+      "Currency": "USD",
+      "POValueUSD": 268.0
+    },
+    {
+      "PONumber": "RFPO-7139-M4015-1",
+      "POType": "Base",
+      "PODate": "2025-10-21 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 1632.0,
+      "Currency": "USD",
+      "POValueUSD": 1632.0
+    },
+    {
+      "PONumber": "RFPO-7139-V40043-1",
+      "POType": "Base",
+      "PODate": "2025-10-20 00:00:00",
+      "SupplierName": "Uline",
+      "MaterialCode": "Various",
+      "POValue": 1693.72,
+      "Currency": "USD",
+      "POValueUSD": 1693.72
+    },
+    {
+      "PONumber": "RFPO-7039-S9101-1",
+      "POType": "Base",
+      "PODate": "2025-10-20 00:00:00",
+      "SupplierName": "TUV SUD MIDDLE EAST LLC",
+      "MaterialCode": "Services",
+      "POValue": 1131.0,
+      "Currency": "USD",
+      "POValueUSD": 1131.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40144-1",
+      "POType": "Base",
+      "PODate": "2025-10-20 00:00:00",
+      "SupplierName": "Tsang Brothers Corporation",
+      "MaterialCode": "Various",
+      "POValue": 1860.0,
+      "Currency": "USD",
+      "POValueUSD": 1860.0
+    },
+    {
+      "PONumber": "RFPO-7139-V40044-1",
+      "POType": "Base",
+      "PODate": "2025-10-20 00:00:00",
+      "SupplierName": "LOWES",
+      "MaterialCode": "Various",
+      "POValue": 9437.25,
+      "Currency": "USD",
+      "POValueUSD": 9437.25
+    },
+    {
+      "PONumber": "RFPO-1569-O102-1",
+      "POType": "Base",
+      "PODate": "2025-10-20 00:00:00",
+      "SupplierName": "RivYv Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 740.0,
+      "Currency": "USD",
+      "POValueUSD": 740.0
+    },
+    {
+      "PONumber": "RFPO-7864-V40002-1",
+      "POType": "Base",
+      "PODate": "2025-10-20 00:00:00",
+      "SupplierName": "ODORES METAL LLC",
+      "MaterialCode": "Various",
+      "POValue": 2001.43,
+      "Currency": "USD",
+      "POValueUSD": 2001.43
+    },
+    {
+      "PONumber": "RFPO-6718-V40034-1",
+      "POType": "Base",
+      "PODate": "2025-10-20 00:00:00",
+      "SupplierName": "CRA Trading LLC",
+      "MaterialCode": "Various",
+      "POValue": 1170.0,
+      "Currency": "USD",
+      "POValueUSD": 1170.0
+    },
+    {
+      "PONumber": "RFPO-6718-V40035-1",
+      "POType": "Base",
+      "PODate": "2025-10-20 00:00:00",
+      "SupplierName": "Hilong Petroleum Pipe Co. LLC",
+      "MaterialCode": "Various",
+      "POValue": 9136.0,
+      "Currency": "USD",
+      "POValueUSD": 9136.0
+    },
+    {
+      "PONumber": "RFPO-7208-V40024-1",
+      "POType": "Base",
+      "PODate": "2025-10-16 00:00:00",
+      "SupplierName": "Scott & From Co., Inc.",
+      "MaterialCode": "Various",
+      "POValue": 31106.564,
+      "Currency": "USD",
+      "POValueUSD": 31106.56
+    },
+    {
+      "PONumber": "RFPO-6841-M4105-1",
+      "POType": "Base",
+      "PODate": "2025-10-16 00:00:00",
+      "SupplierName": "S.K.M. Air Conditioning L.L.C.",
+      "MaterialCode": "Mechanical",
+      "POValue": 3980.0,
+      "Currency": "USD",
+      "POValueUSD": 3980.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6835-1",
+      "POType": "Base",
+      "PODate": "2025-10-15 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 10174.3,
+      "Currency": "USD",
+      "POValueUSD": 10174.3
+    },
+    {
+      "PONumber": "RFPO-6705-M4106-1",
+      "POType": "Base",
+      "PODate": "2025-10-15 00:00:00",
+      "SupplierName": "TURTLE",
+      "MaterialCode": "Mechanical",
+      "POValue": 230.0,
+      "Currency": "USD",
+      "POValueUSD": 230.0
+    },
+    {
+      "PONumber": "RFPO-5829-R1511-1",
+      "POType": "Base",
+      "PODate": "2025-10-15 00:00:00",
+      "SupplierName": "MENA ENGINEERING AND TECHNICAL CO. L.L.C",
+      "MaterialCode": "Rental",
+      "POValue": 51900.0,
+      "Currency": "AED",
+      "POValueUSD": 14132.37
+    },
+    {
+      "PONumber": "RFPO-6705-V40143-1",
+      "POType": "Base",
+      "PODate": "2025-10-15 00:00:00",
+      "SupplierName": "HOME DEPOT USA",
+      "MaterialCode": "Various",
+      "POValue": 1446.28,
+      "Currency": "USD",
+      "POValueUSD": 1446.28
+    },
+    {
+      "PONumber": "RFPO-6705-M4026-2",
+      "POType": "Change Order",
+      "PODate": "2025-10-15 00:00:00",
+      "SupplierName": "ACE CENTRO ENTERPRISES",
+      "MaterialCode": "Mechanical",
+      "POValue": 193340.0,
+      "Currency": "AED",
+      "POValueUSD": 52646.48
+    },
+    {
+      "PONumber": "RFPO-5532-M4045-1",
+      "POType": "Base",
+      "PODate": "2025-10-15 00:00:00",
+      "SupplierName": "MEKA",
+      "MaterialCode": "Mechanical",
+      "POValue": 6300.0,
+      "Currency": "EURO",
+      "POValueUSD": 6300.0
+    },
+    {
+      "PONumber": "RFPO-1569-O101-1",
+      "POType": "Base",
+      "PODate": "2025-10-14 00:00:00",
+      "SupplierName": "Managed Solution LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 1187.35,
+      "Currency": "USD",
+      "POValueUSD": 1187.35
+    },
+    {
+      "PONumber": "RFPO-6705-V40140-1",
+      "POType": "Base",
+      "PODate": "2025-10-14 00:00:00",
+      "SupplierName": "FERGUSON ENTERPRISES, LLC",
+      "MaterialCode": "Various",
+      "POValue": 2897.5,
+      "Currency": "USD",
+      "POValueUSD": 2897.5
+    },
+    {
+      "PONumber": "RFPO-5532-M4044-1",
+      "POType": "Base",
+      "PODate": "2025-10-14 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 140.0,
+      "Currency": "USD",
+      "POValueUSD": 140.0
+    },
+    {
+      "PONumber": "RFPO-7139-V40040-2",
+      "POType": "Change Order",
+      "PODate": "2025-10-14 00:00:00",
+      "SupplierName": "LOWES",
+      "MaterialCode": "Various",
+      "POValue": 5164.88,
+      "Currency": "USD",
+      "POValueUSD": 5164.88
+    },
+    {
+      "PONumber": "RFPO-6705-V40142-1",
+      "POType": "Base",
+      "PODate": "2025-10-14 00:00:00",
+      "SupplierName": "White Cap Supply Holdings, LLC",
+      "MaterialCode": "Various",
+      "POValue": 60295.30319,
+      "Currency": "USD",
+      "POValueUSD": 60295.3
+    },
+    {
+      "PONumber": "RFPO-7039-V40027-1",
+      "POType": "Base",
+      "PODate": "2025-10-14 00:00:00",
+      "SupplierName": "Petrocoat Construction Chemicals Trading LLC",
+      "MaterialCode": "Various",
+      "POValue": 10336.0,
+      "Currency": "AED",
+      "POValueUSD": 2814.49
+    },
+    {
+      "PONumber": "RFPO-7208-V40023-1",
+      "POType": "Base",
+      "PODate": "2025-10-14 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 12692.39,
+      "Currency": "USD",
+      "POValueUSD": 12692.39
+    },
+    {
+      "PONumber": "RFPO-7208-A5201-1",
+      "POType": "Base",
+      "PODate": "2025-10-13 00:00:00",
+      "SupplierName": "Lakshmi Metal Tech LLC",
+      "MaterialCode": "Architectural",
+      "POValue": 60806.91,
+      "Currency": "AED",
+      "POValueUSD": 16557.72
+    },
+    {
+      "PONumber": "RFPO-7212-V40004-2",
+      "POType": "Change Order",
+      "PODate": "2025-10-13 00:00:00",
+      "SupplierName": "Cimmaron International Corporation",
+      "MaterialCode": "Various",
+      "POValue": 538.93,
+      "Currency": "USD",
+      "POValueUSD": 538.93
+    },
+    {
+      "PONumber": "RFPO-6852-V40035-1",
+      "POType": "Base",
+      "PODate": "2025-10-10 00:00:00",
+      "SupplierName": "Jet Fuel Specialists LLC",
+      "MaterialCode": "Various",
+      "POValue": 7763.45,
+      "Currency": "USD",
+      "POValueUSD": 7763.45
+    },
+    {
+      "PONumber": "RFPO-5532-V40088-1",
+      "POType": "Base",
+      "PODate": "2025-10-10 00:00:00",
+      "SupplierName": "MEKA \u0130THALAT \u0130HRACAT PAZARLAMA VE T\u0130C. A.\u015e",
+      "MaterialCode": "Various",
+      "POValue": 3019.09,
+      "Currency": "EURO",
+      "POValueUSD": 3019.09
+    },
+    {
+      "PONumber": "RFPO-7208-V40022-1",
+      "POType": "Base",
+      "PODate": "2025-10-10 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 344970.0,
+      "Currency": "USD",
+      "POValueUSD": 344970.0
+    },
+    {
+      "PONumber": "RFPO-6705-M4026-1",
+      "POType": "Base",
+      "PODate": "2025-10-09 00:00:00",
+      "SupplierName": "ACE CENTRO ENTERPRISES",
+      "MaterialCode": "Mechanical",
+      "POValue": 181870.0,
+      "Currency": "AED",
+      "POValueUSD": 49523.2
+    },
+    {
+      "PONumber": "RFPO-1569-V4427-1",
+      "POType": "Base",
+      "PODate": "2025-10-08 00:00:00",
+      "SupplierName": "Green Figure Technique",
+      "MaterialCode": "Various",
+      "POValue": 8200.0,
+      "Currency": "AED",
+      "POValueUSD": 2232.86
+    },
+    {
+      "PONumber": "RFPO-7208-V40021-1",
+      "POType": "Base",
+      "PODate": "2025-10-08 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 2060.12,
+      "Currency": "USD",
+      "POValueUSD": 2060.12
+    },
+    {
+      "PONumber": "RFPO-6705-V40141-1",
+      "POType": "Base",
+      "PODate": "2025-10-08 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 12463.17,
+      "Currency": "USD",
+      "POValueUSD": 12463.17
+    },
+    {
+      "PONumber": "RFPO-7139-S9130-2",
+      "POType": "Change Order",
+      "PODate": "2025-10-08 00:00:00",
+      "SupplierName": "BIG TOP SHELTERS",
+      "MaterialCode": "Services",
+      "POValue": 111700.0,
+      "Currency": "USD",
+      "POValueUSD": 111700.0
+    },
+    {
+      "PONumber": "RFPO-7039-E6807-1",
+      "POType": "Base",
+      "PODate": "2025-10-07 00:00:00",
+      "SupplierName": "EMSI Inc.",
+      "MaterialCode": "Electrical",
+      "POValue": 4808.806,
+      "Currency": "USD",
+      "POValueUSD": 4808.81
+    },
+    {
+      "PONumber": "RFPO-7208-V40020-1",
+      "POType": "Base",
+      "PODate": "2025-10-07 00:00:00",
+      "SupplierName": "Delta Duct Airconditioning LLC",
+      "MaterialCode": "Various",
+      "POValue": 375.0,
+      "Currency": "AED",
+      "POValueUSD": 102.11
+    },
+    {
+      "PONumber": "RFPO-7039-V40026-1",
+      "POType": "Base",
+      "PODate": "2025-10-07 00:00:00",
+      "SupplierName": "SODAMCO EMIRATES FACTORY FOR BUILDING MATERIALS LLC",
+      "MaterialCode": "Various",
+      "POValue": 17000.0,
+      "Currency": "AED",
+      "POValueUSD": 4629.1
+    },
+    {
+      "PONumber": "RFPO-6705-V40061-2",
+      "POType": "Change Order",
+      "PODate": "2025-10-07 00:00:00",
+      "SupplierName": "MONJE",
+      "MaterialCode": "Various",
+      "POValue": 8048.24,
+      "Currency": "USD",
+      "POValueUSD": 8048.24
+    },
+    {
+      "PONumber": "RFPO-1005-V7256-1",
+      "POType": "Base",
+      "PODate": "2025-10-03 00:00:00",
+      "SupplierName": "ArcelorMittal DSTC FZE",
+      "MaterialCode": "Various",
+      "POValue": 116775.0,
+      "Currency": "AED",
+      "POValueUSD": 31797.83
+    },
+    {
+      "PONumber": "RFPO-7139-V4355-1",
+      "POType": "Base",
+      "PODate": "2025-10-03 00:00:00",
+      "SupplierName": "Jack Rubin & Sons Inc",
+      "MaterialCode": "Various",
+      "POValue": 3185.3,
+      "Currency": "USD",
+      "POValueUSD": 3185.3
+    },
+    {
+      "PONumber": "RFPO-7208-V40019-1",
+      "POType": "Base",
+      "PODate": "2025-10-02 00:00:00",
+      "SupplierName": "Gypsemna Co.LLC",
+      "MaterialCode": "Various",
+      "POValue": 45575.88,
+      "Currency": "USD",
+      "POValueUSD": 45575.88
+    },
+    {
+      "PONumber": "RFPO-6705-V40139-1",
+      "POType": "Base",
+      "PODate": "2025-10-02 00:00:00",
+      "SupplierName": "Sign King Inc",
+      "MaterialCode": "Various",
+      "POValue": 2100.0,
+      "Currency": "USD",
+      "POValueUSD": 2100.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6834-1",
+      "POType": "Base",
+      "PODate": "2025-10-02 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 14665.21,
+      "Currency": "USD",
+      "POValueUSD": 14665.21
+    },
+    {
+      "PONumber": "RFPO-6705-V40138-1",
+      "POType": "Base",
+      "PODate": "2025-10-01 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 7977.1,
+      "Currency": "USD",
+      "POValueUSD": 7977.1
+    },
+    {
+      "PONumber": "RFPO-5829-R1510-1",
+      "POType": "Base",
+      "PODate": "2025-09-30 00:00:00",
+      "SupplierName": "JOHNSON ARABIA LLC",
+      "MaterialCode": "Rental",
+      "POValue": 160000.0,
+      "Currency": "AED",
+      "POValueUSD": 43568.0
+    },
+    {
+      "PONumber": "RFPO-7208-V40018-1",
+      "POType": "Base",
+      "PODate": "2025-09-30 00:00:00",
+      "SupplierName": "Isam Kabbani Trading LLC",
+      "MaterialCode": "Various",
+      "POValue": 70070.53,
+      "Currency": "AED",
+      "POValueUSD": 19080.21
+    },
+    {
+      "PONumber": "RFPO-7208-A5302-1",
+      "POType": "Base",
+      "PODate": "2025-09-30 00:00:00",
+      "SupplierName": "BM Middle East FZC",
+      "MaterialCode": "Architectural",
+      "POValue": 51177.28,
+      "Currency": "USD",
+      "POValueUSD": 51177.28
+    },
+    {
+      "PONumber": "RFPO-6705-V40137-1",
+      "POType": "Base",
+      "PODate": "2025-09-30 00:00:00",
+      "SupplierName": "American International Supply Inc.",
+      "MaterialCode": "Various",
+      "POValue": 770.0,
+      "Currency": "USD",
+      "POValueUSD": 770.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40086-2",
+      "POType": "Change Order",
+      "PODate": "2025-09-30 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 18910.46,
+      "Currency": "USD",
+      "POValueUSD": 18910.46
+    },
+    {
+      "PONumber": "RFPO-7039-V40025-1",
+      "POType": "Base",
+      "PODate": "2025-09-29 00:00:00",
+      "SupplierName": "Guangzhou Pareto Technology Co.,LTD",
+      "MaterialCode": "Various",
+      "POValue": 66812.7,
+      "Currency": "USD",
+      "POValueUSD": 66812.7
+    },
+    {
+      "PONumber": "RFPO-7039-V40024A-1",
+      "POType": "Base",
+      "PODate": "2025-09-29 00:00:00",
+      "SupplierName": "White Cap Supply Holdings, LLC",
+      "MaterialCode": "Various",
+      "POValue": 5005.7245,
+      "Currency": "USD",
+      "POValueUSD": 5005.72
+    },
+    {
+      "PONumber": "RFPO-6746-V40027-1",
+      "POType": "Base",
+      "PODate": "2025-09-29 00:00:00",
+      "SupplierName": "WMS Aquatics",
+      "MaterialCode": "Various",
+      "POValue": 135.0,
+      "Currency": "USD",
+      "POValueUSD": 135.0
+    },
+    {
+      "PONumber": "RFPO-7139-V4354-1",
+      "POType": "Base",
+      "PODate": "2025-09-29 00:00:00",
+      "SupplierName": "Rock-N-Rescue",
+      "MaterialCode": "Various",
+      "POValue": 2771.98,
+      "Currency": "USD",
+      "POValueUSD": 2771.98
+    },
+    {
+      "PONumber": "RFPO-7139-V40042-1",
+      "POType": "Base",
+      "PODate": "2025-09-26 00:00:00",
+      "SupplierName": "V-Trust Inspection Service Co. Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 268.0,
+      "Currency": "USD",
+      "POValueUSD": 268.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40136-1",
+      "POType": "Base",
+      "PODate": "2025-09-25 00:00:00",
+      "SupplierName": "LOWES",
+      "MaterialCode": "Various",
+      "POValue": 2315.92,
+      "Currency": "USD",
+      "POValueUSD": 2315.92
+    },
+    {
+      "PONumber": "RFPO-7139-T1002-1",
+      "POType": "Base",
+      "PODate": "2025-09-25 00:00:00",
+      "SupplierName": "Global Sensors LLC",
+      "MaterialCode": "Tools",
+      "POValue": 873.75,
+      "Currency": "USD",
+      "POValueUSD": 873.75
+    },
+    {
+      "PONumber": "RFPO-6718-V40029-2",
+      "POType": "Change Order",
+      "PODate": "2025-09-25 00:00:00",
+      "SupplierName": "Jet Fuel Specialists LLC",
+      "MaterialCode": "Various",
+      "POValue": 71847.0,
+      "Currency": "USD",
+      "POValueUSD": 71847.0
+    },
+    {
+      "PONumber": "RFPO-6718-V40030-2",
+      "POType": "Change Order",
+      "PODate": "2025-09-25 00:00:00",
+      "SupplierName": "Jet Fuel Specialists LLC",
+      "MaterialCode": "Various",
+      "POValue": 14960.36,
+      "Currency": "USD",
+      "POValueUSD": 14960.36
+    },
+    {
+      "PONumber": "RFPO-6718-V40019-2",
+      "POType": "Change Order",
+      "PODate": "2025-09-25 00:00:00",
+      "SupplierName": "Jet Fuel Specialists LLC",
+      "MaterialCode": "Various",
+      "POValue": 5105.1,
+      "Currency": "USD",
+      "POValueUSD": 5105.1
+    },
+    {
+      "PONumber": "RFPO-1569-O100-1",
+      "POType": "Base",
+      "PODate": "2025-09-24 00:00:00",
+      "SupplierName": "Managed Solution LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 583.78,
+      "Currency": "USD",
+      "POValueUSD": 583.78
+    },
+    {
+      "PONumber": "RFPO-6705-S9104-1",
+      "POType": "Base",
+      "PODate": "2025-09-24 00:00:00",
+      "SupplierName": "Cal-Cert Company",
+      "MaterialCode": "Services",
+      "POValue": 6361.0,
+      "Currency": "USD",
+      "POValueUSD": 6361.0
+    },
+    {
+      "PONumber": "RFPO-5532-M4042-1",
+      "POType": "Base",
+      "PODate": "2025-09-24 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 250.0,
+      "Currency": "USD",
+      "POValueUSD": 250.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40126-1",
+      "POType": "Base",
+      "PODate": "2025-09-23 00:00:00",
+      "SupplierName": "American International Supply Inc.",
+      "MaterialCode": "Various",
+      "POValue": 18014.62,
+      "Currency": "USD",
+      "POValueUSD": 18014.62
+    },
+    {
+      "PONumber": "RFPO-6718-V40033-2",
+      "POType": "Change Order",
+      "PODate": "2025-09-22 00:00:00",
+      "SupplierName": "Jet Fuel Specialists LLC",
+      "MaterialCode": "Various",
+      "POValue": 38940.34,
+      "Currency": "USD",
+      "POValueUSD": 38940.34
+    },
+    {
+      "PONumber": "RFPO-7139-M4014-1",
+      "POType": "Base",
+      "PODate": "2025-09-22 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 124000.0,
+      "Currency": "USD",
+      "POValueUSD": 124000.0
+    },
+    {
+      "PONumber": "RFPO-1569-O99-1",
+      "POType": "Base",
+      "PODate": "2025-09-22 00:00:00",
+      "SupplierName": "RivYv Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 12848.0,
+      "Currency": "USD",
+      "POValueUSD": 12848.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40132-1",
+      "POType": "Base",
+      "PODate": "2025-09-22 00:00:00",
+      "SupplierName": "Tsang Brothers Corporation",
+      "MaterialCode": "Various",
+      "POValue": 19809.0,
+      "Currency": "USD",
+      "POValueUSD": 19809.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40133-1",
+      "POType": "Base",
+      "PODate": "2025-09-22 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 198.51,
+      "Currency": "USD",
+      "POValueUSD": 198.51
+    },
+    {
+      "PONumber": "RFPO-7208-V40017-1",
+      "POType": "Base",
+      "PODate": "2025-09-22 00:00:00",
+      "SupplierName": "Isam Kabbani Trading LLC",
+      "MaterialCode": "Various",
+      "POValue": 61560.2,
+      "Currency": "AED",
+      "POValueUSD": 16762.84
+    },
+    {
+      "PONumber": "RFPO-6705-V40131-1",
+      "POType": "Base",
+      "PODate": "2025-09-20 00:00:00",
+      "SupplierName": "V-Trust Inspection Service Co. Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 268.0,
+      "Currency": "USD",
+      "POValueUSD": 268.0
+    },
+    {
+      "PONumber": "RFPO-5503-A5206-1",
+      "POType": "Base",
+      "PODate": "2025-09-18 00:00:00",
+      "SupplierName": "SALZER GmbH",
+      "MaterialCode": "Architectural",
+      "POValue": 19850.0,
+      "Currency": "EURO",
+      "POValueUSD": 19850.0
+    },
+    {
+      "PONumber": "RFPO-5532-V40083-1",
+      "POType": "Base",
+      "PODate": "2025-09-18 00:00:00",
+      "SupplierName": "V-Trust Inspection Service Co. Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 268.0,
+      "Currency": "USD",
+      "POValueUSD": 268.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40130-1",
+      "POType": "Base",
+      "PODate": "2025-09-18 00:00:00",
+      "SupplierName": "BMET Building Materials Trading LLC",
+      "MaterialCode": "Various",
+      "POValue": 12800.48,
+      "Currency": "AED",
+      "POValueUSD": 3485.57
+    },
+    {
+      "PONumber": "RFPO-5532-V40084-1",
+      "POType": "Base",
+      "PODate": "2025-09-18 00:00:00",
+      "SupplierName": "Leeds Services Co. Pte Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 266620.0,
+      "Currency": "USD",
+      "POValueUSD": 266620.0
+    },
+    {
+      "PONumber": "RFPO-5829-E6822-1",
+      "POType": "Base",
+      "PODate": "2025-09-18 00:00:00",
+      "SupplierName": "GEMS SYSTEMS L.L.C.",
+      "MaterialCode": "Electrical",
+      "POValue": 193335.8,
+      "Currency": "AED",
+      "POValueUSD": 52645.34
+    },
+    {
+      "PONumber": "RFPO-1569-V4269-3",
+      "POType": "Change Order 3",
+      "PODate": "2025-09-18 00:00:00",
+      "SupplierName": "BLUE CROWN FURNITURE (LLC)",
+      "MaterialCode": "Various",
+      "POValue": 24739.96,
+      "Currency": "AED",
+      "POValueUSD": 6736.69
+    },
+    {
+      "PONumber": "RFPO-1569-V4269-2",
+      "POType": "Change Order",
+      "PODate": "2025-09-18 00:00:00",
+      "SupplierName": "BLUE CROWN FURNITURE (LLC)",
+      "MaterialCode": "Various",
+      "POValue": 27258.52,
+      "Currency": "AED",
+      "POValueUSD": 7422.49
+    },
+    {
+      "PONumber": "RFPO-5829-M4001-1",
+      "POType": "Base",
+      "PODate": "2025-09-18 00:00:00",
+      "SupplierName": "Tengzhou Hiking Machinery Technology Co., Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 7800.0,
+      "Currency": "USD",
+      "POValueUSD": 7800.0
+    },
+    {
+      "PONumber": "RFPO-7139-M4012-1",
+      "POType": "Base",
+      "PODate": "2025-09-17 00:00:00",
+      "SupplierName": "AIMIX GROUP CO., LTD",
+      "MaterialCode": "Mechanical",
+      "POValue": 24600.0,
+      "Currency": "USD",
+      "POValueUSD": 24600.0
+    },
+    {
+      "PONumber": "RFPO-1569-14069-3",
+      "POType": "Change Order 3",
+      "PODate": "2025-09-17 00:00:00",
+      "SupplierName": "Keen Eye Technical Services LLC",
+      "MaterialCode": "Unknown",
+      "POValue": 107715.0,
+      "Currency": "AED",
+      "POValueUSD": 29330.79
+    },
+    {
+      "PONumber": "RFPO-5683-A5205-1",
+      "POType": "Base",
+      "PODate": "2025-09-17 00:00:00",
+      "SupplierName": "TECHTRADE SAL(OFFSHORE)",
+      "MaterialCode": "Architectural",
+      "POValue": 241.64,
+      "Currency": "USD",
+      "POValueUSD": 241.64
+    },
+    {
+      "PONumber": "RFPO-7139-M4013-1",
+      "POType": "Base",
+      "PODate": "2025-09-17 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 66300.0,
+      "Currency": "USD",
+      "POValueUSD": 66300.0
+    },
+    {
+      "PONumber": "RFPO-7039-V40024-1",
+      "POType": "Base",
+      "PODate": "2025-09-16 00:00:00",
+      "SupplierName": "White Cap Supply Holdings, LLC",
+      "MaterialCode": "Various",
+      "POValue": 6448.615,
+      "Currency": "USD",
+      "POValueUSD": 6448.61
+    },
+    {
+      "PONumber": "RFPO-7139-M4010-1",
+      "POType": "Base",
+      "PODate": "2025-09-16 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 92200.0,
+      "Currency": "USD",
+      "POValueUSD": 92200.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40128-1",
+      "POType": "Base",
+      "PODate": "2025-09-16 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 294.6,
+      "Currency": "USD",
+      "POValueUSD": 294.6
+    },
+    {
+      "PONumber": "RFPO-6852-V40034-1",
+      "POType": "Base",
+      "PODate": "2025-09-12 00:00:00",
+      "SupplierName": "Arabian Environmental Construction Company (AEC)",
+      "MaterialCode": "Various",
+      "POValue": 6156.0,
+      "Currency": "USD",
+      "POValueUSD": 6156.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6833-1",
+      "POType": "Base",
+      "PODate": "2025-09-12 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 1613.42,
+      "Currency": "USD",
+      "POValueUSD": 1613.42
+    },
+    {
+      "PONumber": "RFPO-6705-V40127-1",
+      "POType": "Base",
+      "PODate": "2025-09-12 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 2548.76,
+      "Currency": "USD",
+      "POValueUSD": 2548.76
+    },
+    {
+      "PONumber": "RFPO-7864-V40001-1",
+      "POType": "Base",
+      "PODate": "2025-09-11 00:00:00",
+      "SupplierName": "MANNINGTON MILLS, INC.",
+      "MaterialCode": "Various",
+      "POValue": 820.0,
+      "Currency": "USD",
+      "POValueUSD": 820.0
+    },
+    {
+      "PONumber": "RFPO-5532-M4041-1",
+      "POType": "Base",
+      "PODate": "2025-09-11 00:00:00",
+      "SupplierName": "AIMIX GROUP CO., LTD",
+      "MaterialCode": "Mechanical",
+      "POValue": 101736.0,
+      "Currency": "USD",
+      "POValueUSD": 101736.0
+    },
+    {
+      "PONumber": "RFPO-7139-M4011-1",
+      "POType": "Base",
+      "PODate": "2025-09-11 00:00:00",
+      "SupplierName": "AIMIX GROUP CO., LTD",
+      "MaterialCode": "Mechanical",
+      "POValue": 101736.0,
+      "Currency": "USD",
+      "POValueUSD": 101736.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6832-1",
+      "POType": "Base",
+      "PODate": "2025-09-10 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 117777.85,
+      "Currency": "USD",
+      "POValueUSD": 117777.85
+    },
+    {
+      "PONumber": "RFPO-6705-V40125-1",
+      "POType": "Base",
+      "PODate": "2025-09-10 00:00:00",
+      "SupplierName": "EJ USA Inc.",
+      "MaterialCode": "Various",
+      "POValue": 4393.0,
+      "Currency": "USD",
+      "POValueUSD": 4393.0
+    },
+    {
+      "PONumber": "RFPO-6705-M4105-1",
+      "POType": "Base",
+      "PODate": "2025-09-10 00:00:00",
+      "SupplierName": "Jubaili Bros",
+      "MaterialCode": "Mechanical",
+      "POValue": 190000.83,
+      "Currency": "AED",
+      "POValueUSD": 51737.23
+    },
+    {
+      "PONumber": "RFPO-7139-E6819-1",
+      "POType": "Base",
+      "PODate": "2025-09-09 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 20605.02,
+      "Currency": "USD",
+      "POValueUSD": 20605.02
+    },
+    {
+      "PONumber": "RFPO-7139-V40010A-2",
+      "POType": "Change Order",
+      "PODate": "2025-09-09 00:00:00",
+      "SupplierName": "MONJE",
+      "MaterialCode": "Various",
+      "POValue": 11065.37,
+      "Currency": "USD",
+      "POValueUSD": 11065.37
+    },
+    {
+      "PONumber": "RFPO-7027-M4102A-1",
+      "POType": "Base",
+      "PODate": "2025-09-09 00:00:00",
+      "SupplierName": "S.K.M. Air Conditioning L.L.C.",
+      "MaterialCode": "Mechanical",
+      "POValue": 1250.0,
+      "Currency": "AED",
+      "POValueUSD": 340.38
+    },
+    {
+      "PONumber": "RFPO-6852-V40033-1",
+      "POType": "Base",
+      "PODate": "2025-09-08 00:00:00",
+      "SupplierName": "Fastener Point LLC",
+      "MaterialCode": "Various",
+      "POValue": 9688.0,
+      "Currency": "AED",
+      "POValueUSD": 2638.04
+    },
+    {
+      "PONumber": "RFPO-7039-V40023-1",
+      "POType": "Base",
+      "PODate": "2025-09-08 00:00:00",
+      "SupplierName": "Petrocoat Construction Chemicals Trading LLC",
+      "MaterialCode": "Various",
+      "POValue": 65513.0,
+      "Currency": "AED",
+      "POValueUSD": 17839.19
+    },
+    {
+      "PONumber": "RFPO-6542-V40043-1",
+      "POType": "Base",
+      "PODate": "2025-09-08 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 58.08,
+      "Currency": "USD",
+      "POValueUSD": 58.08
+    },
+    {
+      "PONumber": "RFPO-5532-V40081-1",
+      "POType": "Base",
+      "PODate": "2025-09-04 00:00:00",
+      "SupplierName": "ODORES METAL LLC",
+      "MaterialCode": "Various",
+      "POValue": 1504.7,
+      "Currency": "USD",
+      "POValueUSD": 1504.7
+    },
+    {
+      "PONumber": "RFPO-6705-V40124-1",
+      "POType": "Base",
+      "PODate": "2025-09-04 00:00:00",
+      "SupplierName": "Tsang Brothers Corporation",
+      "MaterialCode": "Various",
+      "POValue": 764.0,
+      "Currency": "USD",
+      "POValueUSD": 764.0
+    },
+    {
+      "PONumber": "RFPO-6746-V40026-1",
+      "POType": "Base",
+      "PODate": "2025-09-04 00:00:00",
+      "SupplierName": "The Sherwin-Williams Company",
+      "MaterialCode": "Various",
+      "POValue": 7273.8,
+      "Currency": "USD",
+      "POValueUSD": 7273.8
+    },
+    {
+      "PONumber": "RFPO-5829-A5303-1",
+      "POType": "Base",
+      "PODate": "2025-09-04 00:00:00",
+      "SupplierName": "SAS express BUILDING MATERIALS TRADING LLC",
+      "MaterialCode": "Architectural",
+      "POValue": 2000.0,
+      "Currency": "AED",
+      "POValueUSD": 544.6
+    },
+    {
+      "PONumber": "RFPO-5683-A5204-1",
+      "POType": "Base",
+      "PODate": "2025-09-04 00:00:00",
+      "SupplierName": "QMI Building Metal Products Manufacturing LLC",
+      "MaterialCode": "Architectural",
+      "POValue": 2120.0,
+      "Currency": "AED",
+      "POValueUSD": 577.28
+    },
+    {
+      "PONumber": "RFPO-7139-M4008-1",
+      "POType": "Base",
+      "PODate": "2025-09-04 00:00:00",
+      "SupplierName": "Guam Autospot",
+      "MaterialCode": "Mechanical",
+      "POValue": 34995.0,
+      "Currency": "USD",
+      "POValueUSD": 34995.0
+    },
+    {
+      "PONumber": "RFPO-5829-V40034-1",
+      "POType": "Base",
+      "PODate": "2025-09-04 00:00:00",
+      "SupplierName": "DUTCO TENNANT LLC",
+      "MaterialCode": "Various",
+      "POValue": 87744.0,
+      "Currency": "AED",
+      "POValueUSD": 23892.69
+    },
+    {
+      "PONumber": "RFPO-6705-S9103-1",
+      "POType": "Base",
+      "PODate": "2025-09-04 00:00:00",
+      "SupplierName": "AASHTO re:source",
+      "MaterialCode": "Services",
+      "POValue": 665.0,
+      "Currency": "USD",
+      "POValueUSD": 665.0
+    },
+    {
+      "PONumber": "RFPO-5695-V40020-1",
+      "POType": "Base",
+      "PODate": "2025-09-04 00:00:00",
+      "SupplierName": "Fastener Point LLC",
+      "MaterialCode": "Various",
+      "POValue": 14150.0,
+      "Currency": "AED",
+      "POValueUSD": 3853.04
+    },
+    {
+      "PONumber": "RFPO-7073-V40011-1",
+      "POType": "Base",
+      "PODate": "2025-09-04 00:00:00",
+      "SupplierName": "Puget Sound Pipe & Supply",
+      "MaterialCode": "Various",
+      "POValue": 59120.34,
+      "Currency": "USD",
+      "POValueUSD": 59120.34
+    },
+    {
+      "PONumber": "RFPO-6705-V40123-1",
+      "POType": "Base",
+      "PODate": "2025-09-03 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 27207.16,
+      "Currency": "USD",
+      "POValueUSD": 27207.16
+    },
+    {
+      "PONumber": "RFPO-6705-V40122-1",
+      "POType": "Base",
+      "PODate": "2025-09-03 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 654.5,
+      "Currency": "USD",
+      "POValueUSD": 654.5
+    },
+    {
+      "PONumber": "RFPO-5829-V40035-1",
+      "POType": "Base",
+      "PODate": "2025-09-03 00:00:00",
+      "SupplierName": "RMB Global Ready Mix Concrete Industries L.L.C S.P.C",
+      "MaterialCode": "Various",
+      "POValue": 1208480.0,
+      "Currency": "AED",
+      "POValueUSD": 329069.1
+    },
+    {
+      "PONumber": "RFPO-7139-V40040-1",
+      "POType": "Base",
+      "PODate": "2025-09-03 00:00:00",
+      "SupplierName": "LOWES",
+      "MaterialCode": "Various",
+      "POValue": 4655.1,
+      "Currency": "USD",
+      "POValueUSD": 4655.1
+    },
+    {
+      "PONumber": "RFPO-7073-V40012-1",
+      "POType": "Base",
+      "PODate": "2025-09-02 00:00:00",
+      "SupplierName": "Unitech Di Pipes & Fittings Mfg. LLC",
+      "MaterialCode": "Various",
+      "POValue": 7050.57,
+      "Currency": "USD",
+      "POValueUSD": 7050.57
+    },
+    {
+      "PONumber": "RFPO-6705-M4101-4",
+      "POType": "Change Order 4",
+      "PODate": "2025-09-02 00:00:00",
+      "SupplierName": "TURTLE",
+      "MaterialCode": "Mechanical",
+      "POValue": 296301.0,
+      "Currency": "USD",
+      "POValueUSD": 296301.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6831-1",
+      "POType": "Base",
+      "PODate": "2025-09-02 00:00:00",
+      "SupplierName": "GRAYBAR ELECTRIC COMPANY INC",
+      "MaterialCode": "Electrical",
+      "POValue": 113.8258,
+      "Currency": "USD",
+      "POValueUSD": 113.83
+    },
+    {
+      "PONumber": "RFPO-7208-V40015-2",
+      "POType": "Change Order",
+      "PODate": "2025-09-02 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 33839.75,
+      "Currency": "USD",
+      "POValueUSD": 33839.75
+    },
+    {
+      "PONumber": "RFPO-7139-S9127-2",
+      "POType": "Change Order",
+      "PODate": "2025-09-01 00:00:00",
+      "SupplierName": "Ozler Formwork and Scaffolding Systems (OZLER KALIP VE ISKELE SISTEMLERI A.S)",
+      "MaterialCode": "Services",
+      "POValue": 202856.77,
+      "Currency": "USD",
+      "POValueUSD": 202856.77
+    },
+    {
+      "PONumber": "RFPO-7139-S9131-2",
+      "POType": "Change Order",
+      "PODate": "2025-09-01 00:00:00",
+      "SupplierName": "Ozler Formwork and Scaffolding Systems (OZLER KALIP VE ISKELE SISTEMLERI A.S)",
+      "MaterialCode": "Services",
+      "POValue": 120213.98,
+      "Currency": "USD",
+      "POValueUSD": 120213.98
+    },
+    {
+      "PONumber": "RFPO-7208-V40016-1",
+      "POType": "Base",
+      "PODate": "2025-08-29 00:00:00",
+      "SupplierName": "INTEGRATED CONTRACTING SUPPLIERS",
+      "MaterialCode": "Various",
+      "POValue": 74306.29,
+      "Currency": "USD",
+      "POValueUSD": 74306.29
+    },
+    {
+      "PONumber": "RFPO-6705-E6830-1",
+      "POType": "Base",
+      "PODate": "2025-08-28 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 2797.24,
+      "Currency": "USD",
+      "POValueUSD": 2797.24
+    },
+    {
+      "PONumber": "RFPO-6705-V40121-1",
+      "POType": "Base",
+      "PODate": "2025-08-27 00:00:00",
+      "SupplierName": "Humboldt Mfg Co",
+      "MaterialCode": "Various",
+      "POValue": 7239.25,
+      "Currency": "USD",
+      "POValueUSD": 7239.25
+    },
+    {
+      "PONumber": "RFPO-6705-M4025-1",
+      "POType": "Base",
+      "PODate": "2025-08-27 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 160300.0,
+      "Currency": "USD",
+      "POValueUSD": 160300.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6829-1",
+      "POType": "Base",
+      "PODate": "2025-08-27 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 16014.17,
+      "Currency": "USD",
+      "POValueUSD": 16014.17
+    },
+    {
+      "PONumber": "RFPO-7139-S9131-1",
+      "POType": "Base",
+      "PODate": "2025-08-26 00:00:00",
+      "SupplierName": "Ozler Formwork and Scaffolding Systems (OZLER KALIP VE ISKELE SISTEMLERI A.S)",
+      "MaterialCode": "Services",
+      "POValue": 105413.98,
+      "Currency": "USD",
+      "POValueUSD": 105413.98
+    },
+    {
+      "PONumber": "RFPO-7139-E6818-1",
+      "POType": "Base",
+      "PODate": "2025-08-25 00:00:00",
+      "SupplierName": "AL GHANDI SWITCHGEARS INDUSTRY",
+      "MaterialCode": "Electrical",
+      "POValue": 16596.39,
+      "Currency": "AED",
+      "POValueUSD": 4519.2
+    },
+    {
+      "PONumber": "RFPO-6542-V40042-1",
+      "POType": "Base",
+      "PODate": "2025-08-25 00:00:00",
+      "SupplierName": "INTEGRATED CONTRACTING SUPPLIERS",
+      "MaterialCode": "Various",
+      "POValue": 1132.0,
+      "Currency": "USD",
+      "POValueUSD": 1132.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6828-1",
+      "POType": "Base",
+      "PODate": "2025-08-25 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 2192.91,
+      "Currency": "USD",
+      "POValueUSD": 2192.91
+    },
+    {
+      "PONumber": "RFPO-1569-V4426-1",
+      "POType": "Base",
+      "PODate": "2025-08-21 00:00:00",
+      "SupplierName": "Green Figure Technique",
+      "MaterialCode": "Various",
+      "POValue": 8200.0,
+      "Currency": "AED",
+      "POValueUSD": 2232.86
+    },
+    {
+      "PONumber": "RFPO-6852-V40030-2",
+      "POType": "Change Order",
+      "PODate": "2025-08-21 00:00:00",
+      "SupplierName": "Jet Fuel Specialists LLC",
+      "MaterialCode": "Various",
+      "POValue": 226085.75,
+      "Currency": "USD",
+      "POValueUSD": 226085.75
+    },
+    {
+      "PONumber": "RFPO-6852-V40031-2",
+      "POType": "Change Order",
+      "PODate": "2025-08-21 00:00:00",
+      "SupplierName": "Jet Fuel Specialists LLC",
+      "MaterialCode": "Various",
+      "POValue": 85248.41,
+      "Currency": "USD",
+      "POValueUSD": 85248.41
+    },
+    {
+      "PONumber": "RFPO-7139-M4102-1",
+      "POType": "Base",
+      "PODate": "2025-08-21 00:00:00",
+      "SupplierName": "Jiangsu Ryan Electric Co.,Ltd",
+      "MaterialCode": "Mechanical",
+      "POValue": 14000.0,
+      "Currency": "USD",
+      "POValueUSD": 14000.0
+    },
+    {
+      "PONumber": "RFPO-7120-V40004-1",
+      "POType": "Base",
+      "PODate": "2025-08-21 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 6195.19,
+      "Currency": "USD",
+      "POValueUSD": 6195.19
+    },
+    {
+      "PONumber": "RFPO-6705-V40120-1",
+      "POType": "Base",
+      "PODate": "2025-08-20 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 208.29,
+      "Currency": "USD",
+      "POValueUSD": 208.29
+    },
+    {
+      "PONumber": "RFPO-7039-V40021-1",
+      "POType": "Base",
+      "PODate": "2025-08-20 00:00:00",
+      "SupplierName": "Crossweld Metal Trading Co.LLC",
+      "MaterialCode": "Various",
+      "POValue": 8184.0,
+      "Currency": "USD",
+      "POValueUSD": 8184.0
+    },
+    {
+      "PONumber": "RFPO-7864-V40000-1",
+      "POType": "Base",
+      "PODate": "2025-08-20 00:00:00",
+      "SupplierName": "Adelta Corporation",
+      "MaterialCode": "Various",
+      "POValue": 2737.99,
+      "Currency": "USD",
+      "POValueUSD": 2737.99
+    },
+    {
+      "PONumber": "RFPO-1569-14592-1",
+      "POType": "Base",
+      "PODate": "2025-08-19 00:00:00",
+      "SupplierName": "EUROFIRE FIRE & SAFETY L.L.C",
+      "MaterialCode": "Unknown",
+      "POValue": 44000.0,
+      "Currency": "AED",
+      "POValueUSD": 11981.2
+    },
+    {
+      "PONumber": "RFPO-6705-S9102-1",
+      "POType": "Base",
+      "PODate": "2025-08-19 00:00:00",
+      "SupplierName": "Rodelio Morales",
+      "MaterialCode": "Services",
+      "POValue": 8000.0,
+      "Currency": "USD",
+      "POValueUSD": 8000.0
+    },
+    {
+      "PONumber": "RFPO-5532-E6805-1",
+      "POType": "Base",
+      "PODate": "2025-08-19 00:00:00",
+      "SupplierName": "Benfield Electric International Ltd.",
+      "MaterialCode": "Electrical",
+      "POValue": 9754.1,
+      "Currency": "USD",
+      "POValueUSD": 9754.1
+    },
+    {
+      "PONumber": "RFPO-6718-E6807-1",
+      "POType": "Base",
+      "PODate": "2025-08-19 00:00:00",
+      "SupplierName": "WESCO Distribution Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 7704.0,
+      "Currency": "USD",
+      "POValueUSD": 7704.0
+    },
+    {
+      "PONumber": "RFPO-7073-V40010-1",
+      "POType": "Base",
+      "PODate": "2025-08-19 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 2035.46,
+      "Currency": "USD",
+      "POValueUSD": 2035.46
+    },
+    {
+      "PONumber": "RFPO-7139-S9130-1",
+      "POType": "Base",
+      "PODate": "2025-08-19 00:00:00",
+      "SupplierName": "BIG TOP SHELTERS",
+      "MaterialCode": "Services",
+      "POValue": 101700.0,
+      "Currency": "USD",
+      "POValueUSD": 101700.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40028-2",
+      "POType": "Change Order",
+      "PODate": "2025-08-18 00:00:00",
+      "SupplierName": "MONJE",
+      "MaterialCode": "Various",
+      "POValue": 36151.89,
+      "Currency": "USD",
+      "POValueUSD": 36151.89
+    },
+    {
+      "PONumber": "RFPO-7139-V4353-1",
+      "POType": "Base",
+      "PODate": "2025-08-18 00:00:00",
+      "SupplierName": "FOSHAN SOEASY MODULAR HOUSING CO LTD",
+      "MaterialCode": "Various",
+      "POValue": 5850.0,
+      "Currency": "USD",
+      "POValueUSD": 5850.0
+    },
+    {
+      "PONumber": "RFPO-7139-T1000-1",
+      "POType": "Base",
+      "PODate": "2025-08-18 00:00:00",
+      "SupplierName": "AMERICANA SUPPLIERS",
+      "MaterialCode": "Tools",
+      "POValue": 5176.0,
+      "Currency": "USD",
+      "POValueUSD": 5176.0
+    },
+    {
+      "PONumber": "RFPO-7039-M4101-2",
+      "POType": "Change Order",
+      "PODate": "2025-08-18 00:00:00",
+      "SupplierName": "Wuxi Pinnacle Mechanical Equipment Co., Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 3867.0,
+      "Currency": "USD",
+      "POValueUSD": 3867.0
+    },
+    {
+      "PONumber": "RFPO-5503-S9101-1",
+      "POType": "Base",
+      "PODate": "2025-08-18 00:00:00",
+      "SupplierName": "TUV SUD MIDDLE EAST LLC",
+      "MaterialCode": "Services",
+      "POValue": 710.0,
+      "Currency": "USD",
+      "POValueUSD": 710.0
+    },
+    {
+      "PONumber": "RFPO-5532-V40080-1",
+      "POType": "Base",
+      "PODate": "2025-08-18 00:00:00",
+      "SupplierName": "Zhengzhou Yugong Construction Machinery Co., Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 860.0,
+      "Currency": "USD",
+      "POValueUSD": 860.0
+    },
+    {
+      "PONumber": "RFPO-5532-T1003-2",
+      "POType": "Change Order",
+      "PODate": "2025-08-16 00:00:00",
+      "SupplierName": "Ali Asger & Brothers LLC",
+      "MaterialCode": "Tools",
+      "POValue": 35440.0,
+      "Currency": "AED",
+      "POValueUSD": 9650.31
+    },
+    {
+      "PONumber": "RFPO-6705-V40118-1",
+      "POType": "Base",
+      "PODate": "2025-08-12 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 18.77,
+      "Currency": "USD",
+      "POValueUSD": 18.77
+    },
+    {
+      "PONumber": "RFPO-6705-V40119-1",
+      "POType": "Base",
+      "PODate": "2025-08-12 00:00:00",
+      "SupplierName": "France Metal",
+      "MaterialCode": "Various",
+      "POValue": 2722.0,
+      "Currency": "USD",
+      "POValueUSD": 2722.0
+    },
+    {
+      "PONumber": "RFPO-5695-V40018-1",
+      "POType": "Base",
+      "PODate": "2025-08-12 00:00:00",
+      "SupplierName": "POWERFIT INDUSTRIAL PTE LTD",
+      "MaterialCode": "Various",
+      "POValue": 3062.0,
+      "Currency": "SGD",
+      "POValueUSD": 3062.0
+    },
+    {
+      "PONumber": "RFPO-6852-E6801-2",
+      "POType": "Change Order",
+      "PODate": "2025-08-12 00:00:00",
+      "SupplierName": "WESCO Distribution Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 15873.3,
+      "Currency": "USD",
+      "POValueUSD": 15873.3
+    },
+    {
+      "PONumber": "RFPO-5503-A5205-1",
+      "POType": "Base",
+      "PODate": "2025-08-11 00:00:00",
+      "SupplierName": "PETROUTSOS BROS LTD",
+      "MaterialCode": "Architectural",
+      "POValue": 19000.0,
+      "Currency": "EURO",
+      "POValueUSD": 19000.0
+    },
+    {
+      "PONumber": "RFPO-5532-V4373-1",
+      "POType": "Base",
+      "PODate": "2025-08-11 00:00:00",
+      "SupplierName": "Onmuse ( Suzhou ) Office Furniture Co.,Ltd",
+      "MaterialCode": "Various",
+      "POValue": 12780.0,
+      "Currency": "USD",
+      "POValueUSD": 12780.0
+    },
+    {
+      "PONumber": "RFPO-7139-E6817-1",
+      "POType": "Base",
+      "PODate": "2025-08-11 00:00:00",
+      "SupplierName": "WESCO Distribution Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 8219.64,
+      "Currency": "USD",
+      "POValueUSD": 8219.64
+    },
+    {
+      "PONumber": "RFPO-6952-V40021-2",
+      "POType": "Change Order",
+      "PODate": "2025-08-11 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 4374.68,
+      "Currency": "USD",
+      "POValueUSD": 4374.68
+    },
+    {
+      "PONumber": "RFPO-7139-V40038-1",
+      "POType": "Base",
+      "PODate": "2025-08-08 00:00:00",
+      "SupplierName": "SMITHBRIDGE GUAM",
+      "MaterialCode": "Various",
+      "POValue": 88358.05,
+      "Currency": "USD",
+      "POValueUSD": 88358.05
+    },
+    {
+      "PONumber": "RFPO-7139-S9101-1",
+      "POType": "Base",
+      "PODate": "2025-08-07 00:00:00",
+      "SupplierName": "Modulus Metal San ve Tic Ltd Sti",
+      "MaterialCode": "Services",
+      "POValue": 700.0,
+      "Currency": "USD",
+      "POValueUSD": 700.0
+    },
+    {
+      "PONumber": "RFPO-7098-E6802-2",
+      "POType": "Change Order",
+      "PODate": "2025-08-07 00:00:00",
+      "SupplierName": "Cooper Crouse-Hinds, LLC",
+      "MaterialCode": "Electrical",
+      "POValue": 141729.57,
+      "Currency": "USD",
+      "POValueUSD": 141729.57
+    },
+    {
+      "PONumber": "RFPO-5503-A5204-1",
+      "POType": "Base",
+      "PODate": "2025-08-07 00:00:00",
+      "SupplierName": "SALZER GmbH",
+      "MaterialCode": "Architectural",
+      "POValue": 2364.0,
+      "Currency": "EURO",
+      "POValueUSD": 2364.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6827-1",
+      "POType": "Base",
+      "PODate": "2025-08-06 00:00:00",
+      "SupplierName": "WESCO Distribution Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 2054.87,
+      "Currency": "USD",
+      "POValueUSD": 2054.87
+    },
+    {
+      "PONumber": "RFPO-6705-V40117-1",
+      "POType": "Base",
+      "PODate": "2025-08-06 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 637.23,
+      "Currency": "USD",
+      "POValueUSD": 637.23
+    },
+    {
+      "PONumber": "RFPO-7139-S9127-1",
+      "POType": "Base",
+      "PODate": "2025-08-06 00:00:00",
+      "SupplierName": "Ozler Formwork and Scaffolding Systems (OZLER KALIP VE ISKELE SISTEMLERI A.S)",
+      "MaterialCode": "Services",
+      "POValue": 179056.77,
+      "Currency": "USD",
+      "POValueUSD": 179056.77
+    },
+    {
+      "PONumber": "RFPO-7039-V40019B-1",
+      "POType": "Base",
+      "PODate": "2025-08-06 00:00:00",
+      "SupplierName": "Underground Devices, Inc.",
+      "MaterialCode": "Various",
+      "POValue": 304337.8,
+      "Currency": "USD",
+      "POValueUSD": 304337.8
+    },
+    {
+      "PONumber": "RFPO-6705-M4024-1",
+      "POType": "Base",
+      "PODate": "2025-08-05 00:00:00",
+      "SupplierName": "Komplet America",
+      "MaterialCode": "Mechanical",
+      "POValue": 341376.2,
+      "Currency": "USD",
+      "POValueUSD": 341376.2
+    },
+    {
+      "PONumber": "RFPO-6542-V40041-1",
+      "POType": "Base",
+      "PODate": "2025-08-05 00:00:00",
+      "SupplierName": "INTEGRATED CONTRACTING SUPPLIERS",
+      "MaterialCode": "Various",
+      "POValue": 1657.99,
+      "Currency": "USD",
+      "POValueUSD": 1657.99
+    },
+    {
+      "PONumber": "RFPO-6705-O2-1",
+      "POType": "Base",
+      "PODate": "2025-08-05 00:00:00",
+      "SupplierName": "AllCAD Solutions LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 925.0,
+      "Currency": "AED",
+      "POValueUSD": 251.88
+    },
+    {
+      "PONumber": "RFPO-6705-E6826-1",
+      "POType": "Base",
+      "PODate": "2025-08-05 00:00:00",
+      "SupplierName": "AL GHANDI SWITCHGEARS INDUSTRY",
+      "MaterialCode": "Electrical",
+      "POValue": 101508.81,
+      "Currency": "AED",
+      "POValueUSD": 27640.85
+    },
+    {
+      "PONumber": "RFPO-5532-V40079-1",
+      "POType": "Base",
+      "PODate": "2025-08-04 00:00:00",
+      "SupplierName": "BLACK CONSTRUCTION CORPORATION",
+      "MaterialCode": "Various",
+      "POValue": 109811.58,
+      "Currency": "USD",
+      "POValueUSD": 109811.58
+    },
+    {
+      "PONumber": "RFPO-7139-V40037-1",
+      "POType": "Base",
+      "PODate": "2025-08-04 00:00:00",
+      "SupplierName": "SQUIRES LUMBER COMPANY, INC.",
+      "MaterialCode": "Various",
+      "POValue": 11335.69,
+      "Currency": "USD",
+      "POValueUSD": 11335.69
+    },
+    {
+      "PONumber": "RFPO-7139-V40035-1",
+      "POType": "Base",
+      "PODate": "2025-08-04 00:00:00",
+      "SupplierName": "Uline",
+      "MaterialCode": "Various",
+      "POValue": 2116.22,
+      "Currency": "USD",
+      "POValueUSD": 2116.22
+    },
+    {
+      "PONumber": "RFPO-7505-V40001-2",
+      "POType": "Change Order",
+      "PODate": "2025-08-04 00:00:00",
+      "SupplierName": "Adelta Corporation",
+      "MaterialCode": "Various",
+      "POValue": 10168.2,
+      "Currency": "USD",
+      "POValueUSD": 10168.2
+    },
+    {
+      "PONumber": "RFPO-7139-V40031-3",
+      "POType": "Change Order 3",
+      "PODate": "2025-08-04 00:00:00",
+      "SupplierName": "NANJING GRAND STEEL PILING CO.,LTD.",
+      "MaterialCode": "Various",
+      "POValue": 67454.4,
+      "Currency": "USD",
+      "POValueUSD": 67454.4
+    },
+    {
+      "PONumber": "RFPO-7139-V40036-1",
+      "POType": "Base",
+      "PODate": "2025-08-04 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 34935.9,
+      "Currency": "USD",
+      "POValueUSD": 34935.9
+    },
+    {
+      "PONumber": "RFPO-5532-M4040-1",
+      "POType": "Base",
+      "PODate": "2025-08-04 00:00:00",
+      "SupplierName": "MEKA",
+      "MaterialCode": "Mechanical",
+      "POValue": 9250.0,
+      "Currency": "EURO",
+      "POValueUSD": 9250.0
+    },
+    {
+      "PONumber": "RFPO-5532-M4038-1",
+      "POType": "Base",
+      "PODate": "2025-08-04 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 19974.0,
+      "Currency": "USD",
+      "POValueUSD": 19974.0
+    },
+    {
+      "PONumber": "RFPO-6705-M4023-1",
+      "POType": "Base",
+      "PODate": "2025-07-31 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 396500.0,
+      "Currency": "USD",
+      "POValueUSD": 396500.0
+    },
+    {
+      "PONumber": "RFPO-6705-M4104-2",
+      "POType": "Change Order",
+      "PODate": "2025-07-31 00:00:00",
+      "SupplierName": "Jiangsu Ryan Electric Co.,Ltd",
+      "MaterialCode": "Mechanical",
+      "POValue": 31200.0,
+      "Currency": "USD",
+      "POValueUSD": 31200.0
+    },
+    {
+      "PONumber": "RFPO-6718-E6806-1",
+      "POType": "Base",
+      "PODate": "2025-07-31 00:00:00",
+      "SupplierName": "WESCO Distribution Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 3897.67,
+      "Currency": "USD",
+      "POValueUSD": 3897.67
+    },
+    {
+      "PONumber": "RFPO-5532-O2-1",
+      "POType": "Base",
+      "PODate": "2025-07-31 00:00:00",
+      "SupplierName": "Midway Computer Trading L.L.C",
+      "MaterialCode": "Office Assets",
+      "POValue": 6200.0,
+      "Currency": "AED",
+      "POValueUSD": 1688.26
+    },
+    {
+      "PONumber": "RFPO-5532-V40078-2",
+      "POType": "Change Order",
+      "PODate": "2025-07-31 00:00:00",
+      "SupplierName": "Leeds Services Co. Pte Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 6470.0,
+      "Currency": "USD",
+      "POValueUSD": 6470.0
+    },
+    {
+      "PONumber": "RFPO-6705-S9032-1",
+      "POType": "Base",
+      "PODate": "2025-07-31 00:00:00",
+      "SupplierName": "ACP INTERNATIONAL",
+      "MaterialCode": "Services",
+      "POValue": 3522.32,
+      "Currency": "USD",
+      "POValueUSD": 3522.32
+    },
+    {
+      "PONumber": "RFPO-6705-V40112-1",
+      "POType": "Base",
+      "PODate": "2025-07-31 00:00:00",
+      "SupplierName": "Tsang Brothers Corporation",
+      "MaterialCode": "Various",
+      "POValue": 440.0,
+      "Currency": "USD",
+      "POValueUSD": 440.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6825-1",
+      "POType": "Base",
+      "PODate": "2025-07-31 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 10645.32,
+      "Currency": "USD",
+      "POValueUSD": 10645.32
+    },
+    {
+      "PONumber": "RFPO-7139-E6816-1",
+      "POType": "Base",
+      "PODate": "2025-07-31 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 8162.0,
+      "Currency": "USD",
+      "POValueUSD": 8162.0
+    },
+    {
+      "PONumber": "RFPO-7120-V40002-1",
+      "POType": "Base",
+      "PODate": "2025-07-31 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 16616.26,
+      "Currency": "USD",
+      "POValueUSD": 16616.26
+    },
+    {
+      "PONumber": "RFPO-6705-V40116-1",
+      "POType": "Base",
+      "PODate": "2025-07-30 00:00:00",
+      "SupplierName": "Crossweld Metal Trading Co.LLC",
+      "MaterialCode": "Various",
+      "POValue": 2199.0,
+      "Currency": "USD",
+      "POValueUSD": 2199.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40115-1",
+      "POType": "Base",
+      "PODate": "2025-07-30 00:00:00",
+      "SupplierName": "American International Supply Inc.",
+      "MaterialCode": "Various",
+      "POValue": 25586.17,
+      "Currency": "USD",
+      "POValueUSD": 25586.17
+    },
+    {
+      "PONumber": "RFPO-6705-V40114-1",
+      "POType": "Base",
+      "PODate": "2025-07-30 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 1092.07,
+      "Currency": "USD",
+      "POValueUSD": 1092.07
+    },
+    {
+      "PONumber": "RFPO-7212-V40003-1",
+      "POType": "Base",
+      "PODate": "2025-07-30 00:00:00",
+      "SupplierName": "INTEGRATED CONTRACTING SUPPLIERS",
+      "MaterialCode": "Various",
+      "POValue": 994.0,
+      "Currency": "USD",
+      "POValueUSD": 994.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6824-1",
+      "POType": "Base",
+      "PODate": "2025-07-30 00:00:00",
+      "SupplierName": "WESCO Distribution Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 8856.48,
+      "Currency": "USD",
+      "POValueUSD": 8856.48
+    },
+    {
+      "PONumber": "RFPO-6705-V40113-1",
+      "POType": "Base",
+      "PODate": "2025-07-29 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 23808.23,
+      "Currency": "USD",
+      "POValueUSD": 23808.23
+    },
+    {
+      "PONumber": "RFPO-5532-M4039-1",
+      "POType": "Base",
+      "PODate": "2025-07-29 00:00:00",
+      "SupplierName": "FASTWIN GROUP CO.,LIMITED",
+      "MaterialCode": "Mechanical",
+      "POValue": 3622.12,
+      "Currency": "USD",
+      "POValueUSD": 3622.12
+    },
+    {
+      "PONumber": "RFPO-1569-O97-1",
+      "POType": "Base",
+      "PODate": "2025-07-29 00:00:00",
+      "SupplierName": "RivYv Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 6810.0,
+      "Currency": "USD",
+      "POValueUSD": 6810.0
+    },
+    {
+      "PONumber": "RFPO-6705-V4358-1",
+      "POType": "Base",
+      "PODate": "2025-07-28 00:00:00",
+      "SupplierName": "HD Signs & Graphics, LLC",
+      "MaterialCode": "Various",
+      "POValue": 900.0,
+      "Currency": "USD",
+      "POValueUSD": 900.0
+    },
+    {
+      "PONumber": "RFPO-5828-O2-1",
+      "POType": "Base",
+      "PODate": "2025-07-28 00:00:00",
+      "SupplierName": "AllCAD Solutions LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 1850.0,
+      "Currency": "AED",
+      "POValueUSD": 503.75
+    },
+    {
+      "PONumber": "RFPO-7139-E6815-1",
+      "POType": "Base",
+      "PODate": "2025-07-28 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 201791.22,
+      "Currency": "USD",
+      "POValueUSD": 201791.22
+    },
+    {
+      "PONumber": "RFPO-6705-M4022-1",
+      "POType": "Base",
+      "PODate": "2025-07-28 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Mechanical",
+      "POValue": 2976.0,
+      "Currency": "USD",
+      "POValueUSD": 2976.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40110-1",
+      "POType": "Base",
+      "PODate": "2025-07-28 00:00:00",
+      "SupplierName": "LOWES",
+      "MaterialCode": "Various",
+      "POValue": 12329.31,
+      "Currency": "USD",
+      "POValueUSD": 12329.31
+    },
+    {
+      "PONumber": "RFPO-6705-V40105-1",
+      "POType": "Base",
+      "PODate": "2025-07-28 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 8278.99,
+      "Currency": "USD",
+      "POValueUSD": 8278.99
+    },
+    {
+      "PONumber": "RFPO-7139-V40034-1",
+      "POType": "Base",
+      "PODate": "2025-07-28 00:00:00",
+      "SupplierName": "Sign King Inc",
+      "MaterialCode": "Various",
+      "POValue": 220.0,
+      "Currency": "USD",
+      "POValueUSD": 220.0
+    },
+    {
+      "PONumber": "RFPO-7139-E6814-1",
+      "POType": "Base",
+      "PODate": "2025-07-24 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 66130.89,
+      "Currency": "USD",
+      "POValueUSD": 66130.89
+    },
+    {
+      "PONumber": "RFPO-7139-V40033-1",
+      "POType": "Base",
+      "PODate": "2025-07-24 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 230.52,
+      "Currency": "USD",
+      "POValueUSD": 230.52
+    },
+    {
+      "PONumber": "RFPO-6705-V40111-1",
+      "POType": "Base",
+      "PODate": "2025-07-24 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 76.84,
+      "Currency": "USD",
+      "POValueUSD": 76.84
+    },
+    {
+      "PONumber": "RFPO-5532-M4105-1",
+      "POType": "Base",
+      "PODate": "2025-07-24 00:00:00",
+      "SupplierName": "WATERcare PRODUCTS PTE. LTD.",
+      "MaterialCode": "Mechanical",
+      "POValue": 2472.05,
+      "Currency": "USD",
+      "POValueUSD": 2472.05
+    },
+    {
+      "PONumber": "RFPO-6705-E6823-1",
+      "POType": "Base",
+      "PODate": "2025-07-24 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 349.0,
+      "Currency": "USD",
+      "POValueUSD": 349.0
+    },
+    {
+      "PONumber": "RFPO-6705-O1-1",
+      "POType": "Base",
+      "PODate": "2025-07-24 00:00:00",
+      "SupplierName": "AllCAD Solutions LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 925.0,
+      "Currency": "AED",
+      "POValueUSD": 251.88
+    },
+    {
+      "PONumber": "RFPO-6168-A5206-1",
+      "POType": "Base",
+      "PODate": "2025-07-23 00:00:00",
+      "SupplierName": "Lakshmi Metal Tech LLC",
+      "MaterialCode": "Architectural",
+      "POValue": 11080.0,
+      "Currency": "AED",
+      "POValueUSD": 3017.08
+    },
+    {
+      "PONumber": "RFPO-7139-V40032-1",
+      "POType": "Base",
+      "PODate": "2025-07-21 00:00:00",
+      "SupplierName": "Uline",
+      "MaterialCode": "Various",
+      "POValue": 2038.87,
+      "Currency": "USD",
+      "POValueUSD": 2038.87
+    },
+    {
+      "PONumber": "RFPO-7139-E6813-1",
+      "POType": "Base",
+      "PODate": "2025-07-21 00:00:00",
+      "SupplierName": "Shanghai Yonghui Electric Technology Co.,Ltd",
+      "MaterialCode": "Electrical",
+      "POValue": 1110.0,
+      "Currency": "USD",
+      "POValueUSD": 1110.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40108-1",
+      "POType": "Base",
+      "PODate": "2025-07-21 00:00:00",
+      "SupplierName": "Humboldt Mfg Co",
+      "MaterialCode": "Various",
+      "POValue": 11560.0,
+      "Currency": "USD",
+      "POValueUSD": 11560.0
+    },
+    {
+      "PONumber": "RFPO-7120-S9102-1",
+      "POType": "Base",
+      "PODate": "2025-07-21 00:00:00",
+      "SupplierName": "TUV SUD MIDDLE EAST LLC",
+      "MaterialCode": "Services",
+      "POValue": 685.0,
+      "Currency": "EURO",
+      "POValueUSD": 685.0
+    },
+    {
+      "PONumber": "RFPO-6705-V40107-1",
+      "POType": "Base",
+      "PODate": "2025-07-17 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 2389.61,
+      "Currency": "USD",
+      "POValueUSD": 2389.61
+    },
+    {
+      "PONumber": "RFPO-7139-V40031-1",
+      "POType": "Base",
+      "PODate": "2025-07-16 00:00:00",
+      "SupplierName": "NANJING GRAND STEEL PILING CO.,LTD.",
+      "MaterialCode": "Various",
+      "POValue": 65984.0,
+      "Currency": "USD",
+      "POValueUSD": 65984.0
+    },
+    {
+      "PONumber": "RFPO-6705-M4021-1",
+      "POType": "Base",
+      "PODate": "2025-07-16 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 515.0,
+      "Currency": "USD",
+      "POValueUSD": 515.0
+    },
+    {
+      "PONumber": "RFPO-7073-V40008-1",
+      "POType": "Base",
+      "PODate": "2025-07-16 00:00:00",
+      "SupplierName": "The Sherwin-Williams Company",
+      "MaterialCode": "Various",
+      "POValue": 3996.79,
+      "Currency": "USD",
+      "POValueUSD": 3996.79
+    },
+    {
+      "PONumber": "RFPO-6841-M4104-1",
+      "POType": "Base",
+      "PODate": "2025-07-16 00:00:00",
+      "SupplierName": "S.K.M. Air Conditioning L.L.C.",
+      "MaterialCode": "Mechanical",
+      "POValue": 33600.0,
+      "Currency": "USD",
+      "POValueUSD": 33600.0
+    },
+    {
+      "PONumber": "RFPO-5829-E6821-1",
+      "POType": "Base",
+      "PODate": "2025-07-16 00:00:00",
+      "SupplierName": "AL MOUSA CABLES CO. L.L.C",
+      "MaterialCode": "Electrical",
+      "POValue": 186760.0,
+      "Currency": "AED",
+      "POValueUSD": 50854.75
+    },
+    {
+      "PONumber": "RFPO-6852-V40032-1",
+      "POType": "Base",
+      "PODate": "2025-07-16 00:00:00",
+      "SupplierName": "BLACK CONSTRUCTION CORPORATION",
+      "MaterialCode": "Various",
+      "POValue": 82799.5,
+      "Currency": "USD",
+      "POValueUSD": 82799.5
+    },
+    {
+      "PONumber": "RFPO-6952-V40014A-1",
+      "POType": "Base",
+      "PODate": "2025-07-16 00:00:00",
+      "SupplierName": "INTEGRATED CONTRACTING SUPPLIERS",
+      "MaterialCode": "Various",
+      "POValue": 15881.7,
+      "Currency": "USD",
+      "POValueUSD": 15881.7
+    },
+    {
+      "PONumber": "RFPO-7208-M4103-1",
+      "POType": "Base",
+      "PODate": "2025-07-15 00:00:00",
+      "SupplierName": "JGB International General Trading LLC",
+      "MaterialCode": "Mechanical",
+      "POValue": 153684.0,
+      "Currency": "AED",
+      "POValueUSD": 41848.15
+    },
+    {
+      "PONumber": "RFPO-6705-V40106-1",
+      "POType": "Base",
+      "PODate": "2025-07-15 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 1129.36,
+      "Currency": "USD",
+      "POValueUSD": 1129.36
+    },
+    {
+      "PONumber": "RFPO-7073-V40009-1",
+      "POType": "Base",
+      "PODate": "2025-07-15 00:00:00",
+      "SupplierName": "Keller America Inc.",
+      "MaterialCode": "Various",
+      "POValue": 1755.45,
+      "Currency": "USD",
+      "POValueUSD": 1755.45
+    },
+    {
+      "PONumber": "RFPO-7139-V40030-1",
+      "POType": "Base",
+      "PODate": "2025-07-15 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 7065.73,
+      "Currency": "USD",
+      "POValueUSD": 7065.73
+    },
+    {
+      "PONumber": "RFPO-6852-V40029-1",
+      "POType": "Base",
+      "PODate": "2025-07-15 00:00:00",
+      "SupplierName": "APP Manufacturing",
+      "MaterialCode": "Various",
+      "POValue": 881.52,
+      "Currency": "USD",
+      "POValueUSD": 881.52
+    },
+    {
+      "PONumber": "RFPO-6852-V40028-1",
+      "POType": "Base",
+      "PODate": "2025-07-15 00:00:00",
+      "SupplierName": "Leeds Services Co. Pte Ltd.",
+      "MaterialCode": "Various",
+      "POValue": 4040.0,
+      "Currency": "USD",
+      "POValueUSD": 4040.0
+    },
+    {
+      "PONumber": "RFPO-7414-V4351-1",
+      "POType": "Base",
+      "PODate": "2025-07-14 00:00:00",
+      "SupplierName": "The Uniform World Tailoring and Textiles LLC",
+      "MaterialCode": "Various",
+      "POValue": 450.0,
+      "Currency": "AED",
+      "POValueUSD": 122.53
+    },
+    {
+      "PONumber": "RFPO-7139-E6811-2",
+      "POType": "Change Order",
+      "PODate": "2025-07-14 00:00:00",
+      "SupplierName": "Benfield Electric International Ltd.",
+      "MaterialCode": "Electrical",
+      "POValue": 6300.0,
+      "Currency": "USD",
+      "POValueUSD": 6300.0
+    },
+    {
+      "PONumber": "RFPO-5193-V40016-1",
+      "POType": "Base",
+      "PODate": "2025-07-14 00:00:00",
+      "SupplierName": "PETRA Air Conditioning Contracting Co",
+      "MaterialCode": "Various",
+      "POValue": 2000.0,
+      "Currency": "AED",
+      "POValueUSD": 544.6
+    },
+    {
+      "PONumber": "RFPO-7139-E6812-1",
+      "POType": "Base",
+      "PODate": "2025-07-14 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 15458.73,
+      "Currency": "USD",
+      "POValueUSD": 15458.73
+    },
+    {
+      "PONumber": "RFPO-5532-V4372-1",
+      "POType": "Base",
+      "PODate": "2025-07-14 00:00:00",
+      "SupplierName": "Green Figure Technique",
+      "MaterialCode": "Various",
+      "POValue": 8200.0,
+      "Currency": "AED",
+      "POValueUSD": 2232.86
+    },
+    {
+      "PONumber": "RFPO-7139-E6811-1",
+      "POType": "Base",
+      "PODate": "2025-07-11 00:00:00",
+      "SupplierName": "Benfield Electric International Ltd.",
+      "MaterialCode": "Electrical",
+      "POValue": 4900.0,
+      "Currency": "USD",
+      "POValueUSD": 4900.0
+    },
+    {
+      "PONumber": "RFPO-1569-O95-1",
+      "POType": "Base",
+      "PODate": "2025-07-10 00:00:00",
+      "SupplierName": "Managed Solution LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 1764.55,
+      "Currency": "USD",
+      "POValueUSD": 1764.55
+    },
+    {
+      "PONumber": "RFPO-6705-V40102-1",
+      "POType": "Base",
+      "PODate": "2025-07-10 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Various",
+      "POValue": 10088.73,
+      "Currency": "USD",
+      "POValueUSD": 10088.73
+    },
+    {
+      "PONumber": "RFPO-6718-V40031-1",
+      "POType": "Base",
+      "PODate": "2025-07-10 00:00:00",
+      "SupplierName": "The Sherwin-Williams Company",
+      "MaterialCode": "Various",
+      "POValue": 4100.18,
+      "Currency": "USD",
+      "POValueUSD": 4100.18
+    },
+    {
+      "PONumber": "RFPO-7139-E6810-1",
+      "POType": "Base",
+      "PODate": "2025-07-10 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 2637.58,
+      "Currency": "USD",
+      "POValueUSD": 2637.58
+    },
+    {
+      "PONumber": "RFPO-6705-E6822-1",
+      "POType": "Base",
+      "PODate": "2025-07-10 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 2621.97,
+      "Currency": "USD",
+      "POValueUSD": 2621.97
+    },
+    {
+      "PONumber": "RFPO-7073-S9073-1",
+      "POType": "Base",
+      "PODate": "2025-07-10 00:00:00",
+      "SupplierName": "Stoncor Middle East LLC",
+      "MaterialCode": "Services",
+      "POValue": 68058.0,
+      "Currency": "AED",
+      "POValueUSD": 18532.19
+    },
+    {
+      "PONumber": "RFPO-1569-O96-1",
+      "POType": "Base",
+      "PODate": "2025-07-10 00:00:00",
+      "SupplierName": "Kyoto Technologies",
+      "MaterialCode": "Office Assets",
+      "POValue": 11650.0,
+      "Currency": "AED",
+      "POValueUSD": 3172.29
+    },
+    {
+      "PONumber": "RFPO-5503-A5203-1",
+      "POType": "Base",
+      "PODate": "2025-07-09 00:00:00",
+      "SupplierName": "SALZER GmbH",
+      "MaterialCode": "Architectural",
+      "POValue": 13908.0,
+      "Currency": "EURO",
+      "POValueUSD": 13908.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6821-1",
+      "POType": "Base",
+      "PODate": "2025-07-09 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 1767.67,
+      "Currency": "USD",
+      "POValueUSD": 1767.67
+    },
+    {
+      "PONumber": "RFPO-7139-E6809-1",
+      "POType": "Base",
+      "PODate": "2025-07-09 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 2784.34,
+      "Currency": "USD",
+      "POValueUSD": 2784.34
+    },
+    {
+      "PONumber": "RFPO-1569-V4425-1",
+      "POType": "Base",
+      "PODate": "2025-07-09 00:00:00",
+      "SupplierName": "Green Figure Technique",
+      "MaterialCode": "Various",
+      "POValue": 8200.0,
+      "Currency": "AED",
+      "POValueUSD": 2232.86
+    },
+    {
+      "PONumber": "RFPO-7505-V40000-1",
+      "POType": "Base",
+      "PODate": "2025-07-09 00:00:00",
+      "SupplierName": "ARB ALUMINIUM & GLASS LLC",
+      "MaterialCode": "Various",
+      "POValue": 4200.0,
+      "Currency": "AED",
+      "POValueUSD": 1143.66
+    },
+    {
+      "PONumber": "RFPO-5828-O1-1",
+      "POType": "Base",
+      "PODate": "2025-07-09 00:00:00",
+      "SupplierName": "AllCAD Solutions LLC",
+      "MaterialCode": "Office Assets",
+      "POValue": 925.0,
+      "Currency": "AED",
+      "POValueUSD": 251.88
+    },
+    {
+      "PONumber": "RFPO-5193-V40015-1",
+      "POType": "Base",
+      "PODate": "2025-07-08 00:00:00",
+      "SupplierName": "PETRA Air Conditioning Contracting Co",
+      "MaterialCode": "Various",
+      "POValue": 5500.0,
+      "Currency": "SAR",
+      "POValueUSD": 1466.85
+    },
+    {
+      "PONumber": "RFPO-7139-V40029-1",
+      "POType": "Base",
+      "PODate": "2025-07-07 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 7618.37,
+      "Currency": "USD",
+      "POValueUSD": 7618.37
+    },
+    {
+      "PONumber": "RFPO-7120-S9101-1",
+      "POType": "Base",
+      "PODate": "2025-07-07 00:00:00",
+      "SupplierName": "TUV SUD MIDDLE EAST LLC",
+      "MaterialCode": "Services",
+      "POValue": 685.0,
+      "Currency": "EURO",
+      "POValueUSD": 685.0
+    },
+    {
+      "PONumber": "RFPO-6705-E6820-1",
+      "POType": "Base",
+      "PODate": "2025-07-04 00:00:00",
+      "SupplierName": "High Voltage, Inc.",
+      "MaterialCode": "Electrical",
+      "POValue": 11615.0,
+      "Currency": "USD",
+      "POValueUSD": 11615.0
+    },
+    {
+      "PONumber": "RFPO-5532-T1003-1",
+      "POType": "Base",
+      "PODate": "2025-07-04 00:00:00",
+      "SupplierName": "Ali Asger & Brothers LLC",
+      "MaterialCode": "Tools",
+      "POValue": 32540.0,
+      "Currency": "USD",
+      "POValueUSD": 32540.0
+    },
+    {
+      "PONumber": "RFPO-6718-V40027-2",
+      "POType": "Change Order",
+      "PODate": "2025-07-03 00:00:00",
+      "SupplierName": "Isam Kabbani Trading LLC",
+      "MaterialCode": "Various",
+      "POValue": 7923.57,
+      "Currency": "AED",
+      "POValueUSD": 2157.59
+    },
+    {
+      "PONumber": "RFPO-1005-V7232-1",
+      "POType": "Base",
+      "PODate": "2025-07-03 00:00:00",
+      "SupplierName": "ASTRONERGY NEW ENERGY TECHNOLOGY(SINGAPORE)PTE.LTD.",
+      "MaterialCode": "Various",
+      "POValue": 70848.0,
+      "Currency": "USD",
+      "POValueUSD": 70848.0
+    },
+    {
+      "PONumber": "RFPO-6542-V40039-1",
+      "POType": "Base",
+      "PODate": "2025-07-03 00:00:00",
+      "SupplierName": "H&M Metal Crafters, LLC",
+      "MaterialCode": "Various",
+      "POValue": 1668.0,
+      "Currency": "USD",
+      "POValueUSD": 1668.0
+    },
+    {
+      "PONumber": "RFPO-6852-V40027-2",
+      "POType": "Change Order",
+      "PODate": "2025-07-03 00:00:00",
+      "SupplierName": "Isam Kabbani Trading LLC",
+      "MaterialCode": "Various",
+      "POValue": 5070.0,
+      "Currency": "AED",
+      "POValueUSD": 1380.56
+    },
+    {
+      "PONumber": "RFPO-6705-V40104-1",
+      "POType": "Base",
+      "PODate": "2025-07-03 00:00:00",
+      "SupplierName": "American International Supply Inc.",
+      "MaterialCode": "Various",
+      "POValue": 33064.51,
+      "Currency": "USD",
+      "POValueUSD": 33064.51
+    },
+    {
+      "PONumber": "RFPO-7139-V40028-1",
+      "POType": "Base",
+      "PODate": "2025-07-02 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 4133.48,
+      "Currency": "USD",
+      "POValueUSD": 4133.48
+    },
+    {
+      "PONumber": "RFPO-6705-V40103-1",
+      "POType": "Base",
+      "PODate": "2025-07-02 00:00:00",
+      "SupplierName": "Dateline Exports Inc.",
+      "MaterialCode": "Various",
+      "POValue": 2495.13,
+      "Currency": "USD",
+      "POValueUSD": 2495.13
+    },
+    {
+      "PONumber": "RFPO-7212-V40002-1",
+      "POType": "Base",
+      "PODate": "2025-07-02 00:00:00",
+      "SupplierName": "T S S TRADING L.L.C",
+      "MaterialCode": "Various",
+      "POValue": 5500.0,
+      "Currency": "AED",
+      "POValueUSD": 1497.65
+    },
+    {
+      "PONumber": "RFPO-7139-V40027-1",
+      "POType": "Base",
+      "PODate": "2025-07-02 00:00:00",
+      "SupplierName": "Kelly & Hayes Electrical Industrial & Plumbing Supplies",
+      "MaterialCode": "Various",
+      "POValue": 875.9,
+      "Currency": "USD",
+      "POValueUSD": 875.9
+    },
+    {
+      "PONumber": "RFPO-6705-V40079-2",
+      "POType": "Change Order",
+      "PODate": "2025-07-02 00:00:00",
+      "SupplierName": "The Quikrete Companies",
+      "MaterialCode": "Various",
+      "POValue": 78045.42,
+      "Currency": "USD",
+      "POValueUSD": 78045.42
+    },
+    {
+      "PONumber": "RFPO-6718-V40030-1",
+      "POType": "Base",
+      "PODate": "2025-07-02 00:00:00",
+      "SupplierName": "Jet Fuel Specialists LLC",
+      "MaterialCode": "Various",
+      "POValue": 13538.79,
+      "Currency": "USD",
+      "POValueUSD": 13538.79
+    },
+    {
+      "PONumber": "RFPO-6718-V40029-1",
+      "POType": "Base",
+      "PODate": "2025-07-02 00:00:00",
+      "SupplierName": "Jet Fuel Specialists LLC",
+      "MaterialCode": "Various",
+      "POValue": 65019.91,
+      "Currency": "USD",
+      "POValueUSD": 65019.91
+    },
+    {
+      "PONumber": "RFPO-6705-E6819-1",
+      "POType": "Base",
+      "PODate": "2025-07-02 00:00:00",
+      "SupplierName": "WESCO Distribution Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 8087.269982,
+      "Currency": "USD",
+      "POValueUSD": 8087.27
+    },
+    {
+      "PONumber": "RFPO-7139-E6807-1",
+      "POType": "Base",
+      "PODate": "2025-07-02 00:00:00",
+      "SupplierName": "WESCO Distribution Inc",
+      "MaterialCode": "Electrical",
+      "POValue": 2804.0,
+      "Currency": "USD",
+      "POValueUSD": 2804.0
+    },
+    {
+      "PONumber": "RFPO-7139-V40026-1",
+      "POType": "Base",
+      "PODate": "2025-07-01 00:00:00",
+      "SupplierName": "HOME DEPOT USA",
+      "MaterialCode": "Various",
+      "POValue": 5015.3,
+      "Currency": "USD",
+      "POValueUSD": 5015.3
+    },
+    {
+      "PONumber": "RFPO-5829-V40033-1",
+      "POType": "Base",
+      "PODate": "2025-07-01 00:00:00",
+      "SupplierName": "AKSHTECH TRADING W.L.L",
+      "MaterialCode": "Various",
+      "POValue": 3900.0,
+      "Currency": "BHD",
+      "POValueUSD": 3900.0
+    },
+    {
+      "PONumber": "RFPO-7208-V40014-1",
+      "POType": "Base",
+      "PODate": "2025-07-01 00:00:00",
+      "SupplierName": "Leminar Air Conditioning Industries L.L.C",
+      "MaterialCode": "Various",
+      "POValue": 64412.4568,
+      "Currency": "USD",
+      "POValueUSD": 64412.46
+    },
+    {
+      "PONumber": "RFPO-6705-E6818-1",
+      "POType": "Base",
+      "PODate": "2025-07-01 00:00:00",
+      "SupplierName": "TIC LIGHT ELECTRICAL CORP",
+      "MaterialCode": "Electrical",
+      "POValue": 1582.0,
+      "Currency": "USD",
+      "POValueUSD": 1582.0
+    },
+    {
+      "PONumber": "RFPO-6718-V40028-1",
+      "POType": "Base",
+      "PODate": "2025-07-01 00:00:00",
+      "SupplierName": "Hidayath Heavy Industry LLC",
+      "MaterialCode": "Various",
+      "POValue": 3497.0,
+      "Currency": "USD",
+      "POValueUSD": 3497.0
+    },
+    {
+      "PONumber": "RFPO-5532-S9084-1",
+      "POType": "Base",
+      "PODate": "2025-07-01 00:00:00",
+      "SupplierName": "SUMMIT FIRE CONSULTING (SFC)",
+      "MaterialCode": "Services",
+      "POValue": 10650.0,
+      "Currency": "USD",
+      "POValueUSD": 10650.0
+    },
+    {
+      "PONumber": "RFPO-5532-M4037-1",
+      "POType": "Base",
+      "PODate": "2025-06-30 00:00:00",
+      "SupplierName": "Evangel International Machinery Ltd.",
+      "MaterialCode": "Mechanical",
+      "POValue": 46852.0,
+      "Currency": "USD",
+      "POValueUSD": 46852.0
+    },
+    {
+      "PONumber": "RFPO-7208-V40013-1",
+      "POType": "Base",
+      "PODate": "2025-06-30 00:00:00",
+      "SupplierName": "AL BAHRI AND AL MAZROEY TRADING COMPANY - L.L.C",
+      "MaterialCode": "Various",
+      "POValue": 207794.81,
+      "Currency": "AED",
+      "POValueUSD": 56582.53
+    },
+    {
+      "PONumber": "RFPO-7027-V40009-1",
+      "POType": "Base",
+      "PODate": "2025-06-30 00:00:00",
+      "SupplierName": "ODORES METAL LLC",
+      "MaterialCode": "Various",
+      "POValue": 3991.14,
+      "Currency": "USD",
+      "POValueUSD": 3991.14
+    },
+    {
+      "PONumber": "RFPO-6705-V40101-1",
+      "POType": "Base",
+      "PODate": "2025-06-30 00:00:00",
+      "SupplierName": "Tsang Brothers Corporation",
+      "MaterialCode": "Various",
+      "POValue": 490.0,
+      "Currency": "USD",
+      "POValueUSD": 490.0
+    },
+    {
+      "PONumber": "RFPO-7208-V40012-1",
+      "POType": "Base",
+      "PODate": "2025-06-26 00:00:00",
+      "SupplierName": "Solatube International, Inc.",
+      "MaterialCode": "Various",
+      "POValue": 39631.78,
+      "Currency": "USD",
+      "POValueUSD": 39631.78
+    },
+    {
+      "PONumber": "RFPO-6705-V40100-1",
+      "POType": "Base",
+      "PODate": "2025-06-26 00:00:00",
+      "SupplierName": "HOLBROOK PIPE SUPPLY INC.",
+      "MaterialCode": "Various",
+      "POValue": 4457.58,
+      "Currency": "USD",
+      "POValueUSD": 4457.58
+    },
+    {
+      "PONumber": "RFPO-5683-O1-1",
+      "POType": "Base",
+      "PODate": "2025-06-26 00:00:00",
+      "SupplierName": "TECHTRADE MIDDLE EAST",
+      "MaterialCode": "Office Assets",
+      "POValue": 2150.0,
+      "Currency": "USD",
+      "POValueUSD": 2150.0
+    },
+    {
+      "PONumber": "RFPO-6680-A5201-1",
+      "POType": "Base",
+      "PODate": "2025-06-25 00:00:00",
+      "SupplierName": "Lakshmi Metal Tech LLC",
+      "MaterialCode": "Architectural",
+      "POValue": 2850.0,
+      "Currency": "AED",
+      "POValueUSD": 776.05
+    }
+  ],
+  "poTypeSummary": [
+    {
+      "POType": "Base",
+      "Count": 3221,
+      "TotalValueUSD": 385487420.62
+    },
+    {
+      "POType": "Change Order",
+      "Count": 220,
+      "TotalValueUSD": 24252233.0
+    },
+    {
+      "POType": "Change Order 10",
+      "Count": 1,
+      "TotalValueUSD": 8169.0
+    },
+    {
+      "POType": "Change Order 11",
+      "Count": 1,
+      "TotalValueUSD": 1123.24
+    },
+    {
+      "POType": "Change Order 12",
+      "Count": 1,
+      "TotalValueUSD": 13196.2
+    },
+    {
+      "POType": "Change Order 13",
+      "Count": 1,
+      "TotalValueUSD": 10424.05
+    },
+    {
+      "POType": "Change Order 14",
+      "Count": 1,
+      "TotalValueUSD": 3781.84
+    },
+    {
+      "POType": "Change Order 16",
+      "Count": 1,
+      "TotalValueUSD": 6834.19
+    },
+    {
+      "POType": "Change Order 17",
+      "Count": 1,
+      "TotalValueUSD": 2623.61
+    },
+    {
+      "POType": "Change Order 18",
+      "Count": 1,
+      "TotalValueUSD": 3935.42
+    },
+    {
+      "POType": "Change Order 19",
+      "Count": 1,
+      "TotalValueUSD": 8158.11
+    },
+    {
+      "POType": "Change Order 3",
+      "Count": 46,
+      "TotalValueUSD": 4656706.53
+    },
+    {
+      "POType": "Change Order 4",
+      "Count": 17,
+      "TotalValueUSD": 634713.77
+    },
+    {
+      "POType": "Change Order 5",
+      "Count": 6,
+      "TotalValueUSD": 279693.68999999994
+    },
+    {
+      "POType": "Change Order 6",
+      "Count": 3,
+      "TotalValueUSD": 626035.8200000001
+    },
+    {
+      "POType": "Change Order 7",
+      "Count": 1,
+      "TotalValueUSD": 8054.63
+    },
+    {
+      "POType": "Change Order 8",
+      "Count": 1,
+      "TotalValueUSD": 5446.0
+    },
+    {
+      "POType": "Change Order 9",
+      "Count": 1,
+      "TotalValueUSD": 7036.23
+    },
+    {
+      "POType": "Unknown",
+      "Count": 14,
+      "TotalValueUSD": 5884431.550000001
+    }
+  ],
+  "materialSpend": [
+    {
+      "MaterialCode": "Architectural",
+      "PONumber": 114,
+      "POValueUSD": 5980584.43
+    },
+    {
+      "MaterialCode": "Chemicals",
+      "PONumber": 50,
+      "POValueUSD": 3077779.02
+    },
+    {
+      "MaterialCode": "Electrical",
+      "PONumber": 377,
+      "POValueUSD": 28158158.13
+    },
+    {
+      "MaterialCode": "Fire",
+      "PONumber": 26,
+      "POValueUSD": 78480.76000000001
+    },
+    {
+      "MaterialCode": "Logistics",
+      "PONumber": 4,
+      "POValueUSD": 42766.55
+    },
+    {
+      "MaterialCode": "Mechanical",
+      "PONumber": 343,
+      "POValueUSD": 30938567.02
+    },
+    {
+      "MaterialCode": "Office Assets",
+      "PONumber": 144,
+      "POValueUSD": 2893522.85
+    },
+    {
+      "MaterialCode": "Protection",
+      "PONumber": 5,
+      "POValueUSD": 3222.94
+    },
+    {
+      "MaterialCode": "Rental",
+      "PONumber": 40,
+      "POValueUSD": 1221961.69
+    },
+    {
+      "MaterialCode": "Services",
+      "PONumber": 165,
+      "POValueUSD": 4502273.64
+    },
+    {
+      "MaterialCode": "Tools",
+      "PONumber": 33,
+      "POValueUSD": 349994.96
+    },
+    {
+      "MaterialCode": "Unknown",
+      "PONumber": 424,
+      "POValueUSD": 49663656.93
+    },
+    {
+      "MaterialCode": "Various",
+      "PONumber": 1814,
+      "POValueUSD": 294989048.58
+    }
+  ]
+}

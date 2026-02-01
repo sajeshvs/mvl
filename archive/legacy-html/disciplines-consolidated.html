@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MVL Supply Intel Hub – Disciplines Consolidated</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+      color: #323130;
+      overflow-x: hidden;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #0f3d5e 0%, #1a5a8a 100%);
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-left h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .header-left p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    .header-right strong {
+      font-size: 13px;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      background: white;
+      padding: 16px 24px;
+      border-bottom: 2px solid #e1dfdd;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      min-width: 150px;
+    }
+
+    .filter-item label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #605e5c;
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-item select {
+      padding: 8px 10px;
+      border: 2px solid #d2d0ce;
+      border-radius: 4px;
+      font-size: 13px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .filter-item select:hover {
+      border-color: #1a5a8a;
+      background: #f0f7ff;
+    }
+
+    .filter-item select:focus {
+      outline: none;
+      border-color: #1a5a8a;
+      box-shadow: 0 0 0 3px rgba(26, 90, 138, 0.1);
+    }
+
+    /* Main Content */
+    .content {
+      flex: 1;
+      padding: 20px;
+    }
+
+    /* KPI Row */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #0f3d5e 0%, #1a5a8a 100%);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #605e5c;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #0f3d5e;
+      margin-bottom: 6px;
+    }
+
+    .kpi-subtext {
+      font-size: 12px;
+      color: #605e5c;
+      font-weight: 600;
+    }
+
+    /* Discipline Cards */
+    .discipline-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .discipline-card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+      border-left: 4px solid #0f3d5e;
+      cursor: pointer;
+    }
+
+    .discipline-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+
+    .discipline-card.active {
+      background: linear-gradient(135deg, #0f3d5e 0%, #1a5a8a 100%);
+      color: white;
+      border-left-color: #faa916;
+    }
+
+    .discipline-name {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .discipline-value {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .discipline-count {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    /* Chart Grid */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .chart-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #323130;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #0f3d5e;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 280px;
+      max-height: 280px;
+      width: 100%;
+      background: #fafbfc;
+      border-radius: 6px;
+      padding: 10px;
+    }
+
+    .chart {
+      width: 100% !important;
+      height: 260px !important;
+      max-height: 260px;
+    }
+
+    /* MEP Breakdown */
+    .mep-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .mep-card {
+      background: linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 100%);
+      border-left: 4px solid #0078d4;
+      padding: 14px;
+      border-radius: 6px;
+    }
+
+    .mep-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #605e5c;
+      margin-bottom: 6px;
+    }
+
+    .mep-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0078d4;
+    }
+
+    /* Tables */
+    .table-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th {
+      background: linear-gradient(135deg, #f3f2f1 0%, #e8e6e4 100%);
+      padding: 10px 8px;
+      text-align: left;
+      font-weight: 700;
+      color: #323130;
+      border-bottom: 2px solid #d2d0ce;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #edebe9;
+    }
+
+    tr:hover {
+      background: #f0f7ff;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #edebe9;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0f3d5e 0%, #1a5a8a 100%);
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    .data-updated {
+      text-align: center;
+      padding: 8px;
+      background: #f0f7ff;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #0f3d5e;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1600px) {
+      .discipline-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 1200px) {
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .discipline-grid { grid-template-columns: repeat(2, 1fr); }
+      .chart-grid { grid-template-columns: 1fr; }
+      .table-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1>🏗️ Disciplines Consolidated</h1>
+        <p>Budget, Actual Cost, and Variance Tracking Across 10 Disciplines</p>
+      </div>
+      <div class="header-right">
+        <div><strong>MVL Supply Intel Hub</strong></div>
+        <div id="lastRefresh">Last Refresh: 23 Jan 2026 06:08 AM</div>
+        <div id="headerFilterStatus">Discipline: All · Entity: All</div>
+      </div>
+    </header>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-item">
+        <label>Discipline</label>
+        <select id="filterDiscipline" onchange="applyFilters()">
+          <option value="All">All Disciplines</option>
+          <option value="Mechanical">Mechanical</option>
+          <option value="Electrical">Electrical</option>
+          <option value="Structural">Structural</option>
+          <option value="MEP">MEP</option>
+          <option value="Piping">Piping</option>
+          <option value="Instrumentation">Instrumentation</option>
+          <option value="Civil">Civil</option>
+          <option value="HVAC">HVAC</option>
+          <option value="Insulation">Insulation</option>
+          <option value="Painting">Painting</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Entity</label>
+        <select id="filterEntity" onchange="applyFilters()">
+          <option value="All">All</option>
+          <option value="MVL Abu Dhabi">MVL Abu Dhabi</option>
+          <option value="MVL Dubai">MVL Dubai</option>
+          <option value="MVL Energy">MVL Energy</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Project</label>
+        <select id="filterProject" onchange="applyFilters()">
+          <option value="All">All</option>
+          <option value="PE108">PE108</option>
+          <option value="PX210">PX210</option>
+          <option value="LK411">LK411</option>
+          <option value="AD300">AD300</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Year</label>
+        <select id="filterYear" onchange="applyFilters()">
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="All">All Years</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <!-- KPI Cards -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Budget</div>
+          <div class="kpi-value" id="kpiBudget">$8.5M</div>
+          <div class="kpi-subtext">Across all disciplines</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Actual Spend</div>
+          <div class="kpi-value" id="kpiActual">$7.2M</div>
+          <div class="kpi-subtext" id="kpiUtilization">85% utilized</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Variance</div>
+          <div class="kpi-value" id="kpiVariance">-$1.3M</div>
+          <div class="kpi-subtext">Under budget</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Active Projects</div>
+          <div class="kpi-value" id="kpiProjects">4</div>
+          <div class="kpi-subtext" id="kpiSuppliers">12 suppliers</div>
+        </div>
+      </div>
+
+      <!-- Discipline Cards -->
+      <div class="discipline-grid" id="disciplineCards">
+        <!-- Generated dynamically -->
+      </div>
+
+      <!-- Charts -->
+      <div class="chart-grid">
+        <div class="panel">
+          <div class="chart-title">Budget vs Actual by Discipline</div>
+          <div class="chart-wrapper">
+            <canvas id="budgetChart" class="chart"></canvas>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="chart-title">Material Distribution</div>
+          <div class="chart-wrapper">
+            <canvas id="materialChart" class="chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEP Breakdown (shown when MEP is selected) -->
+      <div class="panel" id="mepPanel" style="display: none; margin-bottom: 20px;">
+        <div class="chart-title">MEP Breakdown</div>
+        <div class="mep-grid">
+          <div class="mep-card">
+            <div class="mep-label">Mechanical</div>
+            <div class="mep-value" id="mepMechanical">$485K</div>
+          </div>
+          <div class="mep-card">
+            <div class="mep-label">Electrical</div>
+            <div class="mep-value" id="mepElectrical">$612K</div>
+          </div>
+          <div class="mep-card">
+            <div class="mep-label">Plumbing</div>
+            <div class="mep-value" id="mepPlumbing">$358K</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tables -->
+      <div class="table-grid">
+        <div class="panel">
+          <div class="chart-title">Safety & Compliance Metrics</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Discipline</th>
+                <th>Compliance</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="safetyTableBody"></tbody>
+          </table>
+          <div class="data-updated">✓ Updated from latest audits</div>
+        </div>
+
+        <div class="panel">
+          <div class="chart-title">Procurement Vendor Management</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Supplier</th>
+                <th>Disciplines</th>
+                <th>Performance</th>
+              </tr>
+            </thead>
+            <tbody id="vendorTableBody"></tbody>
+          </table>
+          <div class="data-updated" id="resultCount">✓ Showing active vendors</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Data Model
+    const rawData = {
+      disciplines: [
+        { name: "Mechanical", budget: 1250000, actual: 1050000, pos: 28, materials: 15 },
+        { name: "Electrical", budget: 1450000, actual: 1280000, pos: 35, materials: 22 },
+        { name: "Structural", budget: 980000, actual: 850000, pos: 18, materials: 12 },
+        { name: "MEP", budget: 1550000, actual: 1455000, pos: 42, materials: 28 },
+        { name: "Piping", budget: 920000, actual: 780000, pos: 22, materials: 18 },
+        { name: "Instrumentation", budget: 780000, actual: 680000, pos: 16, materials: 14 },
+        { name: "Civil", budget: 850000, actual: 720000, pos: 19, materials: 11 },
+        { name: "HVAC", budget: 620000, actual: 580000, pos: 14, materials: 9 },
+        { name: "Insulation", budget: 420000, actual: 380000, pos: 12, materials: 7 },
+        { name: "Painting", budget: 180000, actual: 160000, pos: 8, materials: 5 }
+      ],
+      materials: [
+        { discipline: "Mechanical", type: "Valves", value: 320000 },
+        { discipline: "Mechanical", type: "Pumps", value: 280000 },
+        { discipline: "Mechanical", type: "Motors", value: 250000 },
+        { discipline: "Electrical", type: "Cables", value: 420000 },
+        { discipline: "Electrical", type: "Switchgear", value: 380000 },
+        { discipline: "Electrical", type: "Control Systems", value: 280000 },
+        { discipline: "Structural", type: "Steel", value: 480000 },
+        { discipline: "Structural", type: "Beams", value: 220000 },
+        { discipline: "MEP", type: "HVAC Units", value: 485000 },
+        { discipline: "MEP", type: "Electrical Panels", value: 612000 },
+        { discipline: "MEP", type: "Plumbing", value: 358000 }
+      ],
+      safety: [
+        { discipline: "Mechanical", compliance: 95, status: "Compliant" },
+        { discipline: "Electrical", compliance: 98, status: "Compliant" },
+        { discipline: "Structural", compliance: 92, status: "Compliant" },
+        { discipline: "MEP", compliance: 97, status: "Compliant" },
+        { discipline: "Piping", compliance: 88, status: "Review" },
+        { discipline: "Instrumentation", compliance: 94, status: "Compliant" },
+        { discipline: "Civil", compliance: 90, status: "Compliant" },
+        { discipline: "HVAC", compliance: 96, status: "Compliant" },
+        { discipline: "Insulation", compliance: 85, status: "Review" },
+        { discipline: "Painting", compliance: 91, status: "Compliant" }
+      ],
+      vendors: [
+        { supplier: "L&T ECC", disciplines: "Mechanical, Structural", performance: 92 },
+        { supplier: "Samsung", disciplines: "Electrical, MEP", performance: 95 },
+        { supplier: "Siemens", disciplines: "Electrical, Instrumentation", performance: 97 },
+        { supplier: "ABB", disciplines: "Mechanical, Electrical", performance: 89 },
+        { supplier: "Honeywell", disciplines: "HVAC, Instrumentation", performance: 93 }
+      ]
+    };
+
+    let budgetChart, materialChart;
+    let selectedDiscipline = "All";
+
+    function applyFilters() {
+      selectedDiscipline = document.getElementById('filterDiscipline').value;
+      const entity = document.getElementById('filterEntity').value;
+      const project = document.getElementById('filterProject').value;
+      const year = document.getElementById('filterYear').value;
+
+      // Filter disciplines
+      let filtered = rawData.disciplines;
+      if (selectedDiscipline !== "All") {
+        filtered = filtered.filter(d => d.name === selectedDiscipline);
+      }
+
+      // Update KPIs
+      const totalBudget = filtered.reduce((sum, d) => sum + d.budget, 0);
+      const totalActual = filtered.reduce((sum, d) => sum + d.actual, 0);
+      const variance = totalBudget - totalActual;
+      const utilization = totalBudget > 0 ? ((totalActual / totalBudget) * 100).toFixed(0) : 0;
+
+      document.getElementById('kpiBudget').textContent = `$${(totalBudget / 1000000).toFixed(1)}M`;
+      document.getElementById('kpiActual').textContent = `$${(totalActual / 1000000).toFixed(1)}M`;
+      document.getElementById('kpiVariance').textContent = `${variance >= 0 ? '+' : '-'}$${Math.abs(variance / 1000000).toFixed(1)}M`;
+      document.getElementById('kpiUtilization').textContent = `${utilization}% utilized`;
+
+      // Show/hide MEP panel
+      document.getElementById('mepPanel').style.display = selectedDiscipline === "MEP" ? "block" : "none";
+
+      // Update discipline cards
+      updateDisciplineCards(filtered);
+
+      // Update charts
+      updateBudgetChart(filtered);
+      updateMaterialChart(selectedDiscipline);
+
+      // Update tables
+      updateSafetyTable(selectedDiscipline);
+      updateVendorTable();
+
+      // Update status
+      document.getElementById('headerFilterStatus').textContent = `Discipline: ${selectedDiscipline} · Entity: ${entity}`;
+    }
+
+    function updateDisciplineCards(disciplines) {
+      const container = document.getElementById('disciplineCards');
+      container.innerHTML = disciplines.map(d => {
+        const variance = ((d.actual / d.budget) * 100).toFixed(0);
+        return `
+          <div class="discipline-card ${d.name === selectedDiscipline ? 'active' : ''}" onclick="selectDiscipline('${d.name}')">
+            <div class="discipline-name">${d.name}</div>
+            <div class="discipline-value">$${(d.actual / 1000).toFixed(0)}K</div>
+            <div class="discipline-count">${d.pos} POs · ${variance}% utilized</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectDiscipline(name) {
+      document.getElementById('filterDiscipline').value = name;
+      applyFilters();
+    }
+
+    function updateBudgetChart(disciplines) {
+      if (budgetChart) budgetChart.destroy();
+
+      const ctx = document.getElementById('budgetChart').getContext('2d');
+      budgetChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: disciplines.map(d => d.name),
+          datasets: [
+            {
+              label: 'Budget',
+              data: disciplines.map(d => d.budget),
+              backgroundColor: '#8a8886',
+              borderRadius: 6
+            },
+            {
+              label: 'Actual',
+              data: disciplines.map(d => d.actual),
+              backgroundColor: '#0f3d5e',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { padding: 12, font: { size: 11, weight: '700' } }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 11, weight: '600' } }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: '#f3f2f1' },
+              ticks: {
+                callback: function(value) { return '$' + (value/1000) + 'K'; },
+                font: { size: 11, weight: '600' }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function updateMaterialChart(discipline) {
+      let materials = rawData.materials;
+      if (discipline !== "All") {
+        materials = materials.filter(m => m.discipline === discipline);
+      }
+
+      const labels = materials.map(m => m.type);
+      const values = materials.map(m => m.value);
+      const colors = ['#0f3d5e', '#1a5a8a', '#0078d4', '#d96f3c', '#107c10', '#faa916', '#a80000'];
+
+      if (materialChart) materialChart.destroy();
+
+      const ctx = document.getElementById('materialChart').getContext('2d');
+      materialChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: colors,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { padding: 8, font: { size: 10, weight: '700' } }
+            }
+          }
+        }
+      });
+    }
+
+    function updateSafetyTable(discipline) {
+      let safety = rawData.safety;
+      if (discipline !== "All") {
+        safety = safety.filter(s => s.discipline === discipline);
+      }
+
+      document.getElementById('safetyTableBody').innerHTML = safety.map(s => `
+        <tr>
+          <td><strong>${s.discipline}</strong></td>
+          <td>
+            ${s.compliance}%
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${s.compliance}%"></div>
+            </div>
+          </td>
+          <td><span style="color: ${s.status === 'Compliant' ? '#107c10' : '#faa916'}; font-weight: 700;">${s.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function updateVendorTable() {
+      document.getElementById('vendorTableBody').innerHTML = rawData.vendors.map(v => `
+        <tr>
+          <td><strong>${v.supplier}</strong></td>
+          <td style="font-size: 11px;">${v.disciplines}</td>
+          <td>
+            ${v.performance}%
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${v.performance}%"></div>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Initialize
+    applyFilters();
+
+    // Update timestamp
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById('lastRefresh').textContent = 
+        `Last Refresh: ${now.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}`;
+    }, 60000);
+  </script>
+</body>
+</html>

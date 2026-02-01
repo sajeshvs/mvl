@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MVL Supply Intel Hub – Supplier Marketplace</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+      color: #323130;
+      overflow-x: hidden;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #004578 0%, #0064a3 100%);
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-left h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .header-left p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    .header-right strong {
+      font-size: 13px;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      background: white;
+      padding: 16px 24px;
+      border-bottom: 2px solid #e1dfdd;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      min-width: 150px;
+    }
+
+    .filter-item label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #605e5c;
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-item select {
+      padding: 8px 10px;
+      border: 2px solid #d2d0ce;
+      border-radius: 4px;
+      font-size: 13px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .filter-item select:hover {
+      border-color: #0078d4;
+      background: #f8f9fa;
+    }
+
+    .filter-item select:focus {
+      outline: none;
+      border-color: #0078d4;
+      box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+    }
+
+    /* Main Content */
+    .content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 360px 1fr 420px;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* Left Panel - Supplier Profile */
+    .supplier-profile h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #004578;
+      margin-bottom: 6px;
+    }
+
+    .supplier-type {
+      font-size: 12px;
+      color: #605e5c;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .stars {
+      color: #faa916;
+      font-size: 16px;
+      letter-spacing: 2px;
+    }
+
+    .rating-value {
+      font-size: 13px;
+      color: #323130;
+      font-weight: 700;
+      background: #fff4ce;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    .contact-info {
+      background: linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 100%);
+      border-left: 4px solid #0078d4;
+      padding: 12px;
+      margin: 14px 0;
+      font-size: 12px;
+      line-height: 1.8;
+      border-radius: 4px;
+    }
+
+    .contact-info strong {
+      color: #004578;
+    }
+
+    .kpi-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .kpi-card {
+      background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+      color: white;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,120,212,0.3);
+      transition: transform 0.2s;
+    }
+
+    .kpi-card:hover {
+      transform: scale(1.05);
+    }
+
+    .kpi-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #323130;
+      margin: 18px 0 10px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid #0078d4;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    th {
+      background: linear-gradient(135deg, #f3f2f1 0%, #e8e6e4 100%);
+      padding: 10px 8px;
+      text-align: left;
+      font-weight: 700;
+      color: #323130;
+      border-bottom: 2px solid #d2d0ce;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #edebe9;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    /* Middle Panel - Charts */
+    .chart-container {
+      margin-bottom: 24px;
+    }
+
+    .chart-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #323130;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid #0078d4;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 300px;
+      max-height: 300px;
+      width: 100%;
+      background: #fafbfc;
+      border-radius: 6px;
+      padding: 10px;
+    }
+
+    .chart {
+      width: 100% !important;
+      height: 280px !important;
+      max-height: 280px;
+    }
+
+    /* Right Panel - Workbench */
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .status-quotation {
+      background: #e1dfdd;
+      color: #323130;
+    }
+
+    .status-waiting {
+      background: #fff4ce;
+      color: #7a5a00;
+    }
+
+    .status-order {
+      background: #dff6dd;
+      color: #107c10;
+    }
+
+    .status-cancelled {
+      background: #fde7e9;
+      color: #a80000;
+    }
+
+    .workbench-table {
+      font-size: 11px;
+    }
+
+    .workbench-table td {
+      padding: 8px 6px;
+    }
+
+    .data-updated {
+      text-align: center;
+      padding: 8px;
+      background: #e8f4ff;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #004578;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1400px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1>📊 Supplier Marketplace</h1>
+        <p>Quotation → PO Pipeline by Supplier and Material</p>
+      </div>
+      <div class="header-right">
+        <div><strong>MVL Supply Intel Hub</strong></div>
+        <div id="lastRefresh">Last Refresh: 23 Jan 2026 06:08 AM</div>
+        <div id="headerFilterStatus">Entity: All · Currency: USD</div>
+      </div>
+    </header>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-item">
+        <label>Entity</label>
+        <select id="filterEntity" onchange="applyFilters()">
+          <option value="All">All</option>
+          <option value="MVL Abu Dhabi">MVL Abu Dhabi</option>
+          <option value="MVL Dubai">MVL Dubai</option>
+          <option value="MVL Energy">MVL Energy</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Supplier / Client</label>
+        <select id="filterSupplier" onchange="applyFilters()">
+          <option value="All">All</option>
+          <option value="L&T ECC">L&T Engineering & Construction</option>
+          <option value="Samsung">Samsung Engineering</option>
+          <option value="Siemens">Siemens</option>
+          <option value="ABB">ABB</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Quotation Type</label>
+        <select id="filterQuotType" onchange="applyFilters()">
+          <option value="All">All</option>
+          <option value="IQ">IQ</option>
+          <option value="RFQ">RFQ</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Status</label>
+        <select id="filterStatus" onchange="applyFilters()">
+          <option value="All">All</option>
+          <option value="Quotation">Quotation</option>
+          <option value="Waiting">Waiting</option>
+          <option value="Order">Order</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Material Type</label>
+        <select id="filterMaterial" onchange="applyFilters()">
+          <option value="All">All</option>
+          <option value="Valves">Valves</option>
+          <option value="Cables">Cables</option>
+          <option value="Steel">Steel</option>
+          <option value="HVAC">HVAC</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Discipline</label>
+        <select id="filterDiscipline" onchange="applyFilters()">
+          <option value="All">All</option>
+          <option value="Mechanical">Mechanical</option>
+          <option value="Electrical">Electrical</option>
+          <option value="Structural">Structural</option>
+          <option value="MEP">MEP</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <!-- Left Panel: Supplier Profile -->
+      <div class="panel supplier-profile">
+        <h2 id="supplierName">L&T Engineering & Construction</h2>
+        <div class="supplier-type" id="supplierType">Type: Supplier · Primary Entity: MVL Abu Dhabi</div>
+        <div class="rating">
+          <span class="stars">★★★★☆</span>
+          <span class="rating-value" id="supplierRating">4.3/5.0</span>
+        </div>
+
+        <div class="contact-info">
+          <div><strong>Contact:</strong> <span id="contactName">Arun Kumar</span></div>
+          <div><strong>Email:</strong> <span id="contactEmail">arun.kumar@lntecc.com</span></div>
+          <div><strong>Phone:</strong> <span id="contactPhone">+971 2 555 1234</span></div>
+        </div>
+
+        <div class="kpi-cards">
+          <div class="kpi-card">
+            <div class="kpi-label">Quotations</div>
+            <div class="kpi-value" id="kpiQuotations">127</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">POs</div>
+            <div class="kpi-value" id="kpiPOs">53</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Win Rate</div>
+            <div class="kpi-value" id="kpiWinRate">41%</div>
+          </div>
+        </div>
+
+        <div class="section-title">Approved Materials & Disciplines</div>
+        <table id="materialsTable">
+          <thead>
+            <tr>
+              <th>Material Type</th>
+              <th>Discipline</th>
+              <th>Lead Time</th>
+              <th>Currency</th>
+            </tr>
+          </thead>
+          <tbody id="materialsBody">
+          </tbody>
+        </table>
+        <div class="data-updated">✓ Data updates dynamically based on filters</div>
+      </div>
+
+      <!-- Middle Panel: Charts -->
+      <div class="panel">
+        <div class="chart-container">
+          <div class="chart-title">Quotation Funnel</div>
+          <div class="chart-wrapper">
+            <canvas id="funnelChart" class="chart"></canvas>
+          </div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">Quote to PO Timeline</div>
+          <div class="chart-wrapper">
+            <canvas id="timelineChart" class="chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Marketplace Workbench -->
+      <div class="panel">
+        <div class="section-title">Marketplace Workbench</div>
+        <table class="workbench-table" id="workbenchTable">
+          <thead>
+            <tr>
+              <th>Quote/PO</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Project</th>
+              <th>Material</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody id="workbenchBody">
+          </tbody>
+        </table>
+        <div class="data-updated" id="resultCount">Showing filtered results</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Data Model - Based on reference files
+    const rawData = {
+      suppliers: [
+        { id: 1, name: "L&T ECC", fullName: "L&T Engineering & Construction", type: "Supplier", entity: "MVL Abu Dhabi", rating: 4.3, contact: "Arun Kumar", email: "arun.kumar@lntecc.com", phone: "+971 2 555 1234" },
+        { id: 2, name: "Samsung", fullName: "Samsung Engineering", type: "Supplier", entity: "MVL Dubai", rating: 4.5, contact: "Kim Min-ho", email: "minho.kim@samsung.com", phone: "+971 4 333 5678" },
+        { id: 3, name: "Siemens", fullName: "Siemens AG", type: "Supplier", entity: "MVL Energy", rating: 4.7, contact: "Hans Mueller", email: "hans.mueller@siemens.com", phone: "+971 2 444 9012" },
+        { id: 4, name: "ABB", fullName: "ABB Group", type: "Supplier", entity: "MVL Abu Dhabi", rating: 4.2, contact: "Johan Berg", email: "johan.berg@abb.com", phone: "+971 2 555 3456" }
+      ],
+      materials: [
+        { supplier: "L&T ECC", material: "Valves", discipline: "Mechanical", leadTime: "10 weeks", currency: "USD" },
+        { supplier: "L&T ECC", material: "Cables", discipline: "Electrical", leadTime: "6 weeks", currency: "EUR" },
+        { supplier: "L&T ECC", material: "Steel", discipline: "Structural", leadTime: "12 weeks", currency: "USD" },
+        { supplier: "L&T ECC", material: "HVAC", discipline: "MEP", leadTime: "8 weeks", currency: "AED" },
+        { supplier: "Samsung", material: "Cables", discipline: "Electrical", leadTime: "5 weeks", currency: "USD" },
+        { supplier: "Samsung", material: "Control Systems", discipline: "Electrical", leadTime: "10 weeks", currency: "USD" },
+        { supplier: "Siemens", material: "Control Systems", discipline: "Electrical", leadTime: "8 weeks", currency: "EUR" },
+        { supplier: "Siemens", material: "Switchgear", discipline: "Electrical", leadTime: "12 weeks", currency: "EUR" },
+        { supplier: "ABB", material: "Motors", discipline: "Mechanical", leadTime: "6 weeks", currency: "USD" }
+      ],
+      quotations: [
+        { id: "RFP-2026-001", type: "RFQ", status: "Waiting", supplier: "L&T ECC", entity: "MVL Abu Dhabi", project: "PE108", material: "Valves", discipline: "Mechanical", value: 125000, currency: "USD", month: "Jan 26" },
+        { id: "RFPO-2026-001-1", type: "PO (Base)", status: "Order", supplier: "L&T ECC", entity: "MVL Abu Dhabi", project: "PE108", material: "Valves", discipline: "Mechanical", value: 118000, currency: "USD", month: "Jan 26" },
+        { id: "RFP-2026-012", type: "IQ", status: "Quotation", supplier: "L&T ECC", entity: "MVL Dubai", project: "PX210", material: "Cables", discipline: "Electrical", value: 85500, currency: "USD", month: "Jan 26" },
+        { id: "RFP-2025-998", type: "RFQ", status: "Cancelled", supplier: "L&T ECC", entity: "MVL Energy", project: "AD300", material: "Steel", discipline: "Structural", value: 245000, currency: "USD", month: "Dec 25" },
+        { id: "RFPO-2025-998-1", type: "PO (Base)", status: "Order", supplier: "Samsung", entity: "MVL Dubai", project: "LK411", material: "HVAC", discipline: "MEP", value: 342000, currency: "USD", month: "Dec 25" },
+        { id: "RFPO-2025-998-2", type: "PO (Change)", status: "Order", supplier: "Samsung", entity: "MVL Dubai", project: "LK411", material: "HVAC", discipline: "MEP", value: 42000, currency: "USD", month: "Dec 25" },
+        { id: "RFP-2026-024", type: "RFQ", status: "Waiting", supplier: "Siemens", entity: "MVL Energy", project: "PE108", material: "Control Systems", discipline: "Electrical", value: 198000, currency: "USD", month: "Jan 26" },
+        { id: "RFP-2026-031", type: "IQ", status: "Quotation", supplier: "ABB", entity: "MVL Abu Dhabi", project: "PX210", material: "Motors", discipline: "Mechanical", value: 412000, currency: "USD", month: "Jan 26" },
+        { id: "RFP-2025-945", type: "RFQ", status: "Waiting", supplier: "Samsung", entity: "MVL Dubai", project: "LK411", material: "Cables", discipline: "Electrical", value: 156000, currency: "USD", month: "Nov 25" },
+        { id: "RFP-2025-888", type: "IQ", status: "Order", supplier: "Siemens", entity: "MVL Energy", project: "AD300", material: "Switchgear", discipline: "Electrical", value: 275000, currency: "EUR", month: "Oct 25" }
+      ],
+      timeline: {
+        months: ["Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],
+        "L&T ECC": { quotation: [120, 140, 155, 170, 150, 180], po: [60, 85, 90, 110, 95, 130], change: [10, 15, 12, 20, 14, 18] },
+        "Samsung": { quotation: [80, 95, 110, 125, 135, 145], po: [40, 55, 60, 70, 75, 85], change: [8, 12, 10, 15, 12, 16] },
+        "Siemens": { quotation: [100, 115, 130, 140, 155, 170], po: [50, 65, 70, 80, 85, 95], change: [9, 13, 11, 18, 15, 19] },
+        "ABB": { quotation: [70, 85, 95, 105, 115, 125], po: [35, 45, 50, 60, 65, 70], change: [7, 10, 9, 12, 11, 14] }
+      }
+    };
+
+    let funnelChart, timelineChart;
+
+    function applyFilters() {
+      const entity = document.getElementById('filterEntity').value;
+      const supplier = document.getElementById('filterSupplier').value;
+      const quotType = document.getElementById('filterQuotType').value;
+      const status = document.getElementById('filterStatus').value;
+      const material = document.getElementById('filterMaterial').value;
+      const discipline = document.getElementById('filterDiscipline').value;
+
+      // Filter quotations
+      let filtered = rawData.quotations.filter(q => {
+        return (entity === "All" || q.entity === entity) &&
+               (supplier === "All" || q.supplier === supplier) &&
+               (quotType === "All" || q.type.includes(quotType)) &&
+               (status === "All" || q.status === status) &&
+               (material === "All" || q.material === material) &&
+               (discipline === "All" || q.discipline === discipline);
+      });
+
+      // Update supplier profile
+      const selectedSupplier = supplier === "All" ? "L&T ECC" : supplier;
+      updateSupplierProfile(selectedSupplier, filtered);
+
+      // Update charts
+      updateFunnelChart(filtered);
+      updateTimelineChart(selectedSupplier);
+
+      // Update workbench table
+      updateWorkbench(filtered);
+
+      // Update filter status
+      document.getElementById('headerFilterStatus').textContent = `Entity: ${entity} · Currency: USD`;
+      document.getElementById('resultCount').textContent = `✓ Showing ${filtered.length} filtered results`;
+    }
+
+    function updateSupplierProfile(supplierName, filteredQuotations) {
+      const supplier = rawData.suppliers.find(s => s.name === supplierName);
+      if (supplier) {
+        document.getElementById('supplierName').textContent = supplier.fullName;
+        document.getElementById('supplierType').textContent = `Type: ${supplier.type} · Primary Entity: ${supplier.entity}`;
+        document.getElementById('supplierRating').textContent = `${supplier.rating}/5.0`;
+        document.getElementById('contactName').textContent = supplier.contact;
+        document.getElementById('contactEmail').textContent = supplier.email;
+        document.getElementById('contactPhone').textContent = supplier.phone;
+
+        // Update materials table
+        const materials = rawData.materials.filter(m => m.supplier === supplierName);
+        const tbody = document.getElementById('materialsBody');
+        tbody.innerHTML = materials.map(m => `
+          <tr>
+            <td><strong>${m.material}</strong></td>
+            <td>${m.discipline}</td>
+            <td>${m.leadTime}</td>
+            <td>${m.currency}</td>
+          </tr>
+        `).join('');
+
+        // Calculate KPIs from filtered data
+        const supplierQuotations = filteredQuotations.filter(q => q.supplier === supplierName);
+        const orders = supplierQuotations.filter(q => q.status === "Order");
+        const winRate = supplierQuotations.length > 0 ? Math.round((orders.length / supplierQuotations.length) * 100) : 0;
+
+        document.getElementById('kpiQuotations').textContent = supplierQuotations.length;
+        document.getElementById('kpiPOs').textContent = orders.length;
+        document.getElementById('kpiWinRate').textContent = `${winRate}%`;
+      }
+    }
+
+    function updateFunnelChart(data) {
+      const statusCounts = {
+        Quotation: data.filter(d => d.status === "Quotation").length,
+        Waiting: data.filter(d => d.status === "Waiting").length,
+        Order: data.filter(d => d.status === "Order").length,
+        Cancelled: data.filter(d => d.status === "Cancelled").length
+      };
+
+      if (funnelChart) funnelChart.destroy();
+
+      const ctx = document.getElementById('funnelChart').getContext('2d');
+      funnelChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Quotations', 'Waiting', 'Order', 'Cancelled'],
+          datasets: [{
+            label: 'Count',
+            data: [statusCounts.Quotation, statusCounts.Waiting, statusCounts.Order, statusCounts.Cancelled],
+            backgroundColor: ['#8a8886', '#faa916', '#107c10', '#a80000'],
+            borderRadius: 6,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            title: { display: false }
+          },
+          scales: {
+            x: { 
+              beginAtZero: true,
+              grid: { color: '#f3f2f1' },
+              ticks: { font: { size: 11, weight: '600' } }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { size: 12, weight: '700' } }
+            }
+          }
+        }
+      });
+    }
+
+    function updateTimelineChart(supplierName) {
+      const timelineData = rawData.timeline[supplierName] || rawData.timeline["L&T ECC"];
+
+      if (timelineChart) timelineChart.destroy();
+
+      const ctx = document.getElementById('timelineChart').getContext('2d');
+      timelineChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: rawData.timeline.months,
+          datasets: [
+            {
+              label: 'Quotation Value',
+              data: timelineData.quotation,
+              backgroundColor: '#0078d4',
+              borderRadius: 6
+            },
+            {
+              label: 'PO Value',
+              data: timelineData.po,
+              backgroundColor: '#107c10',
+              borderRadius: 6
+            },
+            {
+              label: 'Change Orders',
+              data: timelineData.change,
+              backgroundColor: '#faa916',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { 
+              position: 'bottom',
+              labels: { padding: 12, font: { size: 11, weight: '700' } }
+            }
+          },
+          scales: {
+            x: {
+              stacked: false,
+              grid: { display: false },
+              ticks: { font: { size: 11, weight: '600' } }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: '#f3f2f1' },
+              ticks: {
+                callback: function(value) { return '$' + value + 'K'; },
+                font: { size: 11, weight: '600' }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function updateWorkbench(data) {
+      const tbody = document.getElementById('workbenchBody');
+      tbody.innerHTML = data.map(q => `
+        <tr>
+          <td><strong>${q.id}</strong></td>
+          <td>${q.type}</td>
+          <td><span class="status-badge status-${q.status.toLowerCase()}">${q.status}</span></td>
+          <td>${q.project}</td>
+          <td>${q.material}</td>
+          <td><strong>$${q.value.toLocaleString()}</strong></td>
+        </tr>
+      `).join('');
+    }
+
+    // Initialize
+    applyFilters();
+
+    // Update timestamp every minute
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById('lastRefresh').textContent = 
+        `Last Refresh: ${now.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}`;
+    }, 60000);
+  </script>
+</body>
+</html>

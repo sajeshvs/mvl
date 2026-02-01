@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVL Supply Intel Hub – Global Spend Analysis</title>
+    <link rel="stylesheet" href="../shared/styles.css">
+    <link rel="stylesheet" href="../shared/components/modal.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #d96f3c;
+            --primary-dark: #c55a2b;
+            --primary-light: #f8e8e0;
+            --success-color: #107C10;
+            --warning-color: #FFB900;
+            --danger-color: #D13438;
+            --info-color: #0078D4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f7fa;
+            color: #323130;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #004578 0%, #003359 100%);
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .header-left h1 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .header-left p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .header-right {
+            text-align: right;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .header-right a {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 4px;
+            margin-left: 12px;
+        }
+
+        .header-right a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: white;
+            border-bottom: 2px solid #e1dfdd;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .filter-tier {
+            padding: 10px 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-tier:first-child {
+            background: linear-gradient(135deg, #f8f9fa 0%, #f3f4f6 100%);
+            border-bottom: 1px solid #d2d0ce;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            min-width: 130px;
+        }
+
+        .filter-item label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #605e5c;
+            margin-bottom: 4px;
+        }
+
+        .filter-item select,
+        .filter-item input {
+            padding: 8px 10px;
+            border: 1px solid #d2d0ce;
+            border-radius: 4px;
+            font-size: 12px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .filter-item select:hover,
+        .filter-item input:hover {
+            border-color: var(--primary-color);
+        }
+
+        .filter-item select:focus,
+        .filter-item input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(217, 111, 60, 0.1);
+        }
+
+        .btn-reset {
+            padding: 8px 16px;
+            background: #605e5c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .btn-reset:hover {
+            background: #484644;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 16px 24px;
+        }
+
+        /* KPI Row */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-color);
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .kpi-card.active {
+            border: 2px solid var(--primary-color);
+        }
+
+        .kpi-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #605e5c;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #323130;
+        }
+
+        .kpi-sub {
+            font-size: 11px;
+            color: #605e5c;
+            margin-top: 4px;
+        }
+
+        .kpi-change {
+            font-size: 11px;
+            margin-top: 6px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .kpi-change.positive { background: #e6f4ea; color: #137333; }
+        .kpi-change.negative { background: #fce8e6; color: #c5221f; }
+
+        /* Chart Grid */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #edebe9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #323130;
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 280px;
+        }
+
+        .chart-toggle-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        .chart-toggle {
+            padding: 4px 10px;
+            font-size: 11px;
+            border: 1px solid #d2d0ce;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chart-toggle:hover {
+            border-color: var(--primary-color);
+        }
+
+        .chart-toggle.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Lower Section */
+        .lower-grid {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr;
+            gap: 16px;
+        }
+
+        /* PO Table */
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            background: #f3f2f1;
+            z-index: 1;
+        }
+
+        th {
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 600;
+            color: #323130;
+            border-bottom: 2px solid #d2d0ce;
+            cursor: pointer;
+        }
+
+        th:hover {
+            background: #e1dfdd;
+        }
+
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #edebe9;
+        }
+
+        tr:hover {
+            background: #f8f8f8;
+        }
+
+        .po-type-base {
+            background: #e6f4ea;
+            color: #137333;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .po-type-change {
+            background: #fef7e0;
+            color: #b45309;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .value-large {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-top: 1px solid #edebe9;
+            background: #faf9f8;
+        }
+
+        .pagination-info {
+            font-size: 12px;
+            color: #605e5c;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pagination-controls button {
+            padding: 6px 12px;
+            border: 1px solid #d2d0ce;
+            background: white;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .pagination-controls button:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .pagination-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Supplier Rankings */
+        .ranking-section {
+            margin-bottom: 16px;
+        }
+
+        .ranking-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #323130;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #edebe9;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 4px;
+        }
+
+        .ranking-item:hover {
+            background: #f8f8f8;
+        }
+
+        .ranking-item.active {
+            background: var(--primary-light);
+        }
+
+        .ranking-rank {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .ranking-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .ranking-name {
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ranking-meta {
+            font-size: 10px;
+            color: #605e5c;
+        }
+
+        .ranking-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .ranking-bar {
+            height: 4px;
+            background: #edebe9;
+            border-radius: 2px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .ranking-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), #e8824a);
+            border-radius: 2px;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: #605e5c;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #edebe9;
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .kpi-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .chart-grid,
+            .lower-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .filter-tier {
+                flex-direction: column;
+            }
+            .filter-item {
+                width: 100%;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 12px;
+                padding: 12px 16px;
+            }
+            
+            .header-left {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
+                width: 100%;
+            }
+            
+            .header-left img {
+                height: 36px !important;
+            }
+            
+            .header h1 {
+                font-size: 18px;
+            }
+            
+            .header p {
+                font-size: 11px;
+            }
+            
+            .header > div:last-child {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .filter-bar {
+                padding: 12px;
+                gap: 8px;
+            }
+            
+            /* Table scroll on mobile */
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .po-table {
+                min-width: 600px;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .kpi-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 16px;
+            }
+            
+            .kpi-card {
+                padding: 12px;
+            }
+            
+            .kpi-value {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left" style="display:flex;align-items:center;gap:16px;">
+                <img src="../shared/images/logo.png" alt="MVL Logo" style="height:44px;">
+                <div>
+                    <h1>Global Spend Analysis</h1>
+                    <p id="headerSubtitle">Loading...</p>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:20px;font-size:12px;">
+                <span>Last Refresh: 30 Jan 2026</span>
+                <a href="../index.html" style="color:white;text-decoration:none;background:rgba(255,255,255,0.2);padding:8px 14px;border-radius:4px;white-space:nowrap;">← Back to Portal</a>
+            </div>
+        </header>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="filter-tier">
+                <div class="filter-item">
+                    <label>Entity</label>
+                    <select id="filterEntity">
+                        <option value="">All Entities</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Supplier</label>
+                    <select id="filterSupplier">
+                        <option value="">All Suppliers</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Year</label>
+                    <select id="filterYear">
+                        <option value="">All Years</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>PO Type</label>
+                    <select id="filterPOType">
+                        <option value="">All Types</option>
+                        <option value="Base PO">Base PO</option>
+                        <option value="Change Order">Change Order</option>
+                    </select>
+                </div>
+                <button class="btn-reset" onclick="resetFilters()">Reset Filters</button>
+            </div>
+            <div class="filter-tier">
+                <div class="filter-item">
+                    <label>Material</label>
+                    <select id="filterMaterial">
+                        <option value="">All Materials</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Currency</label>
+                    <select id="filterCurrency">
+                        <option value="">All Currencies</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Min Value (USD)</label>
+                    <input type="number" id="filterMinValue" placeholder="0">
+                </div>
+                <div class="filter-item">
+                    <label>Max Value (USD)</label>
+                    <input type="number" id="filterMaxValue" placeholder="Any">
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- KPI Row -->
+            <div class="kpi-row">
+                <div class="kpi-card" id="kpiTotalSpend">
+                    <div class="kpi-icon">💵</div>
+                    <div class="kpi-label">Total Spend (USD)</div>
+                    <div class="kpi-value" id="kpiTotalSpendValue">--</div>
+                    <div class="kpi-sub" id="kpiTotalSpendSub">All entities</div>
+                </div>
+                <div class="kpi-card" id="kpiBasePO">
+                    <div class="kpi-icon">📋</div>
+                    <div class="kpi-label">Base POs</div>
+                    <div class="kpi-value" id="kpiBasePOValue">--</div>
+                    <div class="kpi-sub" id="kpiBasePOSub">Original orders</div>
+                </div>
+                <div class="kpi-card" id="kpiChangeOrder">
+                    <div class="kpi-icon">🔄</div>
+                    <div class="kpi-label">Change Orders</div>
+                    <div class="kpi-value" id="kpiChangeOrderValue">--</div>
+                    <div class="kpi-sub" id="kpiChangeOrderSub">Amendments</div>
+                </div>
+                <div class="kpi-card" id="kpiSuppliers">
+                    <div class="kpi-icon">🏭</div>
+                    <div class="kpi-label">Suppliers</div>
+                    <div class="kpi-value" id="kpiSuppliersValue">--</div>
+                    <div class="kpi-sub">Active vendors</div>
+                </div>
+                <div class="kpi-card" id="kpiAvgPO">
+                    <div class="kpi-icon">📊</div>
+                    <div class="kpi-label">Avg PO Value</div>
+                    <div class="kpi-value" id="kpiAvgPOValue">--</div>
+                    <div class="kpi-sub">Per order</div>
+                </div>
+                <div class="kpi-card" id="kpiChangeRatio">
+                    <div class="kpi-icon">📈</div>
+                    <div class="kpi-label">Change Order %</div>
+                    <div class="kpi-value" id="kpiChangeRatioValue">--</div>
+                    <div class="kpi-sub">Of total POs</div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="chart-grid">
+                <!-- Annual Trend -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">📈 Annual Spend Trend (2012-2026)</span>
+                        <div class="chart-toggle-group">
+                            <button class="chart-toggle active" onclick="setTrendType('stacked')">Stacked</button>
+                            <button class="chart-toggle" onclick="setTrendType('grouped')">Grouped</button>
+                            <button class="chart-toggle" onclick="setTrendType('line')">Line</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Entity/Material Breakdown -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🏢 Spend Breakdown</span>
+                        <div class="chart-toggle-group">
+                            <button class="chart-toggle active" onclick="setBreakdownType('entity')">Entity</button>
+                            <button class="chart-toggle" onclick="setBreakdownType('material')">Material</button>
+                            <button class="chart-toggle" onclick="setBreakdownType('poType')">PO Type</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="breakdownChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lower Section -->
+            <div class="lower-grid">
+                <!-- PO Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">📋 PO Details</span>
+                        <span id="tableInfo" style="font-size:11px;color:#605e5c;">Loading...</span>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th onclick="sortTable('poNumber')">PO Number ↕</th>
+                                    <th onclick="sortTable('poDate')">Date ↕</th>
+                                    <th onclick="sortTable('supplier')">Supplier ↕</th>
+                                    <th onclick="sortTable('entity')">Entity ↕</th>
+                                    <th onclick="sortTable('poType')">Type ↕</th>
+                                    <th onclick="sortTable('valueUSD')">Value (USD) ↕</th>
+                                </tr>
+                            </thead>
+                            <tbody id="poTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <div class="pagination-info" id="paginationInfo">Showing 0 of 0</div>
+                        <div class="pagination-controls">
+                            <button onclick="prevPage()" id="btnPrev">← Previous</button>
+                            <button onclick="nextPage()" id="btnNext">Next →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Supplier Rankings -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🏆 Supplier Rankings</span>
+                    </div>
+                    <div class="card-body" style="max-height: 450px; overflow-y: auto;">
+                        <div class="ranking-section">
+                            <div class="ranking-title">🔝 Top 10 by Spend</div>
+                            <div id="topSuppliers"></div>
+                        </div>
+                        <div class="ranking-section">
+                            <div class="ranking-title">📉 Bottom 10 Active</div>
+                            <div id="bottomSuppliers"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../shared/components/modal.js"></script>
+    <script src="../shared/components/detail-modals.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

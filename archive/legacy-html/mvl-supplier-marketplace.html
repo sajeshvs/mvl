@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MVL Supply Intel Hub – Supplier Marketplace</title>
+  <style>
+    :root {
+      --brand-primary: #004578;
+      --brand-accent: #0a84ff;
+      --brand-warning: #f5c542;
+      --brand-danger: #e05a5a;
+      --brand-success: #4bbf73;
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --text: #1f2933;
+      --muted: #66707a;
+      --line: #e0e5ea;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(90deg, var(--brand-primary), #023a60);
+      color: #fff;
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      margin: 0 0 4px 0;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .header .subtitle {
+      font-size: 12px;
+      opacity: 0.85;
+    }
+
+    .header .meta {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.4;
+      opacity: 0.9;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 8px;
+      padding: 10px 20px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .filter {
+      border: 1px solid #cfd6dd;
+      border-radius: 6px;
+      padding: 6px 8px;
+      background: #fafbfc;
+      font-size: 11px;
+    }
+
+    .filter label {
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .filter select {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 11px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1.1fr 1.2fr 1.1fr;
+      gap: 14px;
+      padding: 14px 20px 20px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .kpi {
+      background: #f6f8fa;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 11px;
+    }
+
+    .kpi .value {
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+
+    .table th {
+      text-align: left;
+      padding: 6px 6px;
+      background: #f2f4f7;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .table td {
+      padding: 6px 6px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .pill {
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .pill.wait { background: #fff4ce; color: #7a5a00; }
+    .pill.order { background: #d6f5df; color: #1f6b38; }
+    .pill.cancel { background: #ffe1e1; color: #8a2a2a; }
+
+    .chart {
+      width: 100%;
+      height: 210px;
+      border: 1px solid #d7dde3;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .small-note {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 4px;
+      vertical-align: -1px;
+      background: currentColor;
+    }
+
+    @media (max-width: 1200px) {
+      .filters { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
+      .content { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div>
+        <h1>Supplier Marketplace</h1>
+        <div class="subtitle">Quotation → PO pipeline by supplier and material</div>
+      </div>
+      <div class="meta">
+        MVL Supply Intel Hub<br />
+        Last Refresh: 23 Jan 2026 06:08 AM<br />
+        Entity: All · Currency: USD
+      </div>
+    </header>
+
+    <section class="filters">
+      <div class="filter"><label>Entity</label><select><option>All</option></select></div>
+      <div class="filter"><label>Supplier / Client</label><select><option>All</option></select></div>
+      <div class="filter"><label>Quotation Type</label><select><option>All</option><option>IQ</option><option>RFQ</option></select></div>
+      <div class="filter"><label>Status</label><select><option>All</option><option>Quotation</option><option>Waiting</option><option>Order</option><option>Cancelled</option></select></div>
+      <div class="filter"><label>Material Type</label><select><option>All</option></select></div>
+      <div class="filter"><label>Discipline</label><select><option>All</option></select></div>
+    </section>
+
+    <section class="content">
+      <div class="card">
+        <div class="card-title">Supplier Profile</div>
+        <div style="font-size: 14px; font-weight: 600;">[Selected Supplier Name]</div>
+        <div style="font-size: 11px; color: var(--muted);">Type: Supplier · Primary Entity: [Entity]</div>
+        <div style="font-size: 11px; margin-top: 6px;">Rating: ★★★★☆ (4.3/5)</div>
+
+        <div style="margin-top: 10px; font-size: 11px;">
+          <div><strong>Contact:</strong> [Contact Name]</div>
+          <div>Email: [email@company.com]</div>
+          <div>Phone: [+971 xx xxx xxxx]</div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><div>Quotations</div><div class="value">127</div></div>
+          <div class="kpi"><div>POs</div><div class="value">53</div></div>
+          <div class="kpi"><div>Win Rate</div><div class="value">41%</div></div>
+        </div>
+
+        <div class="card-title" style="margin-top: 12px;">Approved Materials &amp; Disciplines</div>
+        <table class="table">
+          <tr><th>Material Type</th><th>Discipline</th><th>Lead Time</th><th>Last Currency</th></tr>
+          <tr><td>Valves</td><td>Mechanical</td><td>10 wks</td><td>USD</td></tr>
+          <tr><td>Cables</td><td>Electrical</td><td>6 wks</td><td>EUR</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Quotation Funnel</div>
+        <svg class="chart" id="funnelChart" viewBox="0 0 420 210" preserveAspectRatio="none"></svg>
+
+        <div class="card-title" style="margin-top: 12px;">Quote to PO Timeline</div>
+        <svg class="chart" id="timelineChart" viewBox="0 0 420 210" preserveAspectRatio="none"></svg>
+        <div class="legend">
+          <span style="color: #0a84ff;">Quotation Value</span>
+          <span style="color: #4bbf73;">PO Value</span>
+          <span style="color: #f5c542;">Change Orders</span>
+        </div>
+        <div class="small-note">Click any data point to cross-filter the Supplier Profile and Workbench.</div>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="card-title">Marketplace Workbench</div>
+          <div>
+            <span class="pill order">RFPO (Order)</span>
+            <span class="pill wait">Waiting</span>
+            <span class="pill cancel">Cancelled</span>
+          </div>
+        </div>
+        <table class="table">
+          <tr>
+            <th>Quote / PO</th><th>Type</th><th>Status</th><th>Project</th><th>Material</th><th>Value</th><th>Contact</th>
+          </tr>
+          <tr>
+            <td>RFP-2026-001</td><td>RFQ</td><td><span class="pill wait">Waiting</span></td>
+            <td>PE108</td><td>Valves</td><td>125,000 USD</td><td>A. Khan</td>
+          </tr>
+          <tr>
+            <td>RFPO-2026-001-1</td><td>PO (New)</td><td><span class="pill order">Order</span></td>
+            <td>PE108</td><td>Valves</td><td>118,000 USD</td><td>A. Khan</td>
+          </tr>
+        </table>
+
+        <div class="small-note">Conditional formatting highlights long-open Waiting quotes and Change Orders.</div>
+      </div>
+    </section>
+  </div>
+  <script>
+    const funnelData = [
+      { label: "Quotations", value: 320, color: "#0a84ff" },
+      { label: "Waiting", value: 210, color: "#f5c542" },
+      { label: "Order", value: 140, color: "#4bbf73" },
+      { label: "Cancelled", value: 38, color: "#e05a5a" }
+    ];
+
+    const timelineData = {
+      months: ["Aug", "Sep", "Oct", "Nov", "Dec", "Jan"],
+      quotation: [120, 140, 155, 170, 150, 180],
+      po: [60, 85, 90, 110, 95, 130],
+      change: [10, 15, 12, 20, 14, 18]
+    };
+
+    function renderFunnel(svgId, data) {
+      const svg = document.getElementById(svgId);
+      const width = 420;
+      const height = 210;
+      svg.innerHTML = "";
+      const max = Math.max(...data.map(d => d.value));
+      const segmentHeight = height / data.length;
+
+      data.forEach((d, i) => {
+        const w = (d.value / max) * (width * 0.9);
+        const x = (width - w) / 2;
+        const y = i * segmentHeight + 8;
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", x);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", w);
+        rect.setAttribute("height", segmentHeight - 16);
+        rect.setAttribute("rx", 6);
+        rect.setAttribute("fill", d.color);
+        rect.setAttribute("opacity", "0.85");
+        svg.appendChild(rect);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", width / 2);
+        label.setAttribute("y", y + (segmentHeight - 16) / 2 + 4);
+        label.setAttribute("text-anchor", "middle");
+        label.setAttribute("fill", "#fff");
+        label.setAttribute("font-size", "12");
+        label.textContent = `${d.label} (${d.value})`;
+        svg.appendChild(label);
+      });
+    }
+
+    function renderTimeline(svgId, series) {
+      const svg = document.getElementById(svgId);
+      const width = 420;
+      const height = 210;
+      svg.innerHTML = "";
+
+      const padding = { top: 20, right: 20, bottom: 30, left: 36 };
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+      const max = Math.max(...series.quotation, ...series.po.map((v, i) => v + series.change[i]));
+
+      const axis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      axis.setAttribute("x1", padding.left);
+      axis.setAttribute("y1", padding.top + chartH);
+      axis.setAttribute("x2", padding.left + chartW);
+      axis.setAttribute("y2", padding.top + chartH);
+      axis.setAttribute("stroke", "#cdd5dd");
+      svg.appendChild(axis);
+
+      series.months.forEach((m, i) => {
+        const x = padding.left + (chartW / (series.months.length - 1)) * i;
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", x);
+        label.setAttribute("y", height - 10);
+        label.setAttribute("text-anchor", "middle");
+        label.setAttribute("font-size", "10");
+        label.setAttribute("fill", "#66707a");
+        label.textContent = m;
+        svg.appendChild(label);
+      });
+
+      function drawLine(values, color) {
+        const points = values.map((v, i) => {
+          const x = padding.left + (chartW / (values.length - 1)) * i;
+          const y = padding.top + chartH - (v / max) * chartH;
+          return `${x},${y}`;
+        }).join(" ");
+        const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+        polyline.setAttribute("fill", "none");
+        polyline.setAttribute("stroke", color);
+        polyline.setAttribute("stroke-width", "2");
+        polyline.setAttribute("points", points);
+        svg.appendChild(polyline);
+      }
+
+      function drawBars(values, color, offset) {
+        const barWidth = chartW / values.length * 0.5;
+        values.forEach((v, i) => {
+          const x = padding.left + (chartW / values.length) * i + offset;
+          const h = (v / max) * chartH;
+          const y = padding.top + chartH - h;
+          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("x", x);
+          rect.setAttribute("y", y);
+          rect.setAttribute("width", barWidth);
+          rect.setAttribute("height", h);
+          rect.setAttribute("fill", color);
+          rect.setAttribute("opacity", "0.85");
+          svg.appendChild(rect);
+        });
+      }
+
+      drawBars(series.quotation, "#0a84ff", 2);
+      drawBars(series.change, "#f5c542", 2 + (chartW / series.months.length) * 0.25);
+      drawLine(series.po, "#4bbf73");
+    }
+
+    renderFunnel("funnelChart", funnelData);
+    renderTimeline("timelineChart", timelineData);
+  </script>
+</body>
+</html>

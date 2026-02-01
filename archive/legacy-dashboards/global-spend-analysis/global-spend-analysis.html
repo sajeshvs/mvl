@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MVL Supply Intel Hub – Global Spend Analysis</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #fffaf0 0%, #fef3e2 100%);
+      color: #323130;
+      overflow-x: hidden;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header - Orange Theme */
+    .header {
+      background: linear-gradient(135deg, #c45500 0%, #f5770a 100%);
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-left h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .header-left p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    .header-right strong {
+      font-size: 13px;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      background: white;
+      padding: 16px 24px;
+      border-bottom: 2px solid #f5d5a8;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      min-width: 150px;
+    }
+
+    .filter-item label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #605e5c;
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-item select {
+      padding: 8px 10px;
+      border: 2px solid #d2d0ce;
+      border-radius: 4px;
+      font-size: 13px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .filter-item select:hover {
+      border-color: #f5770a;
+      background: #fffaf0;
+    }
+
+    .filter-item select:focus {
+      outline: none;
+      border-color: #f5770a;
+      box-shadow: 0 0 0 3px rgba(245, 119, 10, 0.1);
+    }
+
+    /* Main Content */
+    .content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 350px 1fr 380px;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* Left Panel - KPIs */
+    .summary-panel h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #c45500;
+      margin-bottom: 16px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: linear-gradient(135deg, #fffaf0 0%, #fef3e2 100%);
+      border-radius: 8px;
+      padding: 16px;
+      border-left: 4px solid #f5770a;
+    }
+
+    .kpi-card.green { border-left-color: #107c10; }
+    .kpi-card.red { border-left-color: #a80000; }
+    .kpi-card.blue { border-left-color: #0078d4; }
+
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #605e5c;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: #323130;
+      margin-top: 4px;
+    }
+
+    .kpi-subtext {
+      font-size: 11px;
+      color: #605e5c;
+      margin-top: 4px;
+    }
+
+    /* Section Title */
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #323130;
+      margin: 16px 0 12px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #f5d5a8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Middle Panel: Charts */
+    .chart-container {
+      margin-bottom: 24px;
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #323130;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .chart-wrapper {
+      height: 220px;
+      position: relative;
+    }
+
+    .chart {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Right Panel: PO Details */
+    .po-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .po-table th {
+      background: #f5d5a8;
+      padding: 10px 8px;
+      text-align: left;
+      font-weight: 700;
+      color: #323130;
+      border-bottom: 2px solid #c45500;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .po-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #f3f2f1;
+      vertical-align: middle;
+    }
+
+    .po-table tr:hover {
+      background: #fffaf0;
+    }
+
+    .type-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .type-base { background: #d4edda; color: #155724; }
+    .type-change { background: #fff4ce; color: #8a6914; }
+    .type-unknown { background: #e1dfdd; color: #605e5c; }
+
+    .data-updated {
+      margin-top: 12px;
+      font-size: 11px;
+      color: #107c10;
+      font-weight: 500;
+    }
+
+    /* Supplier Ranking */
+    .supplier-rank {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-bottom: 1px solid #f3f2f1;
+      font-size: 12px;
+    }
+
+    .supplier-rank:hover {
+      background: #fffaf0;
+    }
+
+    .rank-number {
+      font-weight: 700;
+      color: #c45500;
+      width: 24px;
+    }
+
+    .rank-name {
+      flex: 1;
+      font-weight: 600;
+      color: #323130;
+      margin-left: 8px;
+    }
+
+    .rank-spend {
+      font-weight: 700;
+      color: #107c10;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f3f2f1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c8c6c4;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #8a8886;
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #605e5c;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <h1>MVL Supply Intel Hub – Global Spend Analysis</h1>
+        <p id="headerFilterStatus">Year: All · PO Type: All</p>
+      </div>
+      <div class="header-right">
+        <div id="lastRefresh">Loading...</div>
+        <div><strong>Powered by Real Data</strong></div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-item">
+        <label>PO Type</label>
+        <select id="filterPOType" onchange="applyFilters()">
+          <option value="All">All Types</option>
+          <option value="Base">Base PO</option>
+          <option value="Change Order">Change Order</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Material</label>
+        <select id="filterMaterial" onchange="applyFilters()">
+          <option value="All">All Materials</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <!-- Left Panel: Spend KPIs -->
+      <div class="panel summary-panel">
+        <h2>💰 Spend Summary</h2>
+        
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Total Spend (USD)</div>
+            <div class="kpi-value" id="kpiTotalSpend">-</div>
+            <div class="kpi-subtext" id="kpiTotalPOs">- POs issued</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Base PO Spend</div>
+            <div class="kpi-value" id="kpiBaseSpend">-</div>
+            <div class="kpi-subtext" id="kpiBasePOs">- Base POs</div>
+          </div>
+          <div class="kpi-card red">
+            <div class="kpi-label">Change Order Spend</div>
+            <div class="kpi-value" id="kpiChangeSpend">-</div>
+            <div class="kpi-subtext" id="kpiChangePercent">-% of total</div>
+          </div>
+          <div class="kpi-card blue">
+            <div class="kpi-label">Active Suppliers</div>
+            <div class="kpi-value" id="kpiActiveSuppliers">-</div>
+            <div class="kpi-subtext" id="kpiAvgPO">Avg PO: -</div>
+          </div>
+        </div>
+
+        <div class="section-title">🏆 Top 10 Suppliers</div>
+        <div id="topSuppliers" style="max-height: 200px; overflow-y: auto;">
+          <div class="loading">Loading...</div>
+        </div>
+      </div>
+
+      <!-- Middle Panel: Charts -->
+      <div class="panel">
+        <div class="chart-container">
+          <div class="chart-title">📊 Base vs Change Order Comparison</div>
+          <div class="chart-wrapper">
+            <canvas id="poTypeChart" class="chart"></canvas>
+          </div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">🏭 Spend by Material Category</div>
+          <div class="chart-wrapper">
+            <canvas id="materialChart" class="chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: PO Details -->
+      <div class="panel">
+        <div class="section-title">📋 Recent Purchase Orders</div>
+        <div style="max-height: 500px; overflow-y: auto;">
+          <table class="po-table" id="poTable">
+            <thead>
+              <tr>
+                <th>PO Number</th>
+                <th>Type</th>
+                <th>Supplier</th>
+                <th>Value (USD)</th>
+              </tr>
+            </thead>
+            <tbody id="poBody">
+              <tr><td colspan="4" class="loading">Loading data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="data-updated" id="resultCount">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Global data store
+    let dashboardData = null;
+    let poTypeChart = null;
+    let materialChart = null;
+
+    // Load data from JSON
+    async function loadData() {
+      try {
+        const response = await fetch('data.json');
+        dashboardData = await response.json();
+        initializeDashboard();
+      } catch (error) {
+        console.error('Error loading data:', error);
+        document.getElementById('poBody').innerHTML = 
+          '<tr><td colspan="4" style="color: red;">Error loading data. Please check if data.json exists.</td></tr>';
+      }
+    }
+
+    function initializeDashboard() {
+      // Update last refresh
+      document.getElementById('lastRefresh').textContent = `Last Refresh: ${dashboardData.lastRefresh}`;
+
+      // Update KPIs
+      document.getElementById('kpiTotalSpend').textContent = formatCurrency(dashboardData.summary.totalSpendUSD);
+      document.getElementById('kpiTotalPOs').textContent = `${formatNumber(dashboardData.summary.totalBasePOs + dashboardData.summary.totalChangeOrders)} POs issued`;
+      document.getElementById('kpiBaseSpend').textContent = formatCurrency(dashboardData.summary.baseSpendUSD);
+      document.getElementById('kpiBasePOs').textContent = `${formatNumber(dashboardData.summary.totalBasePOs)} Base POs`;
+      document.getElementById('kpiChangeSpend').textContent = formatCurrency(dashboardData.summary.changeSpendUSD);
+      document.getElementById('kpiChangePercent').textContent = `${dashboardData.summary.changeOrderPercent}% of total`;
+      document.getElementById('kpiActiveSuppliers').textContent = formatNumber(dashboardData.summary.activeSuppliers);
+      document.getElementById('kpiAvgPO').textContent = `Avg PO: ${formatCurrency(dashboardData.summary.avgPOValueUSD)}`;
+
+      // Populate filter dropdowns
+      populateFilters();
+
+      // Render top suppliers
+      renderTopSuppliers();
+
+      // Render charts
+      renderPOTypeChart();
+      renderMaterialChart();
+
+      // Render PO table
+      renderPOTable(dashboardData.poDetails);
+    }
+
+    function populateFilters() {
+      // Populate Material filter
+      const materialSelect = document.getElementById('filterMaterial');
+      const materials = dashboardData.materialSpend
+        .filter(m => m.MaterialCode && m.MaterialCode !== 'Unknown')
+        .map(m => m.MaterialCode);
+      
+      materials.forEach(material => {
+        const option = document.createElement('option');
+        option.value = material;
+        option.textContent = material;
+        materialSelect.appendChild(option);
+      });
+    }
+
+    function renderTopSuppliers() {
+      const container = document.getElementById('topSuppliers');
+      const suppliers = dashboardData.topSuppliers.slice(0, 10);
+
+      container.innerHTML = suppliers.map((s, i) => `
+        <div class="supplier-rank">
+          <span class="rank-number">#${i + 1}</span>
+          <span class="rank-name">${truncate(s.SupplierName, 22)}</span>
+          <span class="rank-spend">${formatCurrency(s.TotalSpendUSD)}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderPOTypeChart() {
+      const ctx = document.getElementById('poTypeChart').getContext('2d');
+
+      if (poTypeChart) poTypeChart.destroy();
+
+      // Summarize by PO Type
+      const basePOs = dashboardData.poTypeSummary.filter(p => p.POType === 'Base');
+      const changePOs = dashboardData.poTypeSummary.filter(p => p.POType !== 'Base' && p.POType !== 'Unknown');
+      
+      const baseTotal = basePOs.reduce((sum, p) => sum + (p.TotalValueUSD || 0), 0);
+      const changeTotal = changePOs.reduce((sum, p) => sum + (p.TotalValueUSD || 0), 0);
+
+      poTypeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Base PO', 'Change Orders'],
+          datasets: [{
+            label: 'Spend (USD)',
+            data: [baseTotal, changeTotal],
+            backgroundColor: ['#107c10', '#faa916'],
+            borderRadius: 8,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => formatCurrency(ctx.raw)
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 12, weight: '700' } }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: '#f3f2f1' },
+              ticks: {
+                callback: (value) => formatCurrency(value),
+                font: { size: 11, weight: '600' }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderMaterialChart() {
+      const materials = dashboardData.materialSpend
+        .filter(m => m.MaterialCode && m.MaterialCode !== 'Unknown')
+        .sort((a, b) => (b.POValueUSD || 0) - (a.POValueUSD || 0))
+        .slice(0, 8);
+
+      const ctx = document.getElementById('materialChart').getContext('2d');
+
+      if (materialChart) materialChart.destroy();
+
+      materialChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: materials.map(m => m.MaterialCode),
+          datasets: [{
+            data: materials.map(m => m.POValueUSD || 0),
+            backgroundColor: [
+              '#c45500', '#f5770a', '#faa916', '#107c10', 
+              '#0078d4', '#8a8886', '#a80000', '#605e5c'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { 
+                padding: 10, 
+                font: { size: 11, weight: '600' },
+                boxWidth: 12
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw)}`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderPOTable(data) {
+      const tbody = document.getElementById('poBody');
+      const displayData = data.slice(0, 50);
+
+      tbody.innerHTML = displayData.map(po => {
+        const typeClass = po.POType === 'Base' ? 'type-base' : 
+                         (po.POType && po.POType.includes('Change')) ? 'type-change' : 'type-unknown';
+        return `
+          <tr>
+            <td><strong>${po.PONumber || '-'}</strong></td>
+            <td><span class="type-badge ${typeClass}">${po.POType || 'N/A'}</span></td>
+            <td title="${po.SupplierName || ''}">${truncate(po.SupplierName || '-', 18)}</td>
+            <td><strong>${formatCurrency(po.POValueUSD || 0)}</strong></td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('resultCount').textContent = `✓ Showing ${displayData.length} of ${data.length} POs`;
+    }
+
+    function applyFilters() {
+      const poType = document.getElementById('filterPOType').value;
+      const material = document.getElementById('filterMaterial').value;
+
+      let filtered = dashboardData.poDetails.filter(po => {
+        const typeMatch = poType === 'All' || 
+          (poType === 'Base' && po.POType === 'Base') ||
+          (poType === 'Change Order' && po.POType && po.POType.includes('Change'));
+        const materialMatch = material === 'All' || po.MaterialCode === material;
+        return typeMatch && materialMatch;
+      });
+
+      renderPOTable(filtered);
+      document.getElementById('headerFilterStatus').textContent = `PO Type: ${poType} · Material: ${material}`;
+    }
+
+    // Utility functions
+    function formatNumber(num) {
+      if (!num) return '0';
+      return num.toLocaleString();
+    }
+
+    function formatCurrency(value) {
+      if (!value) return '$0';
+      if (value >= 1000000000) {
+        return '$' + (value / 1000000000).toFixed(2) + 'B';
+      } else if (value >= 1000000) {
+        return '$' + (value / 1000000).toFixed(2) + 'M';
+      } else if (value >= 1000) {
+        return '$' + (value / 1000).toFixed(1) + 'K';
+      }
+      return '$' + value.toLocaleString();
+    }
+
+    function truncate(str, len) {
+      if (!str) return '';
+      return str.length > len ? str.substring(0, len) + '...' : str;
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

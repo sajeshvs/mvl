@@ -1,0 +1,325 @@
+{
+  "lastRefresh": "30 Jan 2026 04:05 PM",
+  "summary": {
+    "totalBudget": 3304333628.78,
+    "totalActual": 421900017.5,
+    "totalVariance": 2882433611.28,
+    "overallUtilization": 12.8,
+    "activeDisciplines": 13,
+    "activeProjects": 7766
+  },
+  "disciplines": [
+    {
+      "Discipline": "Architectural",
+      "QuoteCount": 222,
+      "QuoteValueUSD": 21314032.82,
+      "POCount": 114,
+      "POValueUSD": 5980584.43,
+      "Budget": 21314032.82,
+      "Actual": 5980584.43,
+      "Variance": 15333448.39,
+      "Utilization": 28.05937515676585
+    },
+    {
+      "Discipline": "Chemicals",
+      "QuoteCount": 155,
+      "QuoteValueUSD": 17193775.65,
+      "POCount": 50,
+      "POValueUSD": 3077779.02,
+      "Budget": 17193775.65,
+      "Actual": 3077779.02,
+      "Variance": 14115996.629999999,
+      "Utilization": 17.900541932452168
+    },
+    {
+      "Discipline": "Electrical",
+      "QuoteCount": 622,
+      "QuoteValueUSD": 58763723.55,
+      "POCount": 377,
+      "POValueUSD": 28158158.13,
+      "Budget": 58763723.55,
+      "Actual": 28158158.13,
+      "Variance": 30605565.419999998,
+      "Utilization": 47.91758661453985
+    },
+    {
+      "Discipline": "Fire",
+      "QuoteCount": 6398,
+      "QuoteValueUSD": 81882812.09,
+      "POCount": 26,
+      "POValueUSD": 78480.76000000001,
+      "Budget": 81882812.09,
+      "Actual": 78480.76000000001,
+      "Variance": 81804331.33,
+      "Utilization": 0.0958452183026388
+    },
+    {
+      "Discipline": "Logistics",
+      "QuoteCount": 191,
+      "QuoteValueUSD": 1944130808.0500002,
+      "POCount": 4,
+      "POValueUSD": 42766.55,
+      "Budget": 1944130808.0500002,
+      "Actual": 42766.55,
+      "Variance": 1944088041.5000002,
+      "Utilization": 0.0021997773927000135
+    },
+    {
+      "Discipline": "Mechanical",
+      "QuoteCount": 618,
+      "QuoteValueUSD": 71409223.94,
+      "POCount": 343,
+      "POValueUSD": 30938567.02,
+      "Budget": 71409223.94,
+      "Actual": 30938567.02,
+      "Variance": 40470656.92,
+      "Utilization": 43.32572924471976
+    },
+    {
+      "Discipline": "Office Assets",
+      "QuoteCount": 166,
+      "QuoteValueUSD": 7716702.4399999995,
+      "POCount": 144,
+      "POValueUSD": 2893522.85,
+      "Budget": 7716702.4399999995,
+      "Actual": 2893522.85,
+      "Variance": 4823179.59,
+      "Utilization": 37.49688254144992
+    },
+    {
+      "Discipline": "Protection",
+      "QuoteCount": 7,
+      "QuoteValueUSD": 22786.21,
+      "POCount": 5,
+      "POValueUSD": 3222.94,
+      "Budget": 22786.21,
+      "Actual": 3222.94,
+      "Variance": 19563.27,
+      "Utilization": 14.144256548149079
+    },
+    {
+      "Discipline": "Rental",
+      "QuoteCount": 45,
+      "QuoteValueUSD": 1879119.5,
+      "POCount": 40,
+      "POValueUSD": 1221961.69,
+      "Budget": 1879119.5,
+      "Actual": 1221961.69,
+      "Variance": 657157.81,
+      "Utilization": 65.02841836296201
+    },
+    {
+      "Discipline": "Services",
+      "QuoteCount": 419,
+      "QuoteValueUSD": 131626814.08,
+      "POCount": 165,
+      "POValueUSD": 4502273.64,
+      "Budget": 131626814.08,
+      "Actual": 4502273.64,
+      "Variance": 127124540.44,
+      "Utilization": 3.4204836388910946
+    },
+    {
+      "Discipline": "Tools",
+      "QuoteCount": 79,
+      "QuoteValueUSD": 476514302.97,
+      "POCount": 33,
+      "POValueUSD": 349994.96,
+      "Budget": 476514302.97,
+      "Actual": 349994.96,
+      "Variance": 476164308.01000005,
+      "Utilization": 0.07344899362276534
+    },
+    {
+      "Discipline": "Unknown",
+      "QuoteCount": 669,
+      "QuoteValueUSD": 149066421.89000002,
+      "POCount": 424,
+      "POValueUSD": 49663656.93,
+      "Budget": 149066421.89000002,
+      "Actual": 49663656.93,
+      "Variance": 99402764.96000001,
+      "Utilization": 33.31646141385758
+    },
+    {
+      "Discipline": "Various",
+      "QuoteCount": 2543,
+      "QuoteValueUSD": 342813105.59,
+      "POCount": 1814,
+      "POValueUSD": 294989048.58,
+      "Budget": 342813105.59,
+      "Actual": 294989048.58,
+      "Variance": 47824057.00999999,
+      "Utilization": 86.04952487808417
+    }
+  ],
+  "materialMapping": [
+    {
+      "MaterialCode": "Logistics",
+      "QuoteCount": 191,
+      "TotalValueUSD": 1944130808.0500002
+    },
+    {
+      "MaterialCode": "Tools",
+      "QuoteCount": 79,
+      "TotalValueUSD": 476514302.97
+    },
+    {
+      "MaterialCode": "Various",
+      "QuoteCount": 2543,
+      "TotalValueUSD": 342813105.59
+    },
+    {
+      "MaterialCode": "Unknown",
+      "QuoteCount": 669,
+      "TotalValueUSD": 149066421.89000002
+    },
+    {
+      "MaterialCode": "Services",
+      "QuoteCount": 419,
+      "TotalValueUSD": 131626814.08
+    },
+    {
+      "MaterialCode": "Fire",
+      "QuoteCount": 6398,
+      "TotalValueUSD": 81882812.09
+    },
+    {
+      "MaterialCode": "Mechanical",
+      "QuoteCount": 618,
+      "TotalValueUSD": 71409223.94
+    },
+    {
+      "MaterialCode": "Electrical",
+      "QuoteCount": 622,
+      "TotalValueUSD": 58763723.55
+    },
+    {
+      "MaterialCode": "Architectural",
+      "QuoteCount": 222,
+      "TotalValueUSD": 21314032.82
+    },
+    {
+      "MaterialCode": "Chemicals",
+      "QuoteCount": 155,
+      "TotalValueUSD": 17193775.65
+    },
+    {
+      "MaterialCode": "Office Assets",
+      "QuoteCount": 166,
+      "TotalValueUSD": 7716702.4399999995
+    },
+    {
+      "MaterialCode": "Rental",
+      "QuoteCount": 45,
+      "TotalValueUSD": 1879119.5
+    },
+    {
+      "MaterialCode": "Protection",
+      "QuoteCount": 7,
+      "TotalValueUSD": 22786.21
+    }
+  ],
+  "byEntity": [
+    {
+      "Entity": "DEFENSE",
+      "QuoteCount": 6,
+      "TotalValueUSD": 499000.0
+    },
+    {
+      "Entity": "FIRESTOP",
+      "QuoteCount": 6714,
+      "TotalValueUSD": 87571831.68
+    },
+    {
+      "Entity": "Gov Svcs",
+      "QuoteCount": 1,
+      "TotalValueUSD": 313.14
+    },
+    {
+      "Entity": "MACRO",
+      "QuoteCount": 2682,
+      "TotalValueUSD": 736514398.08
+    },
+    {
+      "Entity": "MICRON",
+      "QuoteCount": 932,
+      "TotalValueUSD": 122320279.26
+    },
+    {
+      "Entity": "MPG JV",
+      "QuoteCount": 8,
+      "TotalValueUSD": 386517.33
+    },
+    {
+      "Entity": "MV LLC",
+      "QuoteCount": 201,
+      "TotalValueUSD": 118742769.64999999
+    },
+    {
+      "Entity": "MVL Abu Dhabi",
+      "QuoteCount": 4,
+      "TotalValueUSD": 58785.88
+    },
+    {
+      "Entity": "MVL Greece",
+      "QuoteCount": 30,
+      "TotalValueUSD": 4024506.79
+    },
+    {
+      "Entity": "MVL Italy",
+      "QuoteCount": 15,
+      "TotalValueUSD": 305403.48
+    },
+    {
+      "Entity": "MVL Kuwait",
+      "QuoteCount": 4,
+      "TotalValueUSD": 128352.7
+    },
+    {
+      "Entity": "MVL Lebanon",
+      "QuoteCount": 3,
+      "TotalValueUSD": 811705.2
+    },
+    {
+      "Entity": "MVL Nepal",
+      "QuoteCount": 214,
+      "TotalValueUSD": 289070431.29
+    },
+    {
+      "Entity": "MVL Qatar",
+      "QuoteCount": 33,
+      "TotalValueUSD": 1890811.66
+    },
+    {
+      "Entity": "MVL USA JV LLC",
+      "QuoteCount": 648,
+      "TotalValueUSD": 23828136.03
+    },
+    {
+      "Entity": "MVL USA, INC",
+      "QuoteCount": 539,
+      "TotalValueUSD": 53055365.089999996
+    },
+    {
+      "Entity": "MVL-Al Othman",
+      "QuoteCount": 18,
+      "TotalValueUSD": 2847158.06
+    },
+    {
+      "Entity": "MW-OCS",
+      "QuoteCount": 24,
+      "TotalValueUSD": 723007.5
+    },
+    {
+      "Entity": "Unknown",
+      "QuoteCount": 0,
+      "TotalValueUSD": 0.0
+    },
+    {
+      "Entity": "Yamauchi Gumi",
+      "QuoteCount": 58,
+      "TotalValueUSD": 1861554855.9599998
+    }
+  ]
+}

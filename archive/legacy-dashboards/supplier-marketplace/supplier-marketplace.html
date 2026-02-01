@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MVL Supply Intel Hub – Supplier Marketplace</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+      color: #323130;
+      overflow-x: hidden;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #004578 0%, #0064a3 100%);
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-left h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .header-left p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    .header-right strong {
+      font-size: 13px;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      background: white;
+      padding: 16px 24px;
+      border-bottom: 2px solid #e1dfdd;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      min-width: 150px;
+    }
+
+    .filter-item label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #605e5c;
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-item select {
+      padding: 8px 10px;
+      border: 2px solid #d2d0ce;
+      border-radius: 4px;
+      font-size: 13px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .filter-item select:hover {
+      border-color: #0078d4;
+      background: #f8f9fa;
+    }
+
+    .filter-item select:focus {
+      outline: none;
+      border-color: #0078d4;
+      box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+    }
+
+    /* Main Content */
+    .content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 360px 1fr 420px;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* Left Panel - Summary KPIs */
+    .summary-panel h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #004578;
+      margin-bottom: 16px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      border-left: 4px solid #0078d4;
+    }
+
+    .kpi-card.success { border-left-color: #107c10; }
+    .kpi-card.warning { border-left-color: #faa916; }
+    .kpi-card.info { border-left-color: #0078d4; }
+
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #605e5c;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: #323130;
+      margin-top: 4px;
+    }
+
+    /* Section Title */
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #323130;
+      margin: 16px 0 12px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e1dfdd;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Supplier List */
+    .supplier-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .supplier-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-bottom: 1px solid #f3f2f1;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .supplier-item:hover {
+      background: #f3f2f1;
+    }
+
+    .supplier-item.active {
+      background: #e6f2fa;
+      border-left: 3px solid #0078d4;
+    }
+
+    .supplier-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #323130;
+    }
+
+    .supplier-spend {
+      font-size: 12px;
+      font-weight: 700;
+      color: #107c10;
+    }
+
+    /* Middle Panel: Charts */
+    .chart-container {
+      margin-bottom: 24px;
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #323130;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .chart-wrapper {
+      height: 200px;
+      position: relative;
+    }
+
+    .chart {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Right Panel: Workbench */
+    .workbench-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .workbench-table th {
+      background: #f3f2f1;
+      padding: 10px 8px;
+      text-align: left;
+      font-weight: 700;
+      color: #323130;
+      border-bottom: 2px solid #e1dfdd;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .workbench-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #f3f2f1;
+      vertical-align: middle;
+    }
+
+    .workbench-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-quotation { background: #e1dfdd; color: #323130; }
+    .status-waiting { background: #fff4ce; color: #8a6914; }
+    .status-order { background: #d4edda; color: #155724; }
+    .status-cancelled, .status-cancled { background: #f8d7da; color: #721c24; }
+    .status-unknown { background: #e1dfdd; color: #605e5c; }
+
+    .data-updated {
+      margin-top: 12px;
+      font-size: 11px;
+      color: #107c10;
+      font-weight: 500;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f3f2f1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c8c6c4;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #8a8886;
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #605e5c;
+    }
+
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #0078d4;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <h1>MVL Supply Intel Hub – Supplier Marketplace</h1>
+        <p id="headerFilterStatus">Entity: All · Currency: USD</p>
+      </div>
+      <div class="header-right">
+        <div id="lastRefresh">Loading...</div>
+        <div><strong>Powered by Real Data</strong></div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-item">
+        <label>Entity</label>
+        <select id="filterEntity" onchange="applyFilters()">
+          <option value="All">All Entities</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Status</label>
+        <select id="filterStatus" onchange="applyFilters()">
+          <option value="All">All Status</option>
+          <option value="Quotation">Quotation</option>
+          <option value="Waiting">Waiting</option>
+          <option value="Order">Order</option>
+          <option value="Cancled">Cancelled</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Material</label>
+        <select id="filterMaterial" onchange="applyFilters()">
+          <option value="All">All Materials</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <!-- Left Panel: Summary & Suppliers -->
+      <div class="panel summary-panel">
+        <h2>📊 Dashboard Summary</h2>
+        
+        <div class="kpi-grid">
+          <div class="kpi-card info">
+            <div class="kpi-label">Total Quotations</div>
+            <div class="kpi-value" id="kpiTotalQuotes">-</div>
+          </div>
+          <div class="kpi-card success">
+            <div class="kpi-label">Total POs</div>
+            <div class="kpi-value" id="kpiTotalPOs">-</div>
+          </div>
+          <div class="kpi-card warning">
+            <div class="kpi-label">Win Rate</div>
+            <div class="kpi-value" id="kpiWinRate">-</div>
+          </div>
+          <div class="kpi-card info">
+            <div class="kpi-label">Total Spend (USD)</div>
+            <div class="kpi-value" id="kpiTotalSpend">-</div>
+          </div>
+        </div>
+
+        <div class="section-title">🏢 Top Suppliers by Spend</div>
+        <div class="supplier-list" id="supplierList">
+          <div class="loading">Loading suppliers...</div>
+        </div>
+      </div>
+
+      <!-- Middle Panel: Charts -->
+      <div class="panel">
+        <div class="chart-container">
+          <div class="chart-title">📉 Quotation Funnel</div>
+          <div class="chart-wrapper">
+            <canvas id="funnelChart" class="chart"></canvas>
+          </div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">📊 Materials by Discipline</div>
+          <div class="chart-wrapper">
+            <canvas id="materialsChart" class="chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Marketplace Workbench -->
+      <div class="panel">
+        <div class="section-title">📋 Marketplace Workbench</div>
+        <div style="max-height: 500px; overflow-y: auto;">
+          <table class="workbench-table" id="workbenchTable">
+            <thead>
+              <tr>
+                <th>Quote #</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Project</th>
+                <th>Material</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody id="workbenchBody">
+              <tr><td colspan="6" class="loading">Loading data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="data-updated" id="resultCount">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Global data store
+    let dashboardData = null;
+    let funnelChart = null;
+    let materialsChart = null;
+
+    // Load data from JSON
+    async function loadData() {
+      try {
+        console.log('Loading data...');
+        const response = await fetch('data.json?' + Date.now()); // Cache bust
+        dashboardData = await response.json();
+        console.log('Data loaded successfully:', dashboardData.summary);
+        console.log('Funnel:', dashboardData.funnel);
+        console.log('Suppliers count:', dashboardData.suppliers.length);
+        console.log('Workbench count:', dashboardData.workbench.length);
+        initializeDashboard();
+      } catch (error) {
+        console.error('Error loading data:', error);
+        document.getElementById('workbenchBody').innerHTML = 
+          '<tr><td colspan="6" style="color: red;">Error loading data: ' + error.message + '</td></tr>';
+      }
+    }
+
+    function initializeDashboard() {
+      console.log('Initializing dashboard...');
+      // Update last refresh
+      document.getElementById('lastRefresh').textContent = `Last Refresh: ${dashboardData.lastRefresh}`;
+
+      // Update KPIs
+      document.getElementById('kpiTotalQuotes').textContent = formatNumber(dashboardData.summary.totalQuotations);
+      document.getElementById('kpiTotalPOs').textContent = formatNumber(dashboardData.summary.totalPOs);
+      document.getElementById('kpiWinRate').textContent = `${dashboardData.summary.winRate}%`;
+      document.getElementById('kpiTotalSpend').textContent = formatCurrency(dashboardData.summary.totalPOSpendUSD);
+      console.log('KPIs updated');
+
+      // Populate filter dropdowns
+      populateFilters();
+
+      // Render supplier list
+      renderSupplierList();
+
+      // Render charts
+      renderFunnelChart();
+      renderMaterialsChart();
+
+      // Render workbench
+      renderWorkbench(dashboardData.workbench);
+    }
+
+    function populateFilters() {
+      // Populate Entity filter
+      const entitySelect = document.getElementById('filterEntity');
+      const entities = [...new Set(dashboardData.entities.map(e => e.Entity))].sort();
+      entities.forEach(entity => {
+        const option = document.createElement('option');
+        option.value = entity;
+        option.textContent = entity;
+        entitySelect.appendChild(option);
+      });
+
+      // Populate Material filter
+      const materialSelect = document.getElementById('filterMaterial');
+      const materials = [...new Set(dashboardData.materialsByDiscipline.map(m => m.MaterialCode))].filter(m => m && m !== 'Unknown').sort();
+      materials.forEach(material => {
+        const option = document.createElement('option');
+        option.value = material;
+        option.textContent = material;
+        materialSelect.appendChild(option);
+      });
+    }
+
+    function renderSupplierList() {
+      const container = document.getElementById('supplierList');
+      const suppliers = dashboardData.suppliers.slice(0, 15); // Top 15
+
+      container.innerHTML = suppliers.map((s, i) => `
+        <div class="supplier-item ${i === 0 ? 'active' : ''}" onclick="selectSupplier('${s.SupplierName}', this)">
+          <span class="supplier-name">${truncate(s.SupplierName, 25)}</span>
+          <span class="supplier-spend">${formatCurrency(s.TotalSpendUSD)}</span>
+        </div>
+      `).join('');
+    }
+
+    function selectSupplier(name, element) {
+      // Update active state
+      document.querySelectorAll('.supplier-item').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+
+      // Filter workbench by supplier (if needed in future)
+      console.log('Selected supplier:', name);
+    }
+
+    function renderFunnelChart() {
+      const funnel = dashboardData.funnel;
+      const ctx = document.getElementById('funnelChart').getContext('2d');
+
+      if (funnelChart) funnelChart.destroy();
+
+      funnelChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Quotation', 'Waiting', 'Order', 'Cancelled'],
+          datasets: [{
+            label: 'Count',
+            data: [funnel.Quotation || 0, funnel.Waiting || 0, funnel.Order || 0, funnel.Cancelled || 0],
+            backgroundColor: ['#8a8886', '#faa916', '#107c10', '#a80000'],
+            borderRadius: 6,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.raw.toLocaleString()} quotations`
+              }
+            }
+          },
+          scales: {
+            x: { 
+              beginAtZero: true,
+              grid: { color: '#f3f2f1' },
+              ticks: { font: { size: 11, weight: '600' } }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { size: 12, weight: '700' } }
+            }
+          }
+        }
+      });
+    }
+
+    function renderMaterialsChart() {
+      const materials = dashboardData.materialsByDiscipline
+        .filter(m => m.MaterialCode && m.MaterialCode !== 'Unknown')
+        .slice(0, 10);
+
+      const ctx = document.getElementById('materialsChart').getContext('2d');
+
+      if (materialsChart) materialsChart.destroy();
+
+      materialsChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: materials.map(m => m.MaterialCode),
+          datasets: [{
+            data: materials.map(m => m.QuotationValueUSD || 0),
+            backgroundColor: [
+              '#0078d4', '#107c10', '#faa916', '#a80000', '#8a8886',
+              '#004578', '#32a852', '#ff9f1c', '#c13535', '#605e5c'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { 
+                padding: 10, 
+                font: { size: 11, weight: '600' },
+                boxWidth: 12
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw)}`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderWorkbench(data) {
+      const tbody = document.getElementById('workbenchBody');
+      const displayData = data.slice(0, 50); // Show first 50 rows
+
+      tbody.innerHTML = displayData.map(q => `
+        <tr>
+          <td><strong>${q.QuotationNumber || '-'}</strong></td>
+          <td>${q.QuotationType || '-'}</td>
+          <td><span class="status-badge status-${(q.Status || 'unknown').toLowerCase()}">${q.Status || 'N/A'}</span></td>
+          <td title="${q.ProjectName || ''}">${truncate(q.ProjectName || '-', 20)}</td>
+          <td>${q.MaterialName || '-'}</td>
+          <td><strong>${formatCurrency(q.QuotationValue || 0, q.Currency)}</strong></td>
+        </tr>
+      `).join('');
+
+      document.getElementById('resultCount').textContent = `✓ Showing ${displayData.length} of ${data.length} quotations`;
+    }
+
+    function applyFilters() {
+      const entity = document.getElementById('filterEntity').value;
+      const status = document.getElementById('filterStatus').value;
+      const material = document.getElementById('filterMaterial').value;
+
+      let filtered = dashboardData.workbench.filter(q => {
+        return (entity === 'All' || q.Entity === entity) &&
+               (status === 'All' || q.Status === status) &&
+               (material === 'All' || q.MaterialCode === material);
+      });
+
+      renderWorkbench(filtered);
+      document.getElementById('headerFilterStatus').textContent = `Entity: ${entity} · Status: ${status}`;
+    }
+
+    // Utility functions
+    function formatNumber(num) {
+      if (!num) return '0';
+      return num.toLocaleString();
+    }
+
+    function formatCurrency(value, currency = 'USD') {
+      if (!value) return '$0';
+      if (value >= 1000000000) {
+        return '$' + (value / 1000000000).toFixed(2) + 'B';
+      } else if (value >= 1000000) {
+        return '$' + (value / 1000000).toFixed(2) + 'M';
+      } else if (value >= 1000) {
+        return '$' + (value / 1000).toFixed(1) + 'K';
+      }
+      return '$' + value.toLocaleString();
+    }
+
+    function truncate(str, len) {
+      if (!str) return '';
+      return str.length > len ? str.substring(0, len) + '...' : str;
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

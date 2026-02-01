@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MVL Supply Intel Hub – Global Spend Analysis</title>
+  <style>
+    :root {
+      --brand-primary: #d96f3c;
+      --brand-accent: #ff9e2b;
+      --brand-success: #3fbf8f;
+      --brand-info: #2f73c9;
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --text: #1f2933;
+      --muted: #66707a;
+      --line: #e0e5ea;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(90deg, var(--brand-primary), #c3592c);
+      color: #fff;
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      margin: 0 0 4px 0;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .header .subtitle {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .header .meta {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.4;
+      opacity: 0.9;
+    }
+
+    .filters {
+      padding: 12px 20px 6px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .filter {
+      border: 1px solid #cfd6dd;
+      border-radius: 6px;
+      padding: 6px 8px;
+      background: #fafbfc;
+      font-size: 11px;
+    }
+
+    .filter label {
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .filter select, .filter input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 11px;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 12px 20px;
+    }
+
+    .kpi {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      font-size: 11px;
+    }
+
+    .kpi-title {
+      text-transform: uppercase;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .kpi-value {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .kpi-sub {
+      font-size: 10px;
+      color: #8a93a0;
+      margin-top: 4px;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 1.4fr 0.9fr;
+      gap: 12px;
+      padding: 0 20px 20px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .chart {
+      width: 100%;
+      height: 220px;
+      border: 1px solid #d7dde3;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10.5px;
+      margin-top: 6px;
+    }
+
+    .table th {
+      text-align: left;
+      padding: 6px 6px;
+      background: #f2f4f7;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .table td {
+      padding: 6px 6px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 4px;
+      vertical-align: -1px;
+      background: currentColor;
+    }
+
+    @media (max-width: 1200px) {
+      .filter-row { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+      .main { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div>
+        <h1>Global Spend Analysis</h1>
+        <div class="subtitle">01 Jan 2000 – 23 Jan 2026 · Quotation-linked POs</div>
+      </div>
+      <div class="meta">
+        MVL Supply Intel Hub<br />
+        Last Refresh: 23 Jan 2026 06:08 AM<br />
+        Currency: USD (converted)
+      </div>
+    </header>
+
+    <section class="filters">
+      <div class="filter-row">
+        <div class="filter"><label>Entity</label><select><option>All</option></select></div>
+        <div class="filter"><label>Supplier Name</label><select><option>All</option></select></div>
+        <div class="filter"><label>Project Name</label><select><option>All</option></select></div>
+        <div class="filter"><label>PO No.</label><select><option>All</option></select></div>
+        <div class="filter"><label>Year</label><select><option>All</option></select></div>
+        <div class="filter"><label>PO Placement Date</label><input type="text" value="01-Jan-2000 – 23-Jan-2026" /></div>
+      </div>
+      <div class="filter-row">
+        <div class="filter"><label>Material Type</label><select><option>All</option></select></div>
+        <div class="filter"><label>Discipline</label><select><option>All</option></select></div>
+        <div class="filter"><label>Quotation Type</label><select><option>All</option><option>IQ</option><option>RFQ</option></select></div>
+        <div class="filter"><label>PO Type</label><select><option>All</option><option>Base (…1)</option><option>Change (…2)</option></select></div>
+        <div class="filter"><label>Currency</label><select><option>USD</option></select></div>
+        <div class="filter"><label>Project Multi-Select</label><select><option>Enabled</option></select></div>
+      </div>
+    </section>
+
+    <section class="kpis">
+      <div class="kpi">
+        <div class="kpi-title">Total Spend (USD)</div>
+        <div class="kpi-value">53.49bn</div>
+        <div class="kpi-sub">All entities, all suppliers</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-title">No. of Base POs</div>
+        <div class="kpi-value">513.8K</div>
+        <div class="kpi-sub">PO numbers ending with “1”</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-title">No. of Change Orders</div>
+        <div class="kpi-value">225.6K</div>
+        <div class="kpi-sub">PO numbers ending with “2”</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-title">Active Suppliers</div>
+        <div class="kpi-value">3,420</div>
+        <div class="kpi-sub">With at least one PO</div>
+      </div>
+    </section>
+
+    <section class="main">
+      <div>
+        <div class="card">
+          <div class="card-title">Annual Spend Trend</div>
+          <svg class="chart" id="annualSpendChart" viewBox="0 0 520 220" preserveAspectRatio="none"></svg>
+          <div class="legend">
+            <span style="color: #d96f3c;">Base POs</span>
+            <span style="color: #ff9e2b;">Change Orders</span>
+            <span style="color: #2f73c9;">Running Total</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">PO Details</div>
+          <table class="table">
+            <tr>
+              <th>PO No</th><th>Project</th><th>Supplier</th><th>Entity</th><th>PO Date</th><th>Type</th><th>Material</th><th>Discipline</th><th>PO Value (USD)</th>
+            </tr>
+            <tr>
+              <td>RFPO-2025-10451-1</td><td>PE108</td><td>L&amp;T ECC</td><td>Petrofac Abu Dhabi</td>
+              <td>30-Oct-2023</td><td>Base</td><td>Valves</td><td>Mechanical</td><td>1,240,000</td>
+            </tr>
+            <tr>
+              <td>RFPO-2025-10451-2</td><td>PE108</td><td>L&amp;T ECC</td><td>Petrofac Abu Dhabi</td>
+              <td>18-Aug-2024</td><td>Change</td><td>Valves</td><td>Mechanical</td><td>145,000</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title">Spend by Project</div>
+          <svg class="chart" id="donutChart" viewBox="0 0 220 220" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Top 10 Suppliers by Spend</div>
+          <svg class="chart" id="topSuppliersChart" viewBox="0 0 220 220" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Bottom 10 Active Suppliers</div>
+          <svg class="chart" id="bottomSuppliersChart" viewBox="0 0 220 220" preserveAspectRatio="none"></svg>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    const annualData = [
+      { year: "2020", base: 6.2, change: 1.1 },
+      { year: "2021", base: 7.1, change: 1.4 },
+      { year: "2022", base: 7.8, change: 1.6 },
+      { year: "2023", base: 8.4, change: 1.9 },
+      { year: "2024", base: 9.0, change: 2.1 },
+      { year: "2025", base: 9.7, change: 2.4 }
+    ];
+
+    const donutData = [
+      { label: "Project PE108", value: 34, color: "#d96f3c" },
+      { label: "Project PX210", value: 24, color: "#ff9e2b" },
+      { label: "Project LK411", value: 18, color: "#2f73c9" },
+      { label: "Project AD300", value: 14, color: "#3fbf8f" },
+      { label: "Other", value: 10, color: "#c4c9cf" }
+    ];
+
+    const topSuppliers = [
+      { label: "L&T ECC", value: 4.2 },
+      { label: "Samsung", value: 3.8 },
+      { label: "Siemens", value: 3.5 },
+      { label: "Emirates Steel", value: 3.1 },
+      { label: "ABB", value: 2.9 }
+    ];
+
+    const bottomSuppliers = [
+      { label: "Desert Tools", value: 0.5 },
+      { label: "Falcon Pipe", value: 0.6 },
+      { label: "Gulf Cable", value: 0.7 },
+      { label: "Prime Fasteners", value: 0.8 },
+      { label: "Nova Pumps", value: 0.9 }
+    ];
+
+    function renderAnnualChart(svgId, data) {
+      const svg = document.getElementById(svgId);
+      const width = 520;
+      const height = 220;
+      svg.innerHTML = "";
+
+      const padding = { top: 16, right: 20, bottom: 26, left: 30 };
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+
+      const totals = data.map(d => d.base + d.change);
+      const max = Math.max(...totals) * 1.1;
+      const step = chartW / data.length;
+      const barWidth = step * 0.5;
+
+      const axis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      axis.setAttribute("x1", padding.left);
+      axis.setAttribute("y1", padding.top + chartH);
+      axis.setAttribute("x2", padding.left + chartW);
+      axis.setAttribute("y2", padding.top + chartH);
+      axis.setAttribute("stroke", "#cdd5dd");
+      svg.appendChild(axis);
+
+      const running = [];
+      data.reduce((acc, d) => {
+        const next = acc + d.base + d.change;
+        running.push(next);
+        return next;
+      }, 0);
+
+      data.forEach((d, i) => {
+        const x = padding.left + i * step + (step - barWidth) / 2;
+        const baseH = (d.base / max) * chartH;
+        const changeH = (d.change / max) * chartH;
+        const baseY = padding.top + chartH - baseH;
+        const changeY = baseY - changeH;
+
+        const baseRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        baseRect.setAttribute("x", x);
+        baseRect.setAttribute("y", baseY);
+        baseRect.setAttribute("width", barWidth);
+        baseRect.setAttribute("height", baseH);
+        baseRect.setAttribute("fill", "#d96f3c");
+        svg.appendChild(baseRect);
+
+        const changeRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        changeRect.setAttribute("x", x);
+        changeRect.setAttribute("y", changeY);
+        changeRect.setAttribute("width", barWidth);
+        changeRect.setAttribute("height", changeH);
+        changeRect.setAttribute("fill", "#ff9e2b");
+        svg.appendChild(changeRect);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", x + barWidth / 2);
+        label.setAttribute("y", height - 8);
+        label.setAttribute("text-anchor", "middle");
+        label.setAttribute("font-size", "10");
+        label.setAttribute("fill", "#66707a");
+        label.textContent = d.year;
+        svg.appendChild(label);
+      });
+
+      const runMax = Math.max(...running) * 1.1;
+      const points = running.map((v, i) => {
+        const x = padding.left + i * step + step / 2;
+        const y = padding.top + chartH - (v / runMax) * chartH;
+        return `${x},${y}`;
+      }).join(" ");
+
+      const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+      polyline.setAttribute("fill", "none");
+      polyline.setAttribute("stroke", "#2f73c9");
+      polyline.setAttribute("stroke-width", "2");
+      polyline.setAttribute("points", points);
+      svg.appendChild(polyline);
+    }
+
+    function renderDonut(svgId, data) {
+      const svg = document.getElementById(svgId);
+      const center = 110;
+      const radius = 70;
+      const inner = 40;
+      const total = data.reduce((acc, d) => acc + d.value, 0);
+      let angle = -Math.PI / 2;
+
+      svg.innerHTML = "";
+      data.forEach(d => {
+        const slice = (d.value / total) * Math.PI * 2;
+        const end = angle + slice;
+        const x1 = center + Math.cos(angle) * radius;
+        const y1 = center + Math.sin(angle) * radius;
+        const x2 = center + Math.cos(end) * radius;
+        const y2 = center + Math.sin(end) * radius;
+        const large = slice > Math.PI ? 1 : 0;
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const dPath = [
+          `M ${center} ${center}`,
+          `L ${x1} ${y1}`,
+          `A ${radius} ${radius} 0 ${large} 1 ${x2} ${y2}`,
+          "Z"
+        ].join(" ");
+        path.setAttribute("d", dPath);
+        path.setAttribute("fill", d.color);
+        svg.appendChild(path);
+
+        angle = end;
+      });
+
+      const hole = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      hole.setAttribute("cx", center);
+      hole.setAttribute("cy", center);
+      hole.setAttribute("r", inner);
+      hole.setAttribute("fill", "#fff");
+      svg.appendChild(hole);
+    }
+
+    function renderBarList(svgId, data, color) {
+      const svg = document.getElementById(svgId);
+      const width = 220;
+      const height = 220;
+      svg.innerHTML = "";
+      const padding = { top: 18, right: 12, bottom: 12, left: 80 };
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+      const max = Math.max(...data.map(d => d.value)) * 1.1;
+      const barHeight = chartH / data.length - 8;
+
+      data.forEach((d, i) => {
+        const y = padding.top + i * (barHeight + 8);
+        const w = (d.value / max) * chartW;
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", padding.left);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", w);
+        rect.setAttribute("height", barHeight);
+        rect.setAttribute("fill", color);
+        rect.setAttribute("opacity", "0.9");
+        svg.appendChild(rect);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", 10);
+        label.setAttribute("y", y + barHeight / 2 + 4);
+        label.setAttribute("font-size", "10");
+        label.setAttribute("fill", "#5f6975");
+        label.textContent = d.label;
+        svg.appendChild(label);
+      });
+    }
+
+    renderAnnualChart("annualSpendChart", annualData);
+    renderDonut("donutChart", donutData);
+    renderBarList("topSuppliersChart", topSuppliers, "#3fbf8f");
+    renderBarList("bottomSuppliersChart", bottomSuppliers, "#c4c9cf");
+  </script>
+</body>
+</html>
