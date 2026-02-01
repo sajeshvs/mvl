@@ -1,63 +1,108 @@
-# MVL Supply Intel Hub
+# MVL Supply Intel Hub 🏢
 
 A comprehensive procurement analytics solution built with HTML/CSS/JavaScript and Chart.js, designed to visualize quotation, purchase order, and supplier data for MVL (Multi Vision Limited).
+
+[![Private Repo](https://img.shields.io/badge/repo-private-red.svg)](https://github.com/sajeshvs/mvl-powerbi-dashboards)
+[![Version](https://img.shields.io/badge/version-3.0-blue.svg)](./v3/)
+[![Live Demo](https://img.shields.io/badge/demo-live-green.svg)](https://sajeshvs.github.io/mvl/)
+
+---
+
+## 📋 Version History
+
+| Version | Date | Description |
+|---------|------|-------------|
+| **v3.0** | Jan 2025 | Modal system, mobile responsive, component architecture |
+| **v2.0** | Jan 2025 | Multi-page architecture with navigation |
+| **v1.0** | Jan 2025 | Initial standalone HTML dashboards |
+
+---
 
 ## 🎯 Project Overview
 
 The MVL Supply Intel Hub consists of three interactive dashboards:
 
-| Dashboard | Description | Theme Color |
-|-----------|-------------|-------------|
-| **Supplier Marketplace** | Quotation funnel, supplier profiles, marketplace workbench | Blue |
-| **Global Spend Analysis** | PO spend analysis, Base vs Change Orders | Orange |
-| **Disciplines Consolidated** | Budget vs Actual by material discipline | Dark Blue |
+| Dashboard | Description | Theme Color | Records |
+|-----------|-------------|-------------|---------|
+| **Supplier Marketplace** | Quotation funnel, supplier profiles, marketplace workbench | Blue | 12,134 |
+| **Global Spend Analysis** | PO spend analysis, Base vs Change Orders | Orange | 3,539 |
+| **Disciplines Consolidated** | Budget vs Actual by material discipline | Dark Blue | 28 |
+
+### 🌐 Live Demo
+**Public URL:** https://sajeshvs.github.io/mvl/
+
+---
 
 ## 📁 Project Structure
 
 ```
 PowerBI/
-├── process_data.py                    # Data processing script
-├── PROJECT_ANALYSIS_REPORT.md         # Full project documentation
-├── DATA_MAPPING_RULES.md              # Business rules from Rita
+├── v3/                                # ⭐ CURRENT PRODUCTION VERSION
+│   ├── index.html                     # Main navigation hub
+│   ├── supplier-marketplace/          # Quotation dashboard
+│   ├── global-spend-analysis/         # PO spend dashboard
+│   ├── disciplines-consolidated/      # Budget analysis
+│   └── shared/                        # Common components
+│       ├── components/                # Modal system
+│       ├── styles.css                 # Shared styling
+│       ├── charts.js                  # Chart configurations
+│       └── data-utils.js              # Data utilities
 │
-├── supplier-marketplace/
-│   ├── supplier-marketplace.html      # Dashboard HTML
-│   ├── data.json                      # Generated data
-│   ├── README.md                      # Dashboard documentation
-│   └── resources/                     # Assets
+├── v2/                                # Previous stable backup
 │
-├── global-spend-analysis/
-│   ├── global-spend-analysis.html     # Dashboard HTML
-│   ├── data.json                      # Generated data
-│   ├── README.md                      # Dashboard documentation
-│   └── resources/                     # Assets
+├── docs/                              # 📚 All documentation
+│   ├── reference/                     # Original requirements
+│   ├── images/                        # UI mockups & screenshots
+│   └── *.md/*.docx                    # Project docs
 │
-├── disciplines-consolidated/
-│   ├── disciplines-consolidated.html  # Dashboard HTML
-│   ├── data.json                      # Generated data
-│   ├── README.md                      # Dashboard documentation
-│   └── resources/                     # Assets
+├── archive/                           # 📦 Historical files
+│   ├── legacy-html/                   # Old standalone HTMLs
+│   ├── legacy-dashboards/             # Original dashboard attempts
+│   ├── old-scripts/                   # Previous Python scripts
+│   └── data-review/                   # Data analysis files
 │
-├── data-review/
-│   └── DATA_FILES_REVIEW.md           # CSV data analysis
+├── working/                           # 🔧 Scratch/experimental
 │
-├── html/                              # Original HTML templates
-│   └── archive/                       # Previous versions
-│
-└── reference/                         # Reference documents
-    ├── Scope of Work.md
-    ├── 6. Data model – fact tables and dimensions.md
-    ├── 7. Key DAX measures.md
-    └── ...
+├── CONTINUE_LATER.md                  # Instructions to resume work
+└── README.md                          # This file
 ```
+
+---
+
+## ✨ v3.0 Features
+
+### Interactive Modals
+Click on any row or card to view detailed information:
+- **PO Details**: Full purchase order breakdown
+- **Supplier Profiles**: Complete supplier information
+- **Quote Details**: Quotation line items and status
+
+### Mobile Responsive
+- Optimized layouts for all screen sizes
+- Touch-friendly interactions
+- Horizontal scrolling tables on mobile
+
+### Shared Component Architecture
+```
+v3/shared/
+├── components/
+│   ├── modal.js        # Reusable Modal class
+│   ├── modal.css       # Modal styling
+│   └── detail-modals.js # PO/Supplier/Quote templates
+├── styles.css          # Common styles
+├── charts.js           # Chart configurations
+└── data-utils.js       # Data utilities
+```
+
+---
 
 ## 📊 Data Summary
 
-| Dataset | Records | Source File |
-|---------|---------|-------------|
-| Quotations | 12,532 | 5 CSV files (Quotation Reports) |
-| Purchase Orders | 3,539 | PO_List_Jan-23-2026.csv |
-| Suppliers/Clients | 2,542 | MVL_Clients_List_Jan-23-2026.csv |
+| Dataset | Records | File Size |
+|---------|---------|-----------|
+| Quotations | 12,134 | 6.4 MB |
+| Purchase Orders | 3,539 | 2.0 MB |
+| Disciplines | 28 | 309 KB |
 
 ### Key Metrics
 - **Total Quotation Value**: $3.3B USD
@@ -65,64 +110,58 @@ PowerBI/
 - **Win Rate**: 100% (Order / (Order + Cancelled))
 - **Active Suppliers**: 400+
 
+---
+
 ## 🚀 Quick Start
 
+### View Live Demo
+Visit: https://sajeshvs.github.io/mvl/
+
+### Run Locally
+```bash
+# Navigate to v3 folder
+cd "c:\Users\Sajesh\Documents\Apps\Rita\PowerBI\v3"
+
+# Start local server
+python -m http.server 8000
+
+# Open in browser
+http://localhost:8000
+```
+
 ### Prerequisites
-- Python 3.x with pandas installed
+- Python 3.x
 - Web browser (Chrome, Firefox, Edge recommended)
 
-### Generate Data
-```bash
-# Navigate to project directory
-cd "c:\Users\Sajesh\Documents\Apps\Rita\PowerBI"
+---
 
-# Activate virtual environment
-.venv\Scripts\activate
+## 🔧 Development
 
-# Run data processing script
-python process_data.py
-```
+### Git Repositories
+| Repo | Type | Purpose |
+|------|------|---------|
+| [mvl-powerbi-dashboards](https://github.com/sajeshvs/mvl-powerbi-dashboards) | Private | Complete workspace with data |
+| [mvl](https://github.com/sajeshvs/mvl) | Public | v3 production deployment |
 
-### View Dashboards
-Option 1: Direct file access (may have CORS issues)
-```
-Open any dashboard HTML file in browser
-```
+### Workflow
+1. Make changes in local workspace
+2. Test using local server
+3. Commit to private repo (full backup)
+4. Deploy v3 to public repo for live demo
 
-Option 2: Local server (recommended)
-```bash
-python -m http.server 8000
-# Then open http://localhost:8000/supplier-marketplace/supplier-marketplace.html
-```
+---
 
-## 🔧 Data Processing Pipeline
+## 📝 Documentation
 
-The `process_data.py` script performs:
+| Document | Location |
+|----------|----------|
+| Project Scope | `docs/reference/Scope of Work.md` |
+| Data Model | `docs/reference/6. Data model – fact tables and dimensions.md` |
+| DAX Measures | `docs/reference/7. Key DAX measures.md` |
+| Development Guide | `docs/reference/8. How the BI Developer needs to be proceed.md` |
+| Continue Instructions | `CONTINUE_LATER.md` |
 
-1. **Load & Merge**: Combines 5 quotation CSV files
-2. **Clean**: Handles nulls, HTML entities, date parsing
-3. **Transform**: Extracts PO types, material codes, linking keys
-4. **Aggregate**: Calculates KPIs, summaries, rankings
-5. **Export**: Generates JSON for each dashboard
-
-### Business Rules Applied
-
-#### PO Type Classification
-- Last digit `1` = Base PO
-- Last digit `2+` = Change Order
-
-#### Material Code Extraction
-Letter in document number indicates discipline:
-- M = Mechanical
-- E = Electrical
-- A = Architectural
-- V = Various
-- (Full list in DATA_MAPPING_RULES.md)
-
-#### Quote-to-PO Linking
-Middle portion of document number creates linking key:
-- `RFQ-5829-E6823` → Key: `5829-E6823`
-- `RFPO-5829-E6823-1` → Key: `5829-E6823`
+---
 
 ## 🎨 Design System
 
@@ -139,29 +178,27 @@ Middle portion of document number creates linking key:
 - **Order**: Green (#107c10)
 - **Cancelled**: Red (#a80000)
 
-## 📈 Charts Library
+---
 
-All charts use [Chart.js 4.4.0](https://www.chartjs.org/) with:
-- Responsive design
-- Custom tooltips
-- Consistent styling with MVL branding
+## 📈 Technology Stack
 
-## 🔄 Refreshing Data
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Charts**: Chart.js 4.4.0
+- **Data**: JSON (processed from CSV)
+- **Hosting**: GitHub Pages
 
-To update dashboards with new data:
+---
 
-1. Place updated CSV files in the data folder
-2. Run `process_data.py`
-3. Refresh the HTML dashboard in browser
+## 👨‍💻 Author
 
-## 📝 Documentation
+**Sajesh VS**
+- GitHub: [@sajeshvs](https://github.com/sajeshvs)
 
-| Document | Purpose |
-|----------|---------|
-| PROJECT_ANALYSIS_REPORT.md | Complete project analysis |
-| DATA_MAPPING_RULES.md | Business rules from Rita |
-| DATA_FILES_REVIEW.md | CSV structure analysis |
-| Individual README.md | Dashboard-specific docs |
+---
+
+## 📄 License
+
+Private repository - All rights reserved.
 
 ## 🤝 Contributors
 
