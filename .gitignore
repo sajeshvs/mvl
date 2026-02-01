@@ -1,36 +1,3 @@
-# Python
-.venv/
-__pycache__/
-*.py[cod]
-*.egg-info/
-.eggs/
-dist/
-build/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Logs
-*.log
-npm-debug.log*
-
-# Temp files
-*.tmp
-*.temp
-*.bak
-
-# Ignore nested git repos (v2 and v3 have their own repos)
+# Ignore nested git repos only
 v2/.git/
 v3/.git/
-
-# Large data files (optional - uncomment if you want to exclude)
-# */data.json
