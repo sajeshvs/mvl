@@ -1,0 +1,223 @@
+@import '../../../../styles/variables';
+
+.portal {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: $color-bg;
+}
+
+// Header
+.portalHeader {
+  background: $header-gradient;
+  color: $color-text-inverse;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-md;
+}
+
+.logoContainer {
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  @include flex-center;
+}
+
+.logoText {
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+}
+
+.titleContainer {
+  h1 {
+    font-size: 32px;
+    margin: 0 0 $space-sm 0;
+    font-weight: 600;
+  }
+
+  p {
+    opacity: 0.85;
+    margin: 0;
+    font-size: $font-size-xl;
+  }
+}
+
+// Main Content
+.portalContent {
+  flex: 1;
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// Stats Bar
+.statsBar {
+  @include card-base;
+  padding: $space-xl;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: $space-xl;
+  margin-bottom: 40px;
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: $color-primary-light;
+}
+
+.statLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-top: $space-xs;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// Dashboard Grid
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: $space-xl;
+  margin-bottom: 40px;
+}
+
+.dashboardCard {
+  @include card-base;
+  @include card-hover;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+
+  &:focus {
+    outline: 2px solid $color-primary-light;
+    outline-offset: 2px;
+  }
+}
+
+.cardIcon {
+  height: 120px;
+  @include flex-center;
+  font-size: 64px;
+  
+  &.supplierIcon {
+    background: $supplier-marketplace-gradient;
+  }
+  
+  &.spendIcon {
+    background: $global-spend-gradient;
+  }
+  
+  &.disciplinesIcon {
+    background: $disciplines-gradient;
+  }
+}
+
+.cardBody {
+  padding: $space-xl;
+  flex: 1;
+}
+
+.cardTitle {
+  font-size: $font-size-xxl;
+  font-weight: 600;
+  margin: 0 0 $space-sm 0;
+  color: $color-text-primary;
+}
+
+.cardDescription {
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+  margin: 0 0 $space-lg 0;
+  line-height: 1.5;
+}
+
+.cardFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    font-size: $font-size-md;
+    color: $color-text-secondary;
+    padding: $space-xs 0;
+
+    &::before {
+      content: '✓';
+      color: $color-success;
+      font-weight: bold;
+    }
+  }
+}
+
+.cardCta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-lg $space-xl;
+  background: $color-bg;
+  font-size: $font-size-lg;
+  font-weight: 600;
+  color: $color-primary-light;
+  border-top: 1px solid $color-border;
+}
+
+.arrow {
+  font-size: 20px;
+  transition: transform $transition-fast;
+  
+  .dashboardCard:hover & {
+    transform: translateX(4px);
+  }
+}
+
+// Footer
+.portalFooter {
+  text-align: center;
+  padding: $space-xl;
+  color: $color-text-tertiary;
+  font-size: $font-size-sm;
+
+  p {
+    margin: 0;
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-md) {
+  .portalHeader {
+    padding: 24px 16px;
+  }
+  
+  .titleContainer h1 {
+    font-size: 24px;
+  }
+  
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .statsBar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

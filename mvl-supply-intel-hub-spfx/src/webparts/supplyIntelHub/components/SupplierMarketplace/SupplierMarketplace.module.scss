@@ -1,0 +1,135 @@
+@import '../../../../styles/variables';
+
+.supplierMarketplace {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: $color-bg;
+}
+
+.content {
+  flex: 1;
+  padding: $space-lg $space-xl;
+}
+
+// KPI Row
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: $space-md;
+  margin-bottom: $space-lg;
+}
+
+// Charts Grid
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: $space-lg;
+  margin-bottom: $space-lg;
+  
+  &:last-child {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Full width section
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+// Funnel Section
+.funnelSection {
+  @include card-base;
+  padding: $space-lg;
+  margin-bottom: $space-lg;
+}
+
+.funnelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $space-lg;
+  
+  h3 {
+    margin: 0;
+    font-size: $font-size-lg;
+    font-weight: 600;
+  }
+}
+
+.funnel {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: $space-md;
+  padding: $space-lg 0;
+}
+
+.funnelStage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  
+  .stageBar {
+    width: 120px;
+    border-radius: $radius-sm $radius-sm 0 0;
+    min-height: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding: $space-sm;
+    color: white;
+    font-weight: 600;
+    font-size: $font-size-lg;
+    
+    &.quotation { background: $funnel-quotation; }
+    &.waiting { background: $funnel-waiting; }
+    &.order { background: $funnel-order; }
+    &.cancelled { background: $funnel-cancelled; }
+  }
+  
+  .stageLabel {
+    margin-top: $space-sm;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    font-weight: 500;
+  }
+  
+  .stageValue {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-xl) {
+  .kpiRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .content {
+    padding: $space-md;
+  }
+  
+  .kpiRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .funnel {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .kpiRow {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,94 @@
+@import '../../../../../styles/variables';
+
+.dashboardHeader {
+  background: $header-gradient;
+  color: $color-text-inverse;
+  padding: $space-md $space-xl;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: $shadow-md;
+  position: sticky;
+  top: 0;
+  z-index: $z-header;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: $space-lg;
+}
+
+.backButton {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: $space-sm $space-md;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  transition: background $transition-fast;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  &:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+.titleContainer {
+  display: flex;
+  flex-direction: column;
+  
+  h1 {
+    margin: 0;
+    font-size: $font-size-xxl;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+}
+
+.subtitle {
+  font-size: $font-size-sm;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+
+.headerRight {
+  text-align: right;
+  font-size: $font-size-xs;
+}
+
+.refreshTime {
+  opacity: 0.9;
+}
+
+.entityInfo {
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+// Responsive
+@media (max-width: $breakpoint-md) {
+  .dashboardHeader {
+    flex-direction: column;
+    gap: $space-sm;
+    text-align: center;
+    padding: $space-md;
+  }
+  
+  .headerLeft {
+    flex-direction: column;
+  }
+  
+  .headerRight {
+    text-align: center;
+  }
+  
+  .titleContainer h1 {
+    font-size: $font-size-xl;
+  }
+}

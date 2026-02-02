@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "MVL Supply Intel Hub",
+    "id": "a5e8f3b2-4c91-4d7e-b8f6-2c9a1d3e5f7b",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "MVL Group",
+      "websiteUrl": "https://mvlgroupusa.sharepoint.com",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.21.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "MVL Supply Intelligence Hub - Procurement Analytics Dashboard"
+      },
+      "longDescription": {
+        "default": "A comprehensive procurement analytics dashboard featuring Supplier Marketplace, Global Spend Analysis, and Disciplines Consolidated views. Connects to MicroTrack SharePoint lists for live data visualization."
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": [
+        "Productivity"
+      ]
+    },
+    "features": [
+      {
+        "title": "MVL Supply Intel Hub Web Part",
+        "description": "Interactive procurement analytics dashboard web part",
+        "id": "b6f9a4c3-5d82-4e8f-a9g7-3d0b2e4f6a8c",
+        "version": "1.0.0.0"
+      }
+    ],
+    "webApiPermissionRequests": [
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Sites.Read.All"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/mvl-supply-intel-hub.sppkg"
+  }
+}

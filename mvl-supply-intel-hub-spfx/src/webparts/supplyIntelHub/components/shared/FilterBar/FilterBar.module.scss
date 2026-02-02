@@ -1,0 +1,145 @@
+@import '../../../../../styles/variables';
+
+.filtersBar {
+  background: $color-card;
+  padding: $space-md $space-lg;
+  border-bottom: 1px solid $color-border;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  align-items: flex-end;
+  position: sticky;
+  top: 54px; // Below header
+  z-index: $z-filter-bar;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 130px;
+  
+  label {
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    color: $color-text-secondary;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  select,
+  input {
+    border: 1px solid $color-border-dark;
+    border-radius: $radius-sm;
+    padding: $space-xs $space-sm;
+    font-size: $font-size-sm;
+    background: $color-card;
+    min-width: 140px;
+    cursor: pointer;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+    
+    &:hover {
+      border-color: $color-primary-light;
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary-light;
+      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.15);
+    }
+  }
+}
+
+.searchBox {
+  position: relative;
+  
+  input {
+    width: 100%;
+    padding-left: 32px;
+  }
+  
+  &::before {
+    content: '🔍';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.activeFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-xs;
+  margin-left: $space-md;
+  align-items: center;
+}
+
+.filterTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: $color-primary-light;
+  color: white;
+  border-radius: 12px;
+  font-size: $font-size-xs;
+  
+  button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.8;
+    padding: 0;
+    margin-left: 4px;
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.resetButton {
+  padding: $space-xs $space-md;
+  background: $color-text-secondary;
+  color: white;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  margin-left: auto;
+  transition: background $transition-fast;
+  
+  &:hover {
+    background: darken($color-text-secondary, 10%);
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-md) {
+  .filtersBar {
+    position: relative;
+    top: auto;
+  }
+  
+  .filterGroup {
+    min-width: 100%;
+  }
+  
+  .activeFilters {
+    margin-left: 0;
+    margin-top: $space-sm;
+  }
+  
+  .resetButton {
+    margin-left: 0;
+    margin-top: $space-sm;
+    width: 100%;
+  }
+}

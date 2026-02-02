@@ -1,0 +1,149 @@
+// ==========================================================================
+// MVL Supply Intel Hub - SCSS Variables
+// Ported from v3/shared/styles.css
+// ==========================================================================
+
+// Brand Colors
+$color-primary: #004578;
+$color-primary-dark: #003359;
+$color-primary-light: #0078D4;
+$color-accent: #00A4EF;
+
+// Semantic Colors
+$color-success: #107C10;
+$color-success-light: #DFF6DD;
+$color-warning: #FFB900;
+$color-warning-light: #FFF4CE;
+$color-danger: #D83B01;
+$color-danger-light: #FDE7E1;
+$color-info: #00B7C3;
+$color-info-light: #E1F7F7;
+
+// Neutrals
+$color-bg: #F4F6F8;
+$color-card: #FFFFFF;
+$color-border: #EDEBE9;
+$color-border-dark: #D2D0CE;
+
+// Text
+$color-text-primary: #323130;
+$color-text-secondary: #605E5C;
+$color-text-tertiary: #A19F9D;
+$color-text-inverse: #FFFFFF;
+
+// Shadows
+$shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+$shadow-md: 0 2px 4px rgba(0,0,0,0.08);
+$shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+$shadow-hover: 0 4px 16px rgba(0,0,0,0.15);
+
+// Spacing
+$space-xs: 4px;
+$space-sm: 8px;
+$space-md: 12px;
+$space-lg: 16px;
+$space-xl: 24px;
+$space-xxl: 32px;
+
+// Typography
+$font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+$font-size-xs: 10px;
+$font-size-sm: 11px;
+$font-size-md: 12px;
+$font-size-lg: 14px;
+$font-size-xl: 16px;
+$font-size-xxl: 20px;
+$font-size-kpi: 28px;
+
+// Border Radius
+$radius-sm: 4px;
+$radius-md: 6px;
+$radius-lg: 8px;
+$radius-xl: 12px;
+
+// Transitions
+$transition-fast: 150ms ease;
+$transition-normal: 250ms ease;
+$transition-slow: 350ms ease;
+
+// Dashboard-specific colors
+$supplier-marketplace-gradient: linear-gradient(135deg, #0078D4 0%, #00A4EF 100%);
+$global-spend-gradient: linear-gradient(135deg, #107C10 0%, #00B7C3 100%);
+$disciplines-gradient: linear-gradient(135deg, #881798 0%, #D83B01 100%);
+$header-gradient: linear-gradient(135deg, #004578 0%, #003359 100%);
+
+// Funnel chart colors
+$funnel-quotation: #00B7C3;
+$funnel-waiting: #FFB900;
+$funnel-order: #107C10;
+$funnel-cancelled: #D83B01;
+
+// Chart palette
+$chart-colors: (
+  #0078D4,
+  #00A4EF,
+  #107C10,
+  #FFB900,
+  #D83B01,
+  #881798,
+  #00B7C3,
+  #E81123,
+  #0063B1,
+  #498205
+);
+
+// Z-index layers
+$z-header: 100;
+$z-filter-bar: 90;
+$z-modal-overlay: 1000;
+$z-modal: 1001;
+$z-tooltip: 1100;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+$breakpoint-xxl: 1400px;
+
+// Mixins
+@mixin card-base {
+  background: $color-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+}
+
+@mixin card-hover {
+  transition: transform $transition-normal, box-shadow $transition-normal;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-hover;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin scrollbar-thin {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $color-border-dark;
+    border-radius: 3px;
+  }
+}

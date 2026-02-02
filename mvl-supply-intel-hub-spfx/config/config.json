@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "supply-intel-hub-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/supplyIntelHub/SupplyIntelHubWebPart.js",
+          "manifest": "./src/webparts/supplyIntelHub/SupplyIntelHubWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "SupplyIntelHubWebPartStrings": "lib/webparts/supplyIntelHub/loc/{locale}.js"
+  }
+}

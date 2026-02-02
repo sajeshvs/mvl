@@ -1,0 +1,109 @@
+@import '../../../../../styles/variables';
+
+.kpiCard {
+  @include card-base;
+  padding: $space-lg;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: $color-primary;
+  }
+  
+  &.clickable {
+    cursor: pointer;
+    @include card-hover;
+  }
+  
+  &.active {
+    border: 2px solid $color-primary-light;
+  }
+  
+  // Variants
+  &.success::before {
+    background: $color-success;
+  }
+  
+  &.warning::before {
+    background: $color-warning;
+  }
+  
+  &.danger::before {
+    background: $color-danger;
+  }
+  
+  &.info::before {
+    background: $color-info;
+  }
+}
+
+.kpiIcon {
+  font-size: 24px;
+  margin-bottom: $space-sm;
+}
+
+.kpiLabel {
+  font-size: $font-size-xs;
+  text-transform: uppercase;
+  color: $color-text-secondary;
+  margin-bottom: $space-xs;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.kpiValue {
+  font-size: 22px;
+  font-weight: 700;
+  color: $color-text-primary;
+}
+
+.kpiSub {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-top: $space-xs;
+}
+
+.kpiChange {
+  font-size: $font-size-sm;
+  margin-top: $space-sm;
+  padding: 2px 6px;
+  border-radius: $radius-sm;
+  display: inline-block;
+  
+  &.positive {
+    background: $color-success-light;
+    color: darken($color-success, 10%);
+  }
+  
+  &.negative {
+    background: $color-danger-light;
+    color: darken($color-danger, 10%);
+  }
+  
+  &.neutral {
+    background: $color-bg;
+    color: $color-text-secondary;
+  }
+  
+  &.filtered {
+    background: $color-info-light;
+    color: darken($color-info, 20%);
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-md) {
+  .kpiCard {
+    padding: $space-md;
+  }
+  
+  .kpiValue {
+    font-size: 18px;
+  }
+}
