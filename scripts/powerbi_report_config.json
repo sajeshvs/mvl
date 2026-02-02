@@ -1,0 +1,248 @@
+{
+  "workspace": {
+    "id": "4913fadb-9d03-4742-9e8c-39412a64a93f",
+    "name": "MVL Supply Intelligence Hub"
+  },
+  "dataset": {
+    "id": "c725ca87-7e4b-4a83-819c-55b1bdcbceeb",
+    "name": "MVL-SupplyIntelHub-Data"
+  },
+  "reports": [
+    {
+      "name": "Supplier Marketplace",
+      "description": "Quotation analysis, supplier rankings, entity/material breakdown",
+      "pages": [
+        {
+          "name": "Supplier Marketplace",
+          "displayName": "Supplier Marketplace",
+          "visuals": [
+            {
+              "type": "card",
+              "title": "Total Quotations",
+              "measure": "COUNT(Quotations[QuotationNumber])",
+              "position": {"x": 0, "y": 0, "width": 200, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "Total Quoted Value",
+              "measure": "SUM(Quotations[QuotedAmount])",
+              "format": "$#,##0",
+              "position": {"x": 210, "y": 0, "width": 200, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "Active Suppliers",
+              "measure": "DISTINCTCOUNT(Quotations[SupplierCode])",
+              "position": {"x": 420, "y": 0, "width": 200, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "Win Rate",
+              "measure": "DIVIDE(CALCULATE(COUNT(Quotations[QuotationNumber]), Quotations[Status]=\"Accepted\"), COUNT(Quotations[QuotationNumber]))",
+              "format": "0.0%",
+              "position": {"x": 630, "y": 0, "width": 200, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "Average Quote Value",
+              "measure": "AVERAGE(Quotations[QuotedAmount])",
+              "format": "$#,##0",
+              "position": {"x": 840, "y": 0, "width": 200, "height": 100}
+            },
+            {
+              "type": "funnel",
+              "title": "Quotation Funnel",
+              "category": "Quotations[Status]",
+              "values": "COUNT(Quotations[QuotationNumber])",
+              "position": {"x": 0, "y": 110, "width": 400, "height": 300}
+            },
+            {
+              "type": "barChart",
+              "title": "Top Suppliers by Quote Value",
+              "category": "Quotations[SupplierName]",
+              "values": "SUM(Quotations[QuotedAmount])",
+              "topN": 10,
+              "position": {"x": 410, "y": 110, "width": 400, "height": 300}
+            },
+            {
+              "type": "pieChart",
+              "title": "Quotations by Entity",
+              "category": "Quotations[EntityName]",
+              "values": "COUNT(Quotations[QuotationNumber])",
+              "position": {"x": 820, "y": 110, "width": 350, "height": 300}
+            },
+            {
+              "type": "barChart",
+              "title": "Spend by Material Category",
+              "category": "Quotations[MaterialCategory]",
+              "values": "SUM(Quotations[QuotedAmount])",
+              "position": {"x": 0, "y": 420, "width": 580, "height": 300}
+            },
+            {
+              "type": "table",
+              "title": "Quotation Details",
+              "columns": ["QuotationNumber", "SupplierName", "EntityName", "MaterialCategory", "QuotedAmount", "Status", "QuotationDate"],
+              "position": {"x": 590, "y": 420, "width": 580, "height": 300}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Global Spend Analysis",
+      "description": "PO spend trends, entity/material analysis, supplier performance",
+      "pages": [
+        {
+          "name": "Spend Overview",
+          "displayName": "Global Spend Analysis",
+          "visuals": [
+            {
+              "type": "card",
+              "title": "Total Spend",
+              "measure": "SUM(PurchaseOrders[POAmount])",
+              "format": "$#,##0",
+              "position": {"x": 0, "y": 0, "width": 170, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "PO Count",
+              "measure": "COUNT(PurchaseOrders[PONumber])",
+              "position": {"x": 180, "y": 0, "width": 170, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "Avg PO Value",
+              "measure": "AVERAGE(PurchaseOrders[POAmount])",
+              "format": "$#,##0",
+              "position": {"x": 360, "y": 0, "width": 170, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "Active Suppliers",
+              "measure": "DISTINCTCOUNT(PurchaseOrders[SupplierCode])",
+              "position": {"x": 540, "y": 0, "width": 170, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "Entities",
+              "measure": "DISTINCTCOUNT(PurchaseOrders[EntityCode])",
+              "position": {"x": 720, "y": 0, "width": 170, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "Material Categories",
+              "measure": "DISTINCTCOUNT(PurchaseOrders[MaterialCategory])",
+              "position": {"x": 900, "y": 0, "width": 170, "height": 100}
+            },
+            {
+              "type": "lineChart",
+              "title": "Monthly Spend Trend",
+              "xAxis": "SpendByMonth[Month]",
+              "yAxis": "SpendByMonth[TotalSpend]",
+              "position": {"x": 0, "y": 110, "width": 700, "height": 300}
+            },
+            {
+              "type": "pieChart",
+              "title": "Spend by Entity",
+              "category": "PurchaseOrders[EntityName]",
+              "values": "SUM(PurchaseOrders[POAmount])",
+              "position": {"x": 710, "y": 110, "width": 360, "height": 300}
+            },
+            {
+              "type": "barChart",
+              "title": "Spend by Material Category",
+              "category": "PurchaseOrders[MaterialCategory]",
+              "values": "SUM(PurchaseOrders[POAmount])",
+              "position": {"x": 0, "y": 420, "width": 530, "height": 300}
+            },
+            {
+              "type": "barChart",
+              "title": "Top 10 Suppliers by Spend",
+              "category": "PurchaseOrders[SupplierName]",
+              "values": "SUM(PurchaseOrders[POAmount])",
+              "topN": 10,
+              "position": {"x": 540, "y": 420, "width": 530, "height": 300}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Disciplines Consolidated",
+      "description": "Quote vs Order comparison by discipline, conversion analysis",
+      "pages": [
+        {
+          "name": "Disciplines",
+          "displayName": "Disciplines Consolidated",
+          "visuals": [
+            {
+              "type": "card",
+              "title": "Total Disciplines",
+              "measure": "DISTINCTCOUNT(Disciplines[DisciplineName])",
+              "position": {"x": 0, "y": 0, "width": 200, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "Total Quoted",
+              "measure": "SUM(Disciplines[TotalQuotedAmount])",
+              "format": "$#,##0",
+              "position": {"x": 210, "y": 0, "width": 200, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "Total Ordered",
+              "measure": "SUM(Disciplines[TotalOrderAmount])",
+              "format": "$#,##0",
+              "position": {"x": 420, "y": 0, "width": 200, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "Quote Count",
+              "measure": "SUM(Disciplines[QuotationCount])",
+              "position": {"x": 630, "y": 0, "width": 200, "height": 100}
+            },
+            {
+              "type": "card",
+              "title": "PO Count",
+              "measure": "SUM(Disciplines[POCount])",
+              "position": {"x": 840, "y": 0, "width": 200, "height": 100}
+            },
+            {
+              "type": "clusteredBarChart",
+              "title": "Quote vs Order by Discipline",
+              "category": "Disciplines[DisciplineName]",
+              "values": ["Disciplines[TotalQuotedAmount]", "Disciplines[TotalOrderAmount]"],
+              "position": {"x": 0, "y": 110, "width": 540, "height": 350}
+            },
+            {
+              "type": "clusteredBarChart",
+              "title": "Quote Count vs PO Count by Discipline",
+              "category": "Disciplines[DisciplineName]",
+              "values": ["Disciplines[QuotationCount]", "Disciplines[POCount]"],
+              "position": {"x": 550, "y": 110, "width": 520, "height": 350}
+            },
+            {
+              "type": "table",
+              "title": "Discipline Details",
+              "columns": ["DisciplineName", "QuotationCount", "TotalQuotedAmount", "POCount", "TotalOrderAmount", "ConversionRate"],
+              "position": {"x": 0, "y": 470, "width": 1070, "height": 250}
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "slicers": [
+    {"field": "Entities[EntityName]", "title": "Entity"},
+    {"field": "Disciplines[DisciplineName]", "title": "Discipline"},
+    {"field": "PurchaseOrders[MaterialCategory]", "title": "Material Category"},
+    {"field": "Suppliers[SupplierName]", "title": "Supplier"}
+  ],
+  "theme": {
+    "name": "MVL Corporate",
+    "dataColors": ["#0078D4", "#00B7C3", "#D96F3C", "#107C10", "#FFB900", "#D13438", "#5C2D91", "#0063B1"],
+    "background": "#F5F7FA",
+    "foreground": "#323130",
+    "tableAccent": "#0078D4"
+  }
+}

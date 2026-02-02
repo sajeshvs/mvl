@@ -1,0 +1,16 @@
+{
+  "workspace_id": "4913fadb-9d03-4742-9e8c-39412a64a93f",
+  "workspace_name": "MVL Supply Intelligence Hub",
+  "dataset_id": "c725ca87-7e4b-4a83-819c-55b1bdcbceeb",
+  "dataset_name": "MVL-SupplyIntelHub-Data",
+  "tables": [
+    "PurchaseOrders",
+    "Quotations",
+    "Suppliers",
+    "Entities",
+    "Disciplines",
+    "Summary",
+    "SpendByMonth"
+  ],
+  "sharepoint_site": "https://mvlgroupusa.sharepoint.com/sites/mvlmicrotrackpowerbi"
+}

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVL Supply Intel Hub - Create Reports</title>
+    <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.22.3/dist/powerbi.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f7fa;
+        }
+        .header {
+            background: linear-gradient(135deg, #004578 0%, #003359 100%);
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 20px; }
+        .header-info { font-size: 12px; opacity: 0.9; }
+        .toolbar {
+            background: white;
+            padding: 12px 24px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #0078d4;
+            color: white;
+        }
+        .btn-primary:hover { background: #106ebe; }
+        .btn-secondary {
+            background: #f3f2f1;
+            color: #323130;
+            border: 1px solid #d2d0ce;
+        }
+        .btn-secondary:hover { background: #edebe9; }
+        .btn-success {
+            background: #107c10;
+            color: white;
+        }
+        .btn-success:hover { background: #0b6a0b; }
+        #reportContainer {
+            height: calc(100vh - 120px);
+            background: white;
+        }
+        .status {
+            padding: 4px 12px;
+            background: #e6f4ea;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #137333;
+        }
+        .info-panel {
+            margin-left: auto;
+            font-size: 12px;
+            color: #605e5c;
+        }
+        .report-templates {
+            display: flex;
+            gap: 8px;
+        }
+        .template-btn {
+            padding: 6px 12px;
+            background: #f0f6fc;
+            border: 1px solid #0078d4;
+            border-radius: 4px;
+            color: #0078d4;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .template-btn:hover {
+            background: #0078d4;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🏗️ MVL Supply Intel Hub - Report Builder</h1>
+            <div class="header-info">Create Power BI reports from dataset: MVL-SupplyIntelHub-Data</div>
+        </div>
+        <div class="header-info">
+            Dataset ID: c725ca87...
+        </div>
+    </div>
+    
+    <div class="toolbar">
+        <button class="btn btn-primary" onclick="createReport()">➕ New Report</button>
+        <button class="btn btn-success" onclick="saveReport()">💾 Save Report</button>
+        <button class="btn btn-secondary" onclick="switchToEdit()">✏️ Edit Mode</button>
+        <button class="btn btn-secondary" onclick="switchToView()">👁️ View Mode</button>
+        
+        <div class="report-templates">
+            <span style="font-size: 12px; color: #605e5c;">Templates:</span>
+            <button class="template-btn" onclick="applyTemplate('supplier')">Supplier Marketplace</button>
+            <button class="template-btn" onclick="applyTemplate('spend')">Global Spend</button>
+            <button class="template-btn" onclick="applyTemplate('disciplines')">Disciplines</button>
+        </div>
+        
+        <div class="info-panel">
+            <span class="status" id="status">Ready</span>
+        </div>
+    </div>
+    
+    <div id="reportContainer"></div>
+    
+    <script>
+        // Power BI Embed Configuration
+        const embedConfig = {
+            datasetId: "c725ca87-7e4b-4a83-819c-55b1bdcbceeb",
+            workspaceId: "4913fadb-9d03-4742-9e8c-39412a64a93f",
+            embedUrl: "https://app.powerbigov.us/reportEmbed?config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVVTLUdPVi1WSVJHSU5JQS1yZWRpcmVjdC5hbmFseXNpcy51c2dvdmNsb3VkYXBpLm5ldCIsImVtYmVkRmVhdHVyZXMiOnsidXNhZ2VNZXRyaWNzVk5leHQiOnRydWV9fQ%3d%3d",
+            accessToken: "H4sIAAAAAAAEAB2Tx66rVgBF_-VOiWR6ifQGBtN7MW1GO5gOBzAlyr_nKvM12Ut7_fPjZFc_ZeXP3z8U7wW5PW3SlfcHVMzOdSXd22YirTiJ8YoHjY1gkl7Ju1gyiDORye6AdPvPa3UTmxOKY-Ccwv7Q2yvmhNd7m_sPNkcfKSsByjSfdo6G7aBZsqTdDvXeVopaVAvX6eHrLUozTcQqGHB0U3_B1WVnx0iUEDZ65Hv39ByCZ-ltrMbQ53xo3puWrHt9XJjjMMhj49GLN7k32_luTUOzLyWnVAB81O3w6mRC9UBDOPUJAo-vyGZqbTBOEI5Uk99IFuP-Bx5dOqhse_lDxyQTvXVvr4qdFBLz5ZUfUunyNxdwLo4kvM5CQnWS_IlwYZZVg3pxlHa9SH9dLq4hztDerGHu0oK591cTLVx4qExXNsEAUmBk-CAEyMbeW46i1nMD9bcIyCp5NEakBXP0beLiCftlH5a2e0TGiNXPIr3PxfPPbhrCSpF_l2fjht-zYuYhMpXH9ULB-3tkVTZ_g0Mer7UHCTXLEEOWqZUS8saNdL89syz6Q24sNhcKmxfj6AsL0v28US2CrhOLTlrMjH62x8oqr6BjTmTY6zEWq17VjCw68t0jS0ZixCe5JxEgoFumY_cudZDWtOdCcnSDkicYtNgk8h3jXzy0ZOKZJiBengdWIrudmw_Fpr_2d9M3PKLjqNSm6ll2AY8UmJYXQR1fnaDDQifOQbw1UVMFRABUEFpXxlMu541KhGOaU688fCoa9cB93d-wHZmJR18lve69r9t-9x9qfQIj3VgCryNeuWx5fth7hwnkbElqbDLJPZi-xD0OLm8ru_V4JRIqn-KUlWk9MniotpzxUoKNH0WoamvPwkfS0WDVz-nPz18_ArzmbdKr6zednDUzb57AKRiVfV91VyZZZe2JHbfxIv9mgFucUAemoRTqQcxBo31Rq2yOCYoHh35PIarH_Yuq0vtw0DCIXlwfvkpxA6xk5Yb2segqeszT9hahRXN2xZ59k_Qo6UZAKDMeLydUcnEM1zTh97yo3k1MQzxjDtSJZwrmRMhiXEuG2IeVRC09t70yEl_bVN2eJ9B9m2bVynEHHIlzAa9EIic43VtS6TbDXdOHxBgNRwUxcO5ruZGt9xulUxtZga7tdZorp_YXtdl0jo1RmEVajCxqqo9AejjvAzIlJoQl1vMQ6VRFtVBXvFcW6kWXK77dII0FG04Yx_OczURDX5RazWNFM-6f_zVf86eCavhrWbXr_oJ2FItghcsabEOOlcf_lN_UY7btsPrFEnLmyPG09qN2jEaoOiYYoWuCuGY136jH0q9Q2ebPAlU3dmPaKBnFrlVbRcVcJUwKfK1fl78meoJVS44ekufRTerUfIHR24mLTAQsXtGkQY0vcrqnOdTLvDal_aumxaZQpnA9L4XZTTZGbv1Lt1eR6hd4zHJkjW5I2yr6Yb7NTm2mhRy3x8mfvVrGBQW-10AGDwWvK8zneZeTxBE8F3He8hX1UbIY2yJkZsZJuxHbujKKwwECVuy0o-j2zSrZGBPK1ag3T1nUyNecoeZY111SjfqjyGh--ZUrsxJbXMRHWSLep2TpHrpdQuctd4TyQHMXDcPAFpoLZAA2cWSRn4KNbc9fzf_-Bwq0qcsuBgAA.eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVVTLUdPVi1WSVJHSU5JQS1yZWRpcmVjdC5hbmFseXNpcy51c2dvdmNsb3VkYXBpLm5ldCIsImV4cCI6MTc3MDAwMjQ0OSwiYWxsb3dBY2Nlc3NPdmVyUHVibGljSW50ZXJuZXQiOnRydWV9",
+            tokenType: 0
+        };
+        
+        let powerbi = window['powerbi-client'];
+        let report = null;
+        
+        function updateStatus(msg, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = msg;
+            status.style.background = type === 'error' ? '#fce8e6' : 
+                                      type === 'success' ? '#e6f4ea' : '#e8f4fd';
+            status.style.color = type === 'error' ? '#c5221f' : 
+                                 type === 'success' ? '#137333' : '#0078d4';
+        }
+        
+        function createReport() {
+            const container = document.getElementById('reportContainer');
+            container.innerHTML = '';
+            
+            updateStatus('Creating new report...');
+            
+            const config = {
+                type: 'create',
+                tokenType: powerbi.models.TokenType.Aad,
+                accessToken: embedConfig.accessToken,
+                embedUrl: embedConfig.embedUrl,
+                datasetId: embedConfig.datasetId,
+                settings: {
+                    panes: {
+                        filters: { visible: true },
+                        pageNavigation: { visible: true }
+                    },
+                    bars: {
+                        actionBar: { visible: true }
+                    }
+                }
+            };
+            
+            try {
+                report = powerbi.embed(container, config);
+                
+                report.on('loaded', function() {
+                    updateStatus('Report canvas ready - add visuals!', 'success');
+                });
+                
+                report.on('error', function(event) {
+                    console.error('Report error:', event.detail);
+                    updateStatus('Error: ' + event.detail.message, 'error');
+                });
+                
+                report.on('saved', function(event) {
+                    updateStatus('Report saved: ' + event.detail.reportObjectId, 'success');
+                });
+                
+            } catch (e) {
+                console.error('Embed error:', e);
+                updateStatus('Failed to embed: ' + e.message, 'error');
+            }
+        }
+        
+        function saveReport() {
+            if (!report) {
+                updateStatus('No report to save', 'error');
+                return;
+            }
+            
+            const saveAsParameters = {
+                name: 'MVL-Dashboard-' + new Date().toISOString().slice(0,10)
+            };
+            
+            report.saveAs(saveAsParameters)
+                .then(function() {
+                    updateStatus('Report saved successfully!', 'success');
+                })
+                .catch(function(error) {
+                    console.error('Save error:', error);
+                    updateStatus('Save failed: ' + error.message, 'error');
+                });
+        }
+        
+        function switchToEdit() {
+            if (report) {
+                report.switchMode('edit').then(() => {
+                    updateStatus('Edit mode', 'info');
+                });
+            }
+        }
+        
+        function switchToView() {
+            if (report) {
+                report.switchMode('view').then(() => {
+                    updateStatus('View mode', 'info');
+                });
+            }
+        }
+        
+        function applyTemplate(templateName) {
+            updateStatus('Applying ' + templateName + ' template...');
+            
+            // Template configurations for each dashboard type
+            const templates = {
+                supplier: {
+                    name: 'Supplier Marketplace',
+                    description: 'Quotation analysis, supplier rankings',
+                    suggestedVisuals: [
+                        'Add 5 Card visuals for KPIs at top',
+                        'Add Funnel chart for Quotation Status',
+                        'Add Bar chart for Top Suppliers by Value',
+                        'Add Donut chart for Quotations by Entity',
+                        'Add Table for Quotation Details'
+                    ],
+                    fields: ['QuotationID', 'Status', 'ValueUSD', 'SupplierCode', 'Entity', 'Discipline']
+                },
+                spend: {
+                    name: 'Global Spend Analysis',
+                    description: 'PO spend trends, entity breakdown',
+                    suggestedVisuals: [
+                        'Add 6 Card visuals for spend KPIs',
+                        'Add Line chart for Monthly Spend Trend',
+                        'Add Donut chart for Spend by Entity',
+                        'Add Bar charts for Spend by Category and Supplier'
+                    ],
+                    fields: ['PONumber', 'POAmount', 'SupplierCode', 'EntityCode', 'MaterialCategory']
+                },
+                disciplines: {
+                    name: 'Disciplines Consolidated',
+                    description: 'Quote vs Order by discipline',
+                    suggestedVisuals: [
+                        'Add 5 Card visuals for discipline KPIs',
+                        'Add Clustered Bar for Quote vs Order Amount',
+                        'Add Clustered Bar for Quote vs PO Count',
+                        'Add Table for Discipline Summary'
+                    ],
+                    fields: ['DisciplineName', 'QuotationCount', 'TotalQuotedAmount', 'POCount', 'TotalOrderAmount']
+                }
+            };
+            
+            const template = templates[templateName];
+            if (template) {
+                let instructions = template.name + '\n\n';
+                instructions += 'Suggested Visuals:\n';
+                template.suggestedVisuals.forEach((v, i) => {
+                    instructions += (i+1) + '. ' + v + '\n';
+                });
+                instructions += '\nKey Fields: ' + template.fields.join(', ');
+                
+                alert(instructions);
+                updateStatus('Template guide shown - build visuals!', 'info');
+            }
+        }
+        
+        // Auto-create report on load
+        window.onload = function() {
+            updateStatus('Loading Power BI SDK...');
+            setTimeout(createReport, 1000);
+        };
+    </script>
+</body>
+</html>
