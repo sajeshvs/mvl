@@ -45,6 +45,90 @@ export class SharePointService {
   }
 
   /**
+   * Fetch all items from a large list using paging
+   * This bypasses the 5000 item threshold by fetching in batches
+   */
+  private async fetchAllItemsPaged<T>(
+    listName: string,
+    selectFields: string[],
+    batchSize: number = 2000
+  ): Promise<T[]> {
+    const allItems: T[] = [];
+    let position: string | undefined = undefined;
+    
+    do {
+      // Build the query with paging
+      let items: T[];
+      const listItems = this.sp.web.lists.getByTitle(listName).items;
+      
+      if (position) {
+        // Use skiptoken for paging
+        items = await listItems
+          .select(...selectFields)
+          .top(batchSize)
+          .skip(position as unknown as number)() as T[];
+      } else {
+        items = await listItems
+          .select(...selectFields)
+          .top(batchSize)() as T[];
+      }
+      
+      allItems.push(...items);
+      
+      // If we got fewer items than batch size, we're done
+      if (items.length < batchSize) {
+        position = undefined;
+      } else {
+        // Use the last item's ID for next page
+        const lastItem = items[items.length - 1] as Record<string, unknown>;
+        if (lastItem && typeof lastItem.Id === 'number') {
+          // Filter by Id > lastId for next batch (indexed column)
+          position = String(lastItem.Id);
+        } else {
+          position = undefined;
+        }
+      }
+    } while (position);
+    
+    return allItems;
+  }
+
+  /**
+   * Fetch all items using ID-based filtering (works with large lists)
+   */
+  private async fetchAllItemsById<T>(
+    listName: string,
+    selectFields: string[],
+    batchSize: number = 2000
+  ): Promise<T[]> {
+    const allItems: T[] = [];
+    let lastId = 0;
+    let hasMore = true;
+    
+    while (hasMore) {
+      const items = await this.sp.web.lists.getByTitle(listName).items
+        .select(...selectFields)
+        .filter(`Id gt ${lastId}`)
+        .top(batchSize)() as T[];
+      
+      allItems.push(...items);
+      
+      if (items.length < batchSize) {
+        hasMore = false;
+      } else {
+        const lastItem = items[items.length - 1] as Record<string, unknown>;
+        if (lastItem && typeof lastItem.Id === 'number') {
+          lastId = lastItem.Id;
+        } else {
+          hasMore = false;
+        }
+      }
+    }
+    
+    return allItems;
+  }
+
+  /**
    * Get cached data or fetch from SharePoint
    */
   private async getCachedOrFetch<T>(key: string, fetchFn: () => Promise<T>): Promise<T> {
@@ -82,10 +166,10 @@ export class SharePointService {
         console.log('  PurchaseOrders list:', this.LISTS.PURCHASE_ORDERS);
         console.log('  Suppliers list:', this.LISTS.SUPPLIERS);
         
-        // Fetch counts from each list
+        // Use ID-based paging for large lists to bypass 5000 item threshold
         const [quotations, purchaseOrders, suppliers] = await Promise.all([
-          this.sp.web.lists.getByTitle(this.LISTS.QUOTATIONS).items.select('Id').top(5000)(),
-          this.sp.web.lists.getByTitle(this.LISTS.PURCHASE_ORDERS).items.select('Id', 'ValueUSD').top(5000)(),
+          this.fetchAllItemsById<{ Id: number }>(this.LISTS.QUOTATIONS, ['Id'], 2000),
+          this.fetchAllItemsById<{ Id: number; ValueUSD?: number }>(this.LISTS.PURCHASE_ORDERS, ['Id', 'ValueUSD'], 2000),
           this.sp.web.lists.getByTitle(this.LISTS.SUPPLIERS).items.select('Id').top(500)()
         ]);
 
@@ -123,27 +207,20 @@ export class SharePointService {
   // ==========================================================================
 
   /**
-   * Get all quotations
+   * Get all quotations - uses ID-based paging to handle large lists over 5000 items
    */
   public async getQuotations(): Promise<IQuotation[]> {
     return this.getCachedOrFetch('quotations', async () => {
       try {
         console.log('SharePointService: Fetching quotations from', this.LISTS.QUOTATIONS);
         
-        const items = await this.sp.web.lists
-          .getByTitle(this.LISTS.QUOTATIONS)
-          .items
-          .select(
-            'Id',
-            'Title',
-            'QuotationID',
-            'ClientName',
-            'Entity',
-            'Discipline',
-            'ValueUSD',
-            'Status'
-          )
-          .top(5000)();
+        // Use ID-based paging to bypass 5000 item threshold
+        // The Id column is always indexed in SharePoint
+        const items = await this.fetchAllItemsById<Record<string, unknown>>(
+          this.LISTS.QUOTATIONS,
+          ['Id', 'Title', 'QuotationID', 'ClientName', 'Entity', 'Discipline', 'ValueUSD', 'Status'],
+          2000
+        );
 
         console.log('SharePointService: Fetched', items.length, 'quotations');
 
@@ -219,26 +296,17 @@ export class SharePointService {
   // ==========================================================================
 
   /**
-   * Get all purchase orders
+   * Get all purchase orders - uses ID-based paging to handle large lists
    */
   public async getPurchaseOrders(): Promise<IPurchaseOrder[]> {
     return this.getCachedOrFetch('purchase-orders', async () => {
       try {
-        const items = await this.sp.web.lists
-          .getByTitle(this.LISTS.PURCHASE_ORDERS)
-          .items
-          .select(
-            'Id',
-            'Title',
-            'POID',
-            'SupplierName',
-            'Entity',
-            'MaterialGroup',
-            'ValueUSD',
-            'Created'
-          )
-          .top(5000)
-          .orderBy('Created', false)();
+        // Use ID-based paging to bypass 5000 item threshold
+        const items = await this.fetchAllItemsById<Record<string, unknown>>(
+          this.LISTS.PURCHASE_ORDERS,
+          ['Id', 'Title', 'POID', 'SupplierName', 'Entity', 'MaterialGroup', 'ValueUSD', 'Created'],
+          2000
+        );
 
         return items.map((item: Record<string, unknown>) => ({
           Id: item.Id as number,
