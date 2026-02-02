@@ -15,6 +15,9 @@ import '@pnp/sp/items';
 import SupplyIntelHub from './components/SupplyIntelHub';
 import { ISupplyIntelHubProps } from './components/ISupplyIntelHubProps';
 
+// The SharePoint site URL where the MT_* lists are located
+const DATA_SITE_URL = 'https://mvlgroupusa.sharepoint.com/sites/mvlmicrotrackpowerbi';
+
 export interface ISupplyIntelHubWebPartProps {
   title: string;
   defaultDashboard: string;
@@ -26,8 +29,8 @@ export default class SupplyIntelHubWebPart extends BaseClientSideWebPart<ISupply
   public async onInit(): Promise<void> {
     await super.onInit();
     
-    // Initialize PnP JS
-    this._sp = spfi().using(SPFx(this.context));
+    // Initialize PnP JS - connect to the specific data site
+    this._sp = spfi(DATA_SITE_URL).using(SPFx(this.context));
   }
 
   public render(): void {
