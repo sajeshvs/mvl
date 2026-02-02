@@ -125,7 +125,6 @@ export class SharePointService {
             'Id',
             'Title',
             'QuotationID',
-            'SupplierName',
             'ClientName',
             'Entity',
             'Discipline',
@@ -139,7 +138,7 @@ export class SharePointService {
         return items.map((item: Record<string, unknown>) => ({
           Id: item.Id as number,
           QuotationNumber: (item.QuotationID || item.Title || '') as string,
-          SupplierName: (item.SupplierName || item.ClientName || 'Unknown') as string,
+          SupplierName: (item.ClientName || 'Unknown') as string,
           Entity: (item.Entity || 'Unknown') as string,
           MaterialGroup: (item.Discipline || 'Unknown') as string,
           MaterialCode: undefined,
@@ -327,19 +326,85 @@ export class SharePointService {
 
   /**
    * Get Disciplines Consolidated dashboard data
+   * Aggregates quotation and PO data by discipline (Material/Discipline field)
    */
   public async getDisciplinesData(): Promise<IDisciplinesData> {
-    const [disciplines, entities] = await Promise.all([
-      this.getDisciplines(),
+    const [quotations, purchaseOrders, entities] = await Promise.all([
+      this.getQuotations(),
+      this.getPurchaseOrders(),
       this.getEntities()
     ]);
+
+    // Aggregate quotations by discipline (MaterialGroup = Discipline field)
+    const disciplineMap = new Map<string, {
+      quotedValue: number;
+      quotedCount: number;
+      orderedValue: number;
+      orderedCount: number;
+    }>();
+
+    // Process quotations
+    for (let i = 0; i < quotations.length; i++) {
+      const q = quotations[i];
+      const discipline = q.MaterialGroup || 'Unknown';
+      
+      if (!disciplineMap.has(discipline)) {
+        disciplineMap.set(discipline, {
+          quotedValue: 0,
+          quotedCount: 0,
+          orderedValue: 0,
+          orderedCount: 0
+        });
+      }
+      
+      const entry = disciplineMap.get(discipline);
+      if (entry) {
+        entry.quotedValue += q.QuotationValue || 0;
+        entry.quotedCount += 1;
+        
+        // If status is 'Order', count as ordered
+        if (q.Status === 'Order') {
+          entry.orderedValue += q.QuotationValue || 0;
+          entry.orderedCount += 1;
+        }
+      }
+    }
+
+    // Convert to disciplines array
+    const disciplines: IDiscipline[] = [];
+    const keys = Array.from(disciplineMap.keys());
+    for (let i = 0; i < keys.length; i++) {
+      const name = keys[i];
+      const data = disciplineMap.get(name);
+      if (data) {
+        const variance = data.orderedValue - data.quotedValue;
+        const variancePercent = data.quotedValue > 0 ? (variance / data.quotedValue) * 100 : 0;
+        const utilization = data.quotedValue > 0 ? (data.orderedValue / data.quotedValue) * 100 : 0;
+        
+        disciplines.push({
+          Id: i + 1,
+          DisciplineName: name,
+          DisciplineCode: name.substring(0, 10).toUpperCase().replace(/[^A-Z0-9]/g, ''),
+          Entity: 'All',
+          Budget: data.quotedValue,
+          Actual: data.orderedValue,
+          Variance: variance,
+          VariancePercent: variancePercent,
+          Currency: 'USD',
+          Year: new Date().getFullYear()
+        });
+      }
+    }
+
+    // Sort by quoted value descending
+    disciplines.sort((a, b) => (b.Budget || 0) - (a.Budget || 0));
 
     // Calculate summary
     const totalDisciplines = disciplines.length;
     const totalBudget = disciplines.reduce((sum, d) => sum + (d.Budget || 0), 0);
     const totalActual = disciplines.reduce((sum, d) => sum + (d.Actual || 0), 0);
-    const totalVariance = totalBudget - totalActual;
-    const variancePercent = totalBudget > 0 ? (totalVariance / totalBudget) * 100 : 0;
+    const totalVariance = totalActual - totalBudget;
+    const variancePercent = totalBudget > 0 ? (totalActual / totalBudget) * 100 : 0;
 
     return {
       disciplines,
