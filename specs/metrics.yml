@@ -1,0 +1,513 @@
+# MVL Supply Intel Hub - KPI Metrics Specification
+# This file defines all DAX measures, KPIs, and calculations
+# Used by generate_pbip.py to create the semantic model
+
+version: "1.0"
+last_updated: "2026-02-02"
+
+# =============================================================================
+# KEY METRICS - Supplier Marketplace Dashboard
+# =============================================================================
+
+supplier_marketplace_metrics:
+  
+  - name: TotalQuotations
+    display_name: "Total Quotations"
+    description: "Count of all quotation records in the system"
+    table: Quotations
+    folder: "Key Metrics"
+    format: "#,##0"
+    dax: |
+      TotalQuotations = 
+      COUNTROWS('Quotations')
+    
+  - name: WinRate
+    display_name: "Win Rate"
+    description: "Percentage of quotations converted to orders"
+    table: Quotations
+    folder: "Key Metrics"
+    format: "0.0%"
+    dax: |
+      WinRate = 
+      DIVIDE(
+          CALCULATE(COUNTROWS('Quotations'), 'Quotations'[Status] = "Order"),
+          COUNTROWS('Quotations'),
+          0
+      )
+    
+  - name: TotalQuoteValue
+    display_name: "Total Quote Value"
+    description: "Sum of all quotation values in USD"
+    table: Quotations
+    folder: "Key Metrics"
+    format: "$#,##0.00"
+    dax: |
+      TotalQuoteValue = 
+      SUM('Quotations'[ValueUSD])
+    
+  - name: OrderConversionCount
+    display_name: "Orders"
+    description: "Count of quotations converted to orders"
+    table: Quotations
+    folder: "Key Metrics"
+    format: "#,##0"
+    dax: |
+      OrderConversionCount = 
+      CALCULATE(
+          COUNTROWS('Quotations'),
+          'Quotations'[Status] = "Order"
+      )
+    
+  - name: PendingQuotations
+    display_name: "Pending Quotations"
+    description: "Count of quotations in Quotation or Waiting status"
+    table: Quotations
+    folder: "Key Metrics"
+    format: "#,##0"
+    dax: |
+      PendingQuotations = 
+      CALCULATE(
+          COUNTROWS('Quotations'),
+          'Quotations'[Status] IN {"Quotation", "Waiting"}
+      )
+    
+  - name: CancelledQuotations
+    display_name: "Cancelled Quotations"
+    description: "Count of cancelled quotations"
+    table: Quotations
+    folder: "Key Metrics"
+    format: "#,##0"
+    dax: |
+      CancelledQuotations = 
+      CALCULATE(
+          COUNTROWS('Quotations'),
+          'Quotations'[Status] = "Cancelled"
+      )
+
+# =============================================================================
+# KEY METRICS - Global Spend Analysis Dashboard
+# =============================================================================
+
+global_spend_metrics:
+  
+  - name: TotalPOs
+    display_name: "Total POs"
+    description: "Count of all purchase orders"
+    table: PurchaseOrders
+    folder: "Key Metrics"
+    format: "#,##0"
+    dax: |
+      TotalPOs = 
+      COUNTROWS('PurchaseOrders')
+    
+  - name: TotalPOSpend
+    display_name: "Total PO Spend"
+    description: "Sum of all PO values in USD"
+    table: PurchaseOrders
+    folder: "Key Metrics"
+    format: "$#,##0.00"
+    dax: |
+      TotalPOSpend = 
+      SUM('PurchaseOrders'[ValueUSD])
+    
+  - name: BaseOrders
+    display_name: "Base Orders"
+    description: "Count of base purchase orders"
+    table: PurchaseOrders
+    folder: "Key Metrics"
+    format: "#,##0"
+    dax: |
+      BaseOrders = 
+      CALCULATE(
+          COUNTROWS('PurchaseOrders'),
+          'PurchaseOrders'[POType] = "Base"
+      )
+    
+  - name: BaseOrderValue
+    display_name: "Base Order Value"
+    description: "Total value of base orders"
+    table: PurchaseOrders
+    folder: "Key Metrics"
+    format: "$#,##0.00"
+    dax: |
+      BaseOrderValue = 
+      CALCULATE(
+          SUM('PurchaseOrders'[ValueUSD]),
+          'PurchaseOrders'[POType] = "Base"
+      )
+    
+  - name: ChangeOrders
+    display_name: "Change Orders"
+    description: "Count of change orders"
+    table: PurchaseOrders
+    folder: "Key Metrics"
+    format: "#,##0"
+    dax: |
+      ChangeOrders = 
+      CALCULATE(
+          COUNTROWS('PurchaseOrders'),
+          'PurchaseOrders'[POType] = "Change"
+      )
+    
+  - name: ChangeOrderValue
+    display_name: "Change Order Value"
+    description: "Total value of change orders"
+    table: PurchaseOrders
+    folder: "Key Metrics"
+    format: "$#,##0.00"
+    dax: |
+      ChangeOrderValue = 
+      CALCULATE(
+          SUM('PurchaseOrders'[ValueUSD]),
+          'PurchaseOrders'[POType] = "Change"
+      )
+    
+  - name: AveragePOValue
+    display_name: "Avg PO Value"
+    description: "Average value per purchase order"
+    table: PurchaseOrders
+    folder: "Key Metrics"
+    format: "$#,##0.00"
+    dax: |
+      AveragePOValue = 
+      AVERAGEX('PurchaseOrders', 'PurchaseOrders'[ValueUSD])
+
+# =============================================================================
+# KEY METRICS - Disciplines Consolidated Dashboard
+# =============================================================================
+
+disciplines_metrics:
+  
+  - name: TotalDisciplines
+    display_name: "Total Disciplines"
+    description: "Count of distinct disciplines"
+    table: Disciplines
+    folder: "Key Metrics"
+    format: "#,##0"
+    dax: |
+      TotalDisciplines = 
+      DISTINCTCOUNT('Disciplines'[DisciplineName])
+    
+  - name: TotalQuotedAmount
+    display_name: "Total Quoted Amount"
+    description: "Sum of all quoted amounts across disciplines"
+    table: Disciplines
+    folder: "Key Metrics"
+    format: "$#,##0.00"
+    dax: |
+      TotalQuotedAmount = 
+      SUM('Disciplines'[QuotedAmount])
+    
+  - name: TotalOrderAmount
+    display_name: "Total Order Amount"
+    description: "Sum of all order amounts across disciplines"
+    table: Disciplines
+    folder: "Key Metrics"
+    format: "$#,##0.00"
+    dax: |
+      TotalOrderAmount = 
+      SUM('Disciplines'[OrderAmount])
+    
+  - name: QuoteToOrderRatio
+    display_name: "Quote to Order Ratio"
+    description: "Ratio of order amount to quoted amount"
+    table: Disciplines
+    folder: "Key Metrics"
+    format: "0.0%"
+    dax: |
+      QuoteToOrderRatio = 
+      DIVIDE(
+          SUM('Disciplines'[OrderAmount]),
+          SUM('Disciplines'[QuotedAmount]),
+          0
+      )
+    
+  - name: DisciplineVariance
+    display_name: "Variance (Quote vs Order)"
+    description: "Difference between quoted and order amounts"
+    table: Disciplines
+    folder: "Key Metrics"
+    format: "$#,##0.00"
+    dax: |
+      DisciplineVariance = 
+      SUM('Disciplines'[OrderAmount]) - SUM('Disciplines'[QuotedAmount])
+
+# =============================================================================
+# TIME INTELLIGENCE MEASURES
+# =============================================================================
+
+time_intelligence:
+  
+  - name: QuotationsMTD
+    display_name: "Quotations MTD"
+    description: "Month-to-date quotation count"
+    table: Quotations
+    folder: "Time Intelligence"
+    format: "#,##0"
+    dax: |
+      QuotationsMTD = 
+      TOTALMTD([TotalQuotations], 'Calendar'[Date])
+    
+  - name: QuotationsYTD
+    display_name: "Quotations YTD"
+    description: "Year-to-date quotation count"
+    table: Quotations
+    folder: "Time Intelligence"
+    format: "#,##0"
+    dax: |
+      QuotationsYTD = 
+      TOTALYTD([TotalQuotations], 'Calendar'[Date])
+    
+  - name: SpendMTD
+    display_name: "Spend MTD"
+    description: "Month-to-date PO spend"
+    table: PurchaseOrders
+    folder: "Time Intelligence"
+    format: "$#,##0.00"
+    dax: |
+      SpendMTD = 
+      TOTALMTD([TotalPOSpend], 'Calendar'[Date])
+    
+  - name: SpendYTD
+    display_name: "Spend YTD"
+    description: "Year-to-date PO spend"
+    table: PurchaseOrders
+    folder: "Time Intelligence"
+    format: "$#,##0.00"
+    dax: |
+      SpendYTD = 
+      TOTALYTD([TotalPOSpend], 'Calendar'[Date])
+    
+  - name: PriorMonthQuotations
+    display_name: "Prior Month Quotations"
+    description: "Quotation count for previous month"
+    table: Quotations
+    folder: "Time Intelligence"
+    format: "#,##0"
+    dax: |
+      PriorMonthQuotations = 
+      CALCULATE(
+          [TotalQuotations],
+          DATEADD('Calendar'[Date], -1, MONTH)
+      )
+    
+  - name: MonthOverMonthChange
+    display_name: "MoM Change %"
+    description: "Month-over-month percentage change in quotations"
+    table: Quotations
+    folder: "Time Intelligence"
+    format: "0.0%"
+    dax: |
+      MonthOverMonthChange = 
+      DIVIDE(
+          [TotalQuotations] - [PriorMonthQuotations],
+          [PriorMonthQuotations],
+          0
+      )
+
+# =============================================================================
+# SUPPLIER PERFORMANCE METRICS
+# =============================================================================
+
+supplier_performance:
+  
+  - name: SupplierQuoteCount
+    display_name: "Quote Count"
+    description: "Number of quotes per supplier"
+    table: Suppliers
+    folder: "Supplier Performance"
+    format: "#,##0"
+    dax: |
+      SupplierQuoteCount = 
+      CALCULATE(
+          COUNTROWS('Quotations'),
+          USERELATIONSHIP('Quotations'[SupplierCode], 'Suppliers'[SupplierCode])
+      )
+    
+  - name: SupplierPOCount
+    display_name: "PO Count"
+    description: "Number of POs per supplier"
+    table: Suppliers
+    folder: "Supplier Performance"
+    format: "#,##0"
+    dax: |
+      SupplierPOCount = 
+      CALCULATE(
+          COUNTROWS('PurchaseOrders'),
+          USERELATIONSHIP('PurchaseOrders'[SupplierName], 'Suppliers'[SupplierName])
+      )
+    
+  - name: SupplierTotalSpend
+    display_name: "Total Spend"
+    description: "Total spend per supplier"
+    table: Suppliers
+    folder: "Supplier Performance"
+    format: "$#,##0.00"
+    dax: |
+      SupplierTotalSpend = 
+      CALCULATE(
+          SUM('PurchaseOrders'[ValueUSD]),
+          USERELATIONSHIP('PurchaseOrders'[SupplierName], 'Suppliers'[SupplierName])
+      )
+    
+  - name: SupplierWinRate
+    display_name: "Supplier Win Rate"
+    description: "Percentage of supplier quotes converted to orders"
+    table: Suppliers
+    folder: "Supplier Performance"
+    format: "0.0%"
+    dax: |
+      SupplierWinRate = 
+      VAR QuoteCount = [SupplierQuoteCount]
+      VAR OrderCount = 
+          CALCULATE(
+              COUNTROWS('Quotations'),
+              'Quotations'[Status] = "Order",
+              USERELATIONSHIP('Quotations'[SupplierCode], 'Suppliers'[SupplierCode])
+          )
+      RETURN
+      DIVIDE(OrderCount, QuoteCount, 0)
+
+# =============================================================================
+# ENTITY BREAKDOWN METRICS
+# =============================================================================
+
+entity_metrics:
+  
+  - name: EntityQuoteCount
+    display_name: "Quotes by Entity"
+    description: "Number of quotes per entity"
+    table: Entities
+    folder: "Entity Metrics"
+    format: "#,##0"
+    dax: |
+      EntityQuoteCount = 
+      CALCULATE(
+          COUNTROWS('Quotations'),
+          USERELATIONSHIP('Quotations'[Entity], 'Entities'[EntityName])
+      )
+    
+  - name: EntityPOCount
+    display_name: "POs by Entity"
+    description: "Number of POs per entity"
+    table: Entities
+    folder: "Entity Metrics"
+    format: "#,##0"
+    dax: |
+      EntityPOCount = 
+      CALCULATE(
+          COUNTROWS('PurchaseOrders'),
+          USERELATIONSHIP('PurchaseOrders'[Entity], 'Entities'[EntityName])
+      )
+    
+  - name: EntitySpend
+    display_name: "Spend by Entity"
+    description: "Total spend per entity"
+    table: Entities
+    folder: "Entity Metrics"
+    format: "$#,##0.00"
+    dax: |
+      EntitySpend = 
+      CALCULATE(
+          SUM('PurchaseOrders'[ValueUSD]),
+          USERELATIONSHIP('PurchaseOrders'[Entity], 'Entities'[EntityName])
+      )
+
+# =============================================================================
+# MATERIAL GROUP METRICS
+# =============================================================================
+
+material_metrics:
+  
+  - name: MaterialQuoteCount
+    display_name: "Quotes by Material"
+    description: "Number of quotes per material group"
+    table: MaterialGroups
+    folder: "Material Metrics"
+    format: "#,##0"
+    dax: |
+      MaterialQuoteCount = 
+      CALCULATE(
+          COUNTROWS('Quotations'),
+          USERELATIONSHIP('Quotations'[MaterialGroup], 'MaterialGroups'[MaterialGroupName])
+      )
+    
+  - name: MaterialSpend
+    display_name: "Spend by Material"
+    description: "Total spend per material group"
+    table: MaterialGroups
+    folder: "Material Metrics"
+    format: "$#,##0.00"
+    dax: |
+      MaterialSpend = 
+      CALCULATE(
+          SUM('PurchaseOrders'[ValueUSD]),
+          USERELATIONSHIP('PurchaseOrders'[MaterialGroup], 'MaterialGroups'[MaterialGroupName])
+      )
+
+# =============================================================================
+# CALCULATED COLUMNS (if needed)
+# =============================================================================
+
+calculated_columns:
+  
+  - name: QuotationYear
+    table: Quotations
+    column: Year
+    dax: |
+      Year = YEAR('Quotations'[CreatedDate])
+    
+  - name: QuotationMonth
+    table: Quotations
+    column: Month
+    dax: |
+      Month = FORMAT('Quotations'[CreatedDate], "YYYY-MM")
+    
+  - name: POYear
+    table: PurchaseOrders
+    column: Year
+    dax: |
+      Year = YEAR('PurchaseOrders'[PODate])
+    
+  - name: POMonth
+    table: PurchaseOrders
+    column: Month
+    dax: |
+      Month = FORMAT('PurchaseOrders'[PODate], "YYYY-MM")
+
+# =============================================================================
+# CALCULATION GROUPS (Advanced)
+# =============================================================================
+
+calculation_groups:
+  
+  - name: TimeIntelligence
+    table: TimeCalc
+    items:
+      - name: Current
+        ordinal: 0
+        format: ""
+        expression: "SELECTEDMEASURE()"
+      
+      - name: MTD
+        ordinal: 1
+        format: ""
+        expression: "TOTALMTD(SELECTEDMEASURE(), 'Calendar'[Date])"
+      
+      - name: YTD
+        ordinal: 2
+        format: ""
+        expression: "TOTALYTD(SELECTEDMEASURE(), 'Calendar'[Date])"
+      
+      - name: PY
+        ordinal: 3
+        format: ""
+        expression: "CALCULATE(SELECTEDMEASURE(), SAMEPERIODLASTYEAR('Calendar'[Date]))"
+      
+      - name: YoY%
+        ordinal: 4
+        format: "0.0%"
+        expression: |
+          VAR Current = SELECTEDMEASURE()
+          VAR PY = CALCULATE(SELECTEDMEASURE(), SAMEPERIODLASTYEAR('Calendar'[Date]))
+          RETURN DIVIDE(Current - PY, PY, 0)

@@ -2,6 +2,9 @@ import * as React from 'react';
 import styles from './Header.module.scss';
 import { DashboardView } from '../../SupplyIntelHub';
 
+// Import logo from project assets folder
+const logoUrl = require('../../../../../../assets/images/logo.png');
+
 export interface IHeaderProps {
   title: string;
   subtitle?: string;
@@ -38,6 +41,7 @@ const Header: React.FC<IHeaderProps> = ({
             ← Back
           </button>
         )}
+        <img src={logoUrl} alt="MVL Logo" className={styles.logo} />
         <div className={styles.titleContainer}>
           <h1>{title}</h1>
           {subtitle && <span className={styles.subtitle}>{subtitle}</span>}

@@ -1,14 +1,15 @@
 
 require("./Header.module.css");
 const styles = {
-  dashboardHeader: 'dashboardHeader_f5d1b37e',
-  headerLeft: 'headerLeft_f5d1b37e',
-  backButton: 'backButton_f5d1b37e',
-  titleContainer: 'titleContainer_f5d1b37e',
-  subtitle: 'subtitle_f5d1b37e',
-  headerRight: 'headerRight_f5d1b37e',
-  refreshTime: 'refreshTime_f5d1b37e',
-  entityInfo: 'entityInfo_f5d1b37e'
+  dashboardHeader: 'dashboardHeader_ece82cce',
+  headerLeft: 'headerLeft_ece82cce',
+  backButton: 'backButton_ece82cce',
+  logo: 'logo_ece82cce',
+  titleContainer: 'titleContainer_ece82cce',
+  subtitle: 'subtitle_ece82cce',
+  headerRight: 'headerRight_ece82cce',
+  refreshTime: 'refreshTime_ece82cce',
+  entityInfo: 'entityInfo_ece82cce'
 };
 
 export default styles;

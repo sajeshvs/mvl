@@ -39,6 +39,13 @@
   }
 }
 
+.logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1); // Make logo white for dark header
+}
+
 .titleContainer {
   display: flex;
   flex-direction: column;

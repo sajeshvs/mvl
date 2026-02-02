@@ -80,12 +80,12 @@ export class SharePointService {
         // Fetch counts from each list
         const [quotations, purchaseOrders, suppliers] = await Promise.all([
           this.sp.web.lists.getByTitle(this.LISTS.QUOTATIONS).items.select('Id').top(5000)(),
-          this.sp.web.lists.getByTitle(this.LISTS.PURCHASE_ORDERS).items.select('Id', 'POValue').top(5000)(),
+          this.sp.web.lists.getByTitle(this.LISTS.PURCHASE_ORDERS).items.select('Id', 'ValueUSD').top(5000)(),
           this.sp.web.lists.getByTitle(this.LISTS.SUPPLIERS).items.select('Id').top(500)()
         ]);
 
-        const totalSpend = purchaseOrders.reduce((sum: number, po: { POValue?: number }) => 
-          sum + (po.POValue || 0), 0);
+        const totalSpend = purchaseOrders.reduce((sum: number, po: { ValueUSD?: number }) => 
+          sum + (po.ValueUSD || 0), 0);
 
         return {
           totalQuotations: quotations.length,
@@ -124,44 +124,36 @@ export class SharePointService {
           .select(
             'Id',
             'Title',
-            'QuotationNumber',
+            'QuotationID',
             'SupplierName',
+            'ClientName',
             'Entity',
-            'MaterialGroup',
-            'MaterialCode',
-            'QuotationValue',
-            'Currency',
+            'Discipline',
+            'ValueUSD',
             'Status',
-            'StatusCategory',
-            'QuoteType',
-            'Created',
-            'ValidityDays',
-            'Description',
-            'DeliveryTerms',
-            'PaymentTerms',
-            'PONumber'
+            'Created'
           )
           .top(5000)
           .orderBy('Created', false)();
 
         return items.map((item: Record<string, unknown>) => ({
           Id: item.Id as number,
-          QuotationNumber: (item.QuotationNumber || item.Title || '') as string,
-          SupplierName: (item.SupplierName || 'Unknown') as string,
+          QuotationNumber: (item.QuotationID || item.Title || '') as string,
+          SupplierName: (item.SupplierName || item.ClientName || 'Unknown') as string,
           Entity: (item.Entity || 'Unknown') as string,
-          MaterialGroup: (item.MaterialGroup || 'Unknown') as string,
-          MaterialCode: item.MaterialCode as string | undefined,
-          QuotationValue: (item.QuotationValue || 0) as number,
-          Currency: (item.Currency || 'USD') as string,
+          MaterialGroup: (item.Discipline || 'Unknown') as string,
+          MaterialCode: undefined,
+          QuotationValue: (item.ValueUSD || 0) as number,
+          Currency: 'USD',
           Status: (item.Status || 'Quotation') as string,
-          StatusCategory: item.StatusCategory as string | undefined,
-          QuoteType: item.QuoteType as string | undefined,
+          StatusCategory: undefined,
+          QuoteType: undefined,
           CreatedDate: item.Created as string,
-          ValidityDays: item.ValidityDays as number | undefined,
-          Description: item.Description as string | undefined,
-          DeliveryTerms: item.DeliveryTerms as string | undefined,
-          PaymentTerms: item.PaymentTerms as string | undefined,
-          PONumber: item.PONumber as string | undefined
+          ValidityDays: undefined,
+          Description: (item.ClientName || '') as string,
+          DeliveryTerms: undefined,
+          PaymentTerms: undefined,
+          PONumber: undefined
         }));
       } catch (error) {
         console.error('Error fetching quotations:', error);
@@ -226,34 +218,29 @@ export class SharePointService {
           .select(
             'Id',
             'Title',
-            'PONumber',
+            'POID',
             'SupplierName',
             'Entity',
             'MaterialGroup',
-            'POValue',
-            'Currency',
-            'PODate',
-            'Status',
-            'DeliveryDate',
-            'Description',
-            'QuotationNumber'
+            'ValueUSD',
+            'Created'
           )
           .top(5000)
-          .orderBy('PODate', false)();
+          .orderBy('Created', false)();
 
         return items.map((item: Record<string, unknown>) => ({
           Id: item.Id as number,
-          PONumber: (item.PONumber || item.Title || '') as string,
+          PONumber: (item.POID || item.Title || '') as string,
           SupplierName: (item.SupplierName || 'Unknown') as string,
           Entity: (item.Entity || 'Unknown') as string,
-          MaterialGroup: item.MaterialGroup as string | undefined,
-          POValue: (item.POValue || 0) as number,
-          Currency: (item.Currency || 'USD') as string,
-          PODate: item.PODate as string,
-          Status: (item.Status || 'Active') as string,
-          DeliveryDate: item.DeliveryDate as string | undefined,
-          Description: item.Description as string | undefined,
-          QuotationNumber: item.QuotationNumber as string | undefined
+          MaterialGroup: (item.MaterialGroup || '') as string | undefined,
+          POValue: (item.ValueUSD || 0) as number,
+          Currency: 'USD',
+          PODate: item.Created as string,
+          Status: 'Active',
+          DeliveryDate: undefined,
+          Description: undefined,
+          QuotationNumber: undefined
         }));
       } catch (error) {
         console.error('Error fetching purchase orders:', error);
@@ -313,31 +300,22 @@ export class SharePointService {
             'Title',
             'DisciplineName',
             'DisciplineCode',
-            'Entity',
-            'Budget',
-            'Actual',
-            'Currency',
-            'Year'
+            'Category'
           )
           .top(500)();
 
         return items.map((item: Record<string, unknown>) => {
-          const budget = (item.Budget || 0) as number;
-          const actual = (item.Actual || 0) as number;
-          const variance = budget - actual;
-          const variancePercent = budget > 0 ? (variance / budget) * 100 : 0;
-
           return {
             Id: item.Id as number,
             DisciplineName: (item.DisciplineName || item.Title || '') as string,
             DisciplineCode: item.DisciplineCode as string | undefined,
-            Entity: (item.Entity || 'Unknown') as string,
-            Budget: budget,
-            Actual: actual,
-            Variance: variance,
-            VariancePercent: variancePercent,
-            Currency: (item.Currency || 'USD') as string,
-            Year: item.Year as number | undefined
+            Entity: 'All' as string,
+            Budget: 0,
+            Actual: 0,
+            Variance: 0,
+            VariancePercent: 0,
+            Currency: 'USD',
+            Year: new Date().getFullYear()
           };
         });
       } catch (error) {
@@ -389,17 +367,17 @@ export class SharePointService {
         const items = await this.sp.web.lists
           .getByTitle(this.LISTS.SUPPLIERS)
           .items
-          .select('Id', 'Title', 'SupplierName', 'SupplierCode', 'Category', 'Country', 'City', 'Status')
+          .select('Id', 'Title', 'SupplierName', 'POCount', 'TotalSpendUSD')
           .top(500)();
 
         return items.map((item: Record<string, unknown>) => ({
           Id: item.Id as number,
           SupplierName: (item.SupplierName || item.Title || '') as string,
-          SupplierCode: item.SupplierCode as string | undefined,
-          Category: item.Category as string | undefined,
-          Country: item.Country as string | undefined,
-          City: item.City as string | undefined,
-          Status: (item.Status || 'Active') as string
+          SupplierCode: undefined,
+          Category: undefined,
+          Country: undefined,
+          City: undefined,
+          Status: 'Active'
         }));
       } catch (error) {
         console.error('Error fetching suppliers:', error);
@@ -417,7 +395,7 @@ export class SharePointService {
         const items = await this.sp.web.lists
           .getByTitle(this.LISTS.ENTITIES)
           .items
-          .select('Id', 'Title', 'EntityName', 'EntityCode', 'Country', 'Region', 'Status')
+          .select('Id', 'Title', 'EntityName', 'EntityCode', 'Country', 'Region')
           .top(100)();
 
         return items.map((item: Record<string, unknown>) => ({
@@ -426,7 +404,7 @@ export class SharePointService {
           EntityCode: (item.EntityCode || '') as string,
           Country: item.Country as string | undefined,
           Region: item.Region as string | undefined,
-          Status: (item.Status || 'Active') as string
+          Status: 'Active'
         }));
       } catch (error) {
         console.error('Error fetching entities:', error);
@@ -444,15 +422,15 @@ export class SharePointService {
         const items = await this.sp.web.lists
           .getByTitle(this.LISTS.MATERIAL_GROUPS)
           .items
-          .select('Id', 'Title', 'MaterialGroupName', 'MaterialGroupCode', 'Category', 'Description')
+          .select('Id', 'Title', 'MaterialName', 'MaterialCode', 'Category')
           .top(100)();
 
         return items.map((item: Record<string, unknown>) => ({
           Id: item.Id as number,
-          MaterialGroupName: (item.MaterialGroupName || item.Title || '') as string,
-          MaterialGroupCode: (item.MaterialGroupCode || '') as string,
+          MaterialGroupName: (item.MaterialName || item.Title || '') as string,
+          MaterialGroupCode: (item.MaterialCode || '') as string,
           Category: item.Category as string | undefined,
-          Description: item.Description as string | undefined
+          Description: undefined
         }));
       } catch (error) {
         console.error('Error fetching material groups:', error);
@@ -470,20 +448,20 @@ export class SharePointService {
         const items = await this.sp.web.lists
           .getByTitle(this.LISTS.SPEND_BY_MONTH)
           .items
-          .select('Id', 'Title', 'Month', 'Year', 'Entity', 'Spend', 'QuotationValue', 'POCount', 'Currency')
+          .select('Id', 'Title', 'YearMonth', 'Month', 'Year', 'TotalSpendUSD', 'POCount')
           .orderBy('Year', true)
           .orderBy('Month', true)
           .top(100)();
 
         return items.map((item: Record<string, unknown>) => ({
           Id: item.Id as number,
-          Month: (item.Month || item.Title || '') as string,
+          Month: (item.YearMonth || item.Title || '') as string,
           Year: (item.Year || new Date().getFullYear()) as number,
-          Entity: item.Entity as string | undefined,
-          Spend: (item.Spend || 0) as number,
-          QuotationValue: item.QuotationValue as number | undefined,
+          Entity: undefined,
+          Spend: (item.TotalSpendUSD || 0) as number,
+          QuotationValue: undefined,
           POCount: item.POCount as number | undefined,
-          Currency: (item.Currency || 'USD') as string
+          Currency: 'USD'
         }));
       } catch (error) {
         console.error('Error fetching spend by month:', error);
