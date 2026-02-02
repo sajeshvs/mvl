@@ -77,12 +77,22 @@ export class SharePointService {
   public async getSummary(): Promise<IPortalSummary> {
     return this.getCachedOrFetch('portal-summary', async () => {
       try {
+        console.log('SharePointService: Fetching summary data...');
+        console.log('  Quotations list:', this.LISTS.QUOTATIONS);
+        console.log('  PurchaseOrders list:', this.LISTS.PURCHASE_ORDERS);
+        console.log('  Suppliers list:', this.LISTS.SUPPLIERS);
+        
         // Fetch counts from each list
         const [quotations, purchaseOrders, suppliers] = await Promise.all([
           this.sp.web.lists.getByTitle(this.LISTS.QUOTATIONS).items.select('Id').top(5000)(),
           this.sp.web.lists.getByTitle(this.LISTS.PURCHASE_ORDERS).items.select('Id', 'ValueUSD').top(5000)(),
           this.sp.web.lists.getByTitle(this.LISTS.SUPPLIERS).items.select('Id').top(500)()
         ]);
+
+        console.log('SharePointService: Summary results:');
+        console.log('  Quotations count:', quotations.length);
+        console.log('  PurchaseOrders count:', purchaseOrders.length);
+        console.log('  Suppliers count:', suppliers.length);
 
         const totalSpend = purchaseOrders.reduce((sum: number, po: { ValueUSD?: number }) => 
           sum + (po.ValueUSD || 0), 0);
@@ -118,6 +128,8 @@ export class SharePointService {
   public async getQuotations(): Promise<IQuotation[]> {
     return this.getCachedOrFetch('quotations', async () => {
       try {
+        console.log('SharePointService: Fetching quotations from', this.LISTS.QUOTATIONS);
+        
         const items = await this.sp.web.lists
           .getByTitle(this.LISTS.QUOTATIONS)
           .items
@@ -129,11 +141,11 @@ export class SharePointService {
             'Entity',
             'Discipline',
             'ValueUSD',
-            'Status',
-            'Created'
+            'Status'
           )
-          .top(5000)
-          .orderBy('Created', false)();
+          .top(5000)();
+
+        console.log('SharePointService: Fetched', items.length, 'quotations');
 
         return items.map((item: Record<string, unknown>) => ({
           Id: item.Id as number,
@@ -147,7 +159,7 @@ export class SharePointService {
           Status: (item.Status || 'Quotation') as string,
           StatusCategory: undefined,
           QuoteType: undefined,
-          CreatedDate: item.Created as string,
+          CreatedDate: undefined,
           ValidityDays: undefined,
           Description: (item.ClientName || '') as string,
           DeliveryTerms: undefined,
@@ -156,6 +168,7 @@ export class SharePointService {
         }));
       } catch (error) {
         console.error('Error fetching quotations:', error);
+        // Return empty array on error - UI will show no data
         return [];
       }
     });
