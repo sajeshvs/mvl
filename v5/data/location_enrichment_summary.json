@@ -1,0 +1,23 @@
+{
+  "total_suppliers": 2189,
+  "geocoded_count": 20,
+  "countries_standardized": 1559,
+  "valid_phones": 907,
+  "quality_distribution": {
+    "medium": 1132,
+    "low": 1046,
+    "high": 11
+  },
+  "top_countries": {
+    "United Arab Emirates": 603,
+    "Afghanistan": 182,
+    "United States": 165,
+    "China": 95,
+    "Qatar": 91,
+    "Nepal": 75,
+    "Saudi Arabia": 64,
+    "Kuwait": 54,
+    "India": 36,
+    "Dubai": 33
+  }
+}

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Chain Intel Hub</title>
+    <link rel="stylesheet" href="shared/styles.css">
+    <link rel="icon" href="shared/images/mvl-logo.png">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- ============================================
+             HEADER
+             ============================================ -->
+        <header class="header">
+            <div class="header-left">
+                <img src="shared/images/SupplyChain1.png" alt="Supply Chain Intel Hub" class="header-logo">
+            </div>
+            <div class="header-right">
+                <span class="header-refresh">Last Refresh: <span id="lastRefresh">Thu 12 Feb 2026 06:08 AM</span></span>
+                <img src="shared/images/mvl-logo.png" alt="MVL" class="header-mvl-logo">
+            </div>
+        </header>
+
+        <!-- ============================================
+             NAVIGATION TABS
+             ============================================ -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="supplier-marketplace">Supplier Marketplace</button>
+            <button class="nav-tab" data-tab="global-spend">Global Spend Analysis</button>
+            <button class="nav-tab" data-tab="materials-disciplines">Materials & Disciplines</button>
+        </nav>
+
+        <!-- ============================================
+             MAIN CONTENT AREA
+             ============================================ -->
+        <main class="main-content">
+
+            <!-- ========================================
+                 TAB 1: SUPPLIER MARKETPLACE
+                 ======================================== -->
+            <div class="tab-content active" id="tab-supplier-marketplace">
+
+                <!-- FILTER ROW (Tab 1 Only) -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="filter-label">Entity</label>
+                        <select class="filter-select" id="filterEntity">
+                            <option>All Entities</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Project</label>
+                        <select class="filter-select" id="filterProject">
+                            <option>All Projects</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Supplier</label>
+                        <select class="filter-select" id="filterSupplier">
+                            <option>All Suppliers</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Status</label>
+                        <select class="filter-select" id="filterStatus">
+                            <option>All Statuses</option>
+                            <option>Order</option>
+                            <option>Quotation</option>
+                            <option>Waiting</option>
+                            <option>Cancelled</option>
+                            <option>Closed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Material</label>
+                        <select class="filter-select" id="filterMaterial">
+                            <option>All Materials</option>
+                        </select>
+                    </div>
+                    <div class="filter-group filter-search">
+                        <label class="filter-label">Search</label>
+                        <input type="text" id="searchInput" placeholder="Search Quotes, Projects, etc.">
+                    </div>
+                </div>
+
+                <!-- KPI ROW (Tab 1 Only) -->
+                <div class="kpi-row">
+                    <div class="kpi-card">
+                        <div class="kpi-value" id="kpiRfqCount">12,532</div>
+                        <div class="kpi-label">Request for Quotation</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value highlight" id="kpiQuoteValue">$3.6B</div>
+                        <div class="kpi-label">Quote Value</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value" id="kpiPoCount">7,697</div>
+                        <div class="kpi-label">Purchase Orders</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value highlight" id="kpiPoValue">$721.3M</div>
+                        <div class="kpi-label">PO Values</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value" id="kpiWinRate">97.7%</div>
+                        <div class="kpi-label">Win Rate</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value" id="kpiCoCount">7,697</div>
+                        <div class="kpi-label">Change Orders</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value highlight" id="kpiCoValue">$721.3M</div>
+                        <div class="kpi-label">CO Value</div>
+                    </div>
+                </div>
+
+                <!-- Three Column Layout -->
+                <div class="three-column-layout">
+
+                    <!-- LEFT COLUMN -->
+                    <div class="column">
+
+                        <!-- 5.1.1 Status Chart -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">📊</span>
+                                    Status
+                                </h3>
+                            </div>
+                            <div class="chart-body">
+                                <div class="status-bar-list" id="statusChart">
+                                    <!-- Populated by JS -->
+                                </div>
+                                <div class="status-bottom-kpis">
+                                    <div class="status-kpi">
+                                        <div class="status-kpi-value" id="conversionRate">97.7%</div>
+                                        <div class="status-kpi-label">Conversion Rate</div>
+                                    </div>
+                                    <div class="status-kpi">
+                                        <div class="status-kpi-value" id="openQuotes">4,650</div>
+                                        <div class="status-kpi-label">Open Quotes</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.1.2 Entity Comparison -->
+                        <div class="chart-card" id="entityChartCard">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">📊</span>
+                                    Entity Comparison
+                                </h3>
+                                <div class="chart-actions">
+                                    <div class="chart-toggle" id="entityChartToggle">
+                                        <button class="chart-toggle-btn active" data-entity-view="quote">By
+                                            Quote</button>
+                                        <button class="chart-toggle-btn" data-entity-view="spend">By PO Spend</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <div id="entityChartContainer">
+                                    <canvas id="entityChartCanvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.1.3 Top 10 Suppliers -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">🏆</span>
+                                    Top 10 Suppliers by Spend
+                                </h3>
+                            </div>
+                            <div class="chart-body">
+                                <div class="ranked-list" id="topSuppliers">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- CENTER COLUMN -->
+                    <div class="column">
+
+                        <!-- 5.2.1 Location of Suppliers (Map) -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">🗺️</span>
+                                    Location of Suppliers
+                                </h3>
+                            </div>
+                            <div class="chart-body">
+                                <div id="supplierMap"></div>
+                            </div>
+                        </div>
+
+                        <!-- 5.2.2 Material Distribution -->
+                        <div class="chart-card" id="materialChartCard">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">📊</span>
+                                    Material Distribution
+                                </h3>
+                                <div class="chart-actions">
+                                    <div class="chart-toggle" id="materialChartToggle">
+                                        <button class="chart-toggle-btn active" data-chart-type="bar">Bar</button>
+                                        <button class="chart-toggle-btn" data-chart-type="pie">Pie</button>
+                                        <button class="chart-toggle-btn" data-chart-type="line">Line</button>
+                                        <button class="chart-toggle-btn" data-chart-type="radar">Radar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <div id="materialChartContainer">
+                                    <canvas id="materialChartCanvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.2.3 Quotation to PO Time -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">⏱️</span>
+                                    Quotation to PO Time
+                                </h3>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="quotationTimeChart"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="column">
+
+                        <!-- 5.3.1 Supplier Profile -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">👤</span>
+                                    Supplier Profile
+                                </h3>
+                            </div>
+                            <div class="chart-body profile-card">
+                                <div class="profile-header">
+                                    <div class="profile-avatar" id="supplierAvatar">S</div>
+                                    <div>
+                                        <div class="profile-name" id="supplierName">Select a Supplier</div>
+                                        <div class="profile-subtitle" id="supplierLocation">Click on Top 10 list</div>
+                                    </div>
+                                </div>
+                                <div class="profile-details">
+                                    <div class="profile-row">
+                                        <span class="profile-label">Contact:</span>
+                                        <span class="profile-value" id="supplierContact">-</span>
+                                    </div>
+                                    <div class="profile-row">
+                                        <span class="profile-label">Email:</span>
+                                        <span class="profile-value" id="supplierEmail">-</span>
+                                    </div>
+                                    <div class="profile-row">
+                                        <span class="profile-label">Phone:</span>
+                                        <span class="profile-value" id="supplierPhone">-</span>
+                                    </div>
+                                    <div class="profile-row">
+                                        <span class="profile-label">Rating:</span>
+                                        <span class="profile-value profile-rating" id="supplierRating">★★★★☆</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.3.2 Responsible MVL Employee -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">👥</span>
+                                    Responsible MVL Employee
+                                </h3>
+                                <div class="chart-actions">
+                                    <a href="#" style="font-size:11px; color:#0078D4;">BY SPEND</a>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <input type="text" placeholder="Search suppliers..."
+                                    style="width:100%; padding:8px; margin-bottom:12px; border:1px solid #e1dfdd; border-radius:4px;">
+                                <div class="ranked-list" id="employeeList">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.3.3 Approved Material -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">✅</span>
+                                    Approved Material
+                                </h3>
+                            </div>
+                            <div class="chart-body">
+                                <p style="font-size:11px; color:#888; margin-bottom:12px;">
+                                    List of Material Approved with this Supplier
+                                </p>
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Material</th>
+                                            <th>Spec #</th>
+                                            <th>Lead Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="approvedMaterialTable">
+                                        <tr>
+                                            <td colspan="3" style="text-align:center; color:#888;">Select a supplier
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Monthly Trend Chart (Full Width) -->
+                <div class="trend-chart-container">
+                    <div class="chart-header trend-chart-header">
+                        <h3 class="chart-title">
+                            <span class="chart-title-icon">📈</span>
+                            Submit & Order Quantity
+                        </h3>
+                        <div class="chart-actions">
+                            <span class="chart-legend">
+                                <span class="legend-item legend-quotes">■</span> Quotes
+                                <span class="legend-item legend-orders">■</span> Orders
+                                <span class="legend-item legend-cos">■</span> COs
+                            </span>
+                        </div>
+                    </div>
+                    <div class="trend-chart-wrapper">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Bottom Tabbed Tables -->
+                <div class="bottom-section">
+                    <div class="bottom-tabs">
+                        <button class="bottom-tab" data-bottom-tab="supplier-list">Supplier List (<span
+                                id="supplierCount">2189</span>)</button>
+                        <button class="bottom-tab active" data-bottom-tab="workbench">Marketplace Workbench</button>
+                    </div>
+
+                    <!-- Filter Bar for Bottom Tables -->
+                    <div class="bottom-filter-bar" id="bottomFilterBar">
+                        <div class="bottom-filter-group">
+                            <input type="text" id="bottomSearch" class="bottom-search-input" placeholder="Search..."
+                                onkeyup="filterBottomTable()">
+                            <select id="bottomFilterStatus" class="bottom-filter-select" onchange="filterBottomTable()">
+                                <option value="">All Status</option>
+                            </select>
+                            <select id="bottomFilterMaterial" class="bottom-filter-select"
+                                onchange="filterBottomTable()">
+                                <option value="">All Materials</option>
+                            </select>
+                            <select id="bottomFilterCountry" class="bottom-filter-select" onchange="filterBottomTable()"
+                                style="display:none;">
+                                <option value="">All Countries</option>
+                            </select>
+                            <button class="bottom-filter-clear" onclick="clearBottomFilters()">Clear</button>
+                        </div>
+                        <div class="bottom-page-size">
+                            <label>Show:</label>
+                            <select id="bottomPageSize" onchange="changeBottomPageSize()">
+                                <option value="25">25</option>
+                                <option value="50" selected>50</option>
+                                <option value="100">100</option>
+                                <option value="200">200</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="bottom-content" id="bottomTableContent">
+                        <table class="data-table">
+                            <thead id="bottomTableHead">
+                                <tr>
+                                    <th>QUOTATION</th>
+                                    <th>STATUS</th>
+                                    <th>MATERIAL</th>
+                                    <th>PROJECT</th>
+                                    <th>VALUE</th>
+                                    <th>CONTACT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workbenchTable">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination Controls -->
+                        <div class="bottom-pagination" id="bottomPagination">
+                            <div class="pagination-info" id="tablePagination">
+                                Showing 1-50 of 12136 records
+                            </div>
+                            <div class="pagination-controls">
+                                <button class="page-btn" onclick="goToBottomPage('first')" title="First">⏮</button>
+                                <button class="page-btn" onclick="goToBottomPage('prev')" title="Previous">◀</button>
+                                <span class="page-numbers" id="pageNumbers"></span>
+                                <button class="page-btn" onclick="goToBottomPage('next')" title="Next">▶</button>
+                                <button class="page-btn" onclick="goToBottomPage('last')" title="Last">⏭</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================
+                 TAB 2: GLOBAL SPEND ANALYSIS (Pending)
+                 ======================================== -->
+            <div class="tab-content" id="tab-global-spend">
+                <div class="pending-placeholder">
+                    <div class="pending-icon">🔄</div>
+                    <div class="pending-title">Global Spend Analysis</div>
+                    <div class="pending-text">Awaiting Visio wireframe extraction</div>
+                    <p style="margin-top:16px; font-size:12px; color:#888;">
+                        Please provide the Global Spend Analysis Visio screenshot to complete this tab.
+                    </p>
+                </div>
+            </div>
+
+            <!-- ========================================
+                 TAB 3: MATERIALS & DISCIPLINES (Pending)
+                 ======================================== -->
+            <div class="tab-content" id="tab-materials-disciplines">
+                <div class="pending-placeholder">
+                    <div class="pending-icon">🔄</div>
+                    <div class="pending-title">Materials & Disciplines</div>
+                    <div class="pending-text">Awaiting Visio wireframe extraction</div>
+                    <p style="margin-top:16px; font-size:12px; color:#888;">
+                        Please provide the Materials & Disciplines Visio screenshot to complete this tab.
+                    </p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="shared/scripts.js"></script>
+</body>
+
+</html>
