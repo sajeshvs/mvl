@@ -1,45 +1,45 @@
 {
-  "extends": "./node_modules/@microsoft/rush-stack-compiler-4.7/includes/tsconfig-web.json",
-  "compilerOptions": {
-    "target": "es5",
-    "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "jsx": "react",
-    "declaration": true,
-    "sourceMap": true,
-    "experimentalDecorators": true,
-    "skipLibCheck": true,
-    "outDir": "lib",
-    "inlineSources": false,
-    "strictNullChecks": false,
-    "noUnusedLocals": false,
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/@microsoft"
+    "extends": "./node_modules/@microsoft/rush-stack-compiler-4.7/includes/tsconfig-web.json",
+    "compilerOptions": {
+        "target": "es5",
+        "forceConsistentCasingInFileNames": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "jsx": "react",
+        "declaration": true,
+        "sourceMap": true,
+        "experimentalDecorators": true,
+        "skipLibCheck": true,
+        "outDir": "lib",
+        "inlineSources": false,
+        "strictNullChecks": false,
+        "noUnusedLocals": false,
+        "typeRoots": [
+            "./node_modules/@types",
+            "./node_modules/@microsoft"
+        ],
+        "types": [
+            "webpack-env"
+        ],
+        "lib": [
+            "es5",
+            "dom",
+            "es2015.collection",
+            "es2015.promise",
+            "es2015.iterable",
+            "es2015.symbol",
+            "es2015.core",
+            "es2016.array.include",
+            "es2017.object",
+            "es2017.string"
+        ]
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx"
     ],
-    "types": [
-      "webpack-env"
-    ],
-    "lib": [
-      "es5",
-      "dom",
-      "es2015.collection",
-      "es2015.promise",
-      "es2015.iterable",
-      "es2015.symbol",
-      "es2015.core",
-      "es2016.array.include",
-      "es2017.object",
-      "es2017.string"
+    "exclude": [
+        "node_modules",
+        "lib"
     ]
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "lib"
-  ]
 }

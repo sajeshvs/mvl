@@ -1,68 +1,68 @@
 @import '../../../../styles/variables';
 
 .globalSpendAnalysis {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: $color-bg;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: $color-bg;
 }
 
 .content {
-  flex: 1;
-  padding: $space-lg $space-xl;
+    flex: 1;
+    padding: $space-lg $space-xl;
 }
 
 // KPI Row
 .kpiRow {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: $space-md;
-  margin-bottom: $space-lg;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: $space-md;
+    margin-bottom: $space-lg;
 }
 
 // Charts Grid
 .chartsGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $space-lg;
-  margin-bottom: $space-lg;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-lg;
+    margin-bottom: $space-lg;
 }
 
 // Full width section
 .fullWidth {
-  margin-bottom: $space-lg;
+    margin-bottom: $space-lg;
 }
 
 // Orange accent for this dashboard
 :global {
-  .globalSpendAnalysis {
-    --accent-color: #d96f3c;
-  }
+    .globalSpendAnalysis {
+        --accent-color: #d96f3c;
+    }
 }
 
 // Responsive
 @media (max-width: $breakpoint-xl) {
-  .kpiRow {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .chartsGrid {
-    grid-template-columns: 1fr;
-  }
+    .kpiRow {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .chartsGrid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: $breakpoint-md) {
-  .content {
-    padding: $space-md;
-  }
-  
-  .kpiRow {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    .content {
+        padding: $space-md;
+    }
+
+    .kpiRow {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: $breakpoint-sm) {
-  .kpiRow {
-    grid-template-columns: 1fr;
-  }
+    .kpiRow {
+        grid-template-columns: 1fr;
+    }
 }

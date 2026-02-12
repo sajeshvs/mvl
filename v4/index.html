@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVL Supply Chain Intel Hub v4</title>
+    <link rel="stylesheet" href="shared/styles.css">
+</head>
+
+<body>
+    <div class="portal">
+        <!-- Header -->
+        <header class="portal-header">
+            <img src="../MVLSupplierIntelHub/MVL Supply Chain Intel Hub - Data/Logo/MVLlogo.png" alt="MVL Logo"
+                class="portal-logo" onerror="this.style.display='none'">
+            <h1>MVL Supply Chain Intel Hub</h1>
+            <div class="portal-subtitle">Version 4.0 — Visio-Compliant Dashboards</div>
+        </header>
+
+        <!-- Dashboard Cards -->
+        <div class="portal-grid">
+            <a href="supplier-marketplace/index.html" class="portal-card supplier">
+                <div class="portal-card-icon">📦</div>
+                <h2>Supplier Marketplace</h2>
+                <p>Quotation–PO pipeline by supplier and material. View supplier profiles, status funnel, and
+                    marketplace workbench.</p>
+                <div class="portal-card-meta">
+                    <span>✓ 3-Column Layout</span>
+                    <span>✓ Supplier Profiles</span>
+                </div>
+            </a>
+
+            <a href="global-spend-analysis/index.html" class="portal-card spend">
+                <div class="portal-card-icon">💰</div>
+                <h2>Global Spend Analysis</h2>
+                <p>Purchase order spend by entity, supplier, and category. Annual trends, top/bottom suppliers, and PO
+                    details.</p>
+                <div class="portal-card-meta">
+                    <span>✓ 4 KPIs</span>
+                    <span>✓ Two-Row Filters</span>
+                </div>
+            </a>
+
+            <a href="disciplines-consolidated/index.html" class="portal-card discipline">
+                <div class="portal-card-icon">🏗️</div>
+                <h2>Disciplines Consolidated</h2>
+                <p>Spend and supplier distribution by engineering discipline. MEP, Safety, Procurement sections with
+                    detailed breakdowns.</p>
+                <div class="portal-card-meta">
+                    <span>✓ 10 Disciplines</span>
+                    <span>✓ 5 Navigation Tabs</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Info Section -->
+        <div class="portal-info">
+            <div class="info-section">
+                <h3>📋 Version 4 Updates</h3>
+                <ul>
+                    <li><strong>Visio-Compliant:</strong> All layouts match wireframe specifications exactly</li>
+                    <li><strong>Data Scope:</strong> RFQ quotations only (IQ excluded for this version)</li>
+                    <li><strong>10 Disciplines:</strong> Consolidated from 28 original disciplines</li>
+                    <li><strong>Material Codes:</strong> 13 letter codes mapped to full names</li>
+                    <li><strong>Status Badges:</strong> Order (green), Waiting (amber), Cancelled (red)</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h3>🔗 Data Sources</h3>
+                <ul>
+                    <li><code>quotations_improved.json</code> — 3,890 RFQ quotations</li>
+                    <li><code>purchase_orders_improved.json</code> — 3,539 POs, $430M total</li>
+                    <li><code>suppliers_improved.json</code> — 50 suppliers with ratings</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="portal-footer">
+            <div>MVL Supply Chain Intel Hub v4.0</div>
+            <div>Last Updated: <span id="lastUpdate">--</span></div>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('lastUpdate').textContent = new Date().toLocaleDateString();
+    </script>
+</body>
+
+</html>

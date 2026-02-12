@@ -1,189 +1,189 @@
 @import '../../../../styles/variables';
 
 .disciplinesConsolidated {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: $color-bg;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: $color-bg;
 }
 
 .content {
-  flex: 1;
-  padding: $space-lg $space-xl;
+    flex: 1;
+    padding: $space-lg $space-xl;
 }
 
 // KPI Row
 .kpiRow {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: $space-md;
-  margin-bottom: $space-lg;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: $space-md;
+    margin-bottom: $space-lg;
 }
 
 // View Toggle
 .viewToggle {
-  display: flex;
-  gap: $space-xs;
-  margin-bottom: $space-lg;
-  background: $color-card;
-  padding: $space-xs;
-  border-radius: $radius-md;
-  width: fit-content;
-  
-  button {
-    padding: $space-sm $space-lg;
-    border: 1px solid $color-border;
-    background: transparent;
-    border-radius: $radius-sm;
-    font-size: $font-size-sm;
-    cursor: pointer;
-    transition: all $transition-fast;
-    
-    &:hover {
-      background: $color-bg;
+    display: flex;
+    gap: $space-xs;
+    margin-bottom: $space-lg;
+    background: $color-card;
+    padding: $space-xs;
+    border-radius: $radius-md;
+    width: fit-content;
+
+    button {
+        padding: $space-sm $space-lg;
+        border: 1px solid $color-border;
+        background: transparent;
+        border-radius: $radius-sm;
+        font-size: $font-size-sm;
+        cursor: pointer;
+        transition: all $transition-fast;
+
+        &:hover {
+            background: $color-bg;
+        }
+
+        &.active {
+            background: #0f3d5e;
+            color: white;
+            border-color: #0f3d5e;
+        }
     }
-    
-    &.active {
-      background: #0f3d5e;
-      color: white;
-      border-color: #0f3d5e;
-    }
-  }
 }
 
 // Charts Grid
 .chartsGrid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: $space-lg;
-  margin-bottom: $space-lg;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: $space-lg;
+    margin-bottom: $space-lg;
 }
 
 // Full width section
 .fullWidth {
-  margin-bottom: $space-lg;
+    margin-bottom: $space-lg;
 }
 
 // Discipline Cards Grid
 .disciplineCardsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: $space-lg;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $space-lg;
 }
 
 .disciplineCard {
-  @include card-base;
-  padding: $space-lg;
-  transition: transform $transition-fast, box-shadow $transition-fast;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-hover;
-  }
+    @include card-base;
+    padding: $space-lg;
+    transition: transform $transition-fast, box-shadow $transition-fast;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-hover;
+    }
 }
 
 .cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: $space-md;
-  padding-bottom: $space-md;
-  border-bottom: 1px solid $color-border;
-  
-  h4 {
-    margin: 0;
-    font-size: $font-size-lg;
-    font-weight: 600;
-    color: $color-text-primary;
-  }
-  
-  .entity {
-    font-size: $font-size-xs;
-    color: $color-text-secondary;
-    background: $color-bg;
-    padding: 2px 8px;
-    border-radius: $radius-sm;
-  }
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: $space-md;
+    padding-bottom: $space-md;
+    border-bottom: 1px solid $color-border;
+
+    h4 {
+        margin: 0;
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: $color-text-primary;
+    }
+
+    .entity {
+        font-size: $font-size-xs;
+        color: $color-text-secondary;
+        background: $color-bg;
+        padding: 2px 8px;
+        border-radius: $radius-sm;
+    }
 }
 
 .cardBody {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: $space-sm;
-  margin-bottom: $space-md;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-sm;
+    margin-bottom: $space-md;
 }
 
 .metric {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  
-  .label {
-    font-size: $font-size-xs;
-    color: $color-text-secondary;
-    text-transform: uppercase;
-    margin-bottom: 2px;
-  }
-  
-  .value {
-    font-size: $font-size-lg;
-    font-weight: 600;
-    color: $color-text-primary;
-    
-    &.positive {
-      color: $color-success;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+
+    .label {
+        font-size: $font-size-xs;
+        color: $color-text-secondary;
+        text-transform: uppercase;
+        margin-bottom: 2px;
     }
-    
-    &.negative {
-      color: $color-danger;
+
+    .value {
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: $color-text-primary;
+
+        &.positive {
+            color: $color-success;
+        }
+
+        &.negative {
+            color: $color-danger;
+        }
     }
-  }
 }
 
 .progressBar {
-  height: 8px;
-  background: $color-bg;
-  border-radius: 4px;
-  overflow: hidden;
+    height: 8px;
+    background: $color-bg;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .progress {
-  height: 100%;
-  border-radius: 4px;
-  transition: width $transition-normal;
+    height: 100%;
+    border-radius: 4px;
+    transition: width $transition-normal;
 }
 
 // Responsive
 @media (max-width: $breakpoint-xl) {
-  .kpiRow {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .chartsGrid {
-    grid-template-columns: 1fr;
-  }
+    .kpiRow {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .chartsGrid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: $breakpoint-md) {
-  .content {
-    padding: $space-md;
-  }
-  
-  .kpiRow {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .disciplineCardsGrid {
-    grid-template-columns: 1fr;
-  }
+    .content {
+        padding: $space-md;
+    }
+
+    .kpiRow {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .disciplineCardsGrid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: $breakpoint-sm) {
-  .kpiRow {
-    grid-template-columns: 1fr;
-  }
-  
-  .cardBody {
-    grid-template-columns: 1fr;
-  }
+    .kpiRow {
+        grid-template-columns: 1fr;
+    }
+
+    .cardBody {
+        grid-template-columns: 1fr;
+    }
 }

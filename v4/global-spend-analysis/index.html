@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Spend Analysis | MVL Supply Intel Hub v4</title>
+    <link rel="stylesheet" href="../shared/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Header (Visio: Orange #d96f3c with MVL logo) -->
+        <header class="header spend">
+            <div class="header-left">
+                <img src="../../MVLSupplierIntelHub/MVL Supply Chain Intel Hub - Data/Logo/MVLlogo.png" alt="MVL Logo"
+                    class="logo" onerror="this.style.display='none'">
+                <div class="title-group">
+                    <h1>Global Spend Analysis</h1>
+                    <div class="subtitle">Purchase order spend by entity, supplier, and category</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="refresh-info">
+                    <div id="lastRefresh">Last Refresh: Loading...</div>
+                    <div>Entity: All · Currency: USD</div>
+                </div>
+                <a href="../index.html" class="nav-link">← Home</a>
+            </div>
+        </header>
+
+        <!-- KPI Row (Visio: 4 cards - Total Spend, PO Count, Supplier Count, Avg PO Value) -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Spend</div>
+                <div class="kpi-value" id="totalSpend">--</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Total POs</div>
+                <div class="kpi-value" id="totalPOs">--</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Unique Suppliers</div>
+                <div class="kpi-value" id="uniqueSuppliers">--</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Avg PO Value</div>
+                <div class="kpi-value" id="avgPOValue">--</div>
+            </div>
+        </div>
+
+        <!-- Filter Bar (Visio: Two rows of filter slicers) -->
+        <div class="filter-bar two-row">
+            <div class="filter-row">
+                <div class="slicer">
+                    <label>Entity</label>
+                    <select id="filterEntity">
+                        <option value="">All Entities</option>
+                    </select>
+                </div>
+                <div class="slicer">
+                    <label>Supplier</label>
+                    <select id="filterSupplier">
+                        <option value="">All Suppliers</option>
+                    </select>
+                </div>
+                <div class="slicer">
+                    <label>Year</label>
+                    <select id="filterYear">
+                        <option value="">All Years</option>
+                    </select>
+                </div>
+                <div class="slicer">
+                    <label>PO Type</label>
+                    <select id="filterPOType">
+                        <option value="">All Types</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-row">
+                <div class="slicer">
+                    <label>Material Category</label>
+                    <select id="filterMaterial">
+                        <option value="">All Materials</option>
+                    </select>
+                </div>
+                <div class="slicer">
+                    <label>Discipline</label>
+                    <select id="filterDiscipline">
+                        <option value="">All Disciplines</option>
+                    </select>
+                </div>
+                <div class="slicer">
+                    <label>Status</label>
+                    <select id="filterStatus">
+                        <option value="">All Statuses</option>
+                        <option value="Ordered">Ordered</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="slicer">
+                    <label>Date Range</label>
+                    <input type="date" id="filterDateFrom" style="width: 100px;">
+                    <span>to</span>
+                    <input type="date" id="filterDateTo" style="width: 100px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content (Visio: Annual trend + PO details + Top 10/Bottom 10) -->
+        <div class="main-content">
+            <div class="two-col-layout">
+                <!-- LEFT: Annual Spend Trend -->
+                <div class="col-left wide">
+                    <div class="card">
+                        <div class="card-title">📈 Annual Spend Trend</div>
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="annualTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">📋 PO Details Table</div>
+                        <div style="max-height: 350px; overflow-y: auto;">
+                            <table class="data-table" id="poTable">
+                                <thead>
+                                    <tr>
+                                        <th>PO Number</th>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                        <th>Supplier</th>
+                                        <th>Material</th>
+                                        <th>Value</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="poTableBody">
+                                    <tr>
+                                        <td colspan="7" class="loading">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Top 10 / Bottom 10 Supplier Charts -->
+                <div class="col-right narrow">
+                    <div class="card">
+                        <div class="card-title">🏆 Top 10 Suppliers by Spend</div>
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="top10Chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">📉 Bottom 10 Suppliers by Spend</div>
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="bottom10Chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">🥧 Spend by Entity</div>
+                        <div class="chart-container" style="height: 220px;">
+                            <canvas id="entityPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global data
+        let dashboardData = null;
+        let filteredPOs = [];
+        let annualChart = null;
+        let top10Chart = null;
+        let bottom10Chart = null;
+        let entityPieChart = null;
+
+        // Format currency
+        function formatCurrency(value) {
+            if (value >= 1e9) return '$' + (value / 1e9).toFixed(2) + 'B';
+            if (value >= 1e6) return '$' + (value / 1e6).toFixed(2) + 'M';
+            if (value >= 1e3) return '$' + (value / 1e3).toFixed(1) + 'K';
+            return '$' + value.toFixed(0);
+        }
+
+        // Format number
+        function formatNumber(value) {
+            return new Intl.NumberFormat().format(value);
+        }
+
+        // Get status badge class
+        function getStatusBadgeClass(status) {
+            const classes = {
+                'Ordered': 'badge-order',
+                'Completed': 'badge-order',
+                'Cancelled': 'badge-cancelled',
+                'In Progress': 'badge-waiting'
+            };
+            return classes[status] || 'badge-quotation';
+        }
+
+        // Load data
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                dashboardData = await response.json();
+                filteredPOs = [...dashboardData.purchaseOrders];
+                initializeDashboard();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.body.innerHTML = '<div class="loading">Error loading data. Please check console.</div>';
+            }
+        }
+
+        // Initialize dashboard
+        function initializeDashboard() {
+            // Set last refresh
+            document.getElementById('lastRefresh').textContent = `Last Refresh: ${dashboardData.lastRefresh}`;
+
+            // Populate filters
+            populateFilters();
+
+            // Render components
+            renderKPIs();
+            renderAnnualTrendChart();
+            renderTop10Chart();
+            renderBottom10Chart();
+            renderEntityPieChart();
+            renderPOTable();
+
+            // Setup filter listeners
+            setupFilterListeners();
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            // Entities
+            const entities = [...new Set(dashboardData.purchaseOrders.map(po => po.company))].sort();
+            const entitySelect = document.getElementById('filterEntity');
+            entities.forEach(e => {
+                const option = document.createElement('option');
+                option.value = e;
+                option.textContent = e;
+                entitySelect.appendChild(option);
+            });
+
+            // Suppliers
+            const suppliers = [...new Set(dashboardData.purchaseOrders.map(po => po.supplier))].sort();
+            const supplierSelect = document.getElementById('filterSupplier');
+            suppliers.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s;
+                option.textContent = s;
+                supplierSelect.appendChild(option);
+            });
+
+            // Years
+            const years = [...new Set(dashboardData.purchaseOrders.map(po => {
+                const d = new Date(po.poDate);
+                return d.getFullYear();
+            }))].sort((a, b) => b - a);
+            const yearSelect = document.getElementById('filterYear');
+            years.forEach(y => {
+                const option = document.createElement('option');
+                option.value = y;
+                option.textContent = y;
+                yearSelect.appendChild(option);
+            });
+
+            // PO Types
+            const types = [...new Set(dashboardData.purchaseOrders.map(po => po.poType))].sort();
+            const typeSelect = document.getElementById('filterPOType');
+            types.forEach(t => {
+                const option = document.createElement('option');
+                option.value = t;
+                option.textContent = t;
+                typeSelect.appendChild(option);
+            });
+
+            // Materials
+            const materials = [...new Set(dashboardData.purchaseOrders.map(po => po.materialCode))].sort();
+            const materialSelect = document.getElementById('filterMaterial');
+            materials.forEach(m => {
+                const option = document.createElement('option');
+                option.value = m;
+                option.textContent = m;
+                materialSelect.appendChild(option);
+            });
+
+            // Disciplines
+            const disciplines = [...new Set(dashboardData.purchaseOrders.map(po => po.discipline))].sort();
+            const disciplineSelect = document.getElementById('filterDiscipline');
+            disciplines.forEach(d => {
+                const option = document.createElement('option');
+                option.value = d;
+                option.textContent = d;
+                disciplineSelect.appendChild(option);
+            });
+        }
+
+        // Setup filter listeners
+        function setupFilterListeners() {
+            ['filterEntity', 'filterSupplier', 'filterYear', 'filterPOType', 'filterMaterial', 'filterDiscipline', 'filterStatus'].forEach(id => {
+                document.getElementById(id).addEventListener('change', applyFilters);
+            });
+            document.getElementById('filterDateFrom').addEventListener('change', applyFilters);
+            document.getElementById('filterDateTo').addEventListener('change', applyFilters);
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const entity = document.getElementById('filterEntity').value;
+            const supplier = document.getElementById('filterSupplier').value;
+            const year = document.getElementById('filterYear').value;
+            const poType = document.getElementById('filterPOType').value;
+            const material = document.getElementById('filterMaterial').value;
+            const discipline = document.getElementById('filterDiscipline').value;
+            const status = document.getElementById('filterStatus').value;
+            const dateFrom = document.getElementById('filterDateFrom').value;
+            const dateTo = document.getElementById('filterDateTo').value;
+
+            filteredPOs = dashboardData.purchaseOrders.filter(po => {
+                if (entity && po.company !== entity) return false;
+                if (supplier && po.supplier !== supplier) return false;
+                if (year && new Date(po.poDate).getFullYear() != year) return false;
+                if (poType && po.poType !== poType) return false;
+                if (material && po.materialCode !== material) return false;
+                if (discipline && po.discipline !== discipline) return false;
+                if (status && po.status !== status) return false;
+                if (dateFrom && po.poDate < dateFrom) return false;
+                if (dateTo && po.poDate > dateTo) return false;
+                return true;
+            });
+
+            renderKPIs();
+            renderAnnualTrendChart();
+            renderTop10Chart();
+            renderBottom10Chart();
+            renderEntityPieChart();
+            renderPOTable();
+        }
+
+        // Render KPIs
+        function renderKPIs() {
+            const totalSpend = filteredPOs.reduce((sum, po) => sum + po.value, 0);
+            const totalPOs = filteredPOs.length;
+            const uniqueSuppliers = new Set(filteredPOs.map(po => po.supplier)).size;
+            const avgPO = totalPOs > 0 ? totalSpend / totalPOs : 0;
+
+            document.getElementById('totalSpend').textContent = formatCurrency(totalSpend);
+            document.getElementById('totalPOs').textContent = formatNumber(totalPOs);
+            document.getElementById('uniqueSuppliers').textContent = formatNumber(uniqueSuppliers);
+            document.getElementById('avgPOValue').textContent = formatCurrency(avgPO);
+        }
+
+        // Render Annual Trend Chart
+        function renderAnnualTrendChart() {
+            const ctx = document.getElementById('annualTrendChart').getContext('2d');
+
+            // Group by year
+            const yearlyData = {};
+            filteredPOs.forEach(po => {
+                const year = new Date(po.poDate).getFullYear();
+                if (!yearlyData[year]) yearlyData[year] = 0;
+                yearlyData[year] += po.value;
+            });
+
+            const years = Object.keys(yearlyData).sort();
+            const values = years.map(y => yearlyData[y]);
+
+            if (annualChart) annualChart.destroy();
+
+            annualChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Spend',
+                        data: values,
+                        backgroundColor: 'rgba(217, 111, 60, 0.7)',
+                        borderColor: 'rgba(217, 111, 60, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function (value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render Top 10 Suppliers Chart
+        function renderTop10Chart() {
+            const ctx = document.getElementById('top10Chart').getContext('2d');
+
+            // Group by supplier
+            const supplierSpend = {};
+            filteredPOs.forEach(po => {
+                if (!supplierSpend[po.supplier]) supplierSpend[po.supplier] = 0;
+                supplierSpend[po.supplier] += po.value;
+            });
+
+            const sorted = Object.entries(supplierSpend).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+            if (top10Chart) top10Chart.destroy();
+
+            top10Chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sorted.map(s => s[0].substring(0, 15) + (s[0].length > 15 ? '...' : '')),
+                    datasets: [{
+                        label: 'Spend',
+                        data: sorted.map(s => s[1]),
+                        backgroundColor: 'rgba(16, 124, 16, 0.7)',
+                        borderColor: 'rgba(16, 124, 16, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: {
+                                callback: function (value) {
+                                    if (value >= 1e6) return (value / 1e6).toFixed(0) + 'M';
+                                    if (value >= 1e3) return (value / 1e3).toFixed(0) + 'K';
+                                    return value;
+                                }
+                            }
+                        },
+                        y: {
+                            ticks: { font: { size: 9 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render Bottom 10 Suppliers Chart
+        function renderBottom10Chart() {
+            const ctx = document.getElementById('bottom10Chart').getContext('2d');
+
+            // Group by supplier
+            const supplierSpend = {};
+            filteredPOs.forEach(po => {
+                if (!supplierSpend[po.supplier]) supplierSpend[po.supplier] = 0;
+                supplierSpend[po.supplier] += po.value;
+            });
+
+            const sorted = Object.entries(supplierSpend).sort((a, b) => a[1] - b[1]).slice(0, 10);
+
+            if (bottom10Chart) bottom10Chart.destroy();
+
+            bottom10Chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sorted.map(s => s[0].substring(0, 15) + (s[0].length > 15 ? '...' : '')),
+                    datasets: [{
+                        label: 'Spend',
+                        data: sorted.map(s => s[1]),
+                        backgroundColor: 'rgba(200, 80, 80, 0.7)',
+                        borderColor: 'rgba(200, 80, 80, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: {
+                                callback: function (value) {
+                                    if (value >= 1e6) return (value / 1e6).toFixed(0) + 'M';
+                                    if (value >= 1e3) return (value / 1e3).toFixed(0) + 'K';
+                                    return value;
+                                }
+                            }
+                        },
+                        y: {
+                            ticks: { font: { size: 9 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render Entity Pie Chart
+        function renderEntityPieChart() {
+            const ctx = document.getElementById('entityPieChart').getContext('2d');
+
+            // Group by entity
+            const entitySpend = {};
+            filteredPOs.forEach(po => {
+                if (!entitySpend[po.company]) entitySpend[po.company] = 0;
+                entitySpend[po.company] += po.value;
+            });
+
+            const sorted = Object.entries(entitySpend).sort((a, b) => b[1] - a[1]);
+
+            const colors = [
+                'rgba(217, 111, 60, 0.8)',
+                'rgba(0, 69, 120, 0.8)',
+                'rgba(16, 124, 16, 0.8)',
+                'rgba(160, 160, 160, 0.8)',
+                'rgba(100, 80, 160, 0.8)'
+            ];
+
+            if (entityPieChart) entityPieChart.destroy();
+
+            entityPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: sorted.map(e => e[0]),
+                    datasets: [{
+                        data: sorted.map(e => e[1]),
+                        backgroundColor: colors.slice(0, sorted.length)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render PO Table
+        function renderPOTable() {
+            const tbody = document.getElementById('poTableBody');
+            const items = filteredPOs.slice(0, 100);
+
+            tbody.innerHTML = items.map(po => `
+                <tr>
+                    <td>${po.poNumber}</td>
+                    <td>${po.poType}</td>
+                    <td>${po.poDate}</td>
+                    <td title="${po.supplier}">${po.supplier.substring(0, 20)}...</td>
+                    <td>${po.materialCode}</td>
+                    <td>${formatCurrency(po.value)}</td>
+                    <td><span class="badge ${getStatusBadgeClass(po.status)}">${po.status}</span></td>
+                </tr>
+            `).join('');
+
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #888;">No data matching filters</td></tr>';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+
+</html>

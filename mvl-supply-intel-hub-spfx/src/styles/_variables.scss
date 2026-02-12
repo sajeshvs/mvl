@@ -32,10 +32,10 @@ $color-text-tertiary: #A19F9D;
 $color-text-inverse: #FFFFFF;
 
 // Shadows
-$shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-$shadow-md: 0 2px 4px rgba(0,0,0,0.08);
-$shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
-$shadow-hover: 0 4px 16px rgba(0,0,0,0.15);
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 2px 4px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.12);
+$shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
 
 // Spacing
 $space-xs: 4px;
@@ -80,16 +80,16 @@ $funnel-cancelled: #D83B01;
 
 // Chart palette
 $chart-colors: (
-  #0078D4,
-  #00A4EF,
-  #107C10,
-  #FFB900,
-  #D83B01,
-  #881798,
-  #00B7C3,
-  #E81123,
-  #0063B1,
-  #498205
+    #0078D4,
+    #00A4EF,
+    #107C10,
+    #FFB900,
+    #D83B01,
+    #881798,
+    #00B7C3,
+    #E81123,
+    #0063B1,
+    #498205
 );
 
 // Z-index layers
@@ -108,42 +108,45 @@ $breakpoint-xxl: 1400px;
 
 // Mixins
 @mixin card-base {
-  background: $color-card;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-md;
-  overflow: hidden;
+    background: $color-card;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-md;
+    overflow: hidden;
 }
 
 @mixin card-hover {
-  transition: transform $transition-normal, box-shadow $transition-normal;
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-hover;
-  }
+    transition: transform $transition-normal, box-shadow $transition-normal;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-hover;
+    }
 }
 
 @mixin flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @mixin text-ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 @mixin scrollbar-thin {
-  &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: $color-border-dark;
-    border-radius: 3px;
-  }
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $color-border-dark;
+        border-radius: 3px;
+    }
 }

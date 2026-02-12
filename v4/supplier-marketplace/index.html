@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Marketplace | MVL Supply Intel Hub v4</title>
+    <link rel="stylesheet" href="../shared/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Header (Visio: Dark blue #004578, with logo and subtitle) -->
+        <header class="header supplier">
+            <div class="header-left">
+                <img src="../../MVLSupplierIntelHub/MVL Supply Chain Intel Hub - Data/Logo/MVLlogo.png" alt="MVL Logo"
+                    class="logo" onerror="this.style.display='none'">
+                <div class="title-group">
+                    <h1>Supplier Marketplace</h1>
+                    <div class="subtitle">Quotation–PO pipeline by supplier and material</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="refresh-info">
+                    <div id="lastRefresh">Last Refresh: Loading...</div>
+                    <div>Entity: All · Currency: USD</div>
+                </div>
+                <a href="../index.html" class="nav-link">← Home</a>
+            </div>
+        </header>
+
+        <!-- Filter Bar (Visio: Single row of slim slicers) -->
+        <div class="filter-bar">
+            <div class="slicer">
+                <label>Entity</label>
+                <select id="filterEntity">
+                    <option value="">All</option>
+                </select>
+            </div>
+            <div class="slicer">
+                <label>Supplier / Client</label>
+                <select id="filterSupplier">
+                    <option value="">All</option>
+                </select>
+            </div>
+            <div class="slicer">
+                <label>Status</label>
+                <select id="filterStatus">
+                    <option value="">All</option>
+                    <option value="Quotation">Quotation</option>
+                    <option value="Waiting">Waiting</option>
+                    <option value="Order">Order</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="slicer">
+                <label>Material Type</label>
+                <select id="filterMaterial">
+                    <option value="">All</option>
+                </select>
+            </div>
+            <div class="slicer">
+                <label>Discipline</label>
+                <select id="filterDiscipline">
+                    <option value="">All</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Main Content: 3 Column Layout (Visio: Profile | Funnel+Timeline | Workbench) -->
+        <div class="main-content">
+            <div class="three-col-layout">
+
+                <!-- LEFT COLUMN: Supplier Profile Card (Visio requirement) -->
+                <div class="col-left">
+                    <div class="card supplier-profile" id="supplierProfileCard">
+                        <div class="card-title">📋 Supplier Profile</div>
+                        <div class="supplier-name" id="selectedSupplierName">[Select a Supplier]</div>
+                        <div class="supplier-meta" id="selectedSupplierMeta">Type: Supplier · Primary Entity: --</div>
+                        <div class="rating" id="selectedSupplierRating">Rating: ★★★☆☆ (3.0/5)</div>
+
+                        <div class="contact-info" id="supplierContact">
+                            <div><strong>Contact:</strong> <span id="contactName">--</span></div>
+                            <div>Email: <span id="contactEmail">--</span></div>
+                            <div>Phone: <span id="contactPhone">--</span></div>
+                        </div>
+
+                        <div class="mini-kpi-row">
+                            <div class="mini-kpi">
+                                <div class="value" id="supplierQuotations">--</div>
+                                <div class="label">Quotations</div>
+                            </div>
+                            <div class="mini-kpi">
+                                <div class="value" id="supplierPOs">--</div>
+                                <div class="label">POs</div>
+                            </div>
+                            <div class="mini-kpi">
+                                <div class="value" id="supplierWinRate">--</div>
+                                <div class="label">Win Rate</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">📦 Approved Materials & Disciplines</div>
+                        <table class="data-table" id="materialsTable">
+                            <thead>
+                                <tr>
+                                    <th>Material Type</th>
+                                    <th>Discipline</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materialsTableBody">
+                                <tr>
+                                    <td colspan="3" class="loading">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- CENTER COLUMN: Funnel + Timeline (Visio requirement) -->
+                <div class="col-center">
+                    <div class="card">
+                        <div class="card-title">📊 Quotation Funnel</div>
+                        <div class="funnel-container" id="funnelChart">
+                            <div class="funnel-stage funnel-stage-1">
+                                <div class="funnel-bar" id="funnelQuotation" style="width: 100%;">Quotation</div>
+                                <div class="funnel-value" id="funnelQuotationVal">--</div>
+                            </div>
+                            <div class="funnel-stage funnel-stage-2">
+                                <div class="funnel-bar" id="funnelWaiting" style="width: 80%;">Waiting</div>
+                                <div class="funnel-value" id="funnelWaitingVal">--</div>
+                            </div>
+                            <div class="funnel-stage funnel-stage-3">
+                                <div class="funnel-bar" id="funnelOrder" style="width: 60%;">Order</div>
+                                <div class="funnel-value" id="funnelOrderVal">--</div>
+                            </div>
+                            <div class="funnel-stage funnel-stage-4">
+                                <div class="funnel-bar" id="funnelCancelled" style="width: 20%;">Cancelled</div>
+                                <div class="funnel-value" id="funnelCancelledVal">--</div>
+                            </div>
+                        </div>
+
+                        <div class="mini-kpi-row">
+                            <div class="mini-kpi">
+                                <div class="value" id="conversionRate">--</div>
+                                <div class="label">Conversion Rate</div>
+                            </div>
+                            <div class="mini-kpi">
+                                <div class="value" id="openQuotes">--</div>
+                                <div class="label">Open Quotes</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">📈 Quote to PO Timeline</div>
+                        <div class="chart-container">
+                            <canvas id="timelineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Marketplace Workbench Table (Visio requirement) -->
+                <div class="col-right">
+                    <div class="card">
+                        <div class="card-title">
+                            📋 Marketplace Workbench
+                            <span style="margin-left: auto; display: flex; gap: 4px;">
+                                <span class="badge badge-order">Order</span>
+                                <span class="badge badge-waiting">Waiting</span>
+                            </span>
+                        </div>
+                        <div style="max-height: 500px; overflow-y: auto;">
+                            <table class="data-table" id="workbenchTable">
+                                <thead>
+                                    <tr>
+                                        <th>Quote / PO</th>
+                                        <th>Status</th>
+                                        <th>Project</th>
+                                        <th>Material</th>
+                                        <th>Value</th>
+                                        <th>Contact</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="workbenchTableBody">
+                                    <tr>
+                                        <td colspan="7" class="loading">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global data
+        let dashboardData = null;
+        let filteredData = [];
+        let timelineChart = null;
+
+        // Format currency
+        function formatCurrency(value) {
+            if (value >= 1e9) return '$' + (value / 1e9).toFixed(2) + 'B';
+            if (value >= 1e6) return '$' + (value / 1e6).toFixed(2) + 'M';
+            if (value >= 1e3) return '$' + (value / 1e3).toFixed(1) + 'K';
+            return '$' + value.toFixed(0);
+        }
+
+        // Format number
+        function formatNumber(value) {
+            return new Intl.NumberFormat().format(value);
+        }
+
+        // Get status badge class
+        function getStatusBadgeClass(status) {
+            const classes = {
+                'Order': 'badge-order',
+                'Waiting': 'badge-waiting',
+                'Cancelled': 'badge-cancelled',
+                'Quotation': 'badge-quotation'
+            };
+            return classes[status] || 'badge-quotation';
+        }
+
+        // Render rating stars
+        function renderRating(score) {
+            const full = Math.floor(score);
+            const half = score % 1 >= 0.5 ? 1 : 0;
+            const empty = 5 - full - half;
+            return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty - half) + ` (${score.toFixed(1)}/5)`;
+        }
+
+        // Load data
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                dashboardData = await response.json();
+                filteredData = [...dashboardData.workbench];
+                initializeDashboard();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.body.innerHTML = '<div class="loading">Error loading data. Please check console.</div>';
+            }
+        }
+
+        // Initialize dashboard
+        function initializeDashboard() {
+            // Set last refresh
+            document.getElementById('lastRefresh').textContent = `Last Refresh: ${dashboardData.lastRefresh}`;
+
+            // Populate filters
+            populateFilters();
+
+            // Render components
+            renderFunnel();
+            renderSupplierProfile(dashboardData.suppliers[0]);
+            renderMaterialsTable();
+            renderWorkbenchTable();
+            renderTimelineChart();
+
+            // Setup filter listeners
+            setupFilterListeners();
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            // Entities
+            const entitySelect = document.getElementById('filterEntity');
+            dashboardData.entities.forEach(e => {
+                const option = document.createElement('option');
+                option.value = e.name;
+                option.textContent = e.name;
+                entitySelect.appendChild(option);
+            });
+
+            // Suppliers
+            const supplierSelect = document.getElementById('filterSupplier');
+            dashboardData.suppliers.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.name;
+                option.textContent = s.name;
+                supplierSelect.appendChild(option);
+            });
+
+            // Materials
+            const materialSelect = document.getElementById('filterMaterial');
+            const materials = [...new Set(dashboardData.workbench.map(w => w.material))].sort();
+            materials.forEach(m => {
+                const option = document.createElement('option');
+                option.value = m;
+                option.textContent = m;
+                materialSelect.appendChild(option);
+            });
+
+            // Disciplines
+            const disciplineSelect = document.getElementById('filterDiscipline');
+            const disciplines = [...new Set(dashboardData.workbench.map(w => w.discipline))].sort();
+            disciplines.forEach(d => {
+                const option = document.createElement('option');
+                option.value = d;
+                option.textContent = d;
+                disciplineSelect.appendChild(option);
+            });
+        }
+
+        // Setup filter listeners
+        function setupFilterListeners() {
+            ['filterEntity', 'filterSupplier', 'filterStatus', 'filterMaterial', 'filterDiscipline'].forEach(id => {
+                document.getElementById(id).addEventListener('change', applyFilters);
+            });
+
+            // Supplier selection updates profile
+            document.getElementById('filterSupplier').addEventListener('change', (e) => {
+                const supplier = dashboardData.suppliers.find(s => s.name === e.target.value) || dashboardData.suppliers[0];
+                renderSupplierProfile(supplier);
+            });
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const entity = document.getElementById('filterEntity').value;
+            const supplier = document.getElementById('filterSupplier').value;
+            const status = document.getElementById('filterStatus').value;
+            const material = document.getElementById('filterMaterial').value;
+            const discipline = document.getElementById('filterDiscipline').value;
+
+            filteredData = dashboardData.workbench.filter(w => {
+                if (entity && w.company !== entity) return false;
+                if (supplier && w.client !== supplier) return false;
+                if (status && w.status !== status) return false;
+                if (material && w.material !== material) return false;
+                if (discipline && w.discipline !== discipline) return false;
+                return true;
+            });
+
+            renderFunnel();
+            renderWorkbenchTable();
+        }
+
+        // Render funnel chart
+        function renderFunnel() {
+            const counts = { Quotation: 0, Waiting: 0, Order: 0, Cancelled: 0 };
+            filteredData.forEach(w => {
+                if (counts.hasOwnProperty(w.status)) {
+                    counts[w.status]++;
+                }
+            });
+
+            const total = filteredData.length;
+            const maxCount = Math.max(...Object.values(counts), 1);
+
+            // Update bars
+            document.getElementById('funnelQuotation').style.width = `${(counts.Quotation / maxCount) * 100}%`;
+            document.getElementById('funnelWaiting').style.width = `${(counts.Waiting / maxCount) * 100}%`;
+            document.getElementById('funnelOrder').style.width = `${(counts.Order / maxCount) * 100}%`;
+            document.getElementById('funnelCancelled').style.width = `${(counts.Cancelled / maxCount) * 100}%`;
+
+            document.getElementById('funnelQuotationVal').textContent = formatNumber(counts.Quotation);
+            document.getElementById('funnelWaitingVal').textContent = formatNumber(counts.Waiting);
+            document.getElementById('funnelOrderVal').textContent = formatNumber(counts.Order);
+            document.getElementById('funnelCancelledVal').textContent = formatNumber(counts.Cancelled);
+
+            // Mini KPIs
+            const conversionRate = total > 0 ? ((counts.Order / total) * 100).toFixed(1) + '%' : '0%';
+            const openQuotes = counts.Quotation + counts.Waiting;
+
+            document.getElementById('conversionRate').textContent = conversionRate;
+            document.getElementById('openQuotes').textContent = formatNumber(openQuotes);
+        }
+
+        // Render supplier profile
+        function renderSupplierProfile(supplier) {
+            if (!supplier) {
+                supplier = { name: '[No Supplier Selected]', quotations: 0, orders: 0, winRate: 0, rating: 3.0 };
+            }
+
+            document.getElementById('selectedSupplierName').textContent = supplier.name;
+            document.getElementById('selectedSupplierMeta').textContent = `Type: Supplier · Quotations: ${supplier.quotations}`;
+            document.getElementById('selectedSupplierRating').textContent = `Rating: ${renderRating(supplier.rating || 3.0)}`;
+
+            // Contact info
+            const contact = supplier.contact || {};
+            document.getElementById('contactName').textContent = contact.primary_contact || '--';
+            document.getElementById('contactEmail').textContent = contact.email || '--';
+            document.getElementById('contactPhone').textContent = contact.phone || '--';
+
+            // KPIs
+            document.getElementById('supplierQuotations').textContent = formatNumber(supplier.quotations);
+            document.getElementById('supplierPOs').textContent = formatNumber(supplier.orders);
+            document.getElementById('supplierWinRate').textContent = supplier.winRate + '%';
+        }
+
+        // Render materials table
+        function renderMaterialsTable() {
+            const tbody = document.getElementById('materialsTableBody');
+            const materials = dashboardData.materials.slice(0, 10);
+
+            tbody.innerHTML = materials.map(m => `
+                <tr>
+                    <td>${m.name}</td>
+                    <td>${m.discipline}</td>
+                    <td>${formatNumber(m.count)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Render workbench table
+        function renderWorkbenchTable() {
+            const tbody = document.getElementById('workbenchTableBody');
+            const items = filteredData.slice(0, 100); // Show first 100
+
+            tbody.innerHTML = items.map(w => `
+                <tr>
+                    <td>${w.quotationNumber}</td>
+                    <td><span class="badge ${getStatusBadgeClass(w.status)}">${w.status}</span></td>
+                    <td title="${w.project}">${(w.project || '').substring(0, 20)}...</td>
+                    <td>${w.material}</td>
+                    <td>${formatCurrency(w.value)} ${w.currency}</td>
+                    <td>${w.contact}</td>
+                </tr>
+            `).join('');
+
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #888;">No data matching filters</td></tr>';
+            }
+        }
+
+        // Render timeline chart
+        function renderTimelineChart() {
+            const ctx = document.getElementById('timelineChart').getContext('2d');
+
+            // Group data by month
+            const monthlyData = {};
+            dashboardData.workbench.forEach(w => {
+                if (w.quotationDate) {
+                    const month = w.quotationDate.substring(0, 7); // YYYY-MM
+                    if (!monthlyData[month]) {
+                        monthlyData[month] = { quotationValue: 0, orderValue: 0 };
+                    }
+                    monthlyData[month].quotationValue += w.value || 0;
+                    if (w.status === 'Order') {
+                        monthlyData[month].orderValue += w.value || 0;
+                    }
+                }
+            });
+
+            const sortedMonths = Object.keys(monthlyData).sort().slice(-12);
+
+            if (timelineChart) {
+                timelineChart.destroy();
+            }
+
+            timelineChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedMonths,
+                    datasets: [
+                        {
+                            label: 'Quotation Value',
+                            data: sortedMonths.map(m => monthlyData[m].quotationValue),
+                            backgroundColor: 'rgba(0, 69, 120, 0.6)',
+                            borderColor: 'rgba(0, 69, 120, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Order Value',
+                            data: sortedMonths.map(m => monthlyData[m].orderValue),
+                            backgroundColor: 'rgba(16, 124, 16, 0.6)',
+                            borderColor: 'rgba(16, 124, 16, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { font: { size: 10 } }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { font: { size: 9 } }
+                        },
+                        y: {
+                            ticks: {
+                                font: { size: 9 },
+                                callback: function (value) {
+                                    if (value >= 1e6) return (value / 1e6).toFixed(0) + 'M';
+                                    if (value >= 1e3) return (value / 1e3).toFixed(0) + 'K';
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+
+</html>
