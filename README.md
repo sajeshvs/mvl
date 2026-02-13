@@ -1,10 +1,10 @@
-# MVL Supply Intel Hub 🏢
+# MVL Supply Chain Intel Hub 🏢
 
 A comprehensive procurement analytics solution built with HTML/CSS/JavaScript and Chart.js, designed to visualize quotation, purchase order, and supplier data for MVL (Multi Vision Limited).
 
 [![Private Repo](https://img.shields.io/badge/repo-private-red.svg)](https://github.com/sajeshvs/mvl-powerbi-dashboards)
-[![Version](https://img.shields.io/badge/version-3.0-blue.svg)](./v3/)
-[![Live Demo](https://img.shields.io/badge/demo-live-green.svg)](https://sajeshvs.github.io/mvl/)
+[![Version](https://img.shields.io/badge/version-5.0-blue.svg)](./v5/)
+[![Live Demo](https://img.shields.io/badge/demo-live-green.svg)](https://sajeshvs.github.io/mvl/v5/)
 
 ---
 
@@ -12,87 +12,88 @@ A comprehensive procurement analytics solution built with HTML/CSS/JavaScript an
 
 | Version | Date | Description |
 |---------|------|-------------|
-| **v3.0** | Jan 2025 | Modal system, mobile responsive, component architecture |
-| **v2.0** | Jan 2025 | Multi-page architecture with navigation |
-| **v1.0** | Jan 2025 | Initial standalone HTML dashboards |
+| **v5.0** | Feb 2026 | Unified dashboard with 3 tabs, comprehensive filtering, complete data integration |
+| **v3.0** | Jan 2025 | Multi-page architecture, modal system, component architecture |
+| **v2.0** | Jan 2025 | Initial multi-page architecture with navigation |
 
 ---
 
 ## 🎯 Project Overview
 
-The MVL Supply Intel Hub consists of three interactive dashboards:
+The MVL Supply Chain Intel Hub is a unified dashboard with three tabs:
 
-| Dashboard | Description | Theme Color | Records |
-|-----------|-------------|-------------|---------|
-| **Supplier Marketplace** | Quotation funnel, supplier profiles, marketplace workbench | Blue | 12,134 |
-| **Global Spend Analysis** | PO spend analysis, Base vs Change Orders | Orange | 3,539 |
-| **Disciplines Consolidated** | Budget vs Actual by material discipline | Dark Blue | 28 |
+| Tab | Description | Theme Color | Records |
+|-----|-------------|-------------|---------|
+| **Supplier Marketplace** | Quotation pipeline, supplier profiles, marketplace workbench | Blue (#004578) | 12,532 |
+| **Global Spend Analysis** | PO spend analysis, Base vs Change Orders, supplier rankings | Orange (#d96f3c) | 3,539 |
+| **Materials & Disciplines** | Budget vs Actual by material discipline, supplier performance | Dark Blue (#0f3d5e) | Combined |
 
 ### 🌐 Live Demo
-**Public URL:** https://sajeshvs.github.io/mvl/
+**Production URL:** https://sajeshvs.github.io/mvl/v5/
 
 ---
 
 ## 📁 Project Structure
 
 ```
-PowerBI/
-├── v3/                                # ⭐ CURRENT PRODUCTION VERSION
-│   ├── index.html                     # Main navigation hub
-│   ├── supplier-marketplace/          # Quotation dashboard
-│   ├── global-spend-analysis/         # PO spend dashboard
-│   ├── disciplines-consolidated/      # Budget analysis
-│   └── shared/                        # Common components
-│       ├── components/                # Modal system
-│       ├── styles.css                 # Shared styling
-│       ├── charts.js                  # Chart configurations
-│       └── data-utils.js              # Data utilities
+mvl-powerbi-dashboards/
+├── v5/                                # ⭐ CURRENT PRODUCTION VERSION
+│   ├── index.html                     # Unified dashboard (3 tabs)
+│   ├── shared/                        # Scripts, styles, images
+│   │   ├── scripts.js                 # Main JavaScript
+│   │   ├── styles.css                 # Global CSS
+│   │   └── images/                    # Logo and images
+│   └── data/                          # JSON data files
+│       ├── sm_data.json               # Supplier Marketplace (12,532 quotations)
+│       ├── gsa_data.json              # Global Spend Analysis (3,539 POs)
+│       ├── md_data.json               # Materials & Disciplines
+│       ├── suppliers.json             # Enriched supplier data (2,189)
+│       └── client_country_map.json    # Client → Country mapping
 │
-├── v2/                                # Previous stable backup
+├── v3/                                # Previous version (backup)
 │
-├── docs/                              # 📚 All documentation
-│   ├── reference/                     # Original requirements
-│   ├── images/                        # UI mockups & screenshots
-│   └── *.md/*.docx                    # Project docs
+├── docs/                              # 📚 Documentation
+│   ├── reference/                     # Original requirements & narratives
+│   └── *.md                           # Project docs
 │
-├── archive/                           # 📦 Historical files
-│   ├── legacy-html/                   # Old standalone HTMLs
-│   ├── legacy-dashboards/             # Original dashboard attempts
+├── Data/                              # Source CSV files
+│
+├── archive/                           # 📦 Archived files
+│   ├── v2-backup/                     # Old v2 files
+│   ├── v4-backup/                     # Old v4 files
 │   ├── old-scripts/                   # Previous Python scripts
-│   └── data-review/                   # Data analysis files
+│   └── outdated-docs/                 # Old documentation
 │
-├── working/                           # 🔧 Scratch/experimental
+├── mvl-supply-intel-hub-spfx/         # SharePoint Framework project
 │
-├── CONTINUE_LATER.md                  # Instructions to resume work
+├── AGENT_INSTRUCTIONS.md              # 📋 Agent instructions (main)
 └── README.md                          # This file
 ```
 
 ---
 
-## ✨ v3.0 Features
+## ✨ v5.0 Features
 
-### Interactive Modals
-Click on any row or card to view detailed information:
-- **PO Details**: Full purchase order breakdown
-- **Supplier Profiles**: Complete supplier information
-- **Quote Details**: Quotation line items and status
+### Unified 3-Tab Dashboard
+- Single page with tab navigation
+- Consistent design across all views
+- Shared filter state management
 
-### Mobile Responsive
-- Optimized layouts for all screen sizes
-- Touch-friendly interactions
-- Horizontal scrolling tables on mobile
+### Comprehensive Filtering
+- Entity, Project, Supplier, Material filters
+- Date range selection
+- Real-time chart/table updates on filter change
 
-### Shared Component Architecture
-```
-v3/shared/
-├── components/
-│   ├── modal.js        # Reusable Modal class
-│   ├── modal.css       # Modal styling
-│   └── detail-modals.js # PO/Supplier/Quote templates
-├── styles.css          # Common styles
-├── charts.js           # Chart configurations
-└── data-utils.js       # Data utilities
-```
+### Interactive Charts
+- Chart.js visualization library
+- Bar, Line, Pie, Doughnut charts
+- Click-to-filter interactions
+- Supplier ranking charts (Top/Bottom)
+
+### Map Integration
+- Leaflet.js supplier location map
+- Client country mapping for accurate location display
+- Filter-aware map updates
 
 ---
 
@@ -100,38 +101,36 @@ v3/shared/
 
 | Dataset | Records | File Size |
 |---------|---------|-----------|
-| Quotations | 12,134 | 6.4 MB |
-| Purchase Orders | 3,539 | 2.0 MB |
-| Disciplines | 28 | 309 KB |
+| Quotations (SM) | 12,532 | 6.4 MB |
+| Purchase Orders (GSA) | 3,539 | 2.0 MB |
+| Suppliers | 2,189 | 3.2 MB |
+| Client Mappings | 2,527 | 93 KB |
 
 ### Key Metrics
-- **Total Quotation Value**: $3.3B USD
-- **Total PO Spend**: $421.9M USD
-- **Win Rate**: 100% (Order / (Order + Cancelled))
-- **Active Suppliers**: 400+
+- **Total Quotation Value**: $3.0B USD
+- **Total PO Spend**: $397.4M USD
+- **Active Suppliers**: 1,092
+- **Projects**: 98
+- **Disciplines**: 28
 
 ---
 
 ## 🚀 Quick Start
 
 ### View Live Demo
-Visit: https://sajeshvs.github.io/mvl/
+Visit: https://sajeshvs.github.io/mvl/v5/
 
 ### Run Locally
 ```bash
-# Navigate to v3 folder
-cd "c:\Users\Sajesh\Documents\Apps\Rita\PowerBI\v3"
+# Navigate to v5 folder
+cd "G:\Rita\mvl-powerbi-dashboards\v5"
 
 # Start local server
-python -m http.server 8000
+python -m http.server 8085
 
 # Open in browser
-http://localhost:8000
+http://localhost:8085
 ```
-
-### Prerequisites
-- Python 3.x
-- Web browser (Chrome, Firefox, Edge recommended)
 
 ---
 
@@ -141,13 +140,13 @@ http://localhost:8000
 | Repo | Type | Purpose |
 |------|------|---------|
 | [mvl-powerbi-dashboards](https://github.com/sajeshvs/mvl-powerbi-dashboards) | Private | Complete workspace with data |
-| [mvl](https://github.com/sajeshvs/mvl) | Public | v3 production deployment |
+| [mvl](https://github.com/sajeshvs/mvl) | Public | v5 production deployment (GitHub Pages) |
 
 ### Workflow
-1. Make changes in local workspace
-2. Test using local server
-3. Commit to private repo (full backup)
-4. Deploy v3 to public repo for live demo
+1. Make changes in local workspace (`mvl-powerbi-dashboards/v5/`)
+2. Test using local server (localhost:8085)
+3. Commit to private repo
+4. Copy to public repo (`mvl/v5/`) and push for live deployment
 
 ---
 
@@ -155,28 +154,26 @@ http://localhost:8000
 
 | Document | Location |
 |----------|----------|
+| **Agent Instructions** | `AGENT_INSTRUCTIONS.md` |
 | Project Scope | `docs/reference/Scope of Work.md` |
 | Data Model | `docs/reference/6. Data model – fact tables and dimensions.md` |
-| DAX Measures | `docs/reference/7. Key DAX measures.md` |
-| Development Guide | `docs/reference/8. How the BI Developer needs to be proceed.md` |
-| Continue Instructions | `CONTINUE_LATER.md` |
+| GSA Requirements | `docs/reference/Global Spend Analysis - Requirements.md` |
 
 ---
 
 ## 🎨 Design System
 
 ### Color Themes
-| Dashboard | Primary | Secondary |
-|-----------|---------|-----------|
-| Supplier Marketplace | #004578 | #0078d4 |
-| Global Spend Analysis | #c45500 | #f5770a |
-| Disciplines Consolidated | #1e3a5f | #2c5282 |
+| Tab | Primary | Secondary |
+|-----|---------|-----------|
+| Supplier Marketplace | #004578 | #0064a3 |
+| Global Spend Analysis | #d96f3c | #e8824a |
+| Materials & Disciplines | #0f3d5e | #1a5a8a |
 
 ### Status Colors
-- **Quotation**: Gray (#8a8886)
-- **Waiting**: Yellow (#faa916)
-- **Order**: Green (#107c10)
-- **Cancelled**: Red (#a80000)
+- **Order/Completed**: Green (#2ecc71)
+- **Waiting/Open**: Orange (#f39c12)
+- **Cancelled**: Red (#e74c3c)
 
 ---
 
@@ -184,7 +181,8 @@ http://localhost:8000
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Charts**: Chart.js 4.4.0
-- **Data**: JSON (processed from CSV)
+- **Maps**: Leaflet.js
+- **Data**: JSON
 - **Hosting**: GitHub Pages
 
 ---
@@ -200,16 +198,15 @@ http://localhost:8000
 
 Private repository - All rights reserved.
 
-## 🤝 Contributors
-
-- **Rita El Jamal** - Business requirements & data model
-- **BI Developer** - Dashboard implementation
+---
 
 ## 📅 Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0 | Jan 2026 | Initial release with real data |
+| 5.0 | Feb 2026 | Unified 3-tab dashboard with comprehensive filtering |
+| 3.0 | Jan 2026 | Multi-page architecture with modals |
+| 2.0 | Jan 2026 | Initial multi-page architecture |
 
 ---
 
