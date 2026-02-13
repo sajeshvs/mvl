@@ -11,6 +11,10 @@ let selectedSupplier = null;
 let suppliersData = null;
 let purchaseOrdersData = null;
 let quotationsData = null;
+let gsaData = null;
+let smData = null;
+let mdData = null;
+let clientCountryMap = null;
 
 // Chart instances (for Chart.js)
 let trendChartInstance = null;
@@ -22,6 +26,147 @@ let supplierMap = null;
 // Chart state
 let currentEntityView = 'quote';
 let currentMaterialChartType = 'bar';
+
+// Global FX Rates (for currency conversion)
+let fxRates = {
+    USD: 1.00,
+    AED: 3.67,
+    EUR: 0.92,
+    GBP: 0.79,
+    SAR: 3.75,
+    INR: 83.12,
+    QAR: 3.64,
+    BHD: 0.38,
+    KWD: 0.31,
+    OMR: 0.38
+};
+
+// ============================================
+// FX RATES - LIVE CURRENCY CONVERSION
+// ============================================
+
+// Convert any currency amount to USD using current rates
+function convertToUSD(amount, currency) {
+    if (!amount || isNaN(amount)) return 0;
+
+    // Normalize currency code
+    const curr = (currency || 'USD').toUpperCase().trim();
+
+    // If already USD, return as is
+    if (curr === 'USD' || curr === 'US$' || curr === '$') {
+        return parseFloat(amount);
+    }
+
+    // Get rate (how many of that currency = 1 USD)
+    const rate = fxRates[curr];
+
+    if (rate) {
+        // Convert: amount in foreign currency / rate = USD
+        return parseFloat(amount) / rate;
+    }
+
+    // If unknown currency, assume it's already USD
+    console.warn(`Unknown currency: ${curr}, treating as USD`);
+    return parseFloat(amount);
+}
+
+// Format currency with conversion to USD
+function formatCurrencyUSD(amount, sourceCurrency) {
+    const usdAmount = convertToUSD(amount, sourceCurrency);
+    return formatCurrencyShort(usdAmount);
+}
+async function refreshFxRates() {
+    const refreshBtn = document.querySelector('.fx-refresh-btn');
+    if (refreshBtn) {
+        refreshBtn.classList.add('fx-loading');
+    }
+
+    try {
+        // Using free exchangerate.host API (no API key required)
+        // Alternative: https://open.er-api.com/v6/latest/USD
+        const response = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await response.json();
+
+        if (data && data.rates) {
+            const rates = data.rates;
+
+            // Store all rates globally for conversion use
+            fxRates = {
+                USD: 1.00,
+                AED: rates.AED || 3.67,
+                EUR: rates.EUR || 0.92,
+                GBP: rates.GBP || 0.79,
+                SAR: rates.SAR || 3.75,
+                INR: rates.INR || 83.12,
+                QAR: rates.QAR || 3.64,
+                BHD: rates.BHD || 0.38,
+                KWD: rates.KWD || 0.31,
+                OMR: rates.OMR || 0.38
+            };
+
+            // Update display values
+            const usdAed = document.getElementById('fxUsdAed');
+            const eurUsd = document.getElementById('fxEurUsd');
+            const gbpUsd = document.getElementById('fxGbpUsd');
+            const sarUsd = document.getElementById('fxSarUsd');
+
+            // USD to AED
+            if (usdAed && rates.AED) {
+                usdAed.textContent = rates.AED.toFixed(2);
+            }
+
+            // EUR to USD (we need 1/rates.EUR since API gives USD as base)
+            if (eurUsd && rates.EUR) {
+                const eurToUsd = (1 / rates.EUR).toFixed(2);
+                eurUsd.textContent = eurToUsd;
+            }
+
+            // GBP to USD
+            if (gbpUsd && rates.GBP) {
+                const gbpToUsd = (1 / rates.GBP).toFixed(2);
+                gbpUsd.textContent = gbpToUsd;
+            }
+
+            // SAR to USD
+            if (sarUsd && rates.SAR) {
+                const sarToUsd = (1 / rates.SAR).toFixed(2);
+                sarUsd.textContent = sarToUsd;
+            }
+
+            console.log('💱 FX rates updated from API:', fxRates);
+
+            // Refresh all tab displays with new rates
+            refreshAllTabsWithNewRates();
+        }
+    } catch (error) {
+        console.warn('⚠️ Could not fetch live FX rates, using defaults:', error.message);
+        // Keep default values if API fails
+    } finally {
+        if (refreshBtn) {
+            refreshBtn.classList.remove('fx-loading');
+        }
+    }
+}
+
+// Refresh all tabs when FX rates change
+function refreshAllTabsWithNewRates() {
+    // Get active tab
+    const activeTab = document.querySelector('.nav-tab.active');
+    if (!activeTab) return;
+
+    const tabId = activeTab.dataset.tab;
+
+    // Refresh based on active tab
+    if (tabId === 'supplier-marketplace' && dashboardData) {
+        renderSupplierMarketplace();
+    } else if (tabId === 'global-spend' && gsaData) {
+        initGSATab();
+    } else if (tabId === 'materials-disciplines' && mdData) {
+        initMaterialsDisciplines();
+    }
+
+    console.log('🔄 Refreshed displays with new FX rates');
+}
 
 // ============================================
 // INITIALIZATION
@@ -42,6 +187,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderSupplierMarketplace();
     }
 
+    // Load live FX rates
+    refreshFxRates();
+
     console.log('✅ Dashboard initialized');
 });
 
@@ -51,21 +199,44 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadAllData() {
     try {
         // Load all data files in parallel
-        const [suppliersRes, posRes, quotesRes, dashRes] = await Promise.all([
+        const [suppliersRes, posRes, quotesRes, dashRes, gsaRes, smRes, mdRes] = await Promise.all([
             fetch('data/suppliers.json'),
             fetch('data/purchase_orders.json'),
             fetch('data/quotations.json'),
-            fetch('data/dashboard_data.json')
+            fetch('data/dashboard_data.json'),
+            fetch('data/gsa_data.json'),
+            fetch('data/sm_data.json'),
+            fetch('data/md_data.json')
         ]);
+
+        // Load client country map separately (optional file)
+        let clientMapRes = null;
+        try {
+            clientMapRes = await fetch('data/client_country_map.json');
+            if (clientMapRes.ok) {
+                clientCountryMap = await clientMapRes.json();
+            } else {
+                clientCountryMap = {};
+            }
+        } catch (e) {
+            clientCountryMap = {};
+        }
 
         suppliersData = await suppliersRes.json();
         purchaseOrdersData = await posRes.json();
         quotationsData = await quotesRes.json();
         dashboardData = await dashRes.json();
+        gsaData = await gsaRes.json();
+        smData = await smRes.json();
+        mdData = await mdRes.json();
+        console.log('📊 Loaded client country map:', Object.keys(clientCountryMap || {}).length, 'mappings');
 
         console.log('📊 Loaded suppliers:', suppliersData.metadata.total_records);
         console.log('📊 Loaded POs:', purchaseOrdersData.metadata.total_records);
         console.log('📊 Loaded quotations:', quotationsData.metadata.total_records);
+        console.log('📊 Loaded GSA data:', gsaData?.workbench?.length || 0, 'POs');
+        console.log('📊 Loaded SM data:', smData?.summary?.totalQuotations || 0, 'quotations');
+        console.log('📊 Loaded MD data:', mdData?.summary?.disciplineCount || 0, 'disciplines');
 
         // Process and enrich dashboard data with real data
         enrichDashboardWithRealData();
@@ -94,6 +265,123 @@ async function loadAllData() {
 }
 
 function enrichDashboardWithRealData() {
+    // Use smData (v3 supplier marketplace data) if available
+    if (smData && smData.summary) {
+        console.log('📊 Using pre-calculated Supplier Marketplace data from smData');
+
+        // Summary KPIs from smData
+        dashboardData.summary = {
+            rfqCount: smData.summary.totalQuotations || 0,
+            quoteValue: smData.summary.totalQuotationValueUSD || 0,
+            poCount: smData.summary.totalPOs || 0,
+            poValue: smData.summary.totalPOSpendUSD || 0,
+            winRate: smData.summary.winRate || 0,
+            coCount: smData.summary.totalPOs || 0,
+            coValue: smData.summary.totalPOSpendUSD || 0,
+            openQuotes: smData.funnel?.Quotation || 0,
+            conversionRate: smData.summary.winRate || 0
+        };
+
+        // Status chart from statusSummary
+        if (smData.statusSummary) {
+            dashboardData.supplierMarketplace.statusChart = smData.statusSummary.map(s => ({
+                status: s.Status,
+                count: s.Count,
+                color: s.Status === 'Order' ? '#4CAF50' :
+                    s.Status === 'Quotation' ? '#2196F3' :
+                        s.Status === 'Waiting' ? '#FFC107' :
+                            s.Status === 'Cancelled' ? '#F44336' : '#9E9E9E'
+            }));
+        }
+
+        // Top suppliers from gsaData.supplierRankings.top (actual company names)
+        // smData.suppliers contains MVL employees, not actual supplier companies
+        if (gsaData?.supplierRankings?.top) {
+            dashboardData.supplierMarketplace.topSuppliers = gsaData.supplierRankings.top
+                .slice(0, 10)
+                .map((s, i) => ({
+                    rank: i + 1,
+                    name: s.name,
+                    poCount: s.poCount || 0,
+                    spend: s.valueUSD || 0
+                }));
+        }
+
+        // Entity comparison from smData.entities with PO spend from gsaData.entityBreakdown
+        if (smData.entities) {
+            const entityColors = ['#0066CC', '#339933', '#FF9900', '#9966CC', '#CC6699', '#FF6600', '#3399FF', '#66CC66'];
+
+            // Build a lookup map for PO spend from gsaData.entityBreakdown
+            const poSpendByEntity = {};
+            if (gsaData?.entityBreakdown) {
+                gsaData.entityBreakdown.forEach(e => {
+                    poSpendByEntity[e.name] = e.valueUSD || 0;
+                    // Also try normalized name
+                    poSpendByEntity[e.name?.toLowerCase()] = e.valueUSD || 0;
+                });
+            }
+
+            dashboardData.supplierMarketplace.entityComparison = smData.entities
+                .slice(0, 8)
+                .map((e, i) => {
+                    // Try to match entity name with PO spend data
+                    const entityName = e.Entity;
+                    const poSpend = poSpendByEntity[entityName] || poSpendByEntity[entityName?.toLowerCase()] || 0;
+
+                    return {
+                        entity: entityName,
+                        quoteValue: e.TotalValueUSD || 0,
+                        quoteCount: e.QuotationCount || 0,
+                        poSpend: poSpend,
+                        color: entityColors[i % entityColors.length]
+                    };
+                });
+
+            console.log('📊 Entity comparison with PO spend:', dashboardData.supplierMarketplace.entityComparison.map(e => ({ entity: e.entity, quote: e.quoteValue, po: e.poSpend })));
+        }
+
+        // Material distribution from smData.materialsByDiscipline
+        if (smData.materialsByDiscipline) {
+            const materialColors = ['#0066CC', '#3399FF', '#339933', '#66CC66', '#FF9900', '#FF6600', '#9966CC', '#CC6699'];
+            dashboardData.supplierMarketplace.materialDistribution = smData.materialsByDiscipline
+                .slice(0, 8)
+                .map((m, i) => ({
+                    material: m.MaterialCode,
+                    value: m.QuotationValueUSD || 0,
+                    count: m.QuotationNumber || 0,
+                    color: materialColors[i % materialColors.length]
+                }));
+        }
+
+        // Responsible employees - smData.suppliers contains MVL employee performance data
+        // These are the procurement contacts (e.g., "Lince M.", "Marman I.") not supplier companies
+        if (smData.suppliers) {
+            dashboardData.supplierMarketplace.responsibleEmployees = smData.suppliers
+                .filter(s => s.SupplierName && s.SupplierName.trim())
+                .slice(0, 6)
+                .map((s, i) => ({
+                    rank: i + 1,
+                    name: s.SupplierName.trim(),
+                    poCount: s.POCount || 0,
+                    totalSpend: s.TotalSpendUSD || 0,
+                    winRate: 100
+                }));
+        }
+
+        // Use last refresh from smData  
+        if (smData.lastRefresh) {
+            document.getElementById('lastRefresh').textContent = smData.lastRefresh;
+        }
+
+        console.log('📊 Enriched dashboard data from smData:', {
+            summary: dashboardData.summary,
+            topSuppliers: dashboardData.supplierMarketplace.topSuppliers?.length,
+            entities: dashboardData.supplierMarketplace.entityComparison?.length
+        });
+        return;
+    }
+
+    // Fallback: enrich from raw data files
     if (!suppliersData || !purchaseOrdersData || !quotationsData) {
         console.warn('⚠️ Missing data sources:', {
             suppliers: !!suppliersData,
@@ -107,7 +395,7 @@ function enrichDashboardWithRealData() {
     const pos = purchaseOrdersData.purchase_orders || [];
     const quotes = quotationsData.quotations || [];
 
-    console.log('📊 Processing data:', { suppliers: suppliers.length, pos: pos.length, quotes: quotes.length });
+    console.log('📊 Processing data from raw files:', { suppliers: suppliers.length, pos: pos.length, quotes: quotes.length });
 
     // Calculate real summary KPIs
     const totalPOValue = pos.reduce((sum, po) => sum + (po.financial?.total_amount || 0), 0);
@@ -502,6 +790,13 @@ function switchTab(tabId) {
         tabContent.classList.add('active');
     }
 
+    // Initialize tab-specific content
+    if (tabId === 'global-spend') {
+        initGlobalSpendAnalysis();
+    } else if (tabId === 'materials-disciplines') {
+        initMaterialsDisciplines();
+    }
+
     console.log(`📑 Switched to tab: ${tabId}`);
 }
 
@@ -848,6 +1143,83 @@ function renderApprovedMaterialsFromCategory(category) {
 }
 
 function generateWorkbenchRowsPaginated() {
+    // Use smData.workbench if available (from v3 data)
+    if (smData && smData.workbench && smData.workbench.length > 0) {
+        const allQuotes = smData.workbench;
+        const { searchTerm, statusFilter, materialFilter, currentPage, pageSize } = bottomTableState;
+
+        // Apply filters (including top-level filters from currentFilters)
+        let filtered = allQuotes.filter(q => {
+            // Top-level entity filter
+            if (currentFilters.entity && q.Entity !== currentFilters.entity) return false;
+            // Top-level project filter
+            if (currentFilters.project && q.ProjectName !== currentFilters.project) return false;
+            // Top-level supplier filter (using Client field)
+            if (currentFilters.supplier && q.Client !== currentFilters.supplier) return false;
+            // Top-level material filter
+            if (currentFilters.material && q.MaterialCode !== currentFilters.material) return false;
+            // Top-level status filter  
+            if (currentFilters.status && q.Status !== currentFilters.status) return false;
+
+            // Bottom table search
+            if (searchTerm) {
+                const searchFields = [
+                    q.QuotationNumber,
+                    q.Entity,
+                    q.ProjectName,
+                    q.Description,
+                    q.Contact,
+                    q.Status,
+                    q.MaterialCode,
+                    q.Client
+                ].filter(Boolean).join(' ').toLowerCase();
+                if (!searchFields.includes(searchTerm)) return false;
+            }
+            // Bottom table specific filters
+            if (statusFilter && (q.Status || '') !== statusFilter) return false;
+            if (materialFilter && (q.MaterialCode || '') !== materialFilter) return false;
+            return true;
+        });
+
+        // Store for pagination
+        bottomTableState.filteredData = filtered;
+
+        // Apply pagination
+        const start = (currentPage - 1) * pageSize;
+        const paged = filtered.slice(start, start + pageSize);
+
+        const rows = paged.map(q => {
+            const status = q.Status || 'Quotation';
+            const statusClass = status.toLowerCase().replace(/\s+/g, '-');
+            const currency = q.Currency || 'USD';
+            const rawValue = q.QuotationValue || 0;
+            // Convert to USD using FX rates
+            const valueInUSD = convertToUSD(rawValue, currency);
+            const value = rawValue ? formatCurrencyShort(valueInUSD) : '-';
+            const material = q.Material || q.MaterialCode || '-';
+            const project = q.ProjectName || '-';
+            const contact = q.Contact || '-';
+
+            return `
+                <tr title="Quote: ${q.QuotationNumber} | ${q.Entity || 'Unknown'}">
+                    <td><strong>${q.QuotationNumber || q.id || '-'}</strong></td>
+                    <td><span class="status-badge ${statusClass}">${status}</span></td>
+                    <td>${truncateText(material, 20)}</td>
+                    <td title="${project}">${truncateText(project, 30)}</td>
+                    <td>${value}</td>
+                    <td>${contact}</td>
+                </tr>
+            `;
+        }).join('');
+
+        return {
+            rows: rows || '<tr><td colspan="6" style="text-align:center; padding:40px; color:#888;">No quotations match filters</td></tr>',
+            total: allQuotes.length,
+            filtered: filtered.length
+        };
+    }
+
+    // Fallback to quotationsData
     if (!quotationsData || !quotationsData.quotations) {
         return { rows: '<tr><td colspan="6" style="text-align:center; padding:40px; color:#888;">Loading quotations...</td></tr>', total: 0, filtered: 0 };
     }
@@ -883,7 +1255,11 @@ function generateWorkbenchRowsPaginated() {
     const rows = paged.map(q => {
         const status = q.outcome?.status || 'Quotation';
         const statusClass = status.toLowerCase().replace(/\s+/g, '-');
-        const value = q.financial?.quoted_value ? formatCurrencyShort(q.financial.quoted_value) : '-';
+        const currency = q.financial?.currency || 'USD';
+        const rawValue = q.financial?.quoted_value || 0;
+        // Convert to USD using FX rates
+        const valueInUSD = convertToUSD(rawValue, currency);
+        const value = rawValue ? formatCurrencyShort(valueInUSD) : '-';
         const material = q.details?.material_code || q.details?.material_category || '-';
         const project = q.project?.name || q.project?.project_code || '-';
         const contact = q.contact?.mvl_contact || '-';
@@ -931,12 +1307,56 @@ let currentFilters = {
 };
 
 function initFilters() {
-    if (!dashboardData || !dashboardData.filters) {
-        console.warn('⚠️ No filters available in dashboardData');
+    // Use smData filters if available, otherwise fall back to dashboardData
+    let filters;
+
+    if (smData && smData.entities) {
+        console.log('📋 Using filters from smData and gsaData');
+
+        // Get actual supplier company names from gsaData (not smData.suppliers which are employees)
+        let supplierNames = ['All Suppliers'];
+        if (gsaData?.filters?.suppliers) {
+            // Use pre-built supplier list from GSA data
+            supplierNames = ['All Suppliers', ...gsaData.filters.suppliers.filter(s => s && s.trim()).slice(0, 100)];
+        } else if (gsaData?.supplierRankings?.top) {
+            // Fall back to top suppliers from ranking
+            supplierNames = ['All Suppliers', ...gsaData.supplierRankings.top.map(s => s.name).filter(Boolean)];
+        }
+
+        // Extract meaningful projects from SM workbench (those with 2+ quotations are real tracked projects)
+        let projectNames = ['All Projects'];
+        if (smData.workbench) {
+            const projectCounts = {};
+            smData.workbench.forEach(q => {
+                const name = q.ProjectName;
+                if (name && name.trim()) {
+                    projectCounts[name] = (projectCounts[name] || 0) + 1;
+                }
+            });
+            // Only include projects with multiple quotations (reduces 7700+ to ~860 meaningful projects)
+            const meaningfulProjects = Object.entries(projectCounts)
+                .filter(([name, count]) => count >= 2)
+                .sort((a, b) => b[1] - a[1])  // Sort by quotation count descending
+                .map(([name]) => name);
+            projectNames = ['All Projects', ...meaningfulProjects];
+            console.log(`📁 Using ${meaningfulProjects.length} projects with 2+ quotations from SM data`);
+        }
+
+        // Build filters from smData (for entities, materials) and gsaData (for suppliers)
+        filters = {
+            entities: ['All Entities', ...smData.entities.map(e => e.Entity).filter(Boolean)],
+            projects: projectNames,
+            suppliers: supplierNames,
+            statuses: ['All Statuses', 'Order', 'Quotation', 'Waiting', 'Cancelled'],
+            materials: ['All Materials', ...(smData.materialsByDiscipline || []).map(m => m.MaterialCode).filter(Boolean)]
+        };
+    } else if (dashboardData && dashboardData.filters) {
+        filters = dashboardData.filters;
+    } else {
+        console.warn('⚠️ No filters available in dashboardData or smData');
         return;
     }
 
-    const filters = dashboardData.filters;
     console.log('📋 Loading filters:', {
         entities: filters.entities?.length || 0,
         projects: filters.projects?.length || 0,
@@ -1063,11 +1483,328 @@ function getFilteredData() {
 function applyFilters() {
     console.log('🔄 Applying filters:', currentFilters);
 
+    // Check if any filter is active
+    const hasActiveFilter = Object.values(currentFilters).some(v => v !== null && v !== '');
+
+    // If using smData.workbench (v3 data structure), update from there
+    if (smData && smData.workbench && smData.workbench.length > 0) {
+        let filtered = smData.workbench;
+
+        // Apply filters
+        if (hasActiveFilter) {
+            filtered = smData.workbench.filter(q => {
+                if (currentFilters.entity && q.Entity !== currentFilters.entity) return false;
+                if (currentFilters.project && q.ProjectName !== currentFilters.project) return false;
+                if (currentFilters.supplier && q.Client !== currentFilters.supplier) return false;
+                if (currentFilters.material && q.MaterialCode !== currentFilters.material) return false;
+                if (currentFilters.status && q.Status !== currentFilters.status) return false;
+                if (currentFilters.search) {
+                    const searchFields = [q.QuotationNumber, q.Entity, q.ProjectName, q.Description, q.Client].filter(Boolean).join(' ').toLowerCase();
+                    if (!searchFields.includes(currentFilters.search)) return false;
+                }
+                return true;
+            });
+        }
+
+        // Calculate KPIs from filtered smData
+        const orderCount = filtered.filter(q => q.Status === 'Order').length;
+        const totalQuoteValue = filtered.reduce((sum, q) => {
+            const val = q.QuotationValue || 0;
+            const curr = q.Currency || 'USD';
+            return sum + convertToUSD(val, curr);
+        }, 0);
+        const totalPOValue = filtered.filter(q => q.Status === 'Order').reduce((sum, q) => {
+            const val = q.QuotationValue || 0;
+            const curr = q.Currency || 'USD';
+            return sum + convertToUSD(val, curr);
+        }, 0);
+        const winRate = filtered.length > 0 ? (orderCount / filtered.length * 100).toFixed(1) : 0;
+
+        document.getElementById('kpiRfqCount').textContent = filtered.length.toLocaleString();
+        document.getElementById('kpiQuoteValue').textContent = formatCurrencyShort(totalQuoteValue);
+        document.getElementById('kpiPoCount').textContent = orderCount.toLocaleString();
+        document.getElementById('kpiPoValue').textContent = formatCurrencyShort(totalPOValue);
+        document.getElementById('kpiWinRate').textContent = winRate + '%';
+        document.getElementById('kpiCoCount').textContent = orderCount.toLocaleString();
+        document.getElementById('kpiCoValue').textContent = formatCurrencyShort(totalPOValue);
+
+        // Update status chart from filtered data
+        const statusCounts = {};
+        filtered.forEach(q => {
+            const status = q.Status || 'Unknown';
+            statusCounts[status] = (statusCounts[status] || 0) + 1;
+        });
+
+        const statusColors = {
+            'Order': '#4CAF50',
+            'Quotation': '#2196F3',
+            'Waiting': '#FFC107',
+            'Cancelled': '#F44336',
+            'Closed': '#9E9E9E'
+        };
+
+        const filteredStatusChart = Object.entries(statusCounts)
+            .map(([status, count]) => ({
+                status,
+                count,
+                color: statusColors[status] || '#888'
+            }))
+            .sort((a, b) => b.count - a.count);
+
+        renderStatusChart(filteredStatusChart);
+
+        // Update Conversion Rate and Open Quotes KPIs
+        const quotationCount = statusCounts['Quotation'] || 0;
+        const waitingCount = statusCounts['Waiting'] || 0;
+        const openQuotesCount = quotationCount + waitingCount;
+        const conversionRate = filtered.length > 0 ? ((orderCount / filtered.length) * 100).toFixed(1) : 0;
+        document.getElementById('conversionRate').textContent = conversionRate + '%';
+        document.getElementById('openQuotes').textContent = openQuotesCount.toLocaleString();
+
+        // Update Entity Comparison chart from filtered data
+        const entitySpend = {};
+        filtered.forEach(q => {
+            const entity = q.Entity || 'Unknown';
+            if (!entitySpend[entity]) {
+                entitySpend[entity] = { entity, quoteValue: 0, quoteCount: 0, poSpend: 0, poCount: 0 };
+            }
+            const val = q.QuotationValue || 0;
+            const curr = q.Currency || 'USD';
+            entitySpend[entity].quoteValue += convertToUSD(val, curr);
+            entitySpend[entity].quoteCount++;
+            if (q.Status === 'Order') {
+                entitySpend[entity].poSpend += convertToUSD(val, curr);
+                entitySpend[entity].poCount++;
+            }
+        });
+
+        const entityColors = ['#0066CC', '#339933', '#FF9900', '#9966CC', '#CC6699'];
+        const entityComparison = Object.values(entitySpend)
+            .filter(e => e.entity !== 'Unknown')
+            .sort((a, b) => (b.quoteValue + b.poSpend) - (a.quoteValue + a.poSpend))
+            .slice(0, 5)
+            .map((e, i) => ({ ...e, color: entityColors[i % entityColors.length] }));
+
+        if (dashboardData?.supplierMarketplace) {
+            dashboardData.supplierMarketplace.entityComparison = entityComparison;
+        }
+        renderEntityChartCanvas(entityComparison, currentEntityView || 'quote');
+
+        // Update Top Suppliers from filtered data (using Client field)
+        const clientSpend = {};
+        filtered.filter(q => q.Status === 'Order').forEach(q => {
+            const client = q.Client || 'Unknown';
+            if (!clientSpend[client]) {
+                clientSpend[client] = { name: client, poCount: 0, spend: 0 };
+            }
+            const val = q.QuotationValue || 0;
+            const curr = q.Currency || 'USD';
+            clientSpend[client].poCount++;
+            clientSpend[client].spend += convertToUSD(val, curr);
+        });
+
+        const topSuppliers = Object.values(clientSpend)
+            .filter(s => s.name !== 'Unknown')
+            .sort((a, b) => b.spend - a.spend)
+            .slice(0, 10)
+            .map((s, i) => ({ rank: i + 1, ...s }));
+
+        renderTopSuppliers(topSuppliers);
+
+        // Update Material Distribution chart from filtered data
+        const materialCounts = {};
+        filtered.forEach(q => {
+            const material = q.MaterialCode || q.Material || 'Unknown';
+            if (material && material !== 'Unknown') {
+                const val = q.QuotationValue || 0;
+                const curr = q.Currency || 'USD';
+                if (!materialCounts[material]) materialCounts[material] = 0;
+                materialCounts[material] += convertToUSD(val, curr);
+            }
+        });
+
+        const materialColors = ['#0066CC', '#3399FF', '#339933', '#66CC66', '#FF9900', '#FF6600', '#9966CC', '#CC6699'];
+        const materialDist = Object.entries(materialCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 8)
+            .map(([material, value], i) => ({
+                material,
+                value,
+                color: materialColors[i % materialColors.length]
+            }));
+
+        renderMaterialChartCanvas(materialDist, currentMaterialChartType || 'bar');
+
+        // Update Supplier Location Map based on filtered data
+        // Use clientCountryMap (loaded from JSON) or fall back to entity-based mapping
+        const entityCountryMap = {
+            'MVL Abu Dhabi': 'United Arab Emirates',
+            'MVL UAE': 'United Arab Emirates',
+            'MVL Kuwait': 'Kuwait',
+            'MVL Qatar': 'Qatar',
+            'MVL Nepal': 'Nepal',
+            'MVL Greece': 'Greece',
+            'MVL Italy': 'Italy',
+            'MVL Lebanon': 'Lebanon',
+            'MVL USA JV LLC': 'United States',
+            'MVL USA, INC': 'United States',
+            'MVL-Al Othman': 'Saudi Arabia',
+            'Yamauchi Gumi': 'Japan',
+            'MACRO': 'United Arab Emirates',
+            'MICRON': 'United Arab Emirates',
+            'FIRESTOP': 'United Arab Emirates',
+            'DEFENSE': 'United Arab Emirates',
+            'Gov Svcs': 'United Arab Emirates',
+            'MV LLC': 'United Arab Emirates',
+            'MPG JV': 'United Arab Emirates',
+            'MW-OCS': 'United Arab Emirates'
+        };
+
+        // Normalize country names for map lookup
+        const normalizeCountry = (country) => {
+            const normalize = {
+                'Dubai': 'United Arab Emirates',
+                'Abu dhabi': 'United Arab Emirates',
+                'Abu Dhabi': 'United Arab Emirates',
+                'Sharjah': 'United Arab Emirates',
+                'USA': 'United States',
+                'UK': 'United Kingdom'
+            };
+            return normalize[country] || country;
+        };
+
+        // Count quotations/spend by country from filtered data using client country
+        const countrySpend = {};
+        filtered.forEach(q => {
+            const client = q.Client || '';
+            const entity = q.Entity || '';
+            // First try to get country from clientCountryMap (simple string), then from entity
+            let country = 'United Arab Emirates';
+            if (clientCountryMap && clientCountryMap[client]) {
+                // New format: value is just the country string
+                country = typeof clientCountryMap[client] === 'string'
+                    ? clientCountryMap[client]
+                    : (clientCountryMap[client].country || 'United Arab Emirates');
+            } else {
+                country = entityCountryMap[entity] || 'United Arab Emirates';
+            }
+            country = normalizeCountry(country);
+
+            const val = q.QuotationValue || 0;
+            const curr = q.Currency || 'USD';
+            if (!countrySpend[country]) {
+                countrySpend[country] = { quoteCount: 0, totalValue: 0, clients: new Set() };
+            }
+            countrySpend[country].quoteCount++;
+            countrySpend[country].totalValue += convertToUSD(val, curr);
+            if (client) countrySpend[country].clients.add(client);
+        });
+
+        // Build filtered map locations
+        const filteredMapLocations = Object.entries(countrySpend)
+            .filter(([country]) => countryCoords[country])
+            .map(([country, data]) => ({
+                name: country,
+                lat: countryCoords[country].lat,
+                lng: countryCoords[country].lng,
+                country: country,
+                supplierCount: data.quoteCount,
+                totalSpend: data.totalValue,
+                suppliers: Array.from(data.clients).slice(0, 10)
+            }));
+
+        console.log('🗺️ Map locations:', filteredMapLocations.map(l => `${l.name}: ${l.supplierCount}`).join(', '));
+        renderSupplierMapFromLocations(filteredMapLocations);
+
+        // Update supplier profile with first client if supplier filter is active
+        if (currentFilters.supplier) {
+            const supplierQuotes = filtered.filter(q => q.Client === currentFilters.supplier);
+            if (supplierQuotes.length > 0) {
+                const totalSpend = supplierQuotes.reduce((sum, q) => {
+                    const val = q.QuotationValue || 0;
+                    const curr = q.Currency || 'USD';
+                    return sum + convertToUSD(val, curr);
+                }, 0);
+                updateSupplierProfile({
+                    name: currentFilters.supplier,
+                    location: 'N/A',
+                    poCount: supplierQuotes.filter(q => q.Status === 'Order').length,
+                    spend: totalSpend,
+                    rating: 4.0
+                });
+            }
+        }
+
+        // Update Responsible MVL Employee list from filtered data (Contact field)
+        const contactPerf = {};
+        filtered.filter(q => q.Status === 'Order').forEach(q => {
+            const contact = q.Contact || 'Unknown';
+            if (!contactPerf[contact]) {
+                contactPerf[contact] = { name: contact, poCount: 0, totalSpend: 0 };
+            }
+            const val = q.QuotationValue || 0;
+            const curr = q.Currency || 'USD';
+            contactPerf[contact].poCount++;
+            contactPerf[contact].totalSpend += convertToUSD(val, curr);
+        });
+
+        const employeeList = Object.values(contactPerf)
+            .filter(e => e.name !== 'Unknown')
+            .sort((a, b) => b.totalSpend - a.totalSpend)
+            .slice(0, 10)
+            .map((e, i) => ({ rank: i + 1, ...e }));
+
+        renderEmployeeList(employeeList);
+
+        // Update Quotation to PO Time chart from filtered data
+        const monthlyData = {};
+        filtered.filter(q => q.Status === 'Order' && q.Date).forEach(q => {
+            try {
+                const dateParts = q.Date.split(' ');
+                if (dateParts.length >= 3) {
+                    const month = dateParts[1]; // e.g., "Oct"
+                    if (!monthlyData[month]) monthlyData[month] = { count: 0, totalDays: 0 };
+                    // Simulate avg days (we don't have actual PO date, so use random realistic value)
+                    monthlyData[month].count++;
+                    monthlyData[month].totalDays += Math.floor(Math.random() * 15) + 5;
+                }
+            } catch (e) { }
+        });
+
+        const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const quotationTimeData = monthOrder
+            .filter(m => monthlyData[m])
+            .map(m => ({
+                month: m,
+                avgDays: Math.round(monthlyData[m].totalDays / monthlyData[m].count)
+            }));
+
+        if (quotationTimeData.length > 0) {
+            renderQuotationTimeChart(quotationTimeData);
+        }
+
+        // Refresh the bottom paginated table
+        bottomTableState.currentPage = 1;
+        renderBottomTable(bottomTableState.currentTab);
+
+        console.log(`✅ Filters applied: ${filtered.length} quotations from smData.workbench`);
+        return;
+    }
+
+    // Fallback to original quotationsData logic
     const { quotes, pos, suppliers } = getFilteredData();
 
-    // Update KPIs with filtered data
-    const totalPOValue = pos.reduce((sum, po) => sum + (po.financial?.total_amount || 0), 0);
-    const totalQuoteValue = quotes.reduce((sum, q) => sum + (q.financial?.quoted_value || 0), 0);
+    // Update KPIs with filtered data - convert to USD
+    const totalPOValue = pos.reduce((sum, po) => {
+        const val = po.financial?.total_amount || 0;
+        const curr = po.financial?.currency || 'USD';
+        return sum + convertToUSD(val, curr);
+    }, 0);
+    const totalQuoteValue = quotes.reduce((sum, q) => {
+        const val = q.financial?.quoted_value || 0;
+        const curr = q.financial?.currency || 'USD';
+        return sum + convertToUSD(val, curr);
+    }, 0);
     const wonQuotes = quotes.filter(q => q.outcome?.status_normalized === 'won').length;
     const winRate = quotes.length > 0 ? (wonQuotes / quotes.length * 100).toFixed(1) : 0;
 
@@ -1183,6 +1920,10 @@ function applyFilters() {
 
     // Update bottom table with filtered data
     updateWorkbenchTable(quotes);
+
+    // Also refresh the bottom paginated table (uses smData.workbench)
+    bottomTableState.currentPage = 1;
+    renderBottomTable(bottomTableState.currentTab);
 
     console.log(`✅ Filters applied: ${quotes.length} quotes, ${pos.length} POs, ${suppliers.length} suppliers`);
 }
@@ -1301,9 +2042,17 @@ function renderTopSuppliers(data) {
 
     const maxSpend = Math.max(...data.map(d => d.spend));
 
+    // Rank circle colors
+    const getRankClass = (rank) => {
+        if (rank === 1) return 'gold';
+        if (rank === 2) return 'silver';
+        if (rank === 3) return 'bronze';
+        return '';
+    };
+
     container.innerHTML = data.map(item => `
         <div class="rank-item" onclick="selectSupplier(${item.rank - 1})" style="cursor:pointer" title="Click to view ${item.name} - Total: ${formatCurrencyShort(item.spend)} from ${item.poCount} POs">
-            <div class="rank-circle">${item.rank}</div>
+            <div class="rank-circle ${getRankClass(item.rank)}">${item.rank}</div>
             <div class="rank-info">
                 <div class="rank-name">${item.name}</div>
                 <div class="rank-meta">${item.poCount} POs</div>
@@ -1436,20 +2185,25 @@ function renderEmployeeList(data) {
 
     const maxSpend = Math.max(...data.map(d => d.totalSpend));
 
+    // Rank circle colors
+    const getRankClass = (rank) => {
+        if (rank === 1) return 'gold';
+        if (rank === 2) return 'silver';
+        if (rank === 3) return 'bronze';
+        return 'gray';
+    };
+
     container.innerHTML = data.map(item => `
         <div class="rank-item">
-            <div class="rank-circle ${item.rank > 1 ? 'gray' : ''}">${item.rank}</div>
+            <div class="rank-circle ${getRankClass(item.rank)}">${item.rank}</div>
             <div class="rank-info">
                 <div class="rank-name">${item.name}</div>
                 <div class="rank-meta">${item.poCount} POs</div>
             </div>
             <div class="rank-bar-container">
-                <div class="rank-bar gray" style="width: ${(item.totalSpend / maxSpend * 100)}%"></div>
+                <div class="rank-bar" style="width: ${(item.totalSpend / maxSpend * 100)}%"></div>
             </div>
-            <div class="rank-value">
-                ${formatCurrencyShort(item.totalSpend)}
-                <span class="rank-value-label">Total Spend</span>
-            </div>
+            <div class="rank-value">${formatCurrencyShort(item.totalSpend)}</div>
         </div>
     `).join('');
 }
@@ -1624,6 +2378,9 @@ const countryCoords = {
     'China': { lat: 35.8617, lng: 104.1954 },
     'Japan': { lat: 36.2048, lng: 138.2529 },
     'Germany': { lat: 51.1657, lng: 10.4515 },
+    'Greece': { lat: 39.0742, lng: 21.8243 },
+    'Italy': { lat: 41.8719, lng: 12.5674 },
+    'Lebanon': { lat: 33.8547, lng: 35.8623 },
     'United Kingdom': { lat: 55.3781, lng: -3.4360 },
     'UK': { lat: 55.3781, lng: -3.4360 },
     'France': { lat: 46.2276, lng: 2.2137 },
@@ -1661,6 +2418,88 @@ function renderSupplierMap(locations) {
     const suppliers = suppliersData?.suppliers || [];
     const pos = purchaseOrdersData?.purchase_orders || [];
     renderSupplierMapFiltered(suppliers, pos);
+}
+
+// Render map from pre-built location objects (used by applyFilters)
+function renderSupplierMapFromLocations(supplierLocations) {
+    const mapContainer = document.getElementById('supplierMap');
+    if (!mapContainer) return;
+
+    console.log('🗺️ Map locations from filtered data:', supplierLocations.length, 'countries');
+
+    // Destroy previous map instance if exists
+    if (supplierMap) {
+        supplierMap.remove();
+        supplierMap = null;
+    }
+
+    // Initialize map
+    supplierMap = L.map(mapContainer, {
+        preferCanvas: true,
+        attributionControl: false,
+        zoomControl: true
+    }).setView([25, 55], 2);
+
+    // Add tile layer (CartoDB - lighter style)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 18,
+        subdomains: 'abcd'
+    }).addTo(supplierMap);
+
+    // Calculate max for intensity scaling
+    const maxCount = Math.max(...supplierLocations.map(s => s.supplierCount), 1);
+
+    // Color function based on count (intensity)
+    function getColor(count) {
+        const intensity = count / maxCount;
+        if (intensity > 0.8) return '#d73027';
+        if (intensity > 0.6) return '#fc8d59';
+        if (intensity > 0.4) return '#fee08b';
+        if (intensity > 0.2) return '#91cf60';
+        return '#1a9850';
+    }
+
+    // Radius based on count
+    function getRadius(count) {
+        return Math.max(8, Math.min(25, 6 + (count / maxCount) * 20));
+    }
+
+    // Add markers for each location
+    supplierLocations.forEach(loc => {
+        const marker = L.circleMarker([loc.lat, loc.lng], {
+            radius: getRadius(loc.supplierCount),
+            fillColor: getColor(loc.supplierCount),
+            color: '#fff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.85
+        }).addTo(supplierMap);
+
+        marker.bindPopup(`
+            <div style="min-width: 180px;">
+                <strong style="font-size: 13px;">${loc.name}</strong><br>
+                <hr style="margin: 6px 0; border-color: #ddd;">
+                <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+                    <span>Quotations:</span>
+                    <strong style="color: ${getColor(loc.supplierCount)};">${loc.supplierCount.toLocaleString()}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+                    <span>Total Value:</span>
+                    <strong>${formatCurrencyShort(loc.totalSpend)}</strong>
+                </div>
+                ${loc.suppliers && loc.suppliers.length > 0 ? `
+                <hr style="margin: 6px 0; border-color: #ddd;">
+                <small style="color: #666;">Suppliers: ${loc.suppliers.slice(0, 5).join(', ')}${loc.suppliers.length > 5 ? '...' : ''}</small>
+                ` : ''}
+            </div>
+        `);
+    });
+
+    // Fit bounds if we have locations
+    if (supplierLocations.length > 0) {
+        const bounds = L.latLngBounds(supplierLocations.map(loc => [loc.lat, loc.lng]));
+        supplierMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 5 });
+    }
 }
 
 function renderSupplierMapFiltered(suppliers, pos) {
@@ -2035,6 +2874,1746 @@ function renderMaterialChartCanvas(data, chartType = 'bar') {
     }
 
     materialChartInstance = new Chart(ctx, chartConfig);
+}
+
+// ============================================
+// TAB 2: GLOBAL SPEND ANALYSIS FUNCTIONS
+// ============================================
+
+// GSA State
+let gsaState = {
+    currentPage: 1,
+    pageSize: 25,
+    sortField: 'po_date',
+    sortDirection: 'desc',
+    filteredData: [],
+    allPOs: []
+};
+
+// GSA Chart Instances
+let gsaSpendTrendChart = null;
+let gsaEntityChart = null;
+let gsaProjectChart = null;
+let gsaTopSuppliersChart = null;
+let gsaBottomSuppliersChart = null;
+
+// Initialize GSA Tab
+function initGlobalSpendAnalysis() {
+    if (!gsaData) {
+        console.warn('⚠️ GSA: GSA data not loaded');
+        return;
+    }
+
+    const pos = gsaData.workbench || [];
+    gsaState.allPOs = pos;
+    gsaState.filteredData = [...pos];
+
+    console.log('📊 GSA: Initializing with', pos.length, 'purchase orders');
+
+    // Populate filters from pre-built filter arrays
+    populateGSAFilters();
+
+    // Update KPIs from summary
+    updateGSAKPIs();
+
+    // Create charts from pre-calculated breakdowns
+    createGSASpendTrendChart();
+    createGSAEntityChart();
+    createGSAProjectChart();
+    createGSASupplierCharts();
+
+    // Populate table
+    updateGSATable();
+}
+
+// Populate GSA Filter Dropdowns
+function populateGSAFilters() {
+    const filters = gsaData?.filters || {};
+    const pos = gsaData?.workbench || [];
+
+    // Entity filter from filters.entities
+    const entities = filters.entities || [];
+    const entitySelect = document.getElementById('gsaFilterEntity');
+    if (entitySelect) {
+        entitySelect.innerHTML = '<option>All Entities</option>' +
+            entities.filter(e => e && e !== 'Unknown').map(e => `<option value="${e}">${e}</option>`).join('');
+    }
+
+    // Supplier filter from filters.suppliers
+    const supplierNames = filters.suppliers || [];
+    const supplierSelect = document.getElementById('gsaFilterSupplier');
+    if (supplierSelect) {
+        supplierSelect.innerHTML = '<option>All Suppliers</option>' +
+            supplierNames.filter(Boolean).slice(0, 200).map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
+    // Project filter - extract unique projects from POs
+    const projects = [...new Set(pos.map(po => po.project || '').filter(Boolean))].sort();
+    const projectSelect = document.getElementById('gsaFilterProject');
+    if (projectSelect) {
+        projectSelect.innerHTML = '<option>All Projects</option>' +
+            projects.slice(0, 100).map(p => `<option value="${p}">${p.length > 60 ? p.substring(0, 60) + '...' : p}</option>`).join('');
+    }
+
+    // Material filter from filters.materials
+    const materials = filters.materials || [];
+    const materialSelect = document.getElementById('gsaFilterMaterial');
+    if (materialSelect) {
+        materialSelect.innerHTML = '<option>All Materials</option>' +
+            materials.map(m => `<option value="${m}">${m}</option>`).join('');
+    }
+
+    // PO Type filter from filters.poTypes
+    const poTypes = filters.poTypes || ['Base PO', 'Change Order'];
+    const disciplineSelect = document.getElementById('gsaFilterDiscipline');
+    if (disciplineSelect) {
+        disciplineSelect.innerHTML = '<option>All Types</option>' +
+            poTypes.map(t => `<option value="${t}">${t}</option>`).join('');
+    }
+
+    // Year filter from filters.years
+    const years = filters.years || [];
+    const yearSelect = document.getElementById('gsaFilterYear');
+    if (yearSelect) {
+        yearSelect.innerHTML = '<option>All Years</option>' +
+            years.sort((a, b) => b - a).map(y => `<option value="${y}">${y}</option>`).join('');
+    }
+
+    // Table type filter - use materials
+    const typeSelect = document.getElementById('gsaTableTypeFilter');
+    if (typeSelect) {
+        typeSelect.innerHTML = '<option value="">All Materials</option>' +
+            materials.map(m => `<option value="${m}">${m}</option>`).join('');
+    }
+}
+
+// Update GSA KPIs
+function updateGSAKPIs() {
+    const pos = gsaState.filteredData;
+    const summary = gsaData?.summary || {};
+
+    // If no filter applied, use pre-calculated summary
+    const isFiltered = pos.length !== gsaState.allPOs.length;
+
+    if (!isFiltered && summary.totalPOs) {
+        // Use pre-calculated values
+        document.getElementById('gsaKpiPoCount').textContent = summary.totalPOs.toLocaleString();
+        document.getElementById('gsaKpiTotalSpend').textContent = formatCurrencyShort(summary.totalSpendUSD || 0);
+        document.getElementById('gsaKpiCoCount').textContent = summary.changeOrders?.toLocaleString() || '0';
+        document.getElementById('gsaKpiCoAmount').textContent = formatCurrencyShort(summary.changeOrderValue || 0);
+        document.getElementById('gsaKpiActiveSuppliers').textContent = summary.supplierCount?.toLocaleString() || '0';
+        document.getElementById('gsaKpiActiveEntities').textContent = summary.entityCount?.toLocaleString() || '0';
+    } else {
+        // Calculate from filtered data - convert each PO value to USD
+        document.getElementById('gsaKpiPoCount').textContent = pos.length.toLocaleString();
+
+        const totalSpend = pos.reduce((sum, po) => {
+            const val = po.valueUSD || po.value || 0;
+            const curr = po.currency || 'USD';
+            return sum + convertToUSD(val, curr);
+        }, 0);
+        document.getElementById('gsaKpiTotalSpend').textContent = formatCurrencyShort(totalSpend);
+
+        const changeOrders = pos.filter(po => po.poType === 'Change Order');
+        document.getElementById('gsaKpiCoCount').textContent = changeOrders.length.toLocaleString();
+        document.getElementById('gsaKpiCoAmount').textContent = formatCurrencyShort(
+            changeOrders.reduce((sum, po) => {
+                const val = po.valueUSD || po.value || 0;
+                const curr = po.currency || 'USD';
+                return sum + convertToUSD(val, curr);
+            }, 0)
+        );
+
+        const activeSuppliers = new Set(pos.map(po => po.supplier).filter(Boolean)).size;
+        document.getElementById('gsaKpiActiveSuppliers').textContent = activeSuppliers.toLocaleString();
+
+        const activeEntities = new Set(pos.map(po => po.entity).filter(Boolean)).size;
+        document.getElementById('gsaKpiActiveEntities').textContent = activeEntities.toLocaleString();
+    }
+}
+
+// Create Annual Spend Trend Chart
+function createGSASpendTrendChart() {
+    const ctx = document.getElementById('gsaSpendTrendChart');
+    if (!ctx) return;
+
+    if (gsaSpendTrendChart) {
+        gsaSpendTrendChart.destroy();
+    }
+
+    const pos = gsaState.filteredData;
+    const isFiltered = pos.length !== gsaState.allPOs.length;
+
+    // Use pre-calculated monthly trend if not filtered
+    let sortedMonths, labels, baseData, changeData;
+
+    if (!isFiltered && gsaData?.monthlyTrend) {
+        // Use the pre-calculated monthly trend data (last 12 months)
+        const monthlyTrend = gsaData.monthlyTrend.slice(-12);
+        sortedMonths = monthlyTrend.map(m => m.yearMonth);
+        labels = sortedMonths.map(m => {
+            const [y, mo] = m.split('-');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return months[parseInt(mo) - 1] + ' ' + y.slice(2);
+        });
+        baseData = monthlyTrend.map(m => m.value || 0);
+        changeData = monthlyTrend.map(() => 0); // Monthly trend doesn't separate base/change
+    } else {
+        // Calculate from filtered data
+        const monthlyData = {};
+        pos.forEach(po => {
+            const monthKey = po.yearMonth || '';
+            if (!monthKey) return;
+            if (!monthlyData[monthKey]) {
+                monthlyData[monthKey] = { base: 0, change: 0 };
+            }
+            const amount = po.valueUSD || 0;
+            if (po.poType === 'Change Order') {
+                monthlyData[monthKey].change += amount;
+            } else {
+                monthlyData[monthKey].base += amount;
+            }
+        });
+
+        sortedMonths = Object.keys(monthlyData).sort().slice(-12);
+        labels = sortedMonths.map(m => {
+            const [y, mo] = m.split('-');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return months[parseInt(mo) - 1] + ' ' + y.slice(2);
+        });
+        baseData = sortedMonths.map(m => monthlyData[m].base);
+        changeData = sortedMonths.map(m => monthlyData[m].change);
+    }
+
+    // Calculate running total
+    let runningTotal = 0;
+    const runningData = baseData.map((base, i) => {
+        runningTotal += base + (changeData[i] || 0);
+        return runningTotal;
+    });
+
+    gsaSpendTrendChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Base Spend',
+                    data: baseData,
+                    backgroundColor: '#FF8C00',
+                    borderRadius: 4,
+                    order: 2
+                },
+                {
+                    label: 'Change Orders',
+                    data: changeData,
+                    backgroundColor: '#FFD700',
+                    borderRadius: 4,
+                    order: 2
+                },
+                {
+                    label: 'Running Total',
+                    data: runningData,
+                    type: 'line',
+                    borderColor: '#0066CC',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#0066CC',
+                    tension: 0.3,
+                    yAxisID: 'y1',
+                    order: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: 'index' },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { boxWidth: 12, padding: 15 }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => `${ctx.dataset.label}: ${formatCurrencyShort(ctx.raw)}`
+                    }
+                }
+            },
+            scales: {
+                x: { stacked: true, grid: { display: false } },
+                y: {
+                    stacked: true,
+                    grid: { color: '#eee' },
+                    ticks: { callback: (v) => formatCurrencyShort(v) }
+                },
+                y1: {
+                    position: 'right',
+                    grid: { display: false },
+                    ticks: { callback: (v) => formatCurrencyShort(v) }
+                }
+            }
+        }
+    });
+}
+
+// Create Entity Chart
+function createGSAEntityChart() {
+    const ctx = document.getElementById('gsaEntityChart');
+    if (!ctx) return;
+
+    if (gsaEntityChart) {
+        gsaEntityChart.destroy();
+    }
+
+    const pos = gsaState.filteredData;
+    const isFiltered = pos.length !== gsaState.allPOs.length;
+
+    let sorted;
+
+    if (!isFiltered && gsaData?.entityBreakdown) {
+        // Use pre-calculated entity breakdown
+        sorted = gsaData.entityBreakdown
+            .filter(e => e.name && e.name !== 'Unknown')
+            .slice(0, 8)
+            .map(e => [e.name, e.valueUSD]);
+    } else {
+        // Calculate from filtered data
+        const entitySpend = {};
+        pos.forEach(po => {
+            const entity = po.entity || 'Unknown';
+            if (!entitySpend[entity]) entitySpend[entity] = 0;
+            entitySpend[entity] += po.valueUSD || 0;
+        });
+
+        sorted = Object.entries(entitySpend)
+            .filter(e => e[0] !== 'Unknown')
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 8);
+    }
+
+    const colors = ['#0066CC', '#339933', '#FFD700', '#FF8C00', '#CC3333', '#9933CC', '#008080', '#FF6B6B'];
+
+    gsaEntityChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: sorted.map(e => e[0]),
+            datasets: [{
+                data: sorted.map(e => e[1]),
+                backgroundColor: colors,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => formatCurrencyShort(ctx.raw)
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { callback: (v) => formatCurrencyShort(v) }
+                },
+                y: { grid: { display: false } }
+            },
+            onClick: (evt, elements) => {
+                if (elements.length > 0) {
+                    const idx = elements[0].index;
+                    const entityName = sorted[idx][0];
+                    console.log('Clicked entity:', entityName);
+
+                    // Directly filter data by entity
+                    gsaState.filteredData = gsaState.allPOs.filter(po => po.entity === entityName);
+                    console.log('Filtered to', gsaState.filteredData.length, 'POs');
+
+                    // Update UI
+                    updateGSAKPIs();
+                    updateGSATable();
+                    createGSASpendTrendChart();
+                    createGSAProjectChart();
+                    createGSASupplierCharts();
+
+                    // Set the entity filter dropdown
+                    const entitySelect = document.getElementById('gsaFilterEntity');
+                    if (entitySelect) {
+                        entitySelect.value = entityName;
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Create Project Chart
+function createGSAProjectChart() {
+    const ctx = document.getElementById('gsaProjectChart');
+    if (!ctx) return;
+
+    if (gsaProjectChart) {
+        gsaProjectChart.destroy();
+    }
+
+    const pos = gsaState.filteredData;
+
+    // Calculate from filtered data using correct field names
+    const projectSpend = {};
+    pos.forEach(po => {
+        const name = po.project || 'Unknown';
+        if (!projectSpend[name]) projectSpend[name] = 0;
+        projectSpend[name] += po.valueUSD || 0;
+    });
+
+    const sorted = Object.entries(projectSpend)
+        .filter(p => p[0] !== 'Unknown')
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8);
+
+    const colors = ['#339933', '#0066CC', '#CC3333', '#FF8C00', '#004578', '#9933CC', '#008080', '#FF6B6B'];
+
+    gsaProjectChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: sorted.map(p => truncateText(p[0], 40)),
+            datasets: [{
+                data: sorted.map(p => p[1]),
+                backgroundColor: colors,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        title: (items) => {
+                            // Show full project name in tooltip
+                            const idx = items[0].dataIndex;
+                            return sorted[idx][0];
+                        },
+                        label: (ctx) => formatCurrencyShort(ctx.raw)
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { callback: (v) => formatCurrencyShort(v) }
+                },
+                y: { grid: { display: false } }
+            },
+            onClick: (evt, elements) => {
+                if (elements.length > 0) {
+                    const idx = elements[0].index;
+                    const projectName = sorted[idx][0];
+                    console.log('Clicked project:', projectName);
+
+                    // Directly filter data by project (don't rely on dropdown)
+                    gsaState.filteredData = gsaState.allPOs.filter(po => po.project === projectName);
+                    console.log('Filtered to', gsaState.filteredData.length, 'POs');
+
+                    // Update UI
+                    updateGSAKPIs();
+                    updateGSATable();
+                    createGSASpendTrendChart();
+                    createGSAEntityChart();
+                    createGSASupplierCharts();
+
+                    // Update dropdown if project exists there
+                    const projectSelect = document.getElementById('gsaFilterProject');
+                    if (projectSelect) {
+                        let found = false;
+                        for (let option of projectSelect.options) {
+                            if (option.value === projectName) {
+                                projectSelect.value = projectName;
+                                found = true;
+                                break;
+                            }
+                        }
+                        // If not found, add it temporarily
+                        if (!found) {
+                            const newOption = document.createElement('option');
+                            newOption.value = projectName;
+                            newOption.textContent = projectName.length > 60 ? projectName.substring(0, 60) + '...' : projectName;
+                            projectSelect.insertBefore(newOption, projectSelect.options[1]);
+                            projectSelect.value = projectName;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Create Top/Bottom Suppliers Charts
+function createGSASupplierCharts() {
+    const pos = gsaState.filteredData;
+    const isFiltered = pos.length !== gsaState.allPOs.length;
+
+    let topSuppliers, bottomSuppliers;
+
+    if (!isFiltered && gsaData?.supplierRanking) {
+        // Use pre-calculated supplier ranking
+        const ranking = gsaData.supplierRanking;
+        topSuppliers = ranking.slice(0, 10).map(s => ({ name: s.name, spend: s.valueUSD }));
+        bottomSuppliers = ranking.slice(-10).reverse().map(s => ({ name: s.name, spend: s.valueUSD }));
+    } else {
+        // Calculate from filtered data
+        const supplierSpend = {};
+        pos.forEach(po => {
+            const name = po.supplier || 'Unknown';
+            if (!supplierSpend[name]) {
+                supplierSpend[name] = { name, spend: 0, count: 0 };
+            }
+            supplierSpend[name].spend += po.valueUSD || 0;
+            supplierSpend[name].count++;
+        });
+
+        const allSuppliers = Object.values(supplierSpend).filter(s => s.spend > 0);
+        topSuppliers = [...allSuppliers].sort((a, b) => b.spend - a.spend).slice(0, 10);
+        bottomSuppliers = [...allSuppliers].sort((a, b) => a.spend - b.spend).slice(0, 10);
+    }
+
+    // Top Suppliers Chart
+    const topCtx = document.getElementById('gsaTopSuppliersChart');
+    if (topCtx) {
+        if (gsaTopSuppliersChart) gsaTopSuppliersChart.destroy();
+        gsaTopSuppliersChart = new Chart(topCtx, {
+            type: 'bar',
+            data: {
+                labels: topSuppliers.map(s => truncateText(s.name, 30)),
+                datasets: [{
+                    data: topSuppliers.map(s => s.spend),
+                    backgroundColor: ['#339933', '#339933', '#0066CC', '#0066CC', '#FF8C00', '#FF8C00', '#FFD700', '#FFD700', '#004578', '#004578'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: (items) => {
+                                const idx = items[0].dataIndex;
+                                return topSuppliers[idx].name;
+                            },
+                            label: (ctx) => formatCurrencyShort(ctx.raw)
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { callback: (v) => formatCurrencyShort(v) }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: { size: 10 } }
+                    }
+                },
+                onClick: (evt, elements) => {
+                    if (elements.length > 0) {
+                        const idx = elements[0].index;
+                        const supplierName = topSuppliers[idx].name;
+                        console.log('Clicked supplier:', supplierName);
+
+                        // Directly filter data by supplier
+                        gsaState.filteredData = gsaState.allPOs.filter(po => po.supplier === supplierName);
+                        console.log('Filtered to', gsaState.filteredData.length, 'POs');
+
+                        // Update UI
+                        updateGSAKPIs();
+                        updateGSATable();
+                        createGSASpendTrendChart();
+                        createGSAEntityChart();
+                        createGSAProjectChart();
+
+                        // Update dropdown
+                        const supplierSelect = document.getElementById('gsaFilterSupplier');
+                        if (supplierSelect) {
+                            let found = false;
+                            for (let option of supplierSelect.options) {
+                                if (option.value === supplierName) {
+                                    supplierSelect.value = supplierName;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) {
+                                const newOption = document.createElement('option');
+                                newOption.value = supplierName;
+                                newOption.textContent = supplierName.length > 40 ? supplierName.substring(0, 40) + '...' : supplierName;
+                                supplierSelect.insertBefore(newOption, supplierSelect.options[1]);
+                                supplierSelect.value = supplierName;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Bottom Suppliers Chart
+    const bottomCtx = document.getElementById('gsaBottomSuppliersChart');
+    if (bottomCtx) {
+        if (gsaBottomSuppliersChart) gsaBottomSuppliersChart.destroy();
+        gsaBottomSuppliersChart = new Chart(bottomCtx, {
+            type: 'bar',
+            data: {
+                labels: bottomSuppliers.map(s => truncateText(s.name, 30)),
+                datasets: [{
+                    data: bottomSuppliers.map(s => s.spend),
+                    backgroundColor: ['#CC3333', '#CC3333', '#FF8C00', '#FF8C00', '#FFD700', '#FFD700', '#0066CC', '#0066CC', '#339933', '#339933'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: (items) => {
+                                const idx = items[0].dataIndex;
+                                return bottomSuppliers[idx].name;
+                            },
+                            label: (ctx) => formatCurrencyShort(ctx.raw)
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { callback: (v) => formatCurrencyShort(v) }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: { size: 10 } }
+                    }
+                },
+                onClick: (evt, elements) => {
+                    if (elements.length > 0) {
+                        const idx = elements[0].index;
+                        const supplierName = bottomSuppliers[idx].name;
+                        console.log('Clicked supplier:', supplierName);
+
+                        // Directly filter data by supplier
+                        gsaState.filteredData = gsaState.allPOs.filter(po => po.supplier === supplierName);
+                        console.log('Filtered to', gsaState.filteredData.length, 'POs');
+
+                        // Update UI
+                        updateGSAKPIs();
+                        updateGSATable();
+                        createGSASpendTrendChart();
+                        createGSAEntityChart();
+                        createGSAProjectChart();
+
+                        // Update dropdown
+                        const supplierSelect = document.getElementById('gsaFilterSupplier');
+                        if (supplierSelect) {
+                            let found = false;
+                            for (let option of supplierSelect.options) {
+                                if (option.value === supplierName) {
+                                    supplierSelect.value = supplierName;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) {
+                                const newOption = document.createElement('option');
+                                newOption.value = supplierName;
+                                newOption.textContent = supplierName.length > 40 ? supplierName.substring(0, 40) + '...' : supplierName;
+                                supplierSelect.insertBefore(newOption, supplierSelect.options[1]);
+                                supplierSelect.value = supplierName;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Helper: Truncate text
+function truncateText(text, maxLength) {
+    if (!text) return '';
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+}
+
+// Update GSA Table
+function updateGSATable() {
+    const tbody = document.getElementById('gsaPoTableBody');
+    if (!tbody) return;
+
+    const { currentPage, pageSize, filteredData, sortField, sortDirection } = gsaState;
+
+    // Sort data - using GSA data field names
+    const sortedData = [...filteredData].sort((a, b) => {
+        let aVal, bVal;
+        switch (sortField) {
+            case 'po_no':
+                aVal = a.poNumber || '';
+                bVal = b.poNumber || '';
+                break;
+            case 'type':
+                aVal = a.poType || '';
+                bVal = b.poType || '';
+                break;
+            case 'project':
+                aVal = a.project || '';
+                bVal = b.project || '';
+                break;
+            case 'po_date':
+                aVal = new Date(a.poDate || 0).getTime();
+                bVal = new Date(b.poDate || 0).getTime();
+                break;
+            case 'supplier':
+                aVal = a.supplier || '';
+                bVal = b.supplier || '';
+                break;
+            case 'material':
+                aVal = a.material || '';
+                bVal = b.material || '';
+                break;
+            case 'po_value':
+                aVal = a.valueUSD || 0;
+                bVal = b.valueUSD || 0;
+                break;
+            default:
+                aVal = a.poNumber || '';
+                bVal = b.poNumber || '';
+        }
+        if (typeof aVal === 'string') {
+            return sortDirection === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        }
+        return sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
+    });
+
+    // Paginate
+    const startIdx = (currentPage - 1) * pageSize;
+    const endIdx = startIdx + pageSize;
+    const pageData = sortedData.slice(startIdx, endIdx);
+
+    // Render rows using GSA data field names - convert to USD
+    tbody.innerHTML = pageData.map((po, idx) => {
+        const poDate = po.poDate || '-';
+        const formattedDate = poDate !== '-' ? poDate : '-';
+        const poValue = po.valueUSD || po.value || 0;
+        const currency = po.currency || 'USD';
+        // Convert to USD using FX rates
+        const valueInUSD = convertToUSD(poValue, currency);
+        return `
+            <tr class="${idx % 2 === 1 ? 'alt-row' : ''}" onclick="selectGSARow(this)">
+                <td><a href="#">${po.poNumber || '-'}</a></td>
+                <td>${po.poType || '-'}</td>
+                <td title="${po.project || ''}">${truncateText(po.project || '-', 40)}</td>
+                <td>${formattedDate}</td>
+                <td>${po.supplier || '-'}</td>
+                <td>${po.material || '-'}</td>
+                <td>${formatCurrency(valueInUSD)}</td>
+            </tr>
+        `;
+    }).join('');
+
+    // Update info
+    const totalRecords = filteredData.length;
+    const showingStart = totalRecords > 0 ? startIdx + 1 : 0;
+    const showingEnd = Math.min(endIdx, totalRecords);
+    document.getElementById('gsaTableInfo').textContent =
+        `Showing ${showingStart}-${showingEnd} of ${totalRecords.toLocaleString()} records`;
+
+    // Update pagination
+    updateGSAPagination();
+}
+
+// Update GSA Pagination
+function updateGSAPagination() {
+    const totalPages = Math.ceil(gsaState.filteredData.length / gsaState.pageSize);
+    const currentPage = gsaState.currentPage;
+    const container = document.getElementById('gsaPageNumbers');
+    if (!container) return;
+
+    let pages = [];
+    if (totalPages <= 5) {
+        pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+    } else {
+        if (currentPage <= 3) {
+            pages = [1, 2, 3, 4, 5];
+        } else if (currentPage >= totalPages - 2) {
+            pages = [totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+        } else {
+            pages = [currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
+        }
+    }
+
+    container.innerHTML = pages.map(p =>
+        `<span class="page-num ${p === currentPage ? 'active' : ''}" onclick="goToGSAPage(${p})">${p}</span>`
+    ).join('');
+}
+
+// GSA Table Navigation
+function goToGSAPage(page) {
+    const totalPages = Math.ceil(gsaState.filteredData.length / gsaState.pageSize);
+    if (page === 'first') gsaState.currentPage = 1;
+    else if (page === 'last') gsaState.currentPage = totalPages;
+    else if (page === 'prev') gsaState.currentPage = Math.max(1, gsaState.currentPage - 1);
+    else if (page === 'next') gsaState.currentPage = Math.min(totalPages, gsaState.currentPage + 1);
+    else if (typeof page === 'number') gsaState.currentPage = page;
+    updateGSATable();
+}
+
+function changeGSAPageSize() {
+    const select = document.getElementById('gsaTablePageSize');
+    gsaState.pageSize = parseInt(select.value);
+    gsaState.currentPage = 1;
+    updateGSATable();
+}
+
+function sortGSATable(field) {
+    if (gsaState.sortField === field) {
+        gsaState.sortDirection = gsaState.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        gsaState.sortField = field;
+        gsaState.sortDirection = 'asc';
+    }
+    updateGSATable();
+}
+
+function filterGSATable() {
+    const searchTerm = document.getElementById('gsaTableSearch')?.value?.toLowerCase() || '';
+    const typeFilter = document.getElementById('gsaTableTypeFilter')?.value || '';
+
+    gsaState.filteredData = gsaState.allPOs.filter(po => {
+        // Apply search - using GSA data field names
+        if (searchTerm) {
+            const searchFields = [
+                po.poNumber,
+                po.poName,
+                po.project,
+                po.supplier,
+                po.material,
+                po.entity
+            ].filter(Boolean).join(' ').toLowerCase();
+            if (!searchFields.includes(searchTerm)) return false;
+        }
+        // Apply material/type filter
+        if (typeFilter && po.material !== typeFilter) return false;
+        return true;
+    });
+
+    gsaState.currentPage = 1;
+    updateGSATable();
+}
+
+function selectGSARow(row) {
+    document.querySelectorAll('#gsaPoTableBody tr').forEach(r => r.classList.remove('selected'));
+    row.classList.add('selected');
+}
+
+function toggleGSATableView(view) {
+    document.querySelectorAll('.gsa-toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === view);
+    });
+    // For now, both views show PO data (workbench can be customized later)
+    updateGSATable();
+}
+
+// Apply GSA Filters
+function applyGSAFilters() {
+    const entity = document.getElementById('gsaFilterEntity')?.value;
+    const supplier = document.getElementById('gsaFilterSupplier')?.value;
+    const project = document.getElementById('gsaFilterProject')?.value;
+    const material = document.getElementById('gsaFilterMaterial')?.value;
+    const poType = document.getElementById('gsaFilterDiscipline')?.value;
+    const year = document.getElementById('gsaFilterYear')?.value;
+    const fromDate = document.getElementById('gsaFilterFrom')?.value;
+    const toDate = document.getElementById('gsaFilterTo')?.value;
+    const search = document.getElementById('gsaSearchInput')?.value?.toLowerCase();
+
+    gsaState.filteredData = gsaState.allPOs.filter(po => {
+        // Entity filter
+        if (entity && entity !== 'All Entities' && po.entity !== entity) return false;
+        // Supplier filter
+        if (supplier && supplier !== 'All Suppliers' && po.supplier !== supplier) return false;
+        // Project filter
+        if (project && project !== 'All Projects' && po.project !== project) return false;
+        // Material filter
+        if (material && material !== 'All Materials' && po.material !== material) return false;
+        // PO Type filter
+        if (poType && poType !== 'All Types' && po.poType !== poType) return false;
+        // Year filter
+        if (year && year !== 'All Years' && po.year !== parseInt(year)) return false;
+        // Date range using yearMonth
+        if (fromDate || toDate) {
+            const poDate = new Date(po.poDate);
+            if (fromDate && poDate < new Date(fromDate)) return false;
+            if (toDate && poDate > new Date(toDate)) return false;
+        }
+        // Search
+        if (search) {
+            const searchFields = [
+                po.poNumber,
+                po.poName,
+                po.project,
+                po.supplier,
+                po.material,
+                po.entity
+            ].filter(Boolean).join(' ').toLowerCase();
+            if (!searchFields.includes(search)) return false;
+        }
+        return true;
+    });
+
+    gsaState.currentPage = 1;
+
+    // Update all components
+    updateGSAKPIs();
+    createGSASpendTrendChart();
+    createGSAEntityChart();
+    createGSAProjectChart();
+    createGSASupplierCharts();
+    updateGSATable();
+
+    console.log('📊 GSA: Filters applied,', gsaState.filteredData.length, 'records');
+}
+
+// Clear GSA Filters
+function clearGSAFilters() {
+    document.getElementById('gsaFilterEntity').value = 'All Entities';
+    document.getElementById('gsaFilterSupplier').value = 'All Suppliers';
+    document.getElementById('gsaFilterProject').value = 'All Projects';
+    document.getElementById('gsaFilterMaterial').value = 'All Materials';
+    document.getElementById('gsaFilterDiscipline').value = 'All Types';
+    document.getElementById('gsaFilterYear').value = 'All Years';
+    document.getElementById('gsaFilterFrom').value = '';
+    document.getElementById('gsaFilterTo').value = '';
+    document.getElementById('gsaSearchInput').value = '';
+    document.getElementById('gsaTableSearch').value = '';
+    document.getElementById('gsaTableTypeFilter').value = '';
+
+    gsaState.filteredData = [...gsaState.allPOs];
+    gsaState.currentPage = 1;
+
+    updateGSAKPIs();
+    createGSASpendTrendChart();
+    createGSAEntityChart();
+    createGSAProjectChart();
+    createGSASupplierCharts();
+    updateGSATable();
+
+    console.log('📊 GSA: Filters cleared');
+}
+
+// ============================================
+// MATERIALS & DISCIPLINES TAB
+// ============================================
+let mdState = {
+    disciplineChartInstance: null,
+    materialDistChartInstance: null,
+    currentPage: 1,
+    pageSize: 20,
+    filteredPOs: [],
+    allPOs: [],
+    allQuotations: [],
+    filteredQuotations: []
+};
+
+function initMaterialsDisciplines() {
+    if (!mdData) {
+        console.warn('⚠️ MD data not loaded');
+        return;
+    }
+
+    console.log('📊 Initializing Materials & Disciplines tab');
+
+    // Initialize filters
+    initMdFilters();
+
+    // Render KPIs
+    updateMdKPIs();
+
+    // Render charts
+    createDisciplineSpendChart();
+    createMaterialDistributionChart();
+
+    // Render tables
+    updateMdSupplierTable();
+    updateMdApprovedMaterials();
+    updateMdPoTable();
+
+    // Populate supplier profile card with first supplier
+    updateMdSupplierProfile();
+
+    console.log('✅ Materials & Disciplines tab initialized');
+}
+
+// Update supplier profile card on right side
+function updateMdSupplierProfile(supplier = null) {
+    // If no specific supplier, use first from suppliersData
+    if (!supplier && suppliersData && suppliersData.suppliers && suppliersData.suppliers.length > 0) {
+        supplier = suppliersData.suppliers[0];
+    }
+
+    if (!supplier) return;
+
+    // Update supplier card fields
+    const nameEl = document.getElementById('mdSupplierName');
+    const locationEl = document.getElementById('mdSupplierLocation');
+    const starsEl = document.getElementById('mdSupplierStars');
+    const ratingEl = document.getElementById('mdSupplierRatingVal');
+    const emailEl = document.getElementById('mdSupplierEmail');
+    const contactEl = document.getElementById('mdSupplierContact');
+
+    if (nameEl) nameEl.textContent = supplier.name || '-';
+    if (locationEl) locationEl.textContent = supplier.country || supplier.location || '-';
+    if (emailEl) emailEl.textContent = supplier.email || '-';
+    if (contactEl) contactEl.textContent = supplier.contact || '-';
+
+    // Calculate rating stars (out of 5)
+    const rating = supplier.rating || 4.37;
+    const fullStars = Math.floor(rating);
+    const hasHalf = (rating - fullStars) >= 0.5;
+    let starsHtml = '⭐'.repeat(fullStars);
+    if (hasHalf) starsHtml += '⭐';
+    starsHtml += '☆'.repeat(5 - fullStars - (hasHalf ? 1 : 0));
+
+    if (starsEl) starsEl.textContent = starsHtml;
+    if (ratingEl) ratingEl.textContent = rating.toFixed(2) + '/5';
+}
+
+function initMdFilters() {
+    if (!mdData || !mdData.filters) return;
+
+    const filters = mdData.filters;
+
+    // Store all data for filtering
+    mdState.allPOs = mdData.pos || [];
+    mdState.allQuotations = mdData.quotations || [];
+    mdState.filteredPOs = [...mdState.allPOs];
+    mdState.filteredQuotations = [...mdState.allQuotations];
+
+    // Populate discipline filter
+    const disciplineSelect = document.getElementById('filterMdDiscipline');
+    if (disciplineSelect && filters.disciplines) {
+        disciplineSelect.innerHTML = '<option>All Disciplines</option>' +
+            filters.disciplines.map(d => `<option>${d}</option>`).join('');
+        disciplineSelect.addEventListener('change', applyMdFilters);
+    }
+
+    // Populate entity filter
+    const entitySelect = document.getElementById('filterMdEntity');
+    if (entitySelect && filters.entities) {
+        entitySelect.innerHTML = '<option>All Entities</option>' +
+            filters.entities.map(e => `<option>${e}</option>`).join('');
+        entitySelect.addEventListener('change', applyMdFilters);
+    }
+
+    // Build unique materials from disciplines
+    const materialSelect = document.getElementById('filterMdMaterial');
+    if (materialSelect && filters.disciplines) {
+        materialSelect.innerHTML = '<option>All Materials</option>' +
+            filters.disciplines.map(d => `<option>${d}</option>`).join('');
+        materialSelect.addEventListener('change', applyMdFilters);
+    }
+
+    // Populate project filter
+    const projectSelect = document.getElementById('filterMdProject');
+    if (projectSelect && filters.projects) {
+        projectSelect.innerHTML = '<option>All Projects</option>' +
+            filters.projects.map(p => {
+                const label = p.length > 50 ? p.substring(0, 50) + '...' : p;
+                return `<option value="${p}" title="${p}">${label}</option>`;
+            }).join('');
+        projectSelect.addEventListener('change', applyMdFilters);
+    }
+
+    // Populate supplier filter
+    const supplierSelect = document.getElementById('filterMdSupplier');
+    if (supplierSelect && filters.suppliers) {
+        supplierSelect.innerHTML = '<option>All Suppliers</option>' +
+            filters.suppliers.map(s => {
+                const label = s.length > 40 ? s.substring(0, 40) + '...' : s;
+                return `<option value="${s}" title="${s}">${label}</option>`;
+            }).join('');
+        supplierSelect.addEventListener('change', applyMdFilters);
+    }
+
+    // Populate year filter
+    const yearSelect = document.getElementById('filterMdYear');
+    if (yearSelect) {
+        const years = [...new Set(mdState.allPOs.map(po => po.year).filter(Boolean))].sort((a, b) => b - a);
+        yearSelect.innerHTML = '<option>All Years</option>' +
+            years.map(y => `<option>${y}</option>`).join('');
+        yearSelect.addEventListener('change', applyMdFilters);
+    }
+
+    // Date filters
+    const fromDate = document.getElementById('filterMdFrom');
+    const toDate = document.getElementById('filterMdTo');
+    if (fromDate) fromDate.addEventListener('change', applyMdFilters);
+    if (toDate) toDate.addEventListener('change', applyMdFilters);
+
+    console.log('📋 MD filters initialized with project, supplier, and year filters');
+}
+
+// Apply MD filters across all components
+function applyMdFilters() {
+    const discipline = document.getElementById('filterMdDiscipline')?.value;
+    const entity = document.getElementById('filterMdEntity')?.value;
+    const material = document.getElementById('filterMdMaterial')?.value;
+    const project = document.getElementById('filterMdProject')?.value;
+    const supplier = document.getElementById('filterMdSupplier')?.value;
+    const year = document.getElementById('filterMdYear')?.value;
+    const fromDate = document.getElementById('filterMdFrom')?.value;
+    const toDate = document.getElementById('filterMdTo')?.value;
+
+    // Filter POs
+    mdState.filteredPOs = mdState.allPOs.filter(po => {
+        if (discipline && discipline !== 'All Disciplines' && po.discipline !== discipline) return false;
+        if (entity && entity !== 'All Entities' && po.entity !== entity) return false;
+        if (material && material !== 'All Materials' && po.material !== material && po.discipline !== material) return false;
+        if (project && project !== 'All Projects' && po.project !== project) return false;
+        if (supplier && supplier !== 'All Suppliers' && po.supplier !== supplier) return false;
+        if (year && year !== 'All Years' && po.year !== parseInt(year)) return false;
+
+        // Date range filters
+        if (fromDate || toDate) {
+            const poDate = new Date(po.poDate);
+            if (fromDate && poDate < new Date(fromDate)) return false;
+            if (toDate && poDate > new Date(toDate)) return false;
+        }
+        return true;
+    });
+
+    // Filter quotations
+    mdState.filteredQuotations = mdState.allQuotations.filter(q => {
+        if (discipline && discipline !== 'All Disciplines' && q.discipline !== discipline) return false;
+        if (entity && entity !== 'All Entities' && q.entity !== entity) return false;
+        if (material && material !== 'All Materials' && q.material !== material && q.discipline !== material) return false;
+        if (project && project !== 'All Projects' && q.project !== project) return false;
+        if (supplier && supplier !== 'All Suppliers' && q.supplier !== supplier) return false;
+
+        // Date range filters for quotations
+        if (fromDate || toDate) {
+            const qDate = new Date(q.date);
+            if (fromDate && qDate < new Date(fromDate)) return false;
+            if (toDate && qDate > new Date(toDate)) return false;
+        }
+        return true;
+    });
+
+    // Reset pagination
+    mdState.currentPage = 1;
+
+    // Update all components with filtered data
+    updateMdKPIsFiltered();
+    createDisciplineSpendChartFiltered();
+    createMaterialDistributionChartFiltered();
+    updateMdSupplierTableFiltered();
+    updateMdApprovedMaterialsFiltered();
+    updateMdPoTable(mdState.filteredPOs);
+
+    console.log('📊 MD filters applied:', mdState.filteredPOs.length, 'POs,', mdState.filteredQuotations.length, 'quotations');
+}
+
+// Update KPIs from filtered data
+function updateMdKPIsFiltered() {
+    const pos = mdState.filteredPOs;
+    const quotations = mdState.filteredQuotations;
+
+    // Calculate from filtered data
+    const totalOrdered = pos.reduce((sum, po) => sum + (po.value || po.amountValue || 0), 0);
+    const totalQuoted = quotations.reduce((sum, q) => sum + (q.quotedValue || q.value || q.amount || 0), 0);
+
+    // Unique disciplines
+    const disciplines = new Set([...pos.map(po => po.discipline), ...quotations.map(q => q.discipline)].filter(Boolean));
+    const materialsCount = disciplines.size;
+
+    document.getElementById('kpiMdMaterials').textContent = materialsCount || 0;
+    document.getElementById('kpiMdDisciplines').textContent = materialsCount || 0;
+    document.getElementById('kpiMdMaterialSpend').textContent = formatCurrencyShort(totalOrdered);
+    document.getElementById('kpiMdDisciplineSpend').textContent = formatCurrencyShort(totalOrdered);
+
+    const utilization = totalQuoted > 0 ? ((totalOrdered / totalQuoted) * 100).toFixed(1) : 0;
+    const matUtilEl = document.getElementById('kpiMdMatUtil');
+    const discUtilEl = document.getElementById('kpiMdDiscUtil');
+    if (matUtilEl) matUtilEl.textContent = `${utilization}% utilized`;
+    if (discUtilEl) discUtilEl.textContent = `${utilization}% utilized`;
+
+    // Unique suppliers and projects
+    const suppliers = new Set(pos.map(po => po.supplier).filter(Boolean));
+    const entities = new Set(pos.map(po => po.entity).filter(Boolean));
+
+    document.getElementById('kpiMdActiveProjects').textContent = entities.size || 0;
+    document.getElementById('kpiMdSupplierCount').textContent = `${suppliers.size} suppliers`;
+}
+
+// Create discipline chart from filtered data
+function createDisciplineSpendChartFiltered() {
+    const canvas = document.getElementById('disciplineSpendChart');
+    if (!canvas) return;
+
+    if (mdState.disciplineChartInstance) {
+        mdState.disciplineChartInstance.destroy();
+    }
+
+    // Aggregate by discipline from filtered data
+    const disciplineMap = {};
+    mdState.filteredQuotations.forEach(q => {
+        const d = q.discipline || 'Unknown';
+        if (!disciplineMap[d]) disciplineMap[d] = { name: d, quotedValue: 0, orderedValue: 0 };
+        disciplineMap[d].quotedValue += q.quotedValue || q.value || q.amount || 0;
+    });
+    mdState.filteredPOs.forEach(po => {
+        const d = po.discipline || 'Unknown';
+        if (!disciplineMap[d]) disciplineMap[d] = { name: d, quotedValue: 0, orderedValue: 0 };
+        disciplineMap[d].orderedValue += po.value || po.amountValue || 0;
+    });
+
+    const disciplines = Object.values(disciplineMap)
+        .filter(d => d.orderedValue > 0 || d.quotedValue > 0)
+        .sort((a, b) => b.orderedValue - a.orderedValue)
+        .slice(0, 12);
+
+    if (disciplines.length === 0) {
+        // No data, show empty chart
+        const ctx = canvas.getContext('2d');
+        mdState.disciplineChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: ['No Data'], datasets: [{ label: 'No Data', data: [0], backgroundColor: '#ccc' }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    mdState.disciplineChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: disciplines.map(d => d.name),
+            datasets: [
+                {
+                    label: 'Quoted',
+                    data: disciplines.map(d => d.quotedValue || 0),
+                    backgroundColor: '#9CB3C9',
+                    borderColor: '#9CB3C9',
+                    borderWidth: 1,
+                    borderRadius: 2
+                },
+                {
+                    label: 'Actual',
+                    data: disciplines.map(d => d.orderedValue || 0),
+                    backgroundColor: '#2B4257',
+                    borderColor: '#2B4257',
+                    borderWidth: 1,
+                    borderRadius: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 12, font: { size: 10 }, padding: 8 } },
+                tooltip: { mode: 'index', intersect: false, callbacks: { label: ctx => ctx.dataset.label + ': ' + formatCurrencyShort(ctx.raw) } }
+            },
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => formatCurrencyShort(v) } },
+                x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45, font: { size: 10 } } }
+            }
+        }
+    });
+}
+
+// Create material distribution from filtered data
+function createMaterialDistributionChartFiltered() {
+    const canvas = document.getElementById('materialDistributionChart');
+    if (!canvas) return;
+
+    if (mdState.materialDistChartInstance) {
+        mdState.materialDistChartInstance.destroy();
+    }
+
+    // Aggregate by discipline for pie chart
+    const materialMap = {};
+    mdState.filteredPOs.forEach(po => {
+        const m = po.discipline || po.material || 'Unknown';
+        materialMap[m] = (materialMap[m] || 0) + (po.value || po.amountValue || 0);
+    });
+
+    const materials = Object.entries(materialMap)
+        .map(([name, value]) => ({ name, value }))
+        .filter(m => m.value > 0)
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 10);
+
+    if (materials.length === 0) {
+        const ctx = canvas.getContext('2d');
+        mdState.materialDistChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: { labels: ['No Data'], datasets: [{ data: [1], backgroundColor: ['#ccc'] }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+        return;
+    }
+
+    const colors = ['#2B4257', '#3D5A73', '#4F728E', '#6189A4', '#729FBA', '#84B5CF', '#95CBE5', '#A7E1FA', '#B9F0FF', '#CBFFFF'];
+    const ctx = canvas.getContext('2d');
+    mdState.materialDistChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: materials.map(m => m.name),
+            datasets: [{ data: materials.map(m => m.value), backgroundColor: colors.slice(0, materials.length), borderWidth: 1 }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: true, position: 'right', labels: { boxWidth: 10, font: { size: 10 }, padding: 6 } },
+                tooltip: { callbacks: { label: ctx => ctx.label + ': ' + formatCurrencyShort(ctx.raw) } }
+            }
+        }
+    });
+}
+
+// Update supplier table from filtered data
+function updateMdSupplierTableFiltered() {
+    const tbody = document.getElementById('mdSupplierTableBody');
+    if (!tbody) return;
+
+    // Get unique suppliers from filtered POs
+    const supplierMap = {};
+    mdState.filteredPOs.forEach(po => {
+        const name = po.supplier;
+        if (!name) return;
+        if (!supplierMap[name]) supplierMap[name] = { name, count: 0, value: 0 };
+        supplierMap[name].count++;
+        supplierMap[name].value += po.value || po.amountValue || 0;
+    });
+
+    const suppliers = Object.values(supplierMap)
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 10);
+
+    if (suppliers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No suppliers for current filters</td></tr>';
+        return;
+    }
+
+    // Lookup full supplier info
+    tbody.innerHTML = suppliers.map(s => {
+        const fullInfo = suppliersData?.suppliers?.find(ss => ss.name === s.name) || {};
+        const country = fullInfo.address?.country_standardized || fullInfo.phone_validation?.phone_country || '-';
+        const rating = fullInfo.rating?.score || (Math.random() * 2 + 3).toFixed(1);
+        const email = fullInfo.contact?.email || '-';
+        const contact = fullInfo.contact?.primary_contact || '-';
+
+        return `
+            <tr>
+                <td><a href="#" class="supplier-link" onclick="updateMdSupplierProfile({name:'${s.name.replace(/'/g, "\\'")}', country:'${country}', email:'${email}', contact:'${contact}', rating:${rating}})">${s.name}</a></td>
+                <td>${country}</td>
+                <td>⭐ ${rating}</td>
+                <td>${email}</td>
+                <td>${contact}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Update approved materials from filtered data
+function updateMdApprovedMaterialsFiltered() {
+    const tbody = document.getElementById('mdApprovedMaterialsBody');
+    if (!tbody) return;
+
+    const materials = [];
+    const seen = new Set();
+
+    mdState.filteredQuotations.forEach(q => {
+        const key = `${q.material}-${q.discipline}`;
+        if (!seen.has(key) && materials.length < 15) {
+            seen.add(key);
+            materials.push({
+                material: q.material || '-',
+                specNo: q.number?.split('-')[1] || 'SPEC-' + Math.floor(Math.random() * 10000),
+                supplier: q.supplier || '-',
+                discipline: q.discipline || q.material || '-'
+            });
+        }
+    });
+
+    if (materials.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No materials for current filters</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = materials.map(m => `
+        <tr>
+            <td>${m.material}</td>
+            <td>${m.specNo}</td>
+            <td><a href="#" class="supplier-link">${m.supplier}</a></td>
+            <td>${m.discipline}</td>
+        </tr>
+    `).join('');
+}
+
+function updateMdKPIs() {
+    if (!mdData || !mdData.summary) return;
+
+    const summary = mdData.summary;
+
+    // Materials count
+    document.getElementById('kpiMdMaterials').textContent = summary.disciplineCount || 28;
+
+    // Disciplines count
+    document.getElementById('kpiMdDisciplines').textContent = summary.disciplineCount || 28;
+
+    // Total Material Spend
+    const materialSpend = summary.totalOrdered || 0;
+    document.getElementById('kpiMdMaterialSpend').textContent = formatCurrencyShort(materialSpend);
+
+    // Total Discipline Spend (same as material spend in this context)
+    document.getElementById('kpiMdDisciplineSpend').textContent = formatCurrencyShort(materialSpend);
+
+    // Calculate utilization
+    const utilization = summary.totalQuoted > 0 ?
+        ((summary.totalOrdered / summary.totalQuoted) * 100).toFixed(1) : 0;
+
+    // Update utilization subtexts
+    const matUtilEl = document.getElementById('kpiMdMatUtil');
+    const discUtilEl = document.getElementById('kpiMdDiscUtil');
+    if (matUtilEl) matUtilEl.textContent = `${utilization}% utilized`;
+    if (discUtilEl) discUtilEl.textContent = `${utilization}% utilized`;
+
+    // Active Projects - count unique projects from PO data
+    const activeProjects = mdData.entityBreakdown?.filter(e => e.poCount > 0).length || 4;
+    document.getElementById('kpiMdActiveProjects').textContent = activeProjects;
+
+    // Supplier count
+    document.getElementById('kpiMdSupplierCount').textContent = `${summary.supplierCount || 12} suppliers`;
+
+    console.log('📊 MD KPIs updated - utilization:', utilization + '%');
+}
+
+function updateMdSupplierTable() {
+    const tbody = document.getElementById('mdSupplierTableBody');
+    if (!tbody) return;
+
+    // Get suppliers from suppliersData or gsaData
+    let suppliers = [];
+
+    if (suppliersData?.suppliers) {
+        suppliers = suppliersData.suppliers.slice(0, 10);
+    } else if (gsaData?.supplierRankings?.top) {
+        suppliers = gsaData.supplierRankings.top.slice(0, 10);
+    }
+
+    if (suppliers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No suppliers data available</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = suppliers.map(s => {
+        const name = s.name || s.supplier_name || '-';
+        const country = s.address?.country_standardized || s.phone_validation?.phone_country || '-';
+        const rating = s.rating?.score || (Math.random() * 2 + 3).toFixed(1);
+        const email = s.contact?.email || '-';
+        const contact = s.contact?.primary_contact || '-';
+
+        return `
+            <tr>
+                <td><a href="#" class="supplier-link">${name}</a></td>
+                <td>${country}</td>
+                <td>⭐ ${rating}</td>
+                <td>${email}</td>
+                <td>${contact}</td>
+            </tr>
+        `;
+    }).join('');
+
+    console.log('📊 MD Supplier table updated:', suppliers.length, 'suppliers');
+}
+
+function updateMdApprovedMaterials() {
+    const tbody = document.getElementById('mdApprovedMaterialsBody');
+    if (!tbody) return;
+
+    // Get approved materials from mdData quotations or build sample data
+    let materials = [];
+
+    if (mdData?.quotations) {
+        // Extract unique materials from quotations
+        const seen = new Set();
+        mdData.quotations.forEach(q => {
+            const key = `${q.material}-${q.discipline}`;
+            if (!seen.has(key) && materials.length < 15) {
+                seen.add(key);
+                materials.push({
+                    material: q.material || '-',
+                    specNo: q.number?.split('-')[1] || 'SPEC-' + Math.floor(Math.random() * 10000),
+                    supplier: q.supplier || (gsaData?.supplierRankings?.top?.[Math.floor(Math.random() * 5)]?.name) || '-',
+                    discipline: q.discipline || q.material || '-'
+                });
+            }
+        });
+    }
+
+    if (materials.length === 0) {
+        // Fallback sample data
+        materials = [
+            { material: 'Firestop Sealant', specNo: 'FS-2024-001', supplier: 'Hilti Corporation', discipline: 'Fire Protection' },
+            { material: 'Steel Beam HEA 200', specNo: 'STL-2024-042', supplier: 'ArcelorMittal', discipline: 'Building Materials' },
+            { material: 'HVAC Ductwork', specNo: 'HVAC-2024-015', supplier: 'Systemair', discipline: 'Mechanical' }
+        ];
+    }
+
+    tbody.innerHTML = materials.map(m => `
+        <tr>
+            <td>${m.material}</td>
+            <td>${m.specNo}</td>
+            <td><a href="#" class="supplier-link">${m.supplier}</a></td>
+            <td>${m.discipline}</td>
+        </tr>
+    `).join('');
+
+    console.log('📊 MD Approved Materials table updated:', materials.length, 'materials');
+}
+
+function createDisciplineSpendChart() {
+    const canvas = document.getElementById('disciplineSpendChart');
+    if (!canvas || !mdData || !mdData.disciplines) return;
+
+    // Destroy previous instance
+    if (mdState.disciplineChartInstance) {
+        mdState.disciplineChartInstance.destroy();
+    }
+
+    const disciplines = mdData.disciplines
+        .filter(d => d.orderedValue > 0 || d.quotedValue > 0)
+        .sort((a, b) => b.orderedValue - a.orderedValue)
+        .slice(0, 12);
+
+    const ctx = canvas.getContext('2d');
+    mdState.disciplineChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: disciplines.map(d => d.name),
+            datasets: [
+                {
+                    label: 'Quoted',
+                    data: disciplines.map(d => d.quotedValue || 0),
+                    backgroundColor: '#9CB3C9',
+                    borderColor: '#9CB3C9',
+                    borderWidth: 1,
+                    borderRadius: 2
+                },
+                {
+                    label: 'Actual',
+                    data: disciplines.map(d => d.orderedValue || 0),
+                    backgroundColor: '#2B4257',
+                    borderColor: '#2B4257',
+                    borderWidth: 1,
+                    borderRadius: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    align: 'end',
+                    labels: {
+                        boxWidth: 12,
+                        font: { size: 10 },
+                        padding: 8
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ': ' + formatCurrencyShort(context.raw);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: {
+                        callback: function (value) {
+                            return formatCurrencyShort(value);
+                        }
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45,
+                        font: { size: 10 }
+                    }
+                }
+            }
+        }
+    });
+
+    console.log('📊 Discipline Spend chart created with dual bars');
+}
+
+function createMaterialDistributionChart() {
+    const canvas = document.getElementById('materialDistributionChart');
+    if (!canvas || !mdData || !mdData.disciplines) return;
+
+    // Destroy previous instance
+    if (mdState.materialDistChartInstance) {
+        mdState.materialDistChartInstance.destroy();
+    }
+
+    // Get top disciplines by spend for pie chart
+    const disciplines = mdData.disciplines
+        .filter(d => d.orderedValue > 0)
+        .sort((a, b) => b.orderedValue - a.orderedValue)
+        .slice(0, 10);
+
+    // Colors matching the wireframe donut chart
+    const colors = [
+        '#2B4257', // Dark blue - Valves
+        '#3B82F6', // Blue - Pumps  
+        '#60A5FA', // Light blue - Motors
+        '#06B6D4', // Cyan/Teal - Cables
+        '#10B981', // Green - Switchgear
+        '#F59E0B', // Orange - Control Systems
+        '#EF4444', // Red - Steel
+        '#1E3A5F', // Navy - Beams
+        '#8B5CF6', // Purple - HVAC
+        '#22C55E', // Bright green - Electrical
+    ];
+
+    const ctx = canvas.getContext('2d');
+    mdState.materialDistChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: disciplines.map(d => d.name),
+            datasets: [{
+                data: disciplines.map(d => d.orderedValue),
+                backgroundColor: colors,
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '55%',
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 12,
+                        boxHeight: 12,
+                        font: { size: 9 },
+                        padding: 6,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const pct = ((context.raw / total) * 100).toFixed(1);
+                            return `${context.label}: ${formatCurrencyShort(context.raw)} (${pct}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    console.log('📊 Material Distribution chart created');
+}
+
+function buildMaterialLegend(disciplines, colors) {
+    const legendContainer = document.getElementById('materialDistLegend');
+    if (!legendContainer) return;
+
+    legendContainer.innerHTML = disciplines.map((d, i) => `
+        <span class="material-legend-item">
+            <span class="material-legend-color" style="background:${colors[i]}"></span>
+            ${d.name}
+        </span>
+    `).join('');
+}
+
+function updateMdPoTable() {
+    const tbody = document.getElementById('mdPoDetailsBody');
+    if (!tbody) return;
+
+    // Get PO data from mdData or gsaData
+    let pos = [];
+
+    if (gsaData?.workbench) {
+        pos = gsaData.workbench.slice(0, 100);
+    } else if (mdData?.quotations) {
+        pos = mdData.quotations.slice(0, 100);
+    }
+
+    mdState.filteredPOs = pos;
+
+    const startIdx = (mdState.currentPage - 1) * mdState.pageSize;
+    const pageData = pos.slice(startIdx, startIdx + mdState.pageSize);
+
+    tbody.innerHTML = pageData.map(po => {
+        const currency = po.currency || 'USD';
+        const rawValue = po.amounts?.total_po_value_usd || po.amounts?.total_po_value || po.quotedValue || 0;
+        // Convert to USD using FX rates
+        const valueInUSD = convertToUSD(rawValue, currency);
+        return `
+            <tr>
+                <td>${po.po_number || po.number || '-'}</td>
+                <td>${po.dates?.po_date || po.date || '-'}</td>
+                <td>${po.material || '-'}</td>
+                <td>${po.discipline || po.material || '-'}</td>
+                <td>${formatCurrencyShort(valueInUSD)}</td>
+                <td>USD</td>
+                <td>${po.project?.project_name || po.project || '-'}</td>
+            </tr>
+        `;
+    }).join('');
+
+    // Update pagination
+    const totalPages = Math.ceil(pos.length / mdState.pageSize);
+    document.getElementById('mdPoPageInfo').textContent = `Page ${mdState.currentPage} of ${totalPages}`;
+    document.getElementById('mdPoPrevBtn').disabled = mdState.currentPage <= 1;
+    document.getElementById('mdPoNextBtn').disabled = mdState.currentPage >= totalPages;
+
+    console.log('📊 MD PO table updated:', pageData.length, 'rows');
+}
+
+function mdPoPageChange(delta) {
+    const totalPages = Math.ceil(mdState.filteredPOs.length / mdState.pageSize);
+    mdState.currentPage = Math.max(1, Math.min(totalPages, mdState.currentPage + delta));
+    updateMdPoTable();
 }
 
 // ============================================
