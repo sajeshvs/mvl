@@ -1,0 +1,61 @@
+{
+  "project": "MVL Supply Chain Intel Hub",
+  "extraction_date": "2026-02-09 17:47:05",
+  "version": "1.0",
+  "datasets": {
+    "suppliers": {
+      "file": "suppliers.json",
+      "records": 2189,
+      "source": "MVL_Suppliers_List_ENRICHED.xlsx",
+      "has_location_data": true
+    },
+    "purchase_orders": {
+      "file": "purchase_orders.json",
+      "records": 3539,
+      "source": "PO_List_Jan-23-2026.xlsx",
+      "linked_to_suppliers": true
+    },
+    "quotations": {
+      "file": "quotations.json",
+      "records": 12136,
+      "source": "5 quotation report files",
+      "merged_and_deduplicated": true
+    }
+  },
+  "improvements_applied": [
+    "ISO 8601 date formatting",
+    "Country name standardization with ISO codes",
+    "Phone number validation and country matching",
+    "Geocoding with latitude/longitude coordinates",
+    "Location quality scoring",
+    "Supplier-PO linkage via name matching",
+    "PO number component parsing",
+    "Quotation number component parsing",
+    "Status value normalization",
+    "Data quality score calculation",
+    "Missing field tracking",
+    "Nested object structures for related data",
+    "Unique ID generation for all records",
+    "Metadata enrichment"
+  ],
+  "data_quality": {
+    "suppliers": {
+      "avg_quality_score": 0.95,
+      "high_quality": 2163,
+      "medium_quality": 26,
+      "low_quality": 0
+    },
+    "purchase_orders": {
+      "avg_quality_score": 1.0,
+      "high_quality": 3539,
+      "medium_quality": 0,
+      "low_quality": 0
+    },
+    "quotations": {
+      "avg_quality_score": 1.0,
+      "high_quality": 12134,
+      "medium_quality": 0,
+      "low_quality": 2
+    }
+  }
+}

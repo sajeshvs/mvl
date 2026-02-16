@@ -1,0 +1,211 @@
+{
+  "improvement_date": "2026-02-09 19:36:11",
+  "datasets": {
+    "suppliers": {
+      "total_records": 2189,
+      "improvements": {
+        "emails_cleaned": 156,
+        "phones_standardized": 788,
+        "contacts_parsed": 1957,
+        "geocoded_new": 0,
+        "scores_calculated": 2189
+      },
+      "top_rated": [
+        {
+          "id": "SUP-0183",
+          "name": "Al Sehmiah Cement Products",
+          "score": 79.0,
+          "rating": 4.0
+        },
+        {
+          "id": "SUP-0560",
+          "name": "CREO LIGHTING CO.",
+          "score": 79.0,
+          "rating": 4.0
+        },
+        {
+          "id": "SUP-0469",
+          "name": "CALA LOGISTICS SERVICES",
+          "score": 76.0,
+          "rating": 3.5
+        },
+        {
+          "id": "SUP-0023",
+          "name": "Abdul Kabir Constrution Compay - AKCC",
+          "score": 74.0,
+          "rating": 4.0
+        },
+        {
+          "id": "SUP-1563",
+          "name": "PRECISE Trading (L.L.C)",
+          "score": 73.0,
+          "rating": 3.0
+        },
+        {
+          "id": "SUP-1607",
+          "name": "QPro Trading & Contracting",
+          "score": 73.0,
+          "rating": 3.0
+        },
+        {
+          "id": "SUP-0003",
+          "name": "(NAVC) Project",
+          "score": 70,
+          "rating": 0.0
+        },
+        {
+          "id": "SUP-0024",
+          "name": "ABDUL QUDOS",
+          "score": 68.0,
+          "rating": 5.0
+        },
+        {
+          "id": "SUP-0226",
+          "name": "Ali Asger & Brothers LLC",
+          "score": 68.0,
+          "rating": 3.0
+        },
+        {
+          "id": "SUP-0394",
+          "name": "BASF Kanoo Polyurethanes LLC",
+          "score": 68.0,
+          "rating": 3.0
+        }
+      ]
+    },
+    "purchase_orders": {
+      "total_records": 3539,
+      "improvements": {
+        "project_codes_extracted": 56,
+        "statuses_calculated": 3539,
+        "categories_identified": 2704,
+        "delivery_dates_estimated": 178
+      },
+      "statistics": {
+        "by_status": {
+          "recent": 44,
+          "active": 134,
+          "aging": 670,
+          "old": 2691
+        },
+        "by_currency": {
+          "AED": 1217,
+          "USD": 1702,
+          "JPY": 1,
+          "EURO": 74,
+          "SGD": 5,
+          "SAR": 169,
+          "BHD": 1,
+          "QAR": 112,
+          "KWD": 35,
+          "INR": 31,
+          "NPR": 170,
+          "GBP": 22
+        },
+        "by_year": {
+          "2026": 62,
+          "2025": 860,
+          "2024": 564,
+          "2023": 482,
+          "2022": 95,
+          "2021": 252,
+          "2020": 175,
+          "2019": 119,
+          "2018": 115,
+          "2017": 87,
+          "2016": 139,
+          "2015": 298,
+          "2014": 214,
+          "2013": 76,
+          "2012": 1
+        },
+        "total_value_by_currency": {
+          "AED": 85141423.31277454,
+          "USD": 107107791.91909744,
+          "JPY": 2146477.0,
+          "EURO": 4936535.9406774985,
+          "SGD": 102968.06,
+          "SAR": 11641595.601800004,
+          "BHD": 3900.0,
+          "QAR": 12128457.585,
+          "KWD": 199952.27,
+          "INR": 16333467.93,
+          "NPR": 252204847.91181174,
+          "GBP": 351807.9346603822
+        }
+      }
+    },
+    "quotations": {
+      "total_records": 12136,
+      "improvements": {
+        "project_codes_extracted": 846,
+        "pos_linked": 3,
+        "clients_categorized": 12136,
+        "win_rates_calculated": 56,
+        "dates_calculated": 0
+      },
+      "top_performers": [
+        {
+          "contact": "Prasad P.",
+          "win_rate": 100.0,
+          "total_quotes": 2,
+          "won_value": 33000.0
+        },
+        {
+          "contact": "Arun S.",
+          "win_rate": 100.0,
+          "total_quotes": 1,
+          "won_value": 409.5
+        },
+        {
+          "contact": "Rusevalt S.",
+          "win_rate": 100.0,
+          "total_quotes": 2,
+          "won_value": 2924.25
+        },
+        {
+          "contact": "Zafar A.",
+          "win_rate": 100.0,
+          "total_quotes": 1,
+          "won_value": 5652.0
+        },
+        {
+          "contact": "Jailani M.",
+          "win_rate": 100.0,
+          "total_quotes": 4,
+          "won_value": 450004.0
+        },
+        {
+          "contact": "Marty A.M.",
+          "win_rate": 100.0,
+          "total_quotes": 10,
+          "won_value": 369941.64
+        },
+        {
+          "contact": "Enayatullah S.",
+          "win_rate": 100.0,
+          "total_quotes": 1,
+          "won_value": 3300.0
+        },
+        {
+          "contact": "Ferdinand R.",
+          "win_rate": 100.0,
+          "total_quotes": 2,
+          "won_value": 41209.0
+        },
+        {
+          "contact": "Admin",
+          "win_rate": 100.0,
+          "total_quotes": 1,
+          "won_value": 1400000.0
+        },
+        {
+          "contact": "Rufino S.J.",
+          "win_rate": 100.0,
+          "total_quotes": 1,
+          "won_value": 5756.5
+        }
+      ]
+    }
+  }
+}

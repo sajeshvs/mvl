@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Chain Intel Hub</title>
+    <link rel="stylesheet" href="shared/styles.css">
+    <link rel="icon" href="../MVLSupplierIntelHub/MVL Supply Chain Intel Hub - Data/Logo/favicon.ico">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- ============================================
+             HEADER
+             ============================================ -->
+        <header class="header">
+            <div class="header-left">
+                <img src="shared/images/SupplyChain1.png" alt="Supply Chain Intel Hub" class="header-logo">
+            </div>
+            <div class="header-right">
+                <span class="header-refresh">Last Refresh: <span id="lastRefresh">Thu 12 Feb 2026 06:08 AM</span></span>
+                <img src="shared/images/mvl-logo.png" alt="MVL" class="header-mvl-logo">
+            </div>
+        </header>
+
+        <!-- ============================================
+             NAVIGATION TABS
+             ============================================ -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="supplier-marketplace">Supplier Marketplace</button>
+            <button class="nav-tab" data-tab="global-spend">Global Spend Analysis</button>
+            <button class="nav-tab" data-tab="materials-disciplines">Materials & Disciplines</button>
+
+            <!-- FX Rates in blank area on right -->
+            <div class="fx-rates-inline">
+                <span class="fx-rates-label">Live FX Rates:</span>
+                <span class="fx-rate-item"><span class="fx-flag">🇺🇸</span>USD/AED:<span class="fx-value"
+                        id="fxUsdAed">3.67</span></span>
+                <span class="fx-rate-item"><span class="fx-flag">🇪🇺</span>EUR/USD:<span class="fx-value"
+                        id="fxEurUsd">1.19</span></span>
+                <span class="fx-rate-item"><span class="fx-flag">🇬🇧</span>GBP/USD:<span class="fx-value"
+                        id="fxGbpUsd">1.36</span></span>
+                <span class="fx-rate-item"><span class="fx-flag">🇸🇦</span>SAR/USD:<span class="fx-value"
+                        id="fxSarUsd">0.27</span></span>
+                <button class="fx-refresh-btn" onclick="refreshFxRates()" title="Refresh rates">🔄</button>
+            </div>
+        </nav>
+
+        <!-- ============================================
+             MAIN CONTENT AREA
+             ============================================ -->
+        <main class="main-content">
+
+            <!-- ========================================
+                 TAB 1: SUPPLIER MARKETPLACE
+                 ======================================== -->
+            <div class="tab-content active" id="tab-supplier-marketplace">
+
+                <!-- FILTER ROW (Tab 1 Only) -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="filter-label">Entity</label>
+                        <select class="filter-select" id="filterEntity">
+                            <option>All Entities</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Project</label>
+                        <select class="filter-select" id="filterProject">
+                            <option>All Projects</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Supplier</label>
+                        <select class="filter-select" id="filterSupplier">
+                            <option>All Suppliers</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Status</label>
+                        <select class="filter-select" id="filterStatus">
+                            <option>All Statuses</option>
+                            <option>Order</option>
+                            <option>Quotation</option>
+                            <option>Waiting</option>
+                            <option>Cancelled</option>
+                            <option>Closed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Material</label>
+                        <select class="filter-select" id="filterMaterial">
+                            <option>All Materials</option>
+                        </select>
+                    </div>
+                    <div class="filter-group filter-search">
+                        <label class="filter-label">Search</label>
+                        <input type="text" id="searchInput" placeholder="Search Quotes, Projects, etc.">
+                    </div>
+                </div>
+
+                <!-- KPI ROW (Tab 1 Only) -->
+                <div class="kpi-row">
+                    <div class="kpi-card">
+                        <span class="kpi-info-icon" data-kpi="sm-rfq" title="View calculation details">i</span>
+                        <div class="kpi-value" id="kpiRfqCount">12,532</div>
+                        <div class="kpi-label">Request for Quotation</div>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-info-icon" data-kpi="sm-quoteValue" title="View calculation details">i</span>
+                        <div class="kpi-value highlight" id="kpiQuoteValue">$3.6B</div>
+                        <div class="kpi-label">Quote Value</div>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-info-icon" data-kpi="sm-po" title="View calculation details">i</span>
+                        <div class="kpi-value" id="kpiPoCount">7,697</div>
+                        <div class="kpi-label">Purchase Orders</div>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-info-icon" data-kpi="sm-poValue" title="View calculation details">i</span>
+                        <div class="kpi-value highlight" id="kpiPoValue">$721.3M</div>
+                        <div class="kpi-label">PO Values</div>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-info-icon" data-kpi="sm-winRate" title="View calculation details">i</span>
+                        <div class="kpi-value" id="kpiWinRate">97.7%</div>
+                        <div class="kpi-label">Win Rate</div>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-info-icon" data-kpi="sm-co" title="View calculation details">i</span>
+                        <div class="kpi-value" id="kpiCoCount">7,697</div>
+                        <div class="kpi-label">Change Orders</div>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-info-icon" data-kpi="sm-coValue" title="View calculation details">i</span>
+                        <div class="kpi-value highlight" id="kpiCoValue">$721.3M</div>
+                        <div class="kpi-label">CO Value</div>
+                    </div>
+                </div>
+
+                <!-- Three Column Layout -->
+                <div class="three-column-layout">
+
+                    <!-- LEFT COLUMN -->
+                    <div class="column">
+
+                        <!-- 5.1.1 Status Chart -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">📊</span>
+                                    Status
+                                </h3>
+                            </div>
+                            <div class="chart-body">
+                                <div class="status-bar-list" id="statusChart">
+                                    <!-- Populated by JS -->
+                                </div>
+                                <div class="status-bottom-kpis">
+                                    <div class="status-kpi">
+                                        <div class="status-kpi-value" id="conversionRate">97.7%</div>
+                                        <div class="status-kpi-label">Conversion Rate</div>
+                                    </div>
+                                    <div class="status-kpi">
+                                        <div class="status-kpi-value" id="openQuotes">4,650</div>
+                                        <div class="status-kpi-label">Open Quotes</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.1.2 Entity Comparison -->
+                        <div class="chart-card" id="entityChartCard">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">📊</span>
+                                    Entity Comparison
+                                </h3>
+                                <div class="chart-actions">
+                                    <div class="chart-toggle" id="entityChartToggle">
+                                        <button class="chart-toggle-btn active" data-entity-view="quote">By
+                                            Quote</button>
+                                        <button class="chart-toggle-btn" data-entity-view="spend">By PO Spend</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <div id="entityChartContainer">
+                                    <canvas id="entityChartCanvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.1.3 Top 10 Suppliers -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">🏆</span>
+                                    Top 10 Suppliers by Spend
+                                </h3>
+                            </div>
+                            <div class="chart-body">
+                                <div class="ranked-list" id="topSuppliers">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- CENTER COLUMN -->
+                    <div class="column">
+
+                        <!-- 5.2.1 Location of Suppliers (Map) -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">🗺️</span>
+                                    Location of Suppliers
+                                </h3>
+                            </div>
+                            <div class="chart-body">
+                                <div id="supplierMap"></div>
+                            </div>
+                        </div>
+
+                        <!-- 5.2.2 Material Distribution -->
+                        <div class="chart-card" id="materialChartCard">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">📊</span>
+                                    Material Distribution
+                                </h3>
+                                <div class="chart-actions">
+                                    <div class="chart-toggle" id="materialChartToggle">
+                                        <button class="chart-toggle-btn active" data-chart-type="bar">Bar</button>
+                                        <button class="chart-toggle-btn" data-chart-type="pie">Pie</button>
+                                        <button class="chart-toggle-btn" data-chart-type="line">Line</button>
+                                        <button class="chart-toggle-btn" data-chart-type="radar">Radar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <div id="materialChartContainer">
+                                    <canvas id="materialChartCanvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.2.3 Quotation to PO Time -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">⏱️</span>
+                                    Quotation to PO Time
+                                </h3>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="quotationTimeChart"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="column">
+
+                        <!-- 5.3.1 Supplier Profile -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">👤</span>
+                                    Supplier Profile
+                                </h3>
+                            </div>
+                            <div class="chart-body profile-card">
+                                <div class="profile-header">
+                                    <div class="profile-avatar" id="supplierAvatar">S</div>
+                                    <div>
+                                        <div class="profile-name" id="supplierName">Select a Supplier</div>
+                                        <div class="profile-subtitle" id="supplierLocation">Click on Top 10 list</div>
+                                    </div>
+                                </div>
+                                <div class="profile-details">
+                                    <div class="profile-row">
+                                        <span class="profile-label">Contact:</span>
+                                        <span class="profile-value" id="supplierContact">-</span>
+                                    </div>
+                                    <div class="profile-row">
+                                        <span class="profile-label">Email:</span>
+                                        <span class="profile-value" id="supplierEmail">-</span>
+                                    </div>
+                                    <div class="profile-row">
+                                        <span class="profile-label">Phone:</span>
+                                        <span class="profile-value" id="supplierPhone">-</span>
+                                    </div>
+                                    <div class="profile-row">
+                                        <span class="profile-label">Rating:</span>
+                                        <span class="profile-value profile-rating" id="supplierRating">★★★★☆</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.3.2 Responsible MVL Employee -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">👥</span>
+                                    Responsible MVL Employee
+                                </h3>
+                                <div class="chart-actions">
+                                    <a href="#" style="font-size:11px; color:#0078D4;">BY SPEND</a>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <input type="text" placeholder="Search suppliers..."
+                                    style="width:100%; padding:8px; margin-bottom:12px; border:1px solid #e1dfdd; border-radius:4px;">
+                                <div class="ranked-list" id="employeeList">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.3.3 Approved Material -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <span class="chart-title-icon">✅</span>
+                                    Approved Material
+                                </h3>
+                            </div>
+                            <div class="chart-body">
+                                <p style="font-size:11px; color:#888; margin-bottom:12px;">
+                                    List of Material Approved with this Supplier
+                                </p>
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Material</th>
+                                            <th>Spec #</th>
+                                            <th>Lead Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="approvedMaterialTable">
+                                        <tr>
+                                            <td colspan="3" style="text-align:center; color:#888;">Select a supplier
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Monthly Trend Chart (Full Width) -->
+                <div class="trend-chart-container">
+                    <div class="chart-header trend-chart-header">
+                        <h3 class="chart-title">
+                            <span class="chart-title-icon">📈</span>
+                            Submit & Order Quantity
+                        </h3>
+                        <div class="chart-actions">
+                            <span class="chart-legend">
+                                <span class="legend-item legend-quotes">■</span> Quotes
+                                <span class="legend-item legend-orders">■</span> Orders
+                                <span class="legend-item legend-cos">■</span> COs
+                            </span>
+                        </div>
+                    </div>
+                    <div class="trend-chart-wrapper">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Bottom Tabbed Tables -->
+                <div class="bottom-section">
+                    <div class="bottom-tabs">
+                        <button class="bottom-tab" data-bottom-tab="supplier-list">Supplier List (<span
+                                id="supplierCount">2189</span>)</button>
+                        <button class="bottom-tab active" data-bottom-tab="workbench">Marketplace Workbench</button>
+                    </div>
+
+                    <!-- Filter Bar for Bottom Tables -->
+                    <div class="bottom-filter-bar" id="bottomFilterBar">
+                        <div class="bottom-filter-group">
+                            <input type="text" id="bottomSearch" class="bottom-search-input" placeholder="Search..."
+                                onkeyup="filterBottomTable()">
+                            <select id="bottomFilterStatus" class="bottom-filter-select" onchange="filterBottomTable()">
+                                <option value="">All Status</option>
+                            </select>
+                            <select id="bottomFilterMaterial" class="bottom-filter-select"
+                                onchange="filterBottomTable()">
+                                <option value="">All Materials</option>
+                            </select>
+                            <select id="bottomFilterCountry" class="bottom-filter-select" onchange="filterBottomTable()"
+                                style="display:none;">
+                                <option value="">All Countries</option>
+                            </select>
+                            <button class="bottom-filter-clear" onclick="clearBottomFilters()">Clear</button>
+                        </div>
+                        <div class="bottom-page-size">
+                            <label>Show:</label>
+                            <select id="bottomPageSize" onchange="changeBottomPageSize()">
+                                <option value="25">25</option>
+                                <option value="50" selected>50</option>
+                                <option value="100">100</option>
+                                <option value="200">200</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="bottom-content" id="bottomTableContent">
+                        <table class="data-table">
+                            <thead id="bottomTableHead">
+                                <tr>
+                                    <th>QUOTATION</th>
+                                    <th>STATUS</th>
+                                    <th>MATERIAL</th>
+                                    <th>PROJECT</th>
+                                    <th>VALUE</th>
+                                    <th>CONTACT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workbenchTable">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination Controls -->
+                        <div class="bottom-pagination" id="bottomPagination">
+                            <div class="pagination-info" id="tablePagination">
+                                Showing 1-50 of 12136 records
+                            </div>
+                            <div class="pagination-controls">
+                                <button class="page-btn" onclick="goToBottomPage('first')" title="First">⏮</button>
+                                <button class="page-btn" onclick="goToBottomPage('prev')" title="Previous">◀</button>
+                                <span class="page-numbers" id="pageNumbers"></span>
+                                <button class="page-btn" onclick="goToBottomPage('next')" title="Next">▶</button>
+                                <button class="page-btn" onclick="goToBottomPage('last')" title="Last">⏭</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================
+                 TAB 2: GLOBAL SPEND ANALYSIS
+                 ======================================== -->
+            <div class="tab-content" id="tab-global-spend">
+
+                <!-- FILTER ROW (Tab 2) - Two Rows -->
+                <div class="filter-row gsa-filter-row">
+                    <div class="filter-group">
+                        <label class="filter-label">Entity</label>
+                        <select class="filter-select" id="gsaFilterEntity">
+                            <option>All Entities</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Supplier</label>
+                        <select class="filter-select" id="gsaFilterSupplier">
+                            <option>All Suppliers</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Project</label>
+                        <select class="filter-select" id="gsaFilterProject">
+                            <option>All Projects</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Material</label>
+                        <select class="filter-select" id="gsaFilterMaterial">
+                            <option>All Materials</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">PO Type</label>
+                        <select class="filter-select" id="gsaFilterDiscipline">
+                            <option>All Types</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-row gsa-filter-row-2">
+                    <div class="filter-group">
+                        <label class="filter-label">Year</label>
+                        <select class="filter-select" id="gsaFilterYear">
+                            <option>All Years</option>
+                            <option>2026</option>
+                            <option>2025</option>
+                            <option>2024</option>
+                            <option>2023</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">From</label>
+                        <input type="date" class="filter-date" id="gsaFilterFrom">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">To</label>
+                        <input type="date" class="filter-date" id="gsaFilterTo">
+                    </div>
+                    <div class="filter-group filter-search">
+                        <label class="filter-label">Search</label>
+                        <input type="text" id="gsaSearchInput" placeholder="Search POs, Projects, etc.">
+                    </div>
+                    <button class="gsa-filter-btn" onclick="applyGSAFilters()">Apply</button>
+                    <button class="gsa-filter-btn gsa-clear-btn" onclick="clearGSAFilters()">Clear</button>
+                </div>
+
+                <!-- KPI ROW (Tab 2) - 6 KPI Cards -->
+                <div class="gsa-kpi-row">
+                    <div class="gsa-kpi-card gsa-kpi-orange">
+                        <span class="kpi-info-icon" data-kpi="gsa-po" title="View calculation details">i</span>
+                        <div class="gsa-kpi-icon">📦</div>
+                        <div class="gsa-kpi-content">
+                            <div class="gsa-kpi-label">Total No. of Purchase Orders</div>
+                            <div class="gsa-kpi-value" id="gsaKpiPoCount">3,539</div>
+                            <div class="gsa-kpi-subtext">Including Change Orders</div>
+                        </div>
+                    </div>
+                    <div class="gsa-kpi-card gsa-kpi-green">
+                        <span class="kpi-info-icon" data-kpi="gsa-spend" title="View calculation details">i</span>
+                        <div class="gsa-kpi-icon">💵</div>
+                        <div class="gsa-kpi-content">
+                            <div class="gsa-kpi-label">TOTAL SPEND</div>
+                            <div class="gsa-kpi-value" id="gsaKpiTotalSpend">$397.4M</div>
+                            <div class="gsa-kpi-subtext"></div>
+                        </div>
+                    </div>
+                    <div class="gsa-kpi-card gsa-kpi-blue">
+                        <span class="kpi-info-icon" data-kpi="gsa-co" title="View calculation details">i</span>
+                        <div class="gsa-kpi-icon">📋</div>
+                        <div class="gsa-kpi-content">
+                            <div class="gsa-kpi-label">Total No. of Change Orders</div>
+                            <div class="gsa-kpi-value" id="gsaKpiCoCount">0</div>
+                            <div class="gsa-kpi-subtext">All records</div>
+                        </div>
+                    </div>
+                    <div class="gsa-kpi-card gsa-kpi-yellow">
+                        <span class="kpi-info-icon" data-kpi="gsa-coAmount" title="View calculation details">i</span>
+                        <div class="gsa-kpi-icon">💰</div>
+                        <div class="gsa-kpi-content">
+                            <div class="gsa-kpi-label">Total Amount of Change Orders</div>
+                            <div class="gsa-kpi-value" id="gsaKpiCoAmount">$0</div>
+                            <div class="gsa-kpi-subtext"></div>
+                        </div>
+                    </div>
+                    <div class="gsa-kpi-card gsa-kpi-gold">
+                        <span class="kpi-info-icon" data-kpi="gsa-suppliers" title="View calculation details">i</span>
+                        <div class="gsa-kpi-icon">🏆</div>
+                        <div class="gsa-kpi-content">
+                            <div class="gsa-kpi-label">ACTIVE SUPPLIERS</div>
+                            <div class="gsa-kpi-value" id="gsaKpiActiveSuppliers">1,093</div>
+                            <div class="gsa-kpi-subtext"></div>
+                        </div>
+                    </div>
+                    <div class="gsa-kpi-card gsa-kpi-navy">
+                        <span class="kpi-info-icon" data-kpi="gsa-entities" title="View calculation details">i</span>
+                        <div class="gsa-kpi-icon">🏢</div>
+                        <div class="gsa-kpi-content">
+                            <div class="gsa-kpi-label">ACTIVE ENTITIES</div>
+                            <div class="gsa-kpi-value" id="gsaKpiActiveEntities">21</div>
+                            <div class="gsa-kpi-subtext"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 1: Annual Spend Trend + Supplier Tooltip -->
+                <div class="gsa-row gsa-row-trend">
+                    <div class="gsa-chart-card gsa-trend-chart">
+                        <div class="chart-header">
+                            <h3 class="chart-title">
+                                <span class="chart-title-icon">📈</span>
+                                Annual Spend Trend (Base vs Change Orders)
+                            </h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="gsaSpendTrendChart" height="300"></canvas>
+                        </div>
+                    </div>
+                    <div class="gsa-supplier-card" id="gsaSupplierTooltip">
+                        <div class="gsa-supplier-header">Supplier Details</div>
+                        <div class="gsa-supplier-name" id="gsaSupplierName">Select a data point</div>
+                        <div class="gsa-supplier-location" id="gsaSupplierLocation">-</div>
+                        <div class="gsa-supplier-rating">
+                            <span class="gsa-stars" id="gsaSupplierStars">★★★★★</span>
+                            <span class="gsa-rating-value" id="gsaSupplierRating">-</span>
+                        </div>
+                        <div class="gsa-supplier-email" id="gsaSupplierEmail">-</div>
+                        <div class="gsa-supplier-contact" id="gsaSupplierContact">-</div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Spend by Entity + Spend by Projects -->
+                <div class="gsa-row gsa-row-entity-project">
+                    <div class="gsa-chart-card gsa-half">
+                        <div class="chart-header">
+                            <h3 class="chart-title">
+                                <span class="chart-title-icon">🏢</span>
+                                Spend by Entity
+                            </h3>
+                            <span class="chart-subtitle">Top 5 Entities by PO Value</span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="gsaEntityChart" height="250"></canvas>
+                        </div>
+                    </div>
+                    <div class="gsa-chart-card gsa-half">
+                        <div class="chart-header">
+                            <h3 class="chart-title">
+                                <span class="chart-title-icon">📁</span>
+                                Spend by Projects
+                            </h3>
+                            <span class="chart-subtitle">Top 5 Projects by PO Value</span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="gsaProjectChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Top 10 Suppliers + Bottom 10 Suppliers -->
+                <div class="gsa-row gsa-row-suppliers">
+                    <div class="gsa-chart-card gsa-half">
+                        <div class="chart-header">
+                            <h3 class="chart-title">
+                                <span class="chart-title-icon">⬆️</span>
+                                Top Suppliers
+                            </h3>
+                            <span class="chart-subtitle">Top 10 suppliers by Spend</span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="gsaTopSuppliersChart" height="280"></canvas>
+                        </div>
+                    </div>
+                    <div class="gsa-chart-card gsa-half">
+                        <div class="chart-header">
+                            <h3 class="chart-title">
+                                <span class="chart-title-icon">⬇️</span>
+                                Top Suppliers
+                            </h3>
+                            <span class="chart-subtitle">Bottom 10 Active Suppliers</span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="gsaBottomSuppliersChart" height="280"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: PO Details Table -->
+                <div class="gsa-row gsa-row-table">
+                    <div class="gsa-table-card">
+                        <div class="gsa-table-header">
+                            <h3 class="chart-title">
+                                <span class="chart-title-icon">📋</span>
+                                PO Details
+                            </h3>
+                            <div class="gsa-table-toggle">
+                                <button class="gsa-toggle-btn active" data-view="po-details"
+                                    onclick="toggleGSATableView('po-details')">PO Details</button>
+                                <button class="gsa-toggle-btn" data-view="workbench"
+                                    onclick="toggleGSATableView('workbench')">Marketplace Workbench <span
+                                        id="gsaWorkbenchCount">0</span></button>
+                            </div>
+                        </div>
+                        <div class="gsa-table-filters">
+                            <input type="text" class="gsa-table-search" id="gsaTableSearch"
+                                placeholder="Search PO No., Project..." onkeyup="filterGSATable()">
+                            <select class="gsa-table-filter" id="gsaTableTypeFilter" onchange="filterGSATable()">
+                                <option value="">All Types</option>
+                            </select>
+                            <div class="gsa-table-pagination">
+                                <span>Show:</span>
+                                <select id="gsaTablePageSize" onchange="changeGSAPageSize()">
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="gsa-table-wrapper">
+                            <table class="gsa-table" id="gsaPoTable">
+                                <thead>
+                                    <tr>
+                                        <th onclick="sortGSATable('po_no')">PO No. <span class="sort-icon">↕</span></th>
+                                        <th onclick="sortGSATable('type')">Type <span class="sort-icon">↕</span></th>
+                                        <th onclick="sortGSATable('project')">Project <span class="sort-icon">↕</span>
+                                        </th>
+                                        <th onclick="sortGSATable('po_date')">PO Date <span class="sort-icon">↕</span>
+                                        </th>
+                                        <th onclick="sortGSATable('supplier')">Supplier <span class="sort-icon">↕</span>
+                                        </th>
+                                        <th onclick="sortGSATable('material')">Material <span class="sort-icon">↕</span>
+                                        </th>
+                                        <th onclick="sortGSATable('po_value')">PO Value (US$) <span
+                                                class="sort-icon">↕</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gsaPoTableBody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="gsa-table-footer">
+                            <div class="gsa-table-info" id="gsaTableInfo">Showing 1-25 of 3,539 records</div>
+                            <div class="gsa-pagination-controls">
+                                <button class="gsa-page-btn" onclick="goToGSAPage('first')">«</button>
+                                <button class="gsa-page-btn" onclick="goToGSAPage('prev')">‹</button>
+                                <span class="gsa-page-numbers" id="gsaPageNumbers"></span>
+                                <button class="gsa-page-btn" onclick="goToGSAPage('next')">›</button>
+                                <button class="gsa-page-btn" onclick="goToGSAPage('last')">»</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================
+                 TAB 3: MATERIALS & DISCIPLINES
+                 ======================================== -->
+            <div class="tab-content" id="tab-materials-disciplines">
+
+                <!-- FILTER ROW (Tab 3) -->
+                <div class="filter-row md-filter-row">
+                    <div class="filter-group">
+                        <label class="filter-label">MATERIAL</label>
+                        <select class="filter-select" id="filterMdMaterial" title="Material filter">
+                            <option>All Materials</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">DISCIPLINE</label>
+                        <select class="filter-select" id="filterMdDiscipline" title="Discipline filter">
+                            <option>All Disciplines</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">ENTITY</label>
+                        <select class="filter-select" id="filterMdEntity" title="Entity filter">
+                            <option>All Entities</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">PROJECT</label>
+                        <select class="filter-select" id="filterMdProject" title="Project filter">
+                            <option>All Projects</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">SUPPLIER</label>
+                        <select class="filter-select" id="filterMdSupplier" title="Supplier filter">
+                            <option>All Suppliers</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-row md-filter-row-2">
+                    <div class="filter-group">
+                        <label class="filter-label">YEAR</label>
+                        <select class="filter-select" id="filterMdYear" title="Year filter">
+                            <option>All Years</option>
+                            <option>2026</option>
+                            <option>2025</option>
+                            <option>2024</option>
+                            <option>2023</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">From</label>
+                        <input type="date" class="filter-date" id="filterMdFrom" title="From date">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">To</label>
+                        <input type="date" class="filter-date" id="filterMdTo" title="To date">
+                    </div>
+                    <div class="filter-group filter-search">
+                        <label class="filter-label">Search</label>
+                        <input type="text" id="mdSearchInput" placeholder="Search Quotes, Projects, etc."
+                            title="Search">
+                    </div>
+                </div>
+
+                <!-- KPI ROW (Tab 3) -->
+                <div class="md-kpi-row">
+                    <div class="md-kpi-card">
+                        <span class="kpi-info-icon" data-kpi="md-materials" title="View calculation details">i</span>
+                        <div class="md-kpi-icon md-kpi-icon-blue">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="md-kpi-content">
+                            <span class="md-kpi-label">Materials</span>
+                            <span class="md-kpi-value" id="kpiMdMaterials">28</span>
+                            <span class="md-kpi-sub">All records</span>
+                        </div>
+                    </div>
+                    <div class="md-kpi-card">
+                        <span class="kpi-info-icon" data-kpi="md-disciplines" title="View calculation details">i</span>
+                        <div class="md-kpi-icon md-kpi-icon-green">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                        </div>
+                        <div class="md-kpi-content">
+                            <span class="md-kpi-label md-kpi-label-green">Disciplines</span>
+                            <span class="md-kpi-value" id="kpiMdDisciplines">28</span>
+                            <span class="md-kpi-sub">All records</span>
+                        </div>
+                    </div>
+                    <div class="md-kpi-card md-kpi-card-highlight">
+                        <span class="kpi-info-icon" data-kpi="md-materialSpend" title="View calculation details">i</span>
+                        <div class="md-kpi-content">
+                            <span class="md-kpi-label">Total Material Spend</span>
+                            <span class="md-kpi-value md-kpi-value-blue" id="kpiMdMaterialSpend">$7.9M</span>
+                            <span class="md-kpi-sub md-kpi-sub-util" id="kpiMdMatUtil">88% utilized</span>
+                        </div>
+                    </div>
+                    <div class="md-kpi-card md-kpi-card-highlight">
+                        <span class="kpi-info-icon" data-kpi="md-disciplineSpend" title="View calculation details">i</span>
+                        <div class="md-kpi-content">
+                            <span class="md-kpi-label">Total Discipline Spend</span>
+                            <span class="md-kpi-value md-kpi-value-blue" id="kpiMdDisciplineSpend">$7.9M</span>
+                            <span class="md-kpi-sub md-kpi-sub-util" id="kpiMdDiscUtil">88% utilized</span>
+                        </div>
+                    </div>
+                    <div class="md-kpi-card">
+                        <span class="kpi-info-icon" data-kpi="md-projects" title="View calculation details">i</span>
+                        <div class="md-kpi-content">
+                            <span class="md-kpi-label">Active Projects</span>
+                            <span class="md-kpi-value" id="kpiMdActiveProjects">4</span>
+                            <span class="md-kpi-sub" id="kpiMdSupplierCount">12 suppliers</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHARTS ROW -->
+                <div class="md-charts-row">
+                    <!-- Total Spend by Discipline Chart -->
+                    <div class="md-chart-card md-chart-large">
+                        <div class="md-chart-header">
+                            <h3 class="md-chart-title">Total Spend by Discipline</h3>
+                            <span class="md-chart-subtitle">Quoted vs Actual spend comparison</span>
+                        </div>
+                        <div class="md-chart-body">
+                            <canvas id="disciplineSpendChart"></canvas>
+                        </div>
+                        <div class="md-chart-footer">Disciplines list</div>
+                    </div>
+
+                    <!-- Material Distribution Chart -->
+                    <div class="md-chart-card md-chart-medium">
+                        <div class="md-chart-header">
+                            <h3 class="md-chart-title">Material Distribution</h3>
+                            <span class="md-chart-subtitle">By spend percentage</span>
+                        </div>
+                        <div class="md-chart-body">
+                            <canvas id="materialDistributionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Supplier Profile Card -->
+                    <div class="md-supplier-profile">
+                        <div class="md-supplier-profile-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span>Supplier Profile</span>
+                        </div>
+                        <div class="md-supplier-profile-body">
+                            <div class="md-supplier-row">
+                                <span class="md-supplier-label">Name</span>
+                                <span class="md-supplier-value" id="mdSupplierName">-</span>
+                            </div>
+                            <div class="md-supplier-row">
+                                <span class="md-supplier-label">Location</span>
+                                <span class="md-supplier-value" id="mdSupplierLocation">-</span>
+                            </div>
+                            <div class="md-supplier-row">
+                                <span class="md-supplier-label">Rating</span>
+                                <span class="md-supplier-value">
+                                    <span class="md-stars" id="mdSupplierStars">⭐⭐⭐⭐☆</span>
+                                    <span id="mdSupplierRatingVal">4.37/5</span>
+                                </span>
+                            </div>
+                            <div class="md-supplier-row">
+                                <span class="md-supplier-label">Email</span>
+                                <span class="md-supplier-value" id="mdSupplierEmail">-</span>
+                            </div>
+                            <div class="md-supplier-row">
+                                <span class="md-supplier-label">Contact</span>
+                                <span class="md-supplier-value" id="mdSupplierContact">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUPPLIER OVERVIEW & APPROVED MATERIALS ROW -->
+                <div class="md-tables-row">
+                    <!-- Supplier Overview -->
+                    <div class="md-table-card">
+                        <div class="md-table-header">
+                            <h3 class="md-table-title">Supplier Overview</h3>
+                            <span class="md-table-subtitle">Suppliers related to selected material/discipline</span>
+                        </div>
+                        <div class="md-table-body">
+                            <table class="md-data-table" id="mdSupplierTable">
+                                <thead>
+                                    <tr>
+                                        <th>Supplier Name</th>
+                                        <th>Location</th>
+                                        <th>Rating</th>
+                                        <th>Email</th>
+                                        <th>Contact</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mdSupplierTableBody">
+                                    <!-- Data populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Approved Materials -->
+                    <div class="md-table-card">
+                        <div class="md-table-header">
+                            <h3 class="md-table-title">Approved Materials</h3>
+                            <span class="md-table-subtitle">List of approved materials by specification</span>
+                        </div>
+                        <div class="md-table-body">
+                            <table class="md-data-table" id="mdApprovedMaterialsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Spec No.</th>
+                                        <th>Supplier</th>
+                                        <th>Discipline</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mdApprovedMaterialsBody">
+                                    <!-- Data populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PO/MATERIAL DETAILS ROW -->
+                <div class="md-po-section">
+                    <div class="md-po-card">
+                        <div class="md-table-header">
+                            <h3 class="md-table-title">PO/Material Details</h3>
+                            <span class="md-table-subtitle">Detailed PO view linked to material/discipline</span>
+                        </div>
+                        <div class="md-table-body">
+                            <table class="md-data-table" id="mdPoDetailsTable">
+                                <thead>
+                                    <tr>
+                                        <th>PO Number</th>
+                                        <th>PO Date</th>
+                                        <th>Material</th>
+                                        <th>Discipline</th>
+                                        <th>PO Value (USD)</th>
+                                        <th>Currency</th>
+                                        <th>Project</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mdPoDetailsBody">
+                                    <!-- Data populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="md-pagination">
+                            <button class="md-pagination-btn" id="mdPoPrevBtn" onclick="mdPoPageChange(-1)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                                Previous
+                            </button>
+                            <span class="md-pagination-info" id="mdPoPageInfo">Page 1 of 1</span>
+                            <button class="md-pagination-btn" id="mdPoNextBtn" onclick="mdPoPageChange(1)">
+                                Next
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script src="shared/scripts.js"></script>
+</body>
+
+</html>

@@ -287,8 +287,8 @@ function enrichDashboardWithRealData() {
             poCount: smData.summary.totalPOs || 0,
             poValue: smData.summary.totalPOSpendUSD || 0,
             winRate: smData.summary.winRate || 0,
-            coCount: smData.summary.totalPOs || 0,
-            coValue: smData.summary.totalPOSpendUSD || 0,
+            coCount: gsaData?.summary?.changeOrders || 0,
+            coValue: gsaData?.summary?.changeOrderValue || 0,
             openQuotes: smData.funnel?.Quotation || 0,
             conversionRate: smData.summary.winRate || 0
         };
@@ -418,8 +418,8 @@ function enrichDashboardWithRealData() {
         poCount: purchaseOrdersData.metadata.total_records,
         poValue: totalPOValue,
         winRate: ((quotationsData.metadata.status_distribution?.won || 0) / quotationsData.metadata.total_records * 100).toFixed(1),
-        coCount: purchaseOrdersData.metadata.total_records,
-        coValue: totalPOValue,
+        coCount: gsaData?.summary?.changeOrders || 0,
+        coValue: gsaData?.summary?.changeOrderValue || 0,
         openQuotes: quotationsData.metadata.status_distribution?.unknown || 0,
         conversionRate: purchaseOrdersData.metadata.supplier_match_stats?.match_rate || 98.9
     };
@@ -669,8 +669,8 @@ function getFallbackData() {
             poCount: 7697,
             poValue: 721300000,
             winRate: 97.7,
-            coCount: 7697,
-            coValue: 721300000,
+            coCount: 314,
+            coValue: 30400000,
             openQuotes: 4650,
             conversionRate: 97.7
         },
@@ -1838,8 +1838,11 @@ function applyFilters() {
     document.getElementById('kpiPoCount').textContent = pos.length.toLocaleString();
     document.getElementById('kpiPoValue').textContent = formatCurrencyShort(totalPOValue);
     document.getElementById('kpiWinRate').textContent = winRate + '%';
-    document.getElementById('kpiCoCount').textContent = pos.length.toLocaleString();
-    document.getElementById('kpiCoValue').textContent = formatCurrencyShort(totalPOValue);
+    // CO Count/Value: Show actual change orders from GSA data
+    const gsaCOsFiltered = gsaData?.summary?.changeOrders || 0;
+    const gsaCOValueFiltered = gsaData?.summary?.changeOrderValue || 0;
+    document.getElementById('kpiCoCount').textContent = gsaCOsFiltered.toLocaleString();
+    document.getElementById('kpiCoValue').textContent = formatCurrencyShort(gsaCOValueFiltered);
 
     // Rebuild status chart from filtered quotes
     const statusCounts = {};
@@ -4639,6 +4642,250 @@ function mdPoPageChange(delta) {
     mdState.currentPage = Math.max(1, Math.min(totalPages, mdState.currentPage + delta));
     updateMdPoTable(mdState.filteredPOs);
 }
+
+// ============================================
+// KPI INFO POPUP SYSTEM (Temporary Dev Notes)
+// ============================================
+const KPI_INFO = {
+    // ── SM Tab KPIs ──
+    'sm-rfq': {
+        title: 'Request for Quotation (RFQ)',
+        description: 'Total number of quotation records in the SM workbench.',
+        formula: 'COUNT(sm_data.workbench)',
+        source: 'sm_data.json → workbench[] array',
+        field: 'Each record = 1 quotation row from SM Workbench export',
+        example: 'Records where WorkbenchNo exists → counted',
+        note: 'Includes all statuses: Order, Quotation, Waiting, Cancelled, Closed. When filtered, counts only records matching active entity/type/status/date/search filters.'
+    },
+    'sm-quoteValue': {
+        title: 'Quote Value',
+        description: 'Total value of all quotations, converted to USD.',
+        formula: 'SUM( convertToUSD(q.QuotationValue, q.Currency) )  for all quotations',
+        source: 'sm_data.json → workbench[].QuotationValue + Currency',
+        field: 'QuotationValue (original currency) → converted via FX rates',
+        example: 'If QuotationValue=100,000 JPY and USD/JPY=150 → $666.67',
+        note: 'FX conversion uses embedded rates: JPY÷150, AED÷3.67, QAR÷3.64, NPR÷133.5, etc. Default assumes USD if currency missing.'
+    },
+    'sm-po': {
+        title: 'Purchase Orders',
+        description: 'Count of quotation records with Status = "Order".',
+        formula: 'COUNT(workbench WHERE Status = "Order")',
+        source: 'sm_data.json → workbench[] filtered by Status',
+        field: 'Status field = "Order"',
+        example: '7,671 out of 12,072 total records have Status=Order',
+        note: 'This counts SM workbench rows with Order status — these are quotations that converted to POs. Not the same as gsa_data PO count (3,522) which counts actual PO documents.'
+    },
+    'sm-poValue': {
+        title: 'PO Values',
+        description: 'Total value of quotations with Status = "Order", converted to USD.',
+        formula: 'SUM( convertToUSD(q.QuotationValue, q.Currency) )  WHERE Status = "Order"',
+        source: 'sm_data.json → workbench[] WHERE Status="Order"',
+        field: 'QuotationValue for Order-status records only',
+        example: 'Sum of all QuotationValues where Status=Order → USD converted',
+        note: 'Uses SM quotation values (not PO values from gsa_data). These represent the quoted amounts for won bids.'
+    },
+    'sm-winRate': {
+        title: 'Win Rate',
+        description: 'Percentage of quotations that converted to orders.',
+        formula: 'Orders ÷ Total Quotations × 100',
+        source: 'Calculated from sm_data.json',
+        field: 'COUNT(Status="Order") / COUNT(all) × 100',
+        example: '7,671 ÷ 12,072 × 100 = 63.5%',
+        note: 'Pre-calculated in build_v7_data.py as sm_data.summary.winRate. When filters are active, recalculated from filtered subset.'
+    },
+    'sm-co': {
+        title: 'Change Orders',
+        description: 'Total number of Change Order POs from Global Spend Analysis data.',
+        formula: 'COUNT(gsa_data.pos WHERE poType = "Change Order")',
+        source: 'gsa_data.json → summary.changeOrders',
+        field: 'poType field = "Change Order" (vs "Base Order")',
+        example: '314 out of 3,522 total POs are Change Orders',
+        note: 'Sourced from GSA data (actual PO documents), NOT from SM workbench. SM does not track change orders — they are post-award modifications tracked in the PO system.'
+    },
+    'sm-coValue': {
+        title: 'CO Value',
+        description: 'Total USD value of all Change Order POs.',
+        formula: 'SUM(gsa_data.pos.valueUSD WHERE poType = "Change Order")',
+        source: 'gsa_data.json → summary.changeOrderValue',
+        field: 'valueUSD for Change Order type POs',
+        example: 'Sum of 314 Change Order PO values = $30.4M',
+        note: 'Pre-calculated in build_v7_data.py. This value does not change with SM filters since COs come from the GSA dataset.'
+    },
+
+    // ── GSA Tab KPIs ──
+    'gsa-po': {
+        title: 'Total No. of Purchase Orders',
+        description: 'Total count of all PO records in the GSA dataset (Base + Change Orders).',
+        formula: 'COUNT(gsa_data.pos)',
+        source: 'gsa_data.json → pos[] array',
+        field: 'All PO records regardless of poType',
+        example: '3,208 Base Orders + 314 Change Orders = 3,522 total',
+        note: 'When filtered, counts only POs matching active entity/supplier/date/material filters. Each PO has poType = "Base Order" or "Change Order".'
+    },
+    'gsa-spend': {
+        title: 'Total Spend',
+        description: 'Sum of USD values for all POs.',
+        formula: 'SUM(gsa_data.pos[].valueUSD)',
+        source: 'gsa_data.json → pos[].valueUSD',
+        field: 'valueUSD (pre-converted to USD in build pipeline)',
+        example: '$396M across 3,522 POs',
+        note: 'Values are pre-converted to USD in build_v7_data.py. When filters active, SUM is recalculated with convertToUSD() applied to each PO\'s original value + currency.'
+    },
+    'gsa-co': {
+        title: 'Total No. of Change Orders',
+        description: 'Count of POs where poType = "Change Order".',
+        formula: 'COUNT(gsa_data.pos WHERE poType = "Change Order")',
+        source: 'gsa_data.json → pos[] filtered by poType',
+        field: 'poType === "Change Order"',
+        example: '314 Change Orders out of 3,522 total POs',
+        note: 'When filtered, counts Change Orders within the filtered PO subset only.'
+    },
+    'gsa-coAmount': {
+        title: 'Total Amount of Change Orders',
+        description: 'Sum of USD values for Change Order POs.',
+        formula: 'SUM(valueUSD WHERE poType = "Change Order")',
+        source: 'gsa_data.json → pos[] filtered + summed',
+        field: 'valueUSD for Change Order records',
+        example: '$30.4M across 314 Change Orders',
+        note: 'When filtered, recalculated from filtered Change Orders only.'
+    },
+    'gsa-suppliers': {
+        title: 'Active Suppliers',
+        description: 'Count of unique supplier names across all POs.',
+        formula: 'COUNT(DISTINCT gsa_data.pos[].supplier)',
+        source: 'gsa_data.json → pos[].supplier',
+        field: 'Unique supplier names (vendor companies)',
+        example: '1,089 unique suppliers across 3,522 POs',
+        note: 'When filtered, counts unique suppliers in the filtered PO subset.'
+    },
+    'gsa-entities': {
+        title: 'Active Entities',
+        description: 'Count of unique MVL business entities across all POs.',
+        formula: 'COUNT(DISTINCT gsa_data.pos[].entity)',
+        source: 'gsa_data.json → pos[].entity',
+        field: 'Unique entity names (MVL business units)',
+        example: '21 entities e.g. "Yamauchi Gumi", "MACRO", "MVL Nepal"',
+        note: 'When filtered, counts unique entities in the filtered PO subset.'
+    },
+
+    // ── M&D Tab KPIs ──
+    'md-materials': {
+        title: 'Materials / Disciplines',
+        description: 'Count of unique discipline categories after consolidation.',
+        formula: 'COUNT(DISTINCT discipline) across POs + Quotations',
+        source: 'md_data.json → summary.disciplineCount',
+        field: 'discipline field (mapped via DISCIPLINE_MAP)',
+        example: '7 disciplines: Mechanical, Electrical, Civil, HVAC, etc.',
+        note: 'Original 27+ raw materials are mapped to 7 standard disciplines in build_v7_data.py using DISCIPLINE_MAP. When filtered, counts unique disciplines in filtered data.'
+    },
+    'md-disciplines': {
+        title: 'Disciplines',
+        description: 'Same as Materials count — unique discipline categories.',
+        formula: 'COUNT(DISTINCT discipline) across POs + Quotations',
+        source: 'md_data.json → summary.disciplineCount',
+        field: 'Same as Materials — both show discipline count',
+        example: '7 consolidated disciplines',
+        note: 'Materials and Disciplines show the same count because materials are mapped 1:1 to discipline categories.'
+    },
+    'md-materialSpend': {
+        title: 'Total Material Spend',
+        description: 'Sum of PO ordered values across all disciplines.',
+        formula: 'SUM(md_data.pos[].value)',
+        source: 'md_data.json → pos[].value (amountValue)',
+        field: 'PO ordered amount (in original currency)',
+        example: 'Total ordered value across all M&D POs',
+        note: 'Shows actual PO spend. "% utilized" = (totalOrdered / totalQuoted × 100). When filtered, recalculated from filtered POs.'
+    },
+    'md-disciplineSpend': {
+        title: 'Total Discipline Spend',
+        description: 'Same as Material Spend — total PO ordered values.',
+        formula: 'SUM(md_data.pos[].value)',
+        source: 'md_data.json → pos[].value',
+        field: 'Same as Material Spend',
+        example: 'Identical to Total Material Spend value',
+        note: 'Both Material Spend and Discipline Spend show the same total ordered value.'
+    },
+    'md-projects': {
+        title: 'Active Projects / Suppliers',
+        description: 'Unique entities (projects) and suppliers from PO data.',
+        formula: 'Projects: COUNT(DISTINCT entity)  |  Suppliers: COUNT(DISTINCT supplier)',
+        source: 'md_data.json → summary.supplierCount + entityBreakdown',
+        field: 'entity = project/business unit, supplier = vendor name',
+        example: '98 projects, 1,089 suppliers',
+        note: 'Projects counts unique MVL entities with POs. Suppliers counts unique vendor names. When filtered, recalculated from filtered PO subset.'
+    }
+};
+
+function showKpiInfo(kpiKey) {
+    const info = KPI_INFO[kpiKey];
+    if (!info) return;
+
+    // Remove existing popup if any
+    const existing = document.querySelector('.kpi-info-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'kpi-info-overlay';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+    overlay.innerHTML = `
+        <div class="kpi-info-popup">
+            <div class="kpi-info-popup-header">
+                <div>
+                    <h3>${info.title}</h3>
+                    <span class="kpi-info-popup-badge">Dev Note</span>
+                </div>
+                <button class="kpi-info-popup-close" onclick="this.closest('.kpi-info-overlay').remove()">&times;</button>
+            </div>
+            <div class="kpi-info-popup-body">
+                <div class="kpi-info-row">
+                    <span class="kpi-info-label">Description</span>
+                    <span class="kpi-info-val">${info.description}</span>
+                </div>
+                <div class="kpi-info-row">
+                    <span class="kpi-info-label">Data Source</span>
+                    <span class="kpi-info-val">${info.source}</span>
+                </div>
+                <div class="kpi-info-row">
+                    <span class="kpi-info-label">Field Used</span>
+                    <span class="kpi-info-val">${info.field}</span>
+                </div>
+                <div class="kpi-info-row" style="flex-direction:column;">
+                    <span class="kpi-info-label" style="margin-bottom:4px;">Formula</span>
+                    <div class="kpi-info-formula">${info.formula}</div>
+                </div>
+                <div class="kpi-info-row">
+                    <span class="kpi-info-label">Example</span>
+                    <span class="kpi-info-val">${info.example}</span>
+                </div>
+                <div class="kpi-info-note">
+                    <strong>Note:</strong> ${info.note}
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Close on Escape
+    const escHandler = (e) => {
+        if (e.key === 'Escape') {
+            overlay.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+}
+
+// Attach click handlers to all info icons
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.kpi-info-icon[data-kpi]').forEach(icon => {
+        icon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showKpiInfo(icon.dataset.kpi);
+        });
+    });
+});
 
 // ============================================
 // EXPORT FOR DEBUGGING

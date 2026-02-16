@@ -1,0 +1,292 @@
+{
+    "_documentation": {
+        "description": "Material Code Reference Data for RFQ/PO Numbering System",
+        "rfq_po_relationship": {
+            "example": "RFQ-7139-V4359-1 corresponds to RFPO-7139-V4359-1",
+            "format": {
+                "rfq": "RFQ-{sequence}-{material_letter}{material_number}-{version}",
+                "po": "RFPO-{sequence}-{material_letter}{material_number}-{order_type}",
+                "co": "RFPO-{sequence}-{material_letter}{material_number}-{order_type} where order_type >= 2"
+            },
+            "order_type_meaning": {
+                "1": "Main Order (PO)",
+                "2+": "Change Order (CO)"
+            }
+        },
+        "updated": "2026-02-12"
+    },
+    "materials": [
+        {
+            "id": 1,
+            "material_name": "Polyurethane Foam",
+            "material_code": "Chemicals",
+            "code_letter": "C",
+            "code_range_start": 6000,
+            "code_range_end": 6050
+        },
+        {
+            "id": 2,
+            "material_name": "Firestop/ DC 315",
+            "material_code": "Fire",
+            "code_letter": "F",
+            "code_range_start": 7000,
+            "code_range_end": 7999
+        },
+        {
+            "id": 3,
+            "material_name": "Sandwich Panel",
+            "material_code": "Architectural",
+            "code_letter": "A",
+            "code_range_start": 5000,
+            "code_range_end": 5100
+        },
+        {
+            "id": 4,
+            "material_name": "Accessories / Connection for Sandwich Panel",
+            "material_code": "Architectural",
+            "code_letter": "A",
+            "code_range_start": 5101,
+            "code_range_end": 5150
+        },
+        {
+            "id": 5,
+            "material_name": "Steel Coil",
+            "material_code": "Architectural",
+            "code_letter": "A",
+            "code_range_start": 5151,
+            "code_range_end": 5200
+        },
+        {
+            "id": 6,
+            "material_name": "Containers",
+            "material_code": "Various",
+            "code_letter": "V",
+            "code_range_start": 4200,
+            "code_range_end": 4250
+        },
+        {
+            "id": 7,
+            "material_name": "Doors",
+            "material_code": "Architectural",
+            "code_letter": "A",
+            "code_range_start": 5201,
+            "code_range_end": 5250
+        },
+        {
+            "id": 8,
+            "material_name": "Windows",
+            "material_code": "Architectural",
+            "code_letter": "A",
+            "code_range_start": 5251,
+            "code_range_end": 5300
+        },
+        {
+            "id": 9,
+            "material_name": "Transportation",
+            "material_code": "Logistics",
+            "code_letter": "L",
+            "code_range_start": 4000,
+            "code_range_end": 4999
+        },
+        {
+            "id": 10,
+            "material_name": "Discount",
+            "material_code": "Logistics",
+            "code_letter": "L",
+            "code_range_start": 0,
+            "code_range_end": 0
+        },
+        {
+            "id": 11,
+            "material_name": "Machine / Equipments",
+            "material_code": "Mechanical",
+            "code_letter": "M",
+            "code_range_start": 4000,
+            "code_range_end": 4100
+        },
+        {
+            "id": 12,
+            "material_name": "Electrical",
+            "material_code": "Electrical",
+            "code_letter": "E",
+            "code_range_start": 6800,
+            "code_range_end": 6999
+        },
+        {
+            "id": 13,
+            "material_name": "Design",
+            "material_code": "Services",
+            "code_letter": "S",
+            "code_range_start": 9000,
+            "code_range_end": 9030
+        },
+        {
+            "id": 14,
+            "material_name": "Fit Out Project",
+            "material_code": "Architectural",
+            "code_letter": "A",
+            "code_range_start": 0,
+            "code_range_end": 0
+        },
+        {
+            "id": 15,
+            "material_name": "Building Materials",
+            "material_code": "Various",
+            "code_letter": "V",
+            "code_range_start": 40000,
+            "code_range_end": 50000
+        },
+        {
+            "id": 16,
+            "material_name": "Mechanical Items",
+            "material_code": "Mechanical",
+            "code_letter": "M",
+            "code_range_start": 4101,
+            "code_range_end": 4200
+        },
+        {
+            "id": 17,
+            "material_name": "Paints",
+            "material_code": "Architectural",
+            "code_letter": "A",
+            "code_range_start": 5301,
+            "code_range_end": 5350
+        },
+        {
+            "id": 18,
+            "material_name": "Rental",
+            "material_code": "Rental",
+            "code_letter": "R",
+            "code_range_start": 1500,
+            "code_range_end": 1600
+        },
+        {
+            "id": 19,
+            "material_name": "Chemicals",
+            "material_code": "Chemicals",
+            "code_letter": "C",
+            "code_range_start": 6051,
+            "code_range_end": 6100
+        },
+        {
+            "id": 20,
+            "material_name": "Graco Spares",
+            "material_code": "Various",
+            "code_letter": "V",
+            "code_range_start": 4301,
+            "code_range_end": 4350
+        },
+        {
+            "id": 21,
+            "material_name": "Sanitary and Toilet Accessories",
+            "material_code": "Architectural",
+            "code_letter": "A",
+            "code_range_start": 5351,
+            "code_range_end": 5400
+        },
+        {
+            "id": 22,
+            "material_name": "Construction",
+            "material_code": "Services",
+            "code_letter": "S",
+            "code_range_start": 9031,
+            "code_range_end": 9050
+        },
+        {
+            "id": 23,
+            "material_name": "Misc.",
+            "material_code": "Various",
+            "code_letter": "V",
+            "code_range_start": 4351,
+            "code_range_end": 4500
+        },
+        {
+            "id": 24,
+            "material_name": "Tools",
+            "material_code": "Tools",
+            "code_letter": "T",
+            "code_range_start": 1000,
+            "code_range_end": 1100
+        },
+        {
+            "id": 25,
+            "material_name": "PPE",
+            "material_code": "Protection",
+            "code_letter": "P",
+            "code_range_start": 4800,
+            "code_range_end": 4900
+        },
+        {
+            "id": 26,
+            "material_name": "LSA - Life Support Area",
+            "material_code": "Services",
+            "code_letter": "S",
+            "code_range_start": 9051,
+            "code_range_end": 9070
+        },
+        {
+            "id": 27,
+            "material_name": "Subcontract",
+            "material_code": "Services",
+            "code_letter": "S",
+            "code_range_start": 9071,
+            "code_range_end": 9090
+        },
+        {
+            "id": 28,
+            "material_name": "Computer Peripherals",
+            "material_code": "Office Assets",
+            "code_letter": "O",
+            "code_range_start": 1,
+            "code_range_end": 100
+        },
+        {
+            "id": 29,
+            "material_name": "MHE",
+            "material_code": "Logistics",
+            "code_letter": "L",
+            "code_range_start": 7000,
+            "code_range_end": 7999
+        },
+        {
+            "id": 30,
+            "material_name": "Services",
+            "material_code": "Services",
+            "code_letter": "S",
+            "code_range_start": 9100,
+            "code_range_end": 9200
+        }
+    ],
+    "material_code_letters": {
+        "Architectural": "A",
+        "Chemicals": "C",
+        "Consumables": "C",
+        "Electrical": "E",
+        "Fire": "F",
+        "Logistics": "L",
+        "Mechanical": "M",
+        "Office Assets": "O",
+        "Protection": "P",
+        "Rental": "R",
+        "Services": "S",
+        "Tools": "T",
+        "Various": "V"
+    },
+    "letter_to_material_code": {
+        "A": "Architectural",
+        "C": [
+            "Chemicals",
+            "Consumables"
+        ],
+        "E": "Electrical",
+        "F": "Fire",
+        "L": "Logistics",
+        "M": "Mechanical",
+        "O": "Office Assets",
+        "P": "Protection",
+        "R": "Rental",
+        "S": "Services",
+        "T": "Tools",
+        "V": "Various"
+    }
+}
