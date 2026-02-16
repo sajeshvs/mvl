@@ -37,61 +37,73 @@ FX_RATES = {
 }
 
 # ─── Discipline Consolidation Map ───────────────────────────────
+# Maps ACTUAL material names from the data to consolidated business categories.
+# Quotation materials (27) + PO materials (14) → 7 categories
 DISCIPLINE_MAP = {
-    'fire protection': 'Fire Protection',
-    'fire alarm': 'Fire Protection',
-    'fire fighting': 'Fire Protection',
-    'fire suppression': 'Fire Protection',
-    'construction': 'Construction',
-    'civil': 'Construction',
-    'structural': 'Construction',
-    'building': 'Construction',
-    'mechanical': 'Mechanical',
-    'hvac': 'Mechanical',
-    'plumbing': 'Mechanical',
-    'piping': 'Mechanical',
-    'electrical': 'Electrical',
-    'power': 'Electrical',
-    'instrumentation': 'Electrical',
-    'services': 'Services',
-    'maintenance': 'Services',
-    'consulting': 'Services',
-    'general': 'General',
-    'misc.': 'General',
-    'misc': 'General',
-    'machine / equipments': 'Mechanical',
-    'machine': 'Mechanical',
-    'equipments': 'Mechanical',
-    'subcontract': 'Services',
-    'logistics': 'Logistics',
-    'transportation': 'Logistics',
-    'shipping': 'Logistics',
-    'it': 'Services',
-    'telecom': 'Electrical',
-    'safety': 'General',
-    'welding': 'Construction',
-    'painting': 'Construction',
-    'insulation': 'Construction',
-    'scaffolding': 'Construction',
-    'furniture': 'General',
-    'stationery': 'General',
-    'catering': 'Services',
-    'cleaning': 'Services',
+    # Fire Protection
+    'firestop/ dc 315':          'Fire Protection',
+    'firestop':                  'Fire Protection',
+    'fire':                      'Fire Protection',
+    'fire alarm':                'Fire Protection',
+    'fire fighting':             'Fire Protection',
+    'fire suppression':          'Fire Protection',
+    'fire protection':           'Fire Protection',
+
+    # Construction
+    'construction':              'Construction',
+    'building materials':        'Construction',
+    'doors':                     'Construction',
+    'fit out project':           'Construction',
+    'sandwich panel':            'Construction',
+    'accessories / connection for sandwich panel': 'Construction',
+    'polyurethane foam':         'Construction',
+    'windows':                   'Construction',
+    'paints':                    'Construction',
+    'steel coil':                'Construction',
+    'sanitary and toilet accessories': 'Construction',
+
+    # Mechanical
+    'mechanical items':          'Mechanical',
+    'machine / equipments':      'Mechanical',
+    'rental':                    'Mechanical',
+    'containers':                'Mechanical',
+
+    # Electrical
+    'electrical':                'Electrical',
+
+    # Services
+    'services':                  'Services',
+    'subcontract':               'Services',
+    'design':                    'Services',
+    'lsa - life support area':   'Services',
+
+    # General
+    'general':                   'General',
+    'misc.':                     'General',
+    'misc':                      'General',
+    'ppe':                       'General',
+    'computer peripherals':      'General',
+    'chemicals':                 'General',
+
+    # Logistics
+    'tools':                     'Logistics',
+    'transportation':            'Logistics',
+    'logistics':                 'Logistics',
 }
 
 def get_discipline(raw):
-    """Consolidate discipline to business category."""
+    """Consolidate material/discipline to business category."""
     if not raw or not str(raw).strip():
         return 'General'
     normalized = str(raw).strip().lower()
     # Direct match
     if normalized in DISCIPLINE_MAP:
         return DISCIPLINE_MAP[normalized]
-    # Partial match
+    # Partial match (for edge cases)
     for key, val in DISCIPLINE_MAP.items():
         if key in normalized or normalized in key:
             return val
-    return str(raw).strip()  # Keep original if no mapping found
+    return 'General'  # Default fallback — always consolidate
 
 
 def to_usd(value, currency):
@@ -582,7 +594,7 @@ def main():
     print(f'  Original M&D quotations: {len(md_quotations)}')
     print(f'  Original M&D POs: {len(md_pos_raw)}')
 
-    # Clean M&D quotations
+    # Clean M&D quotations — apply discipline consolidation
     seen_md_q = set()
     clean_md_q = []
     for q in md_quotations:
@@ -597,20 +609,18 @@ def main():
         if 'status' in q:
             q['status'] = normalize_status(q['status'])
 
-        # Fix supplier
+        # Fix supplier (note: in quotations, "supplier" IS the client/customer)
         if 'supplier' in q:
             q['supplier'] = clean_supplier_name(q['supplier'])
+
+        # Apply discipline consolidation from material name
+        raw_material = q.get('material', q.get('discipline', ''))
+        q['discipline'] = get_discipline(raw_material)
 
         clean_md_q.append(q)
 
     # Clean M&D POs - use GSA workbench as source (already cleaned)
-    # Add discipline info from original md_pos where available
-    md_po_disciplines = {}
-    for po in md_pos_raw:
-        pnum = po.get('poNumber', po.get('number', ''))
-        if pnum and po.get('discipline'):
-            md_po_disciplines[str(pnum)] = po.get('discipline')
-
+    # Apply discipline consolidation from material name
     clean_md_pos = []
     seen_md_po = set()
     for po in clean_pos:  # Use the already-cleaned GSA POs
@@ -619,6 +629,7 @@ def main():
             continue
         seen_md_po.add(pnum)
 
+        raw_material = po.get('material', '')
         md_po = {
             'poNumber': pnum,
             'poDate': po.get('poDate', ''),
@@ -626,8 +637,8 @@ def main():
             'supplier': po.get('supplier', 'Unspecified Supplier'),
             'entity': po.get('entity', ''),
             'project': po.get('project', ''),
-            'material': po.get('material', ''),
-            'discipline': md_po_disciplines.get(pnum, po.get('material', 'General')),
+            'material': raw_material,
+            'discipline': get_discipline(raw_material),
             'value': float(po.get('poSpendUSD', po.get('valueUSD', 0)) or 0),
             'currency': 'USD',
             'year': po.get('year'),
@@ -639,52 +650,49 @@ def main():
     print(f'  Clean M&D POs: {len(clean_md_pos)}')
 
     # Recompute M&D summary
+    # IMPORTANT: Suppliers and Projects are counted from POs only (not quotations)
+    # because quotation "supplier" is actually the client/customer name.
+    # V5 original had: supplierCount=1,092 (PO vendors), projectCount=98 (PO projects)
     md_disciplines = set()
     md_total_quoted = 0
     md_total_ordered = 0
-    md_suppliers_set = set()
-    md_projects_set = set()
+    md_po_suppliers = set()  # Only PO suppliers (actual vendors)
+    md_po_projects = set()   # Only PO projects (real project codes)
     md_entities_set = set()
 
     for q in clean_md_q:
-        disc = q.get('discipline', q.get('material', 'General'))
+        disc = q.get('discipline', 'General')
         md_disciplines.add(disc)
         val = float(q.get('quotedValue', q.get('value', q.get('amount', 0))) or 0)
         md_total_quoted += val
-        if q.get('supplier'):
-            md_suppliers_set.add(q['supplier'])
-        if q.get('project'):
-            md_projects_set.add(q['project'])
         if q.get('entity'):
             md_entities_set.add(q['entity'])
 
     for po in clean_md_pos:
         md_total_ordered += float(po.get('value', 0) or 0)
         if po.get('supplier') and po['supplier'] != 'Unspecified Supplier':
-            md_suppliers_set.add(po['supplier'])
+            md_po_suppliers.add(po['supplier'])
         if po.get('project'):
-            md_projects_set.add(po['project'])
+            md_po_projects.add(po['project'])
         if po.get('entity'):
             md_entities_set.add(po['entity'])
         md_disciplines.add(po.get('discipline', 'General'))
 
     conversion_rate = round(md_total_ordered / md_total_quoted * 100, 1) if md_total_quoted else 0
 
-    # Recompute discipline breakdown
+    # Recompute discipline breakdown (using consolidated discipline names)
     disc_data = defaultdict(lambda: {
         'quotedValue': 0, 'orderedValue': 0,
         'quotedCount': 0, 'orderedCount': 0,
         'suppliers': set(), 'projects': set()
     })
     for q in clean_md_q:
-        d = q.get('discipline', q.get('material', 'General'))
+        d = q.get('discipline', 'General')
         val = float(q.get('quotedValue', q.get('value', 0)) or 0)
         disc_data[d]['quotedValue'] += val
         disc_data[d]['quotedCount'] += 1
         if q.get('supplier'):
             disc_data[d]['suppliers'].add(q['supplier'])
-        if q.get('project'):
-            disc_data[d]['projects'].add(q['project'])
 
     for po in clean_md_pos:
         d = po.get('discipline', 'General')
@@ -726,24 +734,54 @@ def main():
         'disciplineCount': len(md_disciplines),
         'totalQuoted': round(md_total_quoted, 2),
         'totalOrdered': round(md_total_ordered, 2),
-        'supplierCount': len(md_suppliers_set),
-        'projectCount': len(md_projects_set),
+        'supplierCount': len(md_po_suppliers),  # PO vendors only
+        'projectCount': len(md_po_projects),    # PO projects only
         'entityCount': len(md_entities_set),
         'conversionRate': conversion_rate
     }
     md_data['disciplines'] = md_disciplines_list
     md_data['entityBreakdown'] = md_entity_list
+
+    # Filters: use PO suppliers (actual vendors) for supplier filter,
+    # PO projects for project filter, all entities, consolidated disciplines
+    po_entity_set = set(po.get('entity', '') for po in clean_md_pos if po.get('entity', ''))
     md_data['filters'] = {
-        'entities': sorted(md_entities_set),
+        'entities': sorted(po_entity_set),  # Only entities with POs
         'disciplines': sorted(md_disciplines),
-        'projects': sorted(list(md_projects_set)[:200]),
-        'suppliers': sorted(list(md_suppliers_set)[:200])
+        'projects': sorted(list(md_po_projects)),
+        'suppliers': sorted(list(md_po_suppliers))
     }
+
+    # Generate M&D trend data (monthly quotation + PO aggregation)
+    md_trend = defaultdict(lambda: {'quotedValue': 0, 'orderedValue': 0, 'quoteCount': 0, 'poCount': 0})
+    for q in clean_md_q:
+        dt = parse_date_to_iso(q.get('date', ''))
+        if dt:
+            ym = dt.strftime('%Y-%m')
+            val = float(q.get('quotedValue', q.get('value', 0)) or 0)
+            md_trend[ym]['quotedValue'] += val
+            md_trend[ym]['quoteCount'] += 1
+    for po in clean_md_pos:
+        yr = po.get('year')
+        mo = po.get('month')
+        if yr and mo:
+            ym = f'{yr}-{int(mo):02d}'
+            md_trend[ym]['orderedValue'] += float(po.get('value', 0) or 0)
+            md_trend[ym]['poCount'] += 1
+    md_data['trend'] = [
+        {'yearMonth': ym, 'quotedValue': round(d['quotedValue'], 2),
+         'orderedValue': round(d['orderedValue'], 2),
+         'quoteCount': d['quoteCount'], 'poCount': d['poCount']}
+        for ym, d in sorted(md_trend.items())
+    ]
 
     print(f'  Disciplines: {len(md_disciplines)}')
     print(f'  Total Quoted: ${md_total_quoted:,.2f}')
     print(f'  Total Ordered: ${md_total_ordered:,.2f}')
     print(f'  Conversion Rate: {conversion_rate}%')
+    print(f'  PO Suppliers: {len(md_po_suppliers)}')
+    print(f'  PO Projects: {len(md_po_projects)}')
+    print(f'  Trend months: {len(md_data["trend"])}')
 
     # ── 7. Build Q→PO conversion times (separate file) ──────
     print('\n[7/8] Building conversion times data...')

@@ -231,6 +231,17 @@ async function loadAllData() {
         mdData = await mdRes.json();
         console.log('📊 Loaded client country map:', Object.keys(clientCountryMap || {}).length, 'mappings');
 
+        // Load conversion times data (optional)
+        try {
+            const ctRes = await fetch('data/conversion_times.json');
+            if (ctRes.ok) {
+                window._conversionTimes = await ctRes.json();
+                console.log('📊 Loaded conversion times:', window._conversionTimes?.totalLinked || 0, 'linked records');
+            }
+        } catch (e) {
+            window._conversionTimes = null;
+        }
+
         console.log('📊 Loaded suppliers:', suppliersData.metadata.total_records);
         console.log('📊 Loaded POs:', purchaseOrdersData.metadata.total_records);
         console.log('📊 Loaded quotations:', quotationsData.metadata.total_records);
@@ -547,6 +558,16 @@ function enrichDashboardWithRealData() {
     const sortedMonths = Object.keys(monthlyData).sort().slice(-12);
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+    // Build CO count from GSA data by yearMonth
+    const gsaCOsByMonth = {};
+    if (gsaData?.workbench) {
+        gsaData.workbench.forEach(po => {
+            if (po.poType === 'Change Order' && po.yearMonth) {
+                gsaCOsByMonth[po.yearMonth] = (gsaCOsByMonth[po.yearMonth] || 0) + 1;
+            }
+        });
+    }
+
     if (sortedMonths.length > 0) {
         dashboardData.supplierMarketplace.monthlyTrend = sortedMonths.map(m => {
             const monthNum = parseInt(m.split('-')[1]) - 1;
@@ -554,7 +575,7 @@ function enrichDashboardWithRealData() {
                 month: monthNames[monthNum],
                 quotes: monthlyData[m].quotes,
                 orders: monthlyData[m].orders,
-                cos: Math.floor(monthlyData[m].orders * 0.1)
+                cos: gsaCOsByMonth[m] || 0
             };
         });
     }
@@ -1525,8 +1546,12 @@ function applyFilters() {
         document.getElementById('kpiPoCount').textContent = orderCount.toLocaleString();
         document.getElementById('kpiPoValue').textContent = formatCurrencyShort(totalPOValue);
         document.getElementById('kpiWinRate').textContent = winRate + '%';
-        document.getElementById('kpiCoCount').textContent = orderCount.toLocaleString();
-        document.getElementById('kpiCoValue').textContent = formatCurrencyShort(totalPOValue);
+
+        // CO Count/Value: Show actual change orders from GSA data
+        const gsaCOs = gsaData?.summary?.changeOrders || 0;
+        const gsaCOValue = gsaData?.summary?.changeOrderValue || 0;
+        document.getElementById('kpiCoCount').textContent = gsaCOs.toLocaleString();
+        document.getElementById('kpiCoValue').textContent = formatCurrencyShort(gsaCOValue);
 
         // Update status chart from filtered data
         const statusCounts = {};
@@ -1756,31 +1781,31 @@ function applyFilters() {
 
         renderEmployeeList(employeeList);
 
-        // Update Quotation to PO Time chart from filtered data
-        const monthlyData = {};
-        filtered.filter(q => q.Status === 'Order' && q.Date).forEach(q => {
-            try {
-                const dateParts = q.Date.split(' ');
-                if (dateParts.length >= 3) {
-                    const month = dateParts[1]; // e.g., "Oct"
-                    if (!monthlyData[month]) monthlyData[month] = { count: 0, totalDays: 0 };
-                    // Simulate avg days (we don't have actual PO date, so use random realistic value)
-                    monthlyData[month].count++;
-                    monthlyData[month].totalDays += Math.floor(Math.random() * 15) + 5;
-                }
-            } catch (e) { }
-        });
-
-        const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const quotationTimeData = monthOrder
-            .filter(m => monthlyData[m])
-            .map(m => ({
-                month: m,
-                avgDays: Math.round(monthlyData[m].totalDays / monthlyData[m].count)
-            }));
+        // Update Quotation to PO Time chart from conversion_times.json if available
+        const quotationTimeData = [];
+        if (window._conversionTimes && window._conversionTimes.monthlyAverage && window._conversionTimes.monthlyAverage.length > 0) {
+            window._conversionTimes.monthlyAverage.forEach(item => {
+                quotationTimeData.push({ month: item.month, avgDays: item.avgDays });
+            });
+        }
 
         if (quotationTimeData.length > 0) {
             renderQuotationTimeChart(quotationTimeData);
+        } else {
+            // Show "no data" message in the chart container
+            const qtCanvas = document.getElementById('quotationTimeChart');
+            if (qtCanvas) {
+                if (quotationTimeChartInstance) {
+                    quotationTimeChartInstance.destroy();
+                    quotationTimeChartInstance = null;
+                }
+                const ctx = qtCanvas.getContext('2d');
+                quotationTimeChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels: ['No Data'], datasets: [{ label: 'Avg Days', data: [0], backgroundColor: '#ccc' }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'No Q→PO link data available' } } }
+                });
+            }
         }
 
         // Refresh the bottom paginated table
@@ -2296,21 +2321,17 @@ function renderQuotationTimeChart(data) {
     const canvas = document.getElementById('quotationTimeChart');
     if (!canvas) return;
 
-    // Use fallback data if not provided
-    const chartData = data || [
-        { month: 'Jan', avgDays: 12 },
-        { month: 'Feb', avgDays: 15 },
-        { month: 'Mar', avgDays: 8 },
-        { month: 'Apr', avgDays: 10 },
-        { month: 'May', avgDays: 14 },
-        { month: 'Jun', avgDays: 11 },
-        { month: 'Jul', avgDays: 9 },
-        { month: 'Aug', avgDays: 13 },
-        { month: 'Sep', avgDays: 7 },
-        { month: 'Oct', avgDays: 16 },
-        { month: 'Nov', avgDays: 12 },
-        { month: 'Dec', avgDays: 10 }
-    ];
+    // Use provided data; no fallback with fake numbers
+    const chartData = data;
+
+    if (!chartData || chartData.length === 0) {
+        // Show empty chart message
+        if (quotationTimeChartInstance) {
+            quotationTimeChartInstance.destroy();
+            quotationTimeChartInstance = null;
+        }
+        return;
+    }
 
     // Destroy previous instance
     if (quotationTimeChartInstance) {
@@ -4219,7 +4240,7 @@ function updateMdSupplierTableFiltered() {
     tbody.innerHTML = suppliers.map(s => {
         const fullInfo = suppliersData?.suppliers?.find(ss => ss.name === s.name) || {};
         const country = fullInfo.address?.country_standardized || fullInfo.phone_validation?.phone_country || '-';
-        const rating = fullInfo.rating?.score || (Math.random() * 2 + 3).toFixed(1);
+        const rating = fullInfo.rating?.score || '4.0';
         const email = fullInfo.contact?.email || '-';
         const contact = fullInfo.contact?.primary_contact || '-';
 
@@ -4249,7 +4270,7 @@ function updateMdApprovedMaterialsFiltered() {
             seen.add(key);
             materials.push({
                 material: q.material || '-',
-                specNo: q.number?.split('-')[1] || 'SPEC-' + Math.floor(Math.random() * 10000),
+                specNo: q.number?.split('-')[1] || '-',
                 supplier: q.supplier || '-',
                 discipline: q.discipline || q.material || '-'
             });
@@ -4330,7 +4351,7 @@ function updateMdSupplierTable() {
     tbody.innerHTML = suppliers.map(s => {
         const name = s.name || s.supplier_name || '-';
         const country = s.address?.country_standardized || s.phone_validation?.phone_country || '-';
-        const rating = s.rating?.score || (Math.random() * 2 + 3).toFixed(1);
+        const rating = s.rating?.score || '4.0';
         const email = s.contact?.email || '-';
         const contact = s.contact?.primary_contact || '-';
 
@@ -4364,8 +4385,8 @@ function updateMdApprovedMaterials() {
                 seen.add(key);
                 materials.push({
                     material: q.material || '-',
-                    specNo: q.number?.split('-')[1] || 'SPEC-' + Math.floor(Math.random() * 10000),
-                    supplier: q.supplier || (gsaData?.supplierRankings?.top?.[Math.floor(Math.random() * 5)]?.name) || '-',
+                    specNo: q.number?.split('-')[1] || '-',
+                    supplier: q.supplier || '-',
                     discipline: q.discipline || q.material || '-'
                 });
             }
@@ -4373,12 +4394,13 @@ function updateMdApprovedMaterials() {
     }
 
     if (materials.length === 0) {
-        // Fallback sample data
-        materials = [
-            { material: 'Firestop Sealant', specNo: 'FS-2024-001', supplier: 'Hilti Corporation', discipline: 'Fire Protection' },
-            { material: 'Steel Beam HEA 200', specNo: 'STL-2024-042', supplier: 'ArcelorMittal', discipline: 'Building Materials' },
-            { material: 'HVAC Ductwork', specNo: 'HVAC-2024-015', supplier: 'Systemair', discipline: 'Mechanical' }
-        ];
+        // Fallback: no data available
+        materials = [];
+    }
+
+    if (materials.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No approved materials data available</td></tr>';
+        return;
     }
 
     tbody.innerHTML = materials.map(m => `
@@ -4565,17 +4587,19 @@ function buildMaterialLegend(disciplines, colors) {
     `).join('');
 }
 
-function updateMdPoTable() {
+function updateMdPoTable(filteredData) {
     const tbody = document.getElementById('mdPoDetailsBody');
     if (!tbody) return;
 
-    // Get PO data from mdData or gsaData
+    // Use filtered data if provided, otherwise use mdData.pos or gsaData.workbench
     let pos = [];
 
-    if (gsaData?.workbench) {
-        pos = gsaData.workbench.slice(0, 100);
-    } else if (mdData?.quotations) {
-        pos = mdData.quotations.slice(0, 100);
+    if (filteredData && filteredData.length > 0) {
+        pos = filteredData;
+    } else if (mdData?.pos && mdData.pos.length > 0) {
+        pos = mdData.pos;
+    } else if (gsaData?.workbench) {
+        pos = gsaData.workbench;
     }
 
     mdState.filteredPOs = pos;
@@ -4585,18 +4609,18 @@ function updateMdPoTable() {
 
     tbody.innerHTML = pageData.map(po => {
         const currency = po.currency || 'USD';
-        const rawValue = po.amounts?.total_po_value_usd || po.amounts?.total_po_value || po.quotedValue || 0;
+        const rawValue = po.poSpendUSD || po.valueUSD || po.value || po.amounts?.total_po_value_usd || po.quotedValue || 0;
         // Convert to USD using FX rates
         const valueInUSD = convertToUSD(rawValue, currency);
         return `
             <tr>
-                <td>${po.po_number || po.number || '-'}</td>
-                <td>${po.dates?.po_date || po.date || '-'}</td>
+                <td>${po.poNumber || po.po_number || po.number || '-'}</td>
+                <td>${po.poDate || po.dates?.po_date || po.date || '-'}</td>
                 <td>${po.material || '-'}</td>
                 <td>${po.discipline || po.material || '-'}</td>
                 <td>${formatCurrencyShort(valueInUSD)}</td>
-                <td>USD</td>
-                <td>${po.project?.project_name || po.project || '-'}</td>
+                <td>${currency}</td>
+                <td title="${po.project?.project_name || po.project || '-'}">${truncateText(po.project?.project_name || po.project || '-', 40)}</td>
             </tr>
         `;
     }).join('');
@@ -4613,7 +4637,7 @@ function updateMdPoTable() {
 function mdPoPageChange(delta) {
     const totalPages = Math.ceil(mdState.filteredPOs.length / mdState.pageSize);
     mdState.currentPage = Math.max(1, Math.min(totalPages, mdState.currentPage + delta));
-    updateMdPoTable();
+    updateMdPoTable(mdState.filteredPOs);
 }
 
 // ============================================
