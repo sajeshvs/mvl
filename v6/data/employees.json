@@ -1,0 +1,441 @@
+{
+  "metadata": {
+    "version": "v6",
+    "buildDate": "2026-02-16 00:59:24",
+    "totalRecords": 54
+  },
+  "records": [
+    {
+      "name": "Lince M.",
+      "quotationCount": 259,
+      "orderCount": 256,
+      "totalValueUSD": 22171027.45,
+      "orderValueUSD": 22140708.7,
+      "winRate": 98.8
+    },
+    {
+      "name": "Cecil R.",
+      "quotationCount": 7,
+      "orderCount": 5,
+      "totalValueUSD": 16895377.81,
+      "orderValueUSD": 16872967.81,
+      "winRate": 71.4
+    },
+    {
+      "name": "Marman I.",
+      "quotationCount": 750,
+      "orderCount": 654,
+      "totalValueUSD": 17969640.53,
+      "orderValueUSD": 15899324.05,
+      "winRate": 87.2
+    },
+    {
+      "name": "Rahul N.",
+      "quotationCount": 603,
+      "orderCount": 584,
+      "totalValueUSD": 13467743.67,
+      "orderValueUSD": 13130286.71,
+      "winRate": 96.8
+    },
+    {
+      "name": "Maricar I.",
+      "quotationCount": 378,
+      "orderCount": 285,
+      "totalValueUSD": 12600047.77,
+      "orderValueUSD": 8345411.32,
+      "winRate": 75.4
+    },
+    {
+      "name": "Mahesh B.",
+      "quotationCount": 286,
+      "orderCount": 129,
+      "totalValueUSD": 1531594372.29,
+      "orderValueUSD": 7300458.75,
+      "winRate": 45.1
+    },
+    {
+      "name": "Abie M.",
+      "quotationCount": 14,
+      "orderCount": 9,
+      "totalValueUSD": 8758901.97,
+      "orderValueUSD": 6551910.72,
+      "winRate": 64.3
+    },
+    {
+      "name": "Vinith B.",
+      "quotationCount": 171,
+      "orderCount": 166,
+      "totalValueUSD": 4724069.78,
+      "orderValueUSD": 4717828.99,
+      "winRate": 97.1
+    },
+    {
+      "name": "Shah F.",
+      "quotationCount": 184,
+      "orderCount": 179,
+      "totalValueUSD": 3717023.39,
+      "orderValueUSD": 3449411.9,
+      "winRate": 97.3
+    },
+    {
+      "name": "Raquel I.",
+      "quotationCount": 182,
+      "orderCount": 47,
+      "totalValueUSD": 11424730.45,
+      "orderValueUSD": 2292585.55,
+      "winRate": 25.8
+    },
+    {
+      "name": "Samar T.",
+      "quotationCount": 1095,
+      "orderCount": 619,
+      "totalValueUSD": 10216835.36,
+      "orderValueUSD": 2281918.45,
+      "winRate": 56.5
+    },
+    {
+      "name": "Waleed B.M.",
+      "quotationCount": 790,
+      "orderCount": 453,
+      "totalValueUSD": 6969135.19,
+      "orderValueUSD": 1856995.36,
+      "winRate": 57.3
+    },
+    {
+      "name": "Islam S.",
+      "quotationCount": 905,
+      "orderCount": 467,
+      "totalValueUSD": 15240376.08,
+      "orderValueUSD": 1856629.18,
+      "winRate": 51.6
+    },
+    {
+      "name": "Habib B.",
+      "quotationCount": 885,
+      "orderCount": 532,
+      "totalValueUSD": 9409014.39,
+      "orderValueUSD": 1844995.91,
+      "winRate": 60.1
+    },
+    {
+      "name": "Shinso M.",
+      "quotationCount": 248,
+      "orderCount": 71,
+      "totalValueUSD": 30308325.44,
+      "orderValueUSD": 1766382.34,
+      "winRate": 28.6
+    },
+    {
+      "name": "Arun stephen ",
+      "quotationCount": 669,
+      "orderCount": 365,
+      "totalValueUSD": 10834722.2,
+      "orderValueUSD": 1697286.86,
+      "winRate": 54.6
+    },
+    {
+      "name": "Karim E.",
+      "quotationCount": 302,
+      "orderCount": 144,
+      "totalValueUSD": 13431495.18,
+      "orderValueUSD": 1561521.49,
+      "winRate": 47.7
+    },
+    {
+      "name": "Arun N.",
+      "quotationCount": 5,
+      "orderCount": 1,
+      "totalValueUSD": 11962482.0,
+      "orderValueUSD": 1445528.0,
+      "winRate": 20.0
+    },
+    {
+      "name": "Admin ",
+      "quotationCount": 1,
+      "orderCount": 1,
+      "totalValueUSD": 1400000.0,
+      "orderValueUSD": 1400000.0,
+      "winRate": 100.0
+    },
+    {
+      "name": "Muhammad N.",
+      "quotationCount": 539,
+      "orderCount": 316,
+      "totalValueUSD": 3815858.29,
+      "orderValueUSD": 979066.14,
+      "winRate": 58.6
+    },
+    {
+      "name": "Azim R.",
+      "quotationCount": 22,
+      "orderCount": 2,
+      "totalValueUSD": 7458957.84,
+      "orderValueUSD": 689220.4,
+      "winRate": 9.1
+    },
+    {
+      "name": "Jailani M.",
+      "quotationCount": 4,
+      "orderCount": 4,
+      "totalValueUSD": 450004.0,
+      "orderValueUSD": 450004.0,
+      "winRate": 100.0
+    },
+    {
+      "name": "Samjith S.",
+      "quotationCount": 239,
+      "orderCount": 56,
+      "totalValueUSD": 3747512.16,
+      "orderValueUSD": 414789.53,
+      "winRate": 23.4
+    },
+    {
+      "name": "Marty A.M.",
+      "quotationCount": 10,
+      "orderCount": 10,
+      "totalValueUSD": 369941.64,
+      "orderValueUSD": 369941.64,
+      "winRate": 100.0
+    },
+    {
+      "name": "Tamraz M.",
+      "quotationCount": 50,
+      "orderCount": 46,
+      "totalValueUSD": 402499.49,
+      "orderValueUSD": 347511.0,
+      "winRate": 92.0
+    },
+    {
+      "name": "Ajeesh J.",
+      "quotationCount": 148,
+      "orderCount": 62,
+      "totalValueUSD": 839323.61,
+      "orderValueUSD": 165375.01,
+      "winRate": 41.9
+    },
+    {
+      "name": "Ramshad K.",
+      "quotationCount": 147,
+      "orderCount": 93,
+      "totalValueUSD": 825757.99,
+      "orderValueUSD": 147955.26,
+      "winRate": 63.3
+    },
+    {
+      "name": "Rain R.",
+      "quotationCount": 79,
+      "orderCount": 20,
+      "totalValueUSD": 1277998.57,
+      "orderValueUSD": 70376.75,
+      "winRate": 25.3
+    },
+    {
+      "name": "Yaser A.",
+      "quotationCount": 7,
+      "orderCount": 2,
+      "totalValueUSD": 68500.0,
+      "orderValueUSD": 68500.0,
+      "winRate": 28.6
+    },
+    {
+      "name": "Hamza M.",
+      "quotationCount": 24,
+      "orderCount": 9,
+      "totalValueUSD": 135885.43,
+      "orderValueUSD": 49812.19,
+      "winRate": 37.5
+    },
+    {
+      "name": "Dinesh M.",
+      "quotationCount": 72,
+      "orderCount": 31,
+      "totalValueUSD": 503963.68,
+      "orderValueUSD": 48081.17,
+      "winRate": 43.1
+    },
+    {
+      "name": "M.hassan ",
+      "quotationCount": 103,
+      "orderCount": 12,
+      "totalValueUSD": 1547701.86,
+      "orderValueUSD": 42370.53,
+      "winRate": 11.7
+    },
+    {
+      "name": "Ferdinand R.",
+      "quotationCount": 2,
+      "orderCount": 2,
+      "totalValueUSD": 41209.0,
+      "orderValueUSD": 41209.0,
+      "winRate": 100.0
+    },
+    {
+      "name": "Samer H.",
+      "quotationCount": 79,
+      "orderCount": 23,
+      "totalValueUSD": 2009580.33,
+      "orderValueUSD": 40505.68,
+      "winRate": 29.1
+    },
+    {
+      "name": "Venoth T.A.",
+      "quotationCount": 67,
+      "orderCount": 16,
+      "totalValueUSD": 1220077.05,
+      "orderValueUSD": 37181.42,
+      "winRate": 23.9
+    },
+    {
+      "name": "Hayat M.",
+      "quotationCount": 3,
+      "orderCount": 1,
+      "totalValueUSD": 149967.11,
+      "orderValueUSD": 36327.0,
+      "winRate": 33.3
+    },
+    {
+      "name": "Ajith S.",
+      "quotationCount": 73,
+      "orderCount": 23,
+      "totalValueUSD": 346267.21,
+      "orderValueUSD": 30888.18,
+      "winRate": 31.5
+    },
+    {
+      "name": "Avinash P.",
+      "quotationCount": 57,
+      "orderCount": 10,
+      "totalValueUSD": 452930.96,
+      "orderValueUSD": 15479.68,
+      "winRate": 17.5
+    },
+    {
+      "name": "Prasad P.",
+      "quotationCount": 2,
+      "orderCount": 2,
+      "totalValueUSD": 9065.94,
+      "orderValueUSD": 9065.94,
+      "winRate": 100.0
+    },
+    {
+      "name": "Rufino S.J.",
+      "quotationCount": 1,
+      "orderCount": 1,
+      "totalValueUSD": 5756.5,
+      "orderValueUSD": 5756.5,
+      "winRate": 100.0
+    },
+    {
+      "name": "Zafar A.",
+      "quotationCount": 1,
+      "orderCount": 1,
+      "totalValueUSD": 5652.0,
+      "orderValueUSD": 5652.0,
+      "winRate": 100.0
+    },
+    {
+      "name": "Enayatullah S.",
+      "quotationCount": 1,
+      "orderCount": 1,
+      "totalValueUSD": 3300.0,
+      "orderValueUSD": 3300.0,
+      "winRate": 100.0
+    },
+    {
+      "name": "Gilbert J.",
+      "quotationCount": 6,
+      "orderCount": 2,
+      "totalValueUSD": 54014.83,
+      "orderValueUSD": 2176.26,
+      "winRate": 33.3
+    },
+    {
+      "name": "Rusevalt S.",
+      "quotationCount": 2,
+      "orderCount": 2,
+      "totalValueUSD": 796.25,
+      "orderValueUSD": 796.25,
+      "winRate": 100.0
+    },
+    {
+      "name": "Muhammad F.K.",
+      "quotationCount": 31,
+      "orderCount": 2,
+      "totalValueUSD": 278310.84,
+      "orderValueUSD": 503.75,
+      "winRate": 6.5
+    },
+    {
+      "name": "Faseela ",
+      "quotationCount": 1,
+      "orderCount": 1,
+      "totalValueUSD": 360.25,
+      "orderValueUSD": 360.25,
+      "winRate": 100.0
+    },
+    {
+      "name": "Arun S.",
+      "quotationCount": 1,
+      "orderCount": 1,
+      "totalValueUSD": 111.5,
+      "orderValueUSD": 111.5,
+      "winRate": 100.0
+    },
+    {
+      "name": "Jerin V.",
+      "quotationCount": 2,
+      "orderCount": 0,
+      "totalValueUSD": 12235.46,
+      "orderValueUSD": 0,
+      "winRate": 0.0
+    },
+    {
+      "name": "Hani K.",
+      "quotationCount": 1,
+      "orderCount": 0,
+      "totalValueUSD": 2119.44,
+      "orderValueUSD": 0,
+      "winRate": 0.0
+    },
+    {
+      "name": "Lorelie S.",
+      "quotationCount": 19,
+      "orderCount": 0,
+      "totalValueUSD": 187261.8,
+      "orderValueUSD": 0,
+      "winRate": 0.0
+    },
+    {
+      "name": "Shahbas A.S.",
+      "quotationCount": 5,
+      "orderCount": 0,
+      "totalValueUSD": 95779.04,
+      "orderValueUSD": 0,
+      "winRate": 0.0
+    },
+    {
+      "name": "Derlyn J.A.",
+      "quotationCount": 1,
+      "orderCount": 0,
+      "totalValueUSD": 7158.19,
+      "orderValueUSD": 0,
+      "winRate": 0.0
+    },
+    {
+      "name": "Waqar N.",
+      "quotationCount": 1,
+      "orderCount": 0,
+      "totalValueUSD": 14758.0,
+      "orderValueUSD": 0,
+      "winRate": 0.0
+    },
+    {
+      "name": "Darlene A.",
+      "quotationCount": 6,
+      "orderCount": 0,
+      "totalValueUSD": 10181.0,
+      "orderValueUSD": 0,
+      "winRate": 0.0
+    }
+  ]
+}

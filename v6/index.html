@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVL Supply Chain Intel Hub — V6</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- Leaflet CSS + JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Dashboard Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading Supply Chain Intel Hub...</p>
+    </div>
+
+    <div class="dashboard">
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- HEADER                                                             -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <header class="header">
+            <div class="header-left">
+                <img src="assets/mvl-logo.png" alt="MVL Group" class="header-logo" onerror="this.style.display='none'">
+                <h1 class="header-title">Supply Chain Intel Hub</h1>
+                <span class="header-version">V6</span>
+            </div>
+            <div class="header-right">
+                <span class="header-refresh" id="lastRefresh">Last Refresh: —</span>
+                <span class="header-separator">|</span>
+                <span class="header-fx" id="fxRatesDisplay">FX: Loading...</span>
+            </div>
+        </header>
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- NAVIGATION TABS                                                    -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="supplier-marketplace" data-theme="sm">
+                <span class="nav-tab-icon">📊</span>
+                <span class="nav-tab-label">Supplier Marketplace</span>
+            </button>
+            <button class="nav-tab" data-tab="global-spend-analysis" data-theme="gsa">
+                <span class="nav-tab-icon">💰</span>
+                <span class="nav-tab-label">Global Spend Analysis</span>
+            </button>
+            <button class="nav-tab" data-tab="materials-disciplines" data-theme="md">
+                <span class="nav-tab-icon">🔧</span>
+                <span class="nav-tab-label">Materials &amp; Disciplines</span>
+            </button>
+        </nav>
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- MAIN CONTENT                                                       -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <main class="main-content">
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- TAB 1: SUPPLIER MARKETPLACE                                    -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <div id="tab-supplier-marketplace" class="tab-content active" data-theme="sm">
+
+                <!-- SM Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label for="filterEntity">Entity</label>
+                        <select id="filterEntity"><option value="">All Entities</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterProject">Project</label>
+                        <select id="filterProject"><option value="">All Projects</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterStatus">Status</label>
+                        <select id="filterStatus"><option value="">All Statuses</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterMaterial">Material</label>
+                        <select id="filterMaterial"><option value="">All Materials</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterDiscipline">Discipline</label>
+                        <select id="filterDiscipline"><option value="">All Disciplines</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="searchInput">Search</label>
+                        <input type="text" id="searchInput" placeholder="Search quotations...">
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-apply" onclick="window.applySMFilters && window.applySMFilters()">Apply</button>
+                        <button class="btn-clear clear-filters-btn" id="smClearFilters" data-tab="sm">Clear</button>
+                    </div>
+                </div>
+
+                <!-- SM KPIs -->
+                <div class="kpi-grid kpi-grid-5">
+                    <div class="kpi-card" data-theme="sm">
+                        <div class="kpi-label">Total Quotations</div>
+                        <div class="kpi-value" id="smKpiTotalQuotations">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="sm">
+                        <div class="kpi-label">Total Orders (Won)</div>
+                        <div class="kpi-value" id="smKpiTotalOrders">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="sm">
+                        <div class="kpi-label">Win Rate</div>
+                        <div class="kpi-value" id="smKpiWinRate">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="sm">
+                        <div class="kpi-label">Quotation Value (USD)</div>
+                        <div class="kpi-value" id="smKpiQuotationValue">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="sm">
+                        <div class="kpi-label">Order Value (USD)</div>
+                        <div class="kpi-value" id="smKpiOrderValue">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="sm">
+                        <div class="kpi-label">Clients</div>
+                        <div class="kpi-value" id="smKpiClients">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="sm">
+                        <div class="kpi-label">Entities</div>
+                        <div class="kpi-value" id="smKpiEntities">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="sm">
+                        <div class="kpi-label">Employees</div>
+                        <div class="kpi-value" id="smKpiEmployees">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="sm">
+                        <div class="kpi-label">Conversion Rate</div>
+                        <div class="kpi-value" id="smKpiConversionRate">—</div>
+                    </div>
+                </div>
+
+                <!-- SM Charts Row 1 -->
+                <div class="content-grid grid-60-40">
+                    <!-- Entity Comparison -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Entity Comparison</h3>
+                            <div class="chart-toggles">
+                                <button class="chart-toggle-btn active" data-chart-target="entity" data-chart-type="quote">Quote Value</button>
+                                <button class="chart-toggle-btn" data-chart-target="entity" data-chart-type="spend">PO Spend</button>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="entityChartCanvas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Status Breakdown + Top Suppliers -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Quotation Status</h3>
+                        </div>
+                        <div id="statusChart" class="status-bar-list"></div>
+
+                        <div class="chart-header mt-2">
+                            <h3>Top Suppliers</h3>
+                        </div>
+                        <div id="topSuppliers" class="ranked-list"></div>
+                    </div>
+                </div>
+
+                <!-- SM Charts Row 2 -->
+                <div class="content-grid grid-60-40">
+                    <!-- Material / Discipline Distribution -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Material Distribution</h3>
+                            <div class="chart-toggles">
+                                <button class="chart-toggle-btn active" data-chart-target="material" data-chart-type="bar">Bar</button>
+                                <button class="chart-toggle-btn" data-chart-target="material" data-chart-type="pie">Pie</button>
+                                <button class="chart-toggle-btn" data-chart-target="material" data-chart-type="doughnut">Doughnut</button>
+                                <button class="chart-toggle-btn" data-chart-target="material" data-chart-type="radar">Radar</button>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="materialChartCanvas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Employee List -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>MVL Employee Performance</h3>
+                        </div>
+                        <div id="employeeList" class="ranked-list"></div>
+                    </div>
+                </div>
+
+                <!-- SM Charts Row 3 -->
+                <div class="content-grid grid-60-40">
+                    <!-- Conversion Rate by Entity -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Conversion Rate by Entity</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="quotationTimeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Supplier Map -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Supplier Locations</h3>
+                        </div>
+                        <div id="supplierMap" class="map-container"></div>
+                    </div>
+                </div>
+
+                <!-- SM Monthly Trend -->
+                <div class="content-grid grid-full">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Monthly Quotation Trend</h3>
+                        </div>
+                        <div class="chart-body chart-body-wide">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SM Approved Materials -->
+                <div class="content-grid grid-full">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Approved Materials</h3>
+                        </div>
+                        <div class="data-table-container">
+                            <table class="data-table compact">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Spec / Description</th>
+                                        <th>Lead Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="approvedMaterialTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SM Bottom Section -->
+                <div class="bottom-section">
+                    <div class="bottom-tabs">
+                        <button class="bottom-tab-btn active" data-bottom-tab="workbench">Marketplace Workbench</button>
+                        <button class="bottom-tab-btn" data-bottom-tab="supplier-list">Supplier List</button>
+                    </div>
+
+                    <!-- Bottom Filters -->
+                    <div class="filter-bar filter-bar-compact" id="smBottomFilters">
+                        <div class="filter-group">
+                            <label for="bottomSearch">Search</label>
+                            <input type="text" id="bottomSearch" placeholder="Search...">
+                        </div>
+                        <div class="filter-group" id="bottomStatusGroup">
+                            <label for="bottomFilterStatus">Status</label>
+                            <select id="bottomFilterStatus"><option value="">All</option></select>
+                        </div>
+                        <div class="filter-group" id="bottomMaterialGroup">
+                            <label for="bottomFilterMaterial">Material</label>
+                            <select id="bottomFilterMaterial"><option value="">All</option></select>
+                        </div>
+                        <div class="filter-group" id="bottomCountryGroup">
+                            <label for="bottomFilterCountry">Country</label>
+                            <select id="bottomFilterCountry"><option value="">All</option></select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="bottomPageSize">Show</label>
+                            <select id="bottomPageSize">
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="200">200</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Table -->
+                    <div class="data-table-container">
+                        <table class="data-table" id="smBottomTable">
+                            <thead id="smBottomTableHead">
+                                <tr>
+                                    <th>Quotation #</th>
+                                    <th>Status</th>
+                                    <th>Material</th>
+                                    <th>Project</th>
+                                    <th>Value (USD)</th>
+                                    <th>Contact</th>
+                                </tr>
+                            </thead>
+                            <tbody id="smBottomTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-controls" id="smPagination"></div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- TAB 2: GLOBAL SPEND ANALYSIS                                   -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <div id="tab-global-spend-analysis" class="tab-content" data-theme="gsa">
+
+                <!-- GSA Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label for="gsaFilterEntity">Entity</label>
+                        <select id="gsaFilterEntity"><option value="">All Entities</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="gsaFilterSupplier">Supplier</label>
+                        <select id="gsaFilterSupplier"><option value="">All Suppliers</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="gsaFilterProject">Project</label>
+                        <select id="gsaFilterProject"><option value="">All Projects</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="gsaFilterMaterial">Material</label>
+                        <select id="gsaFilterMaterial"><option value="">All Materials</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="gsaFilterDiscipline">Discipline</label>
+                        <select id="gsaFilterDiscipline"><option value="">All Disciplines</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="gsaFilterPoType">PO Type</label>
+                        <select id="gsaFilterPoType"><option value="">All Types</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="gsaFilterYear">Year</label>
+                        <select id="gsaFilterYear"><option value="">All Years</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="gsaFilterFrom">From</label>
+                        <input type="date" id="gsaFilterFrom">
+                    </div>
+                    <div class="filter-group">
+                        <label for="gsaFilterTo">To</label>
+                        <input type="date" id="gsaFilterTo">
+                    </div>
+                    <div class="filter-group">
+                        <label for="gsaSearchInput">Search</label>
+                        <input type="text" id="gsaSearchInput" placeholder="Search POs...">
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-apply" onclick="window.applyGSAFilters && window.applyGSAFilters()">Apply</button>
+                        <button class="btn-clear clear-filters-btn" id="gsaClearFilters" data-tab="gsa">Clear</button>
+                    </div>
+                </div>
+
+                <!-- GSA KPIs -->
+                <div class="kpi-grid kpi-grid-6">
+                    <div class="kpi-card" data-theme="gsa">
+                        <div class="kpi-label">Total POs</div>
+                        <div class="kpi-value" id="gsaKpiPoCount">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="gsa">
+                        <div class="kpi-label">Total Spend (USD)</div>
+                        <div class="kpi-value" id="gsaKpiTotalSpend">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="gsa">
+                        <div class="kpi-label">Change Orders</div>
+                        <div class="kpi-value" id="gsaKpiCoCount">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="gsa">
+                        <div class="kpi-label">CO Amount (USD)</div>
+                        <div class="kpi-value" id="gsaKpiCoAmount">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="gsa">
+                        <div class="kpi-label">Active Suppliers</div>
+                        <div class="kpi-value" id="gsaKpiSupplierCount">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="gsa">
+                        <div class="kpi-label">Entities</div>
+                        <div class="kpi-value" id="gsaKpiEntityCount">—</div>
+                    </div>
+                </div>
+
+                <!-- GSA Charts Row 1: Annual Spend Trend -->
+                <div class="content-grid grid-full">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Annual Spend Trend</h3>
+                        </div>
+                        <div class="chart-body chart-body-wide">
+                            <canvas id="gsaSpendTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GSA Charts Row 2: Entity + Project -->
+                <div class="content-grid grid-50-50">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Entity Spend</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="gsaEntityChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Project Spend</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="gsaProjectChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GSA Charts Row 3: Top + Bottom Suppliers -->
+                <div class="content-grid grid-50-50">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Top 10 Suppliers</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="gsaTopSuppliersChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Bottom 10 Suppliers</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="gsaBottomSuppliersChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GSA PO Table -->
+                <div class="content-grid grid-full">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Purchase Order Details</h3>
+                            <div class="table-controls">
+                                <input type="text" id="gsaTableSearch" placeholder="Search table..." class="table-search">
+                                <select id="gsaTablePageSize" class="page-size-select">
+                                    <option value="25">25 rows</option>
+                                    <option value="50">50 rows</option>
+                                    <option value="100">100 rows</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th data-sort="poNumber">PO Number ▼</th>
+                                        <th data-sort="poType">Type</th>
+                                        <th data-sort="project">Project</th>
+                                        <th data-sort="poDate">PO Date ▼</th>
+                                        <th data-sort="supplier">Supplier</th>
+                                        <th data-sort="material">Material</th>
+                                        <th data-sort="valueUSD" class="text-right">PO Value (USD) ▼</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gsaPoTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="pagination-controls" id="gsaPagination"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- TAB 3: MATERIALS & DISCIPLINES                                 -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <div id="tab-materials-disciplines" class="tab-content" data-theme="md">
+
+                <!-- M&D Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label for="filterMdDiscipline">Discipline</label>
+                        <select id="filterMdDiscipline"><option value="">All Disciplines</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterMdEntity">Entity</label>
+                        <select id="filterMdEntity"><option value="">All Entities</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterMdProject">Project</label>
+                        <select id="filterMdProject"><option value="">All Projects</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterMdSupplier">Supplier</label>
+                        <select id="filterMdSupplier"><option value="">All Suppliers</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterMdMaterial">Material</label>
+                        <select id="filterMdMaterial"><option value="">All Materials</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterMdYear">Year</label>
+                        <select id="filterMdYear"><option value="">All Years</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterMdFrom">From</label>
+                        <input type="date" id="filterMdFrom">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterMdTo">To</label>
+                        <input type="date" id="filterMdTo">
+                    </div>
+                    <div class="filter-group">
+                        <label for="mdSearchInput">Search</label>
+                        <input type="text" id="mdSearchInput" placeholder="Search materials...">
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-apply" onclick="window.applyMdFilters && window.applyMdFilters()">Apply</button>
+                        <button class="btn-clear clear-filters-btn" id="mdClearFilters" data-tab="md">Clear</button>
+                    </div>
+                </div>
+
+                <!-- M&D KPIs -->
+                <div class="kpi-grid kpi-grid-6">
+                    <div class="kpi-card" data-theme="md">
+                        <div class="kpi-label">Disciplines</div>
+                        <div class="kpi-value" id="mdKpiDisciplineCount">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="md">
+                        <div class="kpi-label">Total Quoted (USD)</div>
+                        <div class="kpi-value" id="mdKpiTotalQuoted">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="md">
+                        <div class="kpi-label">Total Ordered (USD)</div>
+                        <div class="kpi-value" id="mdKpiTotalOrdered">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="md">
+                        <div class="kpi-label">Active Suppliers</div>
+                        <div class="kpi-value" id="mdKpiSupplierCount">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="md">
+                        <div class="kpi-label">Projects</div>
+                        <div class="kpi-value" id="mdKpiProjectCount">—</div>
+                    </div>
+                    <div class="kpi-card" data-theme="md">
+                        <div class="kpi-label">Conversion Rate</div>
+                        <div class="kpi-value" id="mdKpiConversionRate">—</div>
+                    </div>
+                </div>
+
+                <!-- M&D Charts Row 1: Discipline Spend + Distribution -->
+                <div class="content-grid grid-60-40">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Discipline Spend — Quoted vs Actual</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="disciplineSpendChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Material Distribution</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="materialDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- M&D Supplier Profile + Supplier Table -->
+                <div class="content-grid grid-40-60">
+                    <!-- Supplier Profile Card -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Supplier Profile</h3>
+                        </div>
+                        <div id="mdSupplierProfile" class="supplier-profile">
+                            <p class="text-secondary text-center">Select a supplier to view profile</p>
+                        </div>
+                    </div>
+
+                    <!-- Supplier Overview Table -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Supplier Overview</h3>
+                        </div>
+                        <div class="data-table-container">
+                            <table class="data-table compact">
+                                <thead>
+                                    <tr>
+                                        <th>Supplier Name</th>
+                                        <th>Country</th>
+                                        <th>Rating</th>
+                                        <th>Email</th>
+                                        <th class="text-right">PO Count</th>
+                                        <th class="text-right">Total Spend</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mdSupplierTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- M&D Approved Materials -->
+                <div class="content-grid grid-full">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Approved Materials</h3>
+                        </div>
+                        <div class="data-table-container">
+                            <table class="data-table compact">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Discipline</th>
+                                        <th class="text-right">Supplier Count</th>
+                                        <th class="text-right">Quotation Count</th>
+                                        <th class="text-right">Total Value (USD)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mdApprovedMaterialsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- M&D PO Details Table -->
+                <div class="content-grid grid-full">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>PO / Material Details</h3>
+                            <div class="table-controls">
+                                <select id="mdTablePageSize" class="page-size-select">
+                                    <option value="25">25 rows</option>
+                                    <option value="50">50 rows</option>
+                                    <option value="100">100 rows</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>PO Number</th>
+                                        <th>PO Date</th>
+                                        <th>Material</th>
+                                        <th>Discipline</th>
+                                        <th>Entity</th>
+                                        <th class="text-right">PO Value (USD)</th>
+                                        <th>Currency</th>
+                                        <th>Project</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mdPoDetailsBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="pagination-controls" id="mdPagination"></div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- FOOTER                                                             -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <footer class="footer">
+            <span>MVL Supply Chain Intel Hub V6 — &copy; 2026 MVL Group</span>
+            <span class="footer-right">Data refreshed from MicroTrack ERP</span>
+        </footer>
+    </div>
+
+    <!-- App Entry Point (ES Module) -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
