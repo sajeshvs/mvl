@@ -2663,3 +2663,92 @@ body {
     font-style: italic;
     border-bottom: 1px solid #eee;
 }
+
+/* ============================================ */
+/* MD SUPPLIER TABLE CONTROLS & PAGINATION      */
+/* ============================================ */
+.md-supplier-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    gap: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f8f9fa;
+}
+
+.md-supplier-search {
+    flex: 1;
+    max-width: 220px;
+    padding: 5px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 11px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    outline: none;
+}
+
+.md-supplier-search:focus {
+    border-color: #0f3d5e;
+    box-shadow: 0 0 0 2px rgba(15, 61, 94, 0.12);
+}
+
+.md-supplier-page-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #555;
+}
+
+.md-supplier-page-controls select {
+    padding: 3px 6px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 11px;
+    background: #fff;
+}
+
+.md-supplier-showing {
+    font-size: 11px;
+    color: #888;
+}
+
+.md-supplier-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    gap: 8px;
+    border-top: 1px solid #e5e7eb;
+    background: #f8f9fa;
+}
+
+.md-supplier-page-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background: #fff;
+    color: #0f3d5e;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+
+.md-supplier-page-btn:hover {
+    background: #0f3d5e;
+    color: #fff;
+    border-color: #0f3d5e;
+}
+
+.md-supplier-page-info {
+    font-size: 11px;
+    color: #555;
+    min-width: 80px;
+    text-align: center;
+}

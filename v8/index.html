@@ -260,7 +260,8 @@
                                 <h3 class="chart-title">
                                     <span class="chart-title-icon">⏱️</span>
                                     Quotation to PO Time
-                                    <span class="kpi-info-icon" title="Average number of days from Quotation Date to PO Date, calculated per month. Formula: (PO Date − Quotation Date) averaged per month.">ℹ️</span>
+                                    <span class="kpi-info-icon"
+                                        title="Average number of days from Quotation Date to PO Date, calculated per month. Formula: (PO Date − Quotation Date) averaged per month.">ℹ️</span>
                                 </h3>
                             </div>
                             <div class="chart-body">
@@ -340,7 +341,8 @@
                                 <div class="coming-soon-placeholder">
                                     <div class="coming-soon-icon">🚧</div>
                                     <div class="coming-soon-text">Coming Soon</div>
-                                    <div class="coming-soon-sub">Approved materials data is being compiled and will be available in a future update.</div>
+                                    <div class="coming-soon-sub">Approved materials data is being compiled and will be
+                                        available in a future update.</div>
                                 </div>
                             </div>
                         </div>
@@ -907,13 +909,26 @@
                             <h3 class="md-table-title">Supplier Overview</h3>
                             <span class="md-table-subtitle">Suppliers related to selected material/discipline</span>
                         </div>
-                        <div class="md-table-body">
+                        <!-- Supplier Table Controls -->
+                        <div class="md-supplier-controls">
+                            <input type="text" id="mdSupplierSearch" class="md-supplier-search" placeholder="Search suppliers..." oninput="filterMdSupplierTable()">
+                            <div class="md-supplier-page-controls">
+                                <label>Show</label>
+                                <select id="mdSupplierPageSize" onchange="changeMdSupplierPageSize()" title="Page size">
+                                    <option value="10" selected>10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                </select>
+                                <span id="mdSupplierShowingText" class="md-supplier-showing">of 0</span>
+                            </div>
+                        </div>
+                        <div class="md-table-body" style="max-height: 420px; overflow-y: auto;">
                             <table class="md-data-table" id="mdSupplierTable">
                                 <thead>
                                     <tr>
-                                        <th>Supplier Name</th>
-                                        <th>Location</th>
-                                        <th>Rating</th>
+                                        <th onclick="sortMdSupplierTable('name')" style="cursor:pointer">Supplier Name ↕</th>
+                                        <th onclick="sortMdSupplierTable('country')" style="cursor:pointer">Location ↕</th>
+                                        <th onclick="sortMdSupplierTable('rating')" style="cursor:pointer">Rating ↕</th>
                                         <th>Email</th>
                                         <th>Contact</th>
                                     </tr>
@@ -922,6 +937,14 @@
                                     <!-- Data populated by JS -->
                                 </tbody>
                             </table>
+                        </div>
+                        <!-- Supplier Table Pagination -->
+                        <div class="md-supplier-pagination">
+                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('first')" title="First page">«</button>
+                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('prev')" title="Previous page">‹</button>
+                            <span id="mdSupplierPageInfo" class="md-supplier-page-info">Page 1 of 1</span>
+                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('next')" title="Next page">›</button>
+                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('last')" title="Last page">»</button>
                         </div>
                     </div>
 
@@ -935,7 +958,8 @@
                             <div class="coming-soon-placeholder">
                                 <div class="coming-soon-icon">🚧</div>
                                 <div class="coming-soon-text">Coming Soon</div>
-                                <div class="coming-soon-sub">Approved materials data is being compiled and will be available in a future update.</div>
+                                <div class="coming-soon-sub">Approved materials data is being compiled and will be
+                                    available in a future update.</div>
                             </div>
                         </div>
                     </div>

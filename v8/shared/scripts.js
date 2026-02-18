@@ -3053,10 +3053,10 @@ function initGlobalSpendAnalysis() {
 
     // Add instant filtering - change listeners on all GSA dropdowns
     ['gsaFilterEntity', 'gsaFilterSupplier', 'gsaFilterProject', 'gsaFilterMaterial',
-     'gsaFilterDiscipline', 'gsaFilterYear'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('change', applyGSAFilters);
-    });
+        'gsaFilterDiscipline', 'gsaFilterYear'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('change', applyGSAFilters);
+        });
     // Date + search instant
     ['gsaFilterFrom', 'gsaFilterTo'].forEach(id => {
         const el = document.getElementById(id);
@@ -4054,10 +4054,10 @@ function clearSMFilters() {
 // Clear M&D Filters
 function clearMdFilters() {
     ['filterMdDiscipline', 'filterMdMaterial', 'filterMdEntity', 'filterMdProject',
-     'filterMdSupplier', 'filterMdYear'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.selectedIndex = 0;
-    });
+        'filterMdSupplier', 'filterMdYear'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.selectedIndex = 0;
+        });
     ['filterMdFrom', 'filterMdTo'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
@@ -4241,7 +4241,7 @@ function initMdFilters() {
     // Search input handler
     const mdSearchInput = document.getElementById('mdSearchInput');
     if (mdSearchInput) {
-        mdSearchInput.addEventListener('input', debounce(function() { applyMdFilters(); }, 300));
+        mdSearchInput.addEventListener('input', debounce(function () { applyMdFilters(); }, 300));
     }
 
     console.log('📋 MD filters initialized with materialCodes, materials, project, supplier, search');
@@ -4485,10 +4485,128 @@ function createMaterialDistributionChartFiltered() {
 }
 
 // Update supplier table from filtered data
-function updateMdSupplierTableFiltered() {
+// MD Supplier Table State
+let mdSupplierTableState = {
+    page: 1,
+    pageSize: 10,
+    sortField: 'name',
+    sortDir: 'asc',
+    search: '',
+    allRows: [],    // full dataset (pre-filter tab filters applied)
+    filtered: []    // after local search
+};
+
+function buildMdSupplierRows(sourceSuppliers) {
+    // Build uniform row objects from either suppliersData or PO-aggregated data
+    return sourceSuppliers.map(s => {
+        const name = s.name || s.supplier_name || '-';
+        const fullInfo = suppliersData?.suppliers?.find(ss => (ss.name || ss.supplier_name) === name) || s;
+        const country = fullInfo.address?.country_standardized || fullInfo.phone_validation?.phone_country || fullInfo.country || '-';
+        const ratingVal = fullInfo.rating?.score || fullInfo.rating || 4.0;
+        const rating = typeof ratingVal === 'number' ? ratingVal : parseFloat(ratingVal) || 4.0;
+        const email = fullInfo.contact?.email || fullInfo.email || '-';
+        const contact = fullInfo.contact?.primary_contact || fullInfo.contact_name || '-';
+        return { name, country, rating, email, contact };
+    });
+}
+
+function applyMdSupplierSearch() {
+    const q = mdSupplierTableState.search.toLowerCase();
+    if (!q) {
+        mdSupplierTableState.filtered = [...mdSupplierTableState.allRows];
+    } else {
+        mdSupplierTableState.filtered = mdSupplierTableState.allRows.filter(r =>
+            r.name.toLowerCase().includes(q) ||
+            r.country.toLowerCase().includes(q) ||
+            r.email.toLowerCase().includes(q) ||
+            r.contact.toLowerCase().includes(q)
+        );
+    }
+    // Apply sort
+    const { sortField, sortDir } = mdSupplierTableState;
+    mdSupplierTableState.filtered.sort((a, b) => {
+        let aVal = a[sortField], bVal = b[sortField];
+        if (sortField === 'rating') return sortDir === 'asc' ? aVal - bVal : bVal - aVal;
+        aVal = (aVal || '').toString().toLowerCase();
+        bVal = (bVal || '').toString().toLowerCase();
+        return sortDir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    });
+}
+
+function renderMdSupplierTablePage() {
     const tbody = document.getElementById('mdSupplierTableBody');
     if (!tbody) return;
 
+    const { page, pageSize, filtered } = mdSupplierTableState;
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+    // Clamp page
+    if (mdSupplierTableState.page > totalPages) mdSupplierTableState.page = totalPages;
+    const currentPage = mdSupplierTableState.page;
+    const start = (currentPage - 1) * pageSize;
+    const pageData = filtered.slice(start, start + pageSize);
+
+    if (pageData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No suppliers match your search</td></tr>';
+    } else {
+        tbody.innerHTML = pageData.map(s => `
+            <tr>
+                <td><a href="#" class="supplier-link" onclick="updateMdSupplierProfile({name:'${s.name.replace(/'/g, "\\'")}', country:'${(typeof s.country === 'string' ? s.country : '-').replace(/'/g, "\\'")}', email:'${s.email.replace(/'/g, "\\'")}', contact:'${s.contact.replace(/'/g, "\\'")}', rating:${s.rating}}); return false;">${s.name}</a></td>
+                <td>${s.country}</td>
+                <td>⭐ ${typeof s.rating === 'number' ? s.rating.toFixed(1) : s.rating}</td>
+                <td>${s.email}</td>
+                <td>${s.contact}</td>
+            </tr>
+        `).join('');
+    }
+
+    // Update pagination info
+    const pageInfo = document.getElementById('mdSupplierPageInfo');
+    if (pageInfo) pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    const showingText = document.getElementById('mdSupplierShowingText');
+    if (showingText) showingText.textContent = `of ${filtered.length}`;
+}
+
+// Public handlers called from HTML
+function filterMdSupplierTable() {
+    mdSupplierTableState.search = document.getElementById('mdSupplierSearch')?.value || '';
+    mdSupplierTableState.page = 1;
+    applyMdSupplierSearch();
+    renderMdSupplierTablePage();
+}
+window.filterMdSupplierTable = filterMdSupplierTable;
+
+function changeMdSupplierPageSize() {
+    mdSupplierTableState.pageSize = parseInt(document.getElementById('mdSupplierPageSize')?.value || '10');
+    mdSupplierTableState.page = 1;
+    renderMdSupplierTablePage();
+}
+window.changeMdSupplierPageSize = changeMdSupplierPageSize;
+
+function sortMdSupplierTable(field) {
+    if (mdSupplierTableState.sortField === field) {
+        mdSupplierTableState.sortDir = mdSupplierTableState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+        mdSupplierTableState.sortField = field;
+        mdSupplierTableState.sortDir = 'asc';
+    }
+    applyMdSupplierSearch();
+    renderMdSupplierTablePage();
+}
+window.sortMdSupplierTable = sortMdSupplierTable;
+
+function mdSupplierPageNav(action) {
+    const totalPages = Math.max(1, Math.ceil(mdSupplierTableState.filtered.length / mdSupplierTableState.pageSize));
+    switch (action) {
+        case 'first': mdSupplierTableState.page = 1; break;
+        case 'prev': mdSupplierTableState.page = Math.max(1, mdSupplierTableState.page - 1); break;
+        case 'next': mdSupplierTableState.page = Math.min(totalPages, mdSupplierTableState.page + 1); break;
+        case 'last': mdSupplierTableState.page = totalPages; break;
+    }
+    renderMdSupplierTablePage();
+}
+window.mdSupplierPageNav = mdSupplierPageNav;
+
+function updateMdSupplierTableFiltered() {
     // Get unique suppliers from filtered POs
     const supplierMap = {};
     mdState.filteredPOs.forEach(po => {
@@ -4499,33 +4617,15 @@ function updateMdSupplierTableFiltered() {
         supplierMap[name].value += po.value || po.amountValue || 0;
     });
 
-    const suppliers = Object.values(supplierMap)
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 10);
+    const suppliers = Object.values(supplierMap).sort((a, b) => b.value - a.value);
 
-    if (suppliers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No suppliers for current filters</td></tr>';
-        return;
-    }
-
-    // Lookup full supplier info
-    tbody.innerHTML = suppliers.map(s => {
-        const fullInfo = suppliersData?.suppliers?.find(ss => ss.name === s.name) || {};
-        const country = fullInfo.address?.country_standardized || fullInfo.phone_validation?.phone_country || '-';
-        const rating = fullInfo.rating?.score || '4.0';
-        const email = fullInfo.contact?.email || '-';
-        const contact = fullInfo.contact?.primary_contact || '-';
-
-        return `
-            <tr>
-                <td><a href="#" class="supplier-link" onclick="updateMdSupplierProfile({name:'${s.name.replace(/'/g, "\\'")}', country:'${country}', email:'${email}', contact:'${contact}', rating:${rating}})">${s.name}</a></td>
-                <td>${country}</td>
-                <td>⭐ ${rating}</td>
-                <td>${email}</td>
-                <td>${contact}</td>
-            </tr>
-        `;
-    }).join('');
+    // Feed into paginated table system
+    mdSupplierTableState.allRows = buildMdSupplierRows(suppliers);
+    mdSupplierTableState.page = 1;
+    // Preserve existing search
+    mdSupplierTableState.search = document.getElementById('mdSupplierSearch')?.value || '';
+    applyMdSupplierSearch();
+    renderMdSupplierTablePage();
 }
 
 // Update approved materials from filtered data
@@ -4603,9 +4703,6 @@ function updateMdKPIs() {
 }
 
 function updateMdSupplierTable() {
-    const tbody = document.getElementById('mdSupplierTableBody');
-    if (!tbody) return;
-
     // Get suppliers from suppliersData or gsaData
     let suppliers = [];
 
@@ -4615,28 +4712,14 @@ function updateMdSupplierTable() {
         suppliers = gsaData.supplierRankings.top;
     }
 
-    if (suppliers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No suppliers data available</td></tr>';
-        return;
-    }
-
-    tbody.innerHTML = suppliers.map(s => {
-        const name = s.name || s.supplier_name || '-';
-        const country = s.address?.country_standardized || s.phone_validation?.phone_country || '-';
-        const rating = s.rating?.score || '4.0';
-        const email = s.contact?.email || '-';
-        const contact = s.contact?.primary_contact || '-';
-
-        return `
-            <tr>
-                <td><a href="#" class="supplier-link">${name}</a></td>
-                <td>${country}</td>
-                <td>⭐ ${rating}</td>
-                <td>${email}</td>
-                <td>${contact}</td>
-            </tr>
-        `;
-    }).join('');
+    // Feed into paginated table system
+    mdSupplierTableState.allRows = buildMdSupplierRows(suppliers);
+    mdSupplierTableState.page = 1;
+    mdSupplierTableState.search = '';
+    const searchEl = document.getElementById('mdSupplierSearch');
+    if (searchEl) searchEl.value = '';
+    applyMdSupplierSearch();
+    renderMdSupplierTablePage();
 
     console.log('📊 MD Supplier table updated:', suppliers.length, 'suppliers');
 }
