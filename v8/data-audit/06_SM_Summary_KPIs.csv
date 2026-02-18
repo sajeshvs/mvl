@@ -1,0 +1,10 @@
+﻿KPI,ElementID,Value,Formula,DataSource,Verified,ActualCount
+Request for Quotation,kpiRfqCount,12072,COUNT(sm_data.workbench),sm_data.json → summary.totalQuotations,True,12072
+Quote Value,kpiQuoteValue,"$3,002,836,585.70","SUM(convertToUSD(q.QuotationValue, q.Currency)) for all records",sm_data.json → summary.totalQuotationValueUSD,Manual check: sum of QuotationValueUSD column in 01_SM_Workbench_Full.csv,
+Purchase Orders,kpiPoCount,7671,"COUNT(workbench WHERE Status=""Order"")",sm_data.json → summary.totalPOs,True,7671
+PO Values,kpiPoValue,"$334,318,427.82","SUM(convertToUSD(QuotationValue, Currency)) WHERE Status=""Order""",sm_data.json → summary.totalPOSpendUSD,Manual check: sum of QuotationValueUSD WHERE Status=Order in 01_SM_Workbench_Full.csv,
+Win Rate,kpiWinRate,63.5%,totalPOs / totalQuotations × 100,sm_data.json → summary.winRate,True,63.5%
+Change Orders,kpiCoCount,314,"COUNT(gsa_data.pos WHERE poType=""Change Order"")",gsa_data.json → summary.changeOrders,True,314
+CO Value,kpiCoValue,"$30,368,822.75","SUM(valueUSD WHERE poType=""Change Order"")",gsa_data.json → summary.changeOrderValue,"Manual check: sum of ValueUSD WHERE POType contains ""Change"" in 02_GSA_Workbench_Full.csv",
+Conversion Rate,conversionRate,63.5%,Same as Win Rate,sm_data.json → summary.winRate,True,
+Open Quotes,openQuotes,3819,"COUNT(workbench WHERE Status=""Quotation"")",sm_data.json → funnel.Quotation,True,3819

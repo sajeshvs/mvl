@@ -1,0 +1,23 @@
+﻿Tab,KPILabel,ElementID,DisplayValue,RawValue,Formula,DataSourceFile,DataSourceField,ScriptsJsFunction,Notes
+SM,Request for Quotation,kpiRfqCount,"12,072",12072,COUNT(sm_data.workbench),sm_data.json,summary.totalQuotations,enrichDashboardWithRealData() / applyFilters(),All SM workbench records (all statuses)
+SM,Quote Value,kpiQuoteValue,$3.0B,3002836585.7,"SUM(convertToUSD(q.QuotationValue, q.Currency))",sm_data.json,summary.totalQuotationValueUSD,enrichDashboardWithRealData() / applyFilters(),FX converted using standard rates
+SM,Purchase Orders,kpiPoCount,"7,671",7671,"COUNT(workbench WHERE Status=""Order"")",sm_data.json,summary.totalPOs,enrichDashboardWithRealData() / applyFilters(),SM workbench rows with Status=Order (won quotations)
+SM,PO Values,kpiPoValue,$334.3M,334318427.82,"SUM(convertToUSD(QuotationValue, Currency)) WHERE Status=""Order""",sm_data.json,summary.totalPOSpendUSD,enrichDashboardWithRealData() / applyFilters(),"Quoted value of won orders, NOT actual PO spend from GSA"
+SM,Win Rate,kpiWinRate,63.5%,63.5,totalPOs / totalQuotations × 100,sm_data.json,summary.winRate,enrichDashboardWithRealData() / applyFilters(),7671 / 12072 × 100 = 63.5%
+SM,Change Orders,kpiCoCount,314,314,"COUNT(gsa_data.pos WHERE poType=""Change Order"")",gsa_data.json,summary.changeOrders,enrichDashboardWithRealData() / applyFilters(),From GSA data (not SM). SM does not track COs.
+SM,CO Value,kpiCoValue,$30.4M,30368822.75,"SUM(gsa_data.pos.poSpendUSD WHERE poType=""Change Order"")",gsa_data.json,summary.changeOrderValue,enrichDashboardWithRealData() / applyFilters(),From GSA data. Does not change with SM filters.
+SM,Conversion Rate,conversionRate,63.5%,63.5,Same as Win Rate,sm_data.json,summary.winRate,updateKPIs(),Identical to Win Rate
+SM,Open Quotes,openQuotes,"3,819",3819,"COUNT(workbench WHERE Status=""Quotation"")",sm_data.json,funnel.Quotation,updateKPIs(),Records still in quotation status
+GSA,Total Purchase Orders,gsaKpiPoCount,"3,522",3522,COUNT(gsa_data.workbench),gsa_data.json,summary.totalPOs,updateGSAKPIs(),All POs (Base + Change Orders)
+GSA,Total Spend,gsaKpiTotalSpend,$396.0M,396042175.6,SUM(gsa_data.workbench[].poSpendUSD),gsa_data.json,summary.totalSpendUSD,updateGSAKPIs(),Actual PO spend values pre-converted to USD
+GSA,Change Orders,gsaKpiCoCount,314,314,"COUNT(workbench WHERE poType=""Change Order"")",gsa_data.json,summary.changeOrders,updateGSAKPIs(),"PO records with poType=""Change Order"""
+GSA,CO Amount,gsaKpiCoAmount,$30.4M,30368822.75,"SUM(poSpendUSD WHERE poType=""Change Order"")",gsa_data.json,summary.changeOrderValue,updateGSAKPIs(),Sum of Change Order PO values
+GSA,Active Suppliers,gsaKpiActiveSuppliers,"1,089",1089,COUNT(DISTINCT supplier),gsa_data.json,summary.supplierCount,updateGSAKPIs(),"Unique vendor names (excl. ""Unspecified Supplier"")"
+GSA,Active Entities,gsaKpiActiveEntities,21,21,COUNT(DISTINCT entity),gsa_data.json,summary.entityCount,updateGSAKPIs(),Unique MVL business units
+M&D,Materials,kpiMdMaterials,7,7,COUNT(DISTINCT discipline) across quotations + POs,md_data.json,summary.disciplineCount,updateMdKPIs() / updateMdKPIsFiltered(),7 consolidated disciplines via DISCIPLINE_MAP
+M&D,Disciplines,kpiMdDisciplines,7,7,Same as Materials,md_data.json,summary.disciplineCount,updateMdKPIs() / updateMdKPIsFiltered(),Same value as Materials count
+M&D,Total Material Spend,kpiMdMaterialSpend,$396.0M,396041496.65,SUM(md_data.pos[].value),md_data.json,summary.totalOrdered,updateMdKPIs() / updateMdKPIsFiltered(),Total PO ordered values across all disciplines
+M&D,Total Discipline Spend,kpiMdDisciplineSpend,$396.0M,396041496.65,Same as Total Material Spend,md_data.json,summary.totalOrdered,updateMdKPIs() / updateMdKPIsFiltered(),Identical value to Material Spend
+M&D,Utilization %,kpiMdMatUtil / kpiMdDiscUtil,13.2%,13.2,(totalOrdered / totalQuoted) × 100,md_data.json,summary.conversionRate,updateMdKPIs() / updateMdKPIsFiltered(),"(396,041,497 / 3,004,946,326) × 100"
+M&D,Active Projects,kpiMdActiveProjects,98,98,COUNT(DISTINCT project) from POs,md_data.json,summary.projectCount,updateMdKPIs(),Unique project names from PO records only
+M&D,Suppliers,kpiMdSupplierCount,"1,089",1089,COUNT(DISTINCT supplier) from POs,md_data.json,summary.supplierCount,updateMdKPIs(),Unique vendor names from PO records only

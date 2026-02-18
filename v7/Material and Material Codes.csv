@@ -1,0 +1,31 @@
+﻿No,Material Name,Material Code,Code Range
+1. ,Polyurethane Foam,Chemicals,6000 - 6050
+2. ,Firestop/ DC 315,Fire,7000 - 7999
+3. ,Sandwich Panel,Architectural,5000 - 5100
+4. ,Accessories / Connection for Sandwich Panel,Architectural,5101 - 5150
+5. ,Steel Coil,Architectural,5151 - 5200
+6. ,Containers,Various,4200 - 4250
+7. ,Doors,Architectural,5201 - 5250
+8. ,Windows,Architectural,5251 - 5300
+9. ,Transportation,Logistics,4000 - 4999
+10. ,Discount,Logistics,0 - 0
+11. ,Machine / Equipments,Mechanical,4000 - 4100
+12. ,Electrical,Electrical,6800 - 6999
+13. ,Design,Services,9000 - 9030
+14. ,Fit Out Project,Architectural,0 - 0
+15. ,Building Materials,Various,40000 - 50000
+16. ,Mechanical Items,Mechanical,4101 - 4200
+17. ,Paints,Architectural,5301 - 5350
+18. ,Rental,Rental,1500 - 1600
+19. ,Chemicals,Chemicals,6051 - 6100
+20. ,Graco Spares,Various,4301 - 4350
+21. ,Sanitary and Toilet Accessories,Architectural,5351 - 5400
+22. ,Construction,Services,9031 - 9050
+23. ,Misc.,Various,4351 - 4500
+24. ,Tools,Tools,1000 - 1100
+25. ,PPE,Protection,4800 - 4900
+26. ,LSA - Life Support Area,Services,9051 - 9070
+27. ,Subcontract,Services,9071 - 9090
+28. ,Computer Peripherals,Office Assets,1 - 100
+29. ,MHE,Logistics,7000 - 7999
+30. ,Services,Services,9100 - 9200
