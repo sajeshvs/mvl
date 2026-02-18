@@ -1,11 +1,11 @@
 // ─── V6 Supply Chain Intel Hub — Main Application Entry Point ───
 // ES module loaded by index.html: <script type="module" src="js/app.js"></script>
 
-import { state } from './state.js';
 import { loadAllData, refreshFxRates } from './dataLoader.js';
-import { initSupplierMarketplace, applySMFilters, clearSMFilters, renderSMTab } from './tab-sm.js';
-import { initGlobalSpendAnalysis, applyGSAFilters, clearGSAFilters, renderGSATab } from './tab-gsa.js';
-import { initMaterialsDisciplines, applyMdFilters, clearMdFilters, renderMdTab } from './tab-md.js';
+import { state } from './state.js';
+import { applyGSAFilters, clearGSAFilters, initGlobalSpendAnalysis, renderGSATab } from './tab-gsa.js';
+import { applyMdFilters, clearMdFilters, initMaterialsDisciplines, renderMdTab } from './tab-md.js';
+import { applySMFilters, clearSMFilters, initSupplierMarketplace, renderSMTab } from './tab-sm.js';
 import { formatDate } from './utils.js';
 
 // ─── Expose filter functions to window for onclick handlers ─────
@@ -44,9 +44,9 @@ function switchTab(tabId) {
 
 function refreshActiveTab() {
   switch (state.activeTab) {
-    case 'supplier-marketplace':    renderSMTab();  break;
-    case 'global-spend-analysis':   renderGSATab(); break;
-    case 'materials-disciplines':   renderMdTab();  break;
+    case 'supplier-marketplace': renderSMTab(); break;
+    case 'global-spend-analysis': renderGSATab(); break;
+    case 'materials-disciplines': renderMdTab(); break;
   }
 }
 
@@ -54,12 +54,12 @@ function refreshActiveTab() {
 
 function showLoadingOverlay() {
   const overlay = document.getElementById('loadingOverlay');
-  if (overlay) overlay.classList.add('active');
+  if (overlay) overlay.classList.remove('hidden');
 }
 
 function hideLoadingOverlay() {
   const overlay = document.getElementById('loadingOverlay');
-  if (overlay) overlay.classList.remove('active');
+  if (overlay) overlay.classList.add('hidden');
 }
 
 // ─── DOMContentLoaded — Bootstrap ───────────────────────────────
@@ -187,9 +187,9 @@ function handlePaginationClick(btn) {
 
   const tab = state.activeTab;
   const tabKey = tab === 'supplier-marketplace' ? 'sm'
-               : tab === 'global-spend-analysis' ? 'gsa'
-               : tab === 'materials-disciplines' ? 'md'
-               : null;
+    : tab === 'global-spend-analysis' ? 'gsa'
+      : tab === 'materials-disciplines' ? 'md'
+        : null;
 
   if (tabKey && state.pagination[tabKey]) {
     state.pagination[tabKey].page = page;
@@ -218,9 +218,9 @@ function handleBottomTabSwitch(btn) {
 
 function handleClearFilters() {
   switch (state.activeTab) {
-    case 'supplier-marketplace':    clearSMFilters();  break;
-    case 'global-spend-analysis':   clearGSAFilters(); break;
-    case 'materials-disciplines':   clearMdFilters();  break;
+    case 'supplier-marketplace': clearSMFilters(); break;
+    case 'global-spend-analysis': clearGSAFilters(); break;
+    case 'materials-disciplines': clearMdFilters(); break;
   }
 }
 
@@ -232,9 +232,9 @@ function handleSortClick(th) {
 
   const tab = state.activeTab;
   const tabKey = tab === 'supplier-marketplace' ? 'sm'
-               : tab === 'global-spend-analysis' ? 'gsa'
-               : tab === 'materials-disciplines' ? 'md'
-               : null;
+    : tab === 'global-spend-analysis' ? 'gsa'
+      : tab === 'materials-disciplines' ? 'md'
+        : null;
 
   if (!tabKey) return;
 
@@ -277,8 +277,8 @@ function updateLastRefreshTime() {
   if (!el) return;
 
   const buildDate = state.dashboard?.metadata?.last_build_date
-                 || state.dashboard?.buildDate
-                 || null;
+    || state.dashboard?.buildDate
+    || null;
 
   if (buildDate) {
     el.textContent = formatDate(buildDate);

@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MVL Supply Chain Intel Hub — V6</title>
+    <link rel="icon" href="assets/mvl-logo.png" type="image/png">
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -15,6 +17,7 @@
     <!-- Dashboard Styles -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
@@ -71,30 +74,41 @@
                 <div class="filter-bar">
                     <div class="filter-group">
                         <label for="filterEntity">Entity</label>
-                        <select id="filterEntity"><option value="">All Entities</option></select>
+                        <select id="filterEntity">
+                            <option value="">All Entities</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="filterProject">Project</label>
-                        <select id="filterProject"><option value="">All Projects</option></select>
+                        <select id="filterProject">
+                            <option value="">All Projects</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="filterStatus">Status</label>
-                        <select id="filterStatus"><option value="">All Statuses</option></select>
+                        <select id="filterStatus">
+                            <option value="">All Statuses</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="filterMaterial">Material</label>
-                        <select id="filterMaterial"><option value="">All Materials</option></select>
+                        <select id="filterMaterial">
+                            <option value="">All Materials</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="filterDiscipline">Discipline</label>
-                        <select id="filterDiscipline"><option value="">All Disciplines</option></select>
+                        <select id="filterDiscipline">
+                            <option value="">All Disciplines</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="searchInput">Search</label>
                         <input type="text" id="searchInput" placeholder="Search quotations...">
                     </div>
                     <div class="filter-actions">
-                        <button class="btn-apply" onclick="window.applySMFilters && window.applySMFilters()">Apply</button>
+                        <button class="btn-apply"
+                            onclick="window.applySMFilters && window.applySMFilters()">Apply</button>
                         <button class="btn-clear clear-filters-btn" id="smClearFilters" data-tab="sm">Clear</button>
                     </div>
                 </div>
@@ -146,8 +160,10 @@
                         <div class="chart-header">
                             <h3>Entity Comparison</h3>
                             <div class="chart-toggles">
-                                <button class="chart-toggle-btn active" data-chart-target="entity" data-chart-type="quote">Quote Value</button>
-                                <button class="chart-toggle-btn" data-chart-target="entity" data-chart-type="spend">PO Spend</button>
+                                <button class="chart-toggle-btn active" data-chart-target="entity"
+                                    data-chart-type="quote">Quote Value</button>
+                                <button class="chart-toggle-btn" data-chart-target="entity" data-chart-type="spend">PO
+                                    Spend</button>
                             </div>
                         </div>
                         <div class="chart-body">
@@ -176,10 +192,14 @@
                         <div class="chart-header">
                             <h3>Material Distribution</h3>
                             <div class="chart-toggles">
-                                <button class="chart-toggle-btn active" data-chart-target="material" data-chart-type="bar">Bar</button>
-                                <button class="chart-toggle-btn" data-chart-target="material" data-chart-type="pie">Pie</button>
-                                <button class="chart-toggle-btn" data-chart-target="material" data-chart-type="doughnut">Doughnut</button>
-                                <button class="chart-toggle-btn" data-chart-target="material" data-chart-type="radar">Radar</button>
+                                <button class="chart-toggle-btn active" data-chart-target="material"
+                                    data-chart-type="bar">Bar</button>
+                                <button class="chart-toggle-btn" data-chart-target="material"
+                                    data-chart-type="pie">Pie</button>
+                                <button class="chart-toggle-btn" data-chart-target="material"
+                                    data-chart-type="doughnut">Doughnut</button>
+                                <button class="chart-toggle-btn" data-chart-target="material"
+                                    data-chart-type="radar">Radar</button>
                             </div>
                         </div>
                         <div class="chart-body">
@@ -265,15 +285,21 @@
                         </div>
                         <div class="filter-group" id="bottomStatusGroup">
                             <label for="bottomFilterStatus">Status</label>
-                            <select id="bottomFilterStatus"><option value="">All</option></select>
+                            <select id="bottomFilterStatus">
+                                <option value="">All</option>
+                            </select>
                         </div>
                         <div class="filter-group" id="bottomMaterialGroup">
                             <label for="bottomFilterMaterial">Material</label>
-                            <select id="bottomFilterMaterial"><option value="">All</option></select>
+                            <select id="bottomFilterMaterial">
+                                <option value="">All</option>
+                            </select>
                         </div>
                         <div class="filter-group" id="bottomCountryGroup">
                             <label for="bottomFilterCountry">Country</label>
-                            <select id="bottomFilterCountry"><option value="">All</option></select>
+                            <select id="bottomFilterCountry">
+                                <option value="">All</option>
+                            </select>
                         </div>
                         <div class="filter-group">
                             <label for="bottomPageSize">Show</label>
@@ -315,31 +341,45 @@
                 <div class="filter-bar">
                     <div class="filter-group">
                         <label for="gsaFilterEntity">Entity</label>
-                        <select id="gsaFilterEntity"><option value="">All Entities</option></select>
+                        <select id="gsaFilterEntity">
+                            <option value="">All Entities</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="gsaFilterSupplier">Supplier</label>
-                        <select id="gsaFilterSupplier"><option value="">All Suppliers</option></select>
+                        <select id="gsaFilterSupplier">
+                            <option value="">All Suppliers</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="gsaFilterProject">Project</label>
-                        <select id="gsaFilterProject"><option value="">All Projects</option></select>
+                        <select id="gsaFilterProject">
+                            <option value="">All Projects</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="gsaFilterMaterial">Material</label>
-                        <select id="gsaFilterMaterial"><option value="">All Materials</option></select>
+                        <select id="gsaFilterMaterial">
+                            <option value="">All Materials</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="gsaFilterDiscipline">Discipline</label>
-                        <select id="gsaFilterDiscipline"><option value="">All Disciplines</option></select>
+                        <select id="gsaFilterDiscipline">
+                            <option value="">All Disciplines</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="gsaFilterPoType">PO Type</label>
-                        <select id="gsaFilterPoType"><option value="">All Types</option></select>
+                        <select id="gsaFilterPoType">
+                            <option value="">All Types</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="gsaFilterYear">Year</label>
-                        <select id="gsaFilterYear"><option value="">All Years</option></select>
+                        <select id="gsaFilterYear">
+                            <option value="">All Years</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="gsaFilterFrom">From</label>
@@ -354,7 +394,8 @@
                         <input type="text" id="gsaSearchInput" placeholder="Search POs...">
                     </div>
                     <div class="filter-actions">
-                        <button class="btn-apply" onclick="window.applyGSAFilters && window.applyGSAFilters()">Apply</button>
+                        <button class="btn-apply"
+                            onclick="window.applyGSAFilters && window.applyGSAFilters()">Apply</button>
                         <button class="btn-clear clear-filters-btn" id="gsaClearFilters" data-tab="gsa">Clear</button>
                     </div>
                 </div>
@@ -445,7 +486,8 @@
                         <div class="chart-header">
                             <h3>Purchase Order Details</h3>
                             <div class="table-controls">
-                                <input type="text" id="gsaTableSearch" placeholder="Search table..." class="table-search">
+                                <input type="text" id="gsaTableSearch" placeholder="Search table..."
+                                    class="table-search">
                                 <select id="gsaTablePageSize" class="page-size-select">
                                     <option value="25">25 rows</option>
                                     <option value="50">50 rows</option>
@@ -483,27 +525,39 @@
                 <div class="filter-bar">
                     <div class="filter-group">
                         <label for="filterMdDiscipline">Discipline</label>
-                        <select id="filterMdDiscipline"><option value="">All Disciplines</option></select>
+                        <select id="filterMdDiscipline">
+                            <option value="">All Disciplines</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="filterMdEntity">Entity</label>
-                        <select id="filterMdEntity"><option value="">All Entities</option></select>
+                        <select id="filterMdEntity">
+                            <option value="">All Entities</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="filterMdProject">Project</label>
-                        <select id="filterMdProject"><option value="">All Projects</option></select>
+                        <select id="filterMdProject">
+                            <option value="">All Projects</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="filterMdSupplier">Supplier</label>
-                        <select id="filterMdSupplier"><option value="">All Suppliers</option></select>
+                        <select id="filterMdSupplier">
+                            <option value="">All Suppliers</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="filterMdMaterial">Material</label>
-                        <select id="filterMdMaterial"><option value="">All Materials</option></select>
+                        <select id="filterMdMaterial">
+                            <option value="">All Materials</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="filterMdYear">Year</label>
-                        <select id="filterMdYear"><option value="">All Years</option></select>
+                        <select id="filterMdYear">
+                            <option value="">All Years</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="filterMdFrom">From</label>
@@ -518,7 +572,8 @@
                         <input type="text" id="mdSearchInput" placeholder="Search materials...">
                     </div>
                     <div class="filter-actions">
-                        <button class="btn-apply" onclick="window.applyMdFilters && window.applyMdFilters()">Apply</button>
+                        <button class="btn-apply"
+                            onclick="window.applyMdFilters && window.applyMdFilters()">Apply</button>
                         <button class="btn-clear clear-filters-btn" id="mdClearFilters" data-tab="md">Clear</button>
                     </div>
                 </div>
@@ -678,4 +733,5 @@
     <!-- App Entry Point (ES Module) -->
     <script type="module" src="js/app.js"></script>
 </body>
+
 </html>
