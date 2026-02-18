@@ -911,7 +911,8 @@
                         </div>
                         <!-- Supplier Table Controls -->
                         <div class="md-supplier-controls">
-                            <input type="text" id="mdSupplierSearch" class="md-supplier-search" placeholder="Search suppliers..." oninput="filterMdSupplierTable()">
+                            <input type="text" id="mdSupplierSearch" class="md-supplier-search"
+                                placeholder="Search suppliers..." oninput="filterMdSupplierTable()">
                             <div class="md-supplier-page-controls">
                                 <label>Show</label>
                                 <select id="mdSupplierPageSize" onchange="changeMdSupplierPageSize()" title="Page size">
@@ -926,8 +927,10 @@
                             <table class="md-data-table" id="mdSupplierTable">
                                 <thead>
                                     <tr>
-                                        <th onclick="sortMdSupplierTable('name')" style="cursor:pointer">Supplier Name ↕</th>
-                                        <th onclick="sortMdSupplierTable('country')" style="cursor:pointer">Location ↕</th>
+                                        <th onclick="sortMdSupplierTable('name')" style="cursor:pointer">Supplier Name ↕
+                                        </th>
+                                        <th onclick="sortMdSupplierTable('country')" style="cursor:pointer">Location ↕
+                                        </th>
                                         <th onclick="sortMdSupplierTable('rating')" style="cursor:pointer">Rating ↕</th>
                                         <th>Email</th>
                                         <th>Contact</th>
@@ -940,11 +943,15 @@
                         </div>
                         <!-- Supplier Table Pagination -->
                         <div class="md-supplier-pagination">
-                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('first')" title="First page">«</button>
-                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('prev')" title="Previous page">‹</button>
+                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('first')"
+                                title="First page">«</button>
+                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('prev')"
+                                title="Previous page">‹</button>
                             <span id="mdSupplierPageInfo" class="md-supplier-page-info">Page 1 of 1</span>
-                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('next')" title="Next page">›</button>
-                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('last')" title="Last page">»</button>
+                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('next')"
+                                title="Next page">›</button>
+                            <button class="md-supplier-page-btn" onclick="mdSupplierPageNav('last')"
+                                title="Last page">»</button>
                         </div>
                     </div>
 

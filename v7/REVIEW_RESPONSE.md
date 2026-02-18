@@ -5,19 +5,90 @@
 **Status:** DRAFT — Pending approval before implementation  
 **Total Questions:** 47 (SM: 18, GSA: 16, M&D: 13)
 
+> **Developer Perspective:** Here are the detailed comments on each question (addressed from a developer's perspective). I will incorporate these points into the data above as well and then proceed with the implementation.
+
 ---
 
 ## Table of Contents
 
-1. [DOC 1: Supplier Marketplace (18 Questions)](#doc-1-supplier-marketplace)
-2. [DOC 2: Global Spend Analysis (16 Questions)](#doc-2-global-spend-analysis)
-3. [DOC 3: Materials & Disciplines (13 Questions)](#doc-3-materials--disciplines)
-4. [Cross-Tab Systemic Issues Summary](#cross-tab-systemic-issues)
-5. [Implementation Priority Matrix](#implementation-priority-matrix)
+1. [Data Audit Validation & Reference Data](#data-audit-validation--reference-data)
+2. [DOC 1: Supplier Marketplace (18 Questions)](#doc-1-supplier-marketplace)
+3. [DOC 2: Global Spend Analysis (16 Questions)](#doc-2-global-spend-analysis)
+4. [DOC 3: Materials & Disciplines (13 Questions)](#doc-3-materials--disciplines)
+5. [Cross-Tab Systemic Issues Summary](#cross-tab-systemic-issues)
+6. [Implementation Priority Matrix](#implementation-priority-matrix)
+
+---
+
+## Data Audit Validation & Reference Data
+
+### Data Audit CSVs (v7/data-audit/)
+
+13 audit CSV files were generated and verified against the live dashboard, confirming data integrity across all three tabs. Key validation results:
+
+| Audit File | What It Validates | Result |
+|-----------|-------------------|--------|
+| `01_SM_Workbench_Full.csv` | All 12,072 SM quotation records | ✅ Verified |
+| `02_GSA_Workbench_Full.csv` | All 3,522 GSA PO records | ✅ Verified |
+| `03_MD_Quotations_Full.csv` | All 12,072 M&D quotation records | ✅ Verified |
+| `04_MD_POs_Full.csv` | All 3,522 M&D PO records | ✅ Verified |
+| `05_Employees.csv` | 42 MVL employee performance records | ✅ Verified |
+| `06_SM_Summary_KPIs.csv` | SM tab KPI values & formulas | ✅ All KPIs match |
+| `07_GSA_Summary_KPIs.csv` | GSA tab KPI values & formulas | ✅ All KPIs match |
+| `08_MD_Summary_KPIs.csv` | M&D tab KPI values & formulas | ⚠️ Materials/Disciplines both show 7 (wrong — see below) |
+| `09_KPI_Reference_Map.csv` | Cross-tab KPI element IDs, formulas, data sources | ✅ Complete reference |
+| `10_Discipline_Map.csv` | Current DISCIPLINE_MAP: 36 source strings → 7 categories | ⚠️ Over-consolidated (see below) |
+| `11_Entity_Breakdown.csv` | 28 entities across all 3 tabs with cross-tab verification | ⚠️ SM has 19, GSA has 21, M&D has 21 — misaligned |
+| `12_Cross_Tab_Verification.csv` | 12 automated consistency checks | ✅ All 12 PASS |
+| `13_Data_Source_Lineage.csv` | Full data flow: Source CSV → V5 → V7 pipeline → JSON → Browser | ✅ Documented |
+
+**Key Audit Findings Relevant to Review Questions:**
+- `10_Discipline_Map.csv` confirms that `build_v7_data.py` currently consolidates 36 raw material strings → 7 discipline categories. This is the root cause of SM-Q5, MD-Q1, MD-Q2, MD-Q7, MD-Q8, MD-Q9.
+- `11_Entity_Breakdown.csv` reveals 28 total unique entities across all tabs, with different subsets visible per tab (SM: 19 with quotations, GSA: 21 with POs). Entities like CENTRICO, Unknown, MVL VENTURES etc. appear only in PO data.
+- `08_MD_Summary_KPIs.csv` confirms both Materials and Disciplines KPIs read from the same `summary.disciplineCount` = 7.
+
+### Official Material & Material Codes Reference (NEW INPUT)
+
+**Source:** `v7/Material and Material Codes.csv` — Provided by stakeholder as the authoritative list of materials and their classification codes.
+
+This CSV provides the **definitive mapping** of 30 materials to 12 Material Codes. This was a missing input in our data pipeline and will be used to rebuild all JSON data files.
+
+#### 12 Material Codes (replacing current 7 DISCIPLINE_MAP categories)
+
+| # | Material Code | Materials in this Code | Code Range |
+|---|--------------|----------------------|------------|
+| 1 | **Architectural** | Sandwich Panel, Accessories/Connection for Sandwich Panel, Steel Coil, Doors, Windows, Fit Out Project, Paints, Sanitary & Toilet Accessories | 5000–5400 |
+| 2 | **Chemicals** | Polyurethane Foam, Chemicals | 6000–6100 |
+| 3 | **Electrical** | Electrical | 6800–6999 |
+| 4 | **Fire** | Firestop/DC 315 | 7000–7999 |
+| 5 | **Logistics** | Transportation, Discount, MHE | 0–0, 4000–4999, 7000–7999 |
+| 6 | **Mechanical** | Machine/Equipments, Mechanical Items | 4000–4200 |
+| 7 | **Office Assets** | Computer Peripherals | 1–100 |
+| 8 | **Protection** | PPE | 4800–4900 |
+| 9 | **Rental** | Rental | 1500–1600 |
+| 10 | **Services** | Design, Construction, LSA - Life Support Area, Subcontract, Services | 9000–9200 |
+| 11 | **Tools** | Tools | 1000–1100 |
+| 12 | **Various** | Containers, Building Materials, Graco Spares, Misc. | 4200–50000 |
+
+#### Impact on Data Pipeline
+
+| Current State | After Fix |
+|--------------|-----------|
+| DISCIPLINE_MAP: 36 strings → **7** disciplines | NEW_MATERIAL_CODE_MAP: 30 materials → **12** Material Codes |
+| `filters.disciplines` = 7 items | `filters.materialCodes` = 12 items |
+| No `filters.materials` array | `filters.materials` = 30 items |
+| Materials and Disciplines show same data | Materials (30) and Material Codes (12) are distinct |
+| `summary.disciplineCount` = 7 | `summary.materialCount` = 30, `summary.materialCodeCount` = 12 |
+
+> **Developer Note:** The Material Codes CSV is saved at `v7/Material and Material Codes.csv` and will be consumed by the updated `build_v7_data.py` pipeline. The old `DISCIPLINE_MAP` (7 categories) will be replaced with a `MATERIAL_CODE_MAP` derived from this CSV (12 codes). All JSON files will be regenerated.
+
+> **CORRECTION:** Previous references to "13 disciplines" in this document have been corrected to **12 Material Codes** based on the official CSV. The term "Discipline" in the original codebase maps to what stakeholders call "Material Code".
 
 ---
 
 ## DOC 1: Supplier Marketplace
+
+> **Developer Notes — SM Tab Overview:** SM tab has 12,072 workbench records across 19 entities. Filter system works via `initFilters()` (L1333) → `applyFilters()` (L1503). Key bugs: `updateSupplierProfile()` called but never defined (L1753), entity chart limited, no cross-filtering on any chart. The `SearchableSelect` component (new) will be the biggest reusable piece across all 3 tabs.
 
 ### SM-Q1: Add a Clear Button to Reset All Filters
 
@@ -43,6 +114,8 @@
 **Complexity:** Low  
 **Files Changed:** `index.html`, `scripts.js`
 
+> **Developer Note:** Pattern matches GSA's existing `clearGSAFilters()`. Reuse the same button styling (`btn-clear` class). Must also reset any active chart selection state and search indicator.
+
 ---
 
 ### SM-Q2: Sort Entity Dropdown Alphabetically
@@ -64,6 +137,8 @@
 
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
+
+> **Developer Note:** One-liner fix in `initFilters()`. Apply `.sort()` to all filter arrays before DOM population. Audit confirmed 19 SM entities in `11_Entity_Breakdown.csv`.
 
 ---
 
@@ -91,6 +166,8 @@
 **Complexity:** Medium (new component)  
 **Files Changed:** `scripts.js`, `styles.css`, `index.html`
 
+> **Developer Note:** `SearchableSelect` is the highest-value reusable component. Build ONCE → apply to 12+ dropdowns across all tabs. Implementation: wrap existing `<select>` elements with a custom dropdown that has a text input, filtered option list, and keyboard navigation. No external dependencies — pure vanilla JS. ~150 lines including styles.
+
 ---
 
 ### SM-Q4: Supplier List Incomplete — Only A-Names Visible
@@ -114,28 +191,34 @@
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** Root cause: `populateGSAFilters()` line ~2970 has `suppliers.slice(0, 200)` cap. Remove the slice. After adding `SearchableSelect`, even 2,189 suppliers will be performant (filtered client-side with virtual scroll).
+
 ---
 
 ### SM-Q5: "All Materials" Filter Showing Disciplines Instead of Materials
 
-**Reviewer Comment:** "All Materials" filter reads from wrong column — showing disciplines (~13) instead of actual materials (~30). Fix to show 30 materials, alphabetical, with type-ahead. Disciplines (13) should be in a separate filter.
+**Reviewer Comment:** "All Materials" filter reads from wrong column — showing disciplines (~12) instead of actual materials (~30). Fix to show 30 materials, alphabetical, with type-ahead. Material Codes (12) should be in a separate filter.
 
 **Current Behavior:**  
 - SM Materials dropdown reads from `smData.materialsByDiscipline[].MaterialCode` — this field was renamed during DISCIPLINE_MAP consolidation.
 - Shows 7 consolidated discipline categories instead of 30 raw material names.
-- No separate Discipline filter on SM tab.
+- No separate Material Code filter on SM tab.
 
 **Root Cause:** The Python data pipeline (`build_v7_data.py`) consolidates 27+ raw material names → 7 disciplines via `DISCIPLINE_MAP`. The consolidated values overwrite the original material names in the JSON output.
 
+**Official Reference:** `v7/Material and Material Codes.csv` — 30 materials mapped to 12 Material Codes (Architectural, Chemicals, Electrical, Fire, Logistics, Mechanical, Office Assets, Protection, Rental, Services, Tools, Various).
+
 **Planned Action:**
-1. **Data Pipeline Change** (`build_v7_data.py`): Preserve BOTH:
-   - `material` = original raw material name (30 distinct values, e.g., "Mechanical Items", "Rental", "Firestop/DC 315", "Subcontract")
-   - `discipline` = the 13 pre-consolidation Material Code categories
-2. Add `filters.materials` (30 items) and `filters.disciplines` (13 items) as separate arrays in `sm_data.json`.
+1. **Data Pipeline Change** (`build_v7_data.py`): Replace `DISCIPLINE_MAP` (7 categories) with `MATERIAL_CODE_MAP` from official CSV (12 codes). Preserve BOTH:
+   - `material` = original raw material name (30 distinct values from CSV, e.g., "Mechanical Items", "Rental", "Firestop/DC 315", "Subcontract")
+   - `materialCode` = the 12 Material Code categories from official CSV
+2. Add `filters.materials` (30 items) and `filters.materialCodes` (12 items) as separate arrays in `sm_data.json`.
 3. Update `initFilters()` to populate Materials dropdown from `filters.materials`.
-4. Add a new Discipline dropdown to the SM filter bar in `index.html`.
+4. Add a new Material Code dropdown to the SM filter bar in `index.html`.
 5. Apply type-ahead to both dropdowns.
 6. Regenerate all JSON data files.
+
+> **Developer Note — CRITICAL PIPELINE CHANGE:** This is the single most impactful change. The new `MATERIAL_CODE_MAP` will be built by reading `Material and Material Codes.csv` directly in `build_v7_data.py`, replacing the hardcoded `DISCIPLINE_MAP`. Each quotation/PO record will carry `material` (raw name), `materialCode` (12 codes), and drop the old `discipline` field. All 6 JSON files will be regenerated. Data audit `10_Discipline_Map.csv` documents the current 36→7 mapping that will be replaced.
 
 **Complexity:** High (data pipeline + UI + JS changes)  
 **Files Changed:** `build_v7_data.py`, `sm_data.json`, `gsa_data.json`, `md_data.json`, `index.html`, `scripts.js`
@@ -162,6 +245,8 @@
 **Complexity:** Low  
 **Files Changed:** `index.html`, `scripts.js`, `styles.css`
 
+> **Developer Note:** Reuse the same pattern for all 3 tabs. Create a `showFilterIndicator(containerId, term, matchCount, totalCount)` utility. SM already has debounced `handleSearch()` at L1392 — just add the indicator bar below the filter row. Clear on empty search or Clear button press.
+
 ---
 
 ### SM-Q7: Status Bars Not Interactive
@@ -184,6 +269,8 @@
 
 **Complexity:** Medium  
 **Files Changed:** `scripts.js`, `styles.css`
+
+> **Developer Note:** Status bars are in the `updateStatusChart()` function. Add `onclick="filterByStatus('Order')"` etc. to each bar div. The toggle-off behavior (clicking active status resets to All) is important UX. Status values from audit: Order(7671), Quotation(3819), Cancelled(181), Waiting(401) = 12,072 total.
 
 ---
 
@@ -209,6 +296,8 @@
 **Complexity:** Medium  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** `countryCoords` at L2422–2484 has ~30 entries but data has 50+ country variants. `normalizeCountry()` at L1699 is defined INSIDE `applyFilters()` (local scope) — must be extracted to global scope and applied during `loadAllData()`. The aggregate circle-per-country approach (Leaflet `L.circleMarker`) with radius = `Math.sqrt(count) * 3` will work well.
+
 ---
 
 ### SM-Q9: Supplier Profile Only Populates from Top 10 Click
@@ -233,6 +322,8 @@
 **Complexity:** Low (function already partially implemented elsewhere)  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** `updateSupplierProfile()` is called at L1753 inside `applyFilters()` but **NEVER DEFINED** — this is a P0 bug causing silent failure. Fix: define it by extracting the profile-rendering logic from `selectSupplierByName()` (L1101). Both functions should call a shared `renderSupplierProfile(supplier, containerId)` helper. Audit `09_KPI_Reference_Map.csv` confirms the function name in the `applyFilters()` flow.
+
 ---
 
 ### SM-Q10: Entity Comparison Not Showing All Entities
@@ -255,6 +346,8 @@
 
 **Complexity:** Medium  
 **Files Changed:** `scripts.js`, `styles.css`
+
+> **Developer Note:** `renderEntityChartCanvas()` at L2753 uses Chart.js horizontal bar. `11_Entity_Breakdown.csv` confirms 19 SM entities (some with very few quotations). Chart height should be `entities.length * 35px` minimum. Chart.js `onClick` callback provides the bar index — map to entity name → set `filterEntity.value` → `applyFilters()`.
 
 ---
 
@@ -279,6 +372,8 @@
 **Complexity:** Medium (depends on SM-Q5 data pipeline fix)  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** After the `MATERIAL_CODE_MAP` pipeline change, `smData.materialsByDiscipline` will contain 30 materials (not 7). Doughnut chart with `Chart.js` doughnut type + external scrollable legend is ideal. Use `plugins.legend.display = false` and build custom HTML legend. Click handler via Chart.js `onClick` + `getElementsAtEventForMode()`.
+
 ---
 
 ### SM-Q12: Responsible MVL Employee Issues
@@ -300,6 +395,8 @@
 
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
+
+> **Developer Note:** `05_Employees.csv` in audit confirms 42 employee records. The blank #1 is a genuine data issue — POs with null `ResponsiblePerson`. Display as "Unassigned" with a warning badge. The "BY SPEND" toggle sorts by `totalPoValueUSD` instead of `orderCount` — add a tooltip explaining this. Show All can use same pagination pattern as Supplier Overview.
 
 ---
 
@@ -324,6 +421,8 @@
 **Complexity:** Medium  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** `selectSupplier()` at L2113 already captures the click. Extend it to call `applyFilters()` with the supplier name set in the dropdown. The cross-filter pattern: set dropdown value programmatically → trigger `applyFilters()` → all charts/tables rebuild. This is the same pattern for ALL chart click handlers across all tabs.
+
 ---
 
 ### SM-Q14: Quotation-to-PO Time — Clarify Calculation
@@ -345,6 +444,8 @@
 
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
+
+> **Developer Note:** `conversion_times.json` is loaded as `_conversionTimes` in `loadAllData()`. The calculation is valid (PO Date – RFQ Date, averaged per month). Add KPI_INFO entry: `"conversionTime": { title: "Quotation-to-PO Conversion Time", formula: "AVG(PO Date - Quotation Date) per month" }`. Simple tooltip addition.
 
 ---
 
@@ -368,6 +469,8 @@
 **Complexity:** Low  
 **Files Changed:** `scripts.js`, `index.html`
 
+> **Developer Note:** Hardcoded data at L726–766 includes fake spec numbers like "MVL-STD-001" and fixed lead times. Remove the entire `buildApprovedMaterialsData()` and `updateApprovedMaterials()` fake data path. Replace with a styled "Coming Soon" card. When the real approved materials list arrives, it will be a new JSON file (`approved_materials.json`) loaded in `loadAllData()`.
+
 ---
 
 ### SM-Q16: Submit & Order Quantity Chart — Year Aggregation Issue
@@ -390,6 +493,8 @@
 
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
+
+> **Developer Note:** `renderTrendChartLine()` at L2242 uses `.slice(-12)` which is correct for last 12 months. The label fix is simple: change from `monthNames[m]` to `` `${monthNames[m]} '${year.toString().slice(-2)}` ``. Data audit `13_Data_Source_Lineage.csv` confirms data spans 2012–2026.
 
 ---
 
@@ -475,9 +580,13 @@
 **Complexity:** Trivial  
 **Files Changed:** `styles.css`
 
+> **Developer Note — SM-Q18a:** `build_v7_data.py` L128 already normalizes "Cancled"→"Cancelled". Verify in loaded JSON with: `smData.workbench.filter(q => q.Status === 'Cancelled').length` should be 181 (per audit `12_Cross_Tab_Verification.csv`). **SM-Q18b:** Waiting badge uses `status-waiting` CSS class. Change `.status-waiting { color: #000; }` for WCAG AA contrast.
+
 ---
 
 ## DOC 2: Global Spend Analysis
+
+> **Developer Notes — GSA Tab Overview:** GSA tab has 3,522 PO records across 21 entities. The #1 systemic issue is that ALL filters require the Apply button click — no `change` event listeners are wired on any GSA dropdown. `populateGSAFilters()` at L2958 caps suppliers at 200 and projects at 100. Audit `07_GSA_Summary_KPIs.csv` confirms all 6 GSA KPIs are correct. The entity count of 21 includes CENTRICO and Unknown (see `11_Entity_Breakdown.csv`).
 
 ### GSA-Q1: Entity List Mismatch — 20 vs 19, Unknown Entity "CENTRICO"
 
@@ -502,6 +611,8 @@
 **Complexity:** High (data pipeline alignment)  
 **Files Changed:** `build_v7_data.py`, all 3 JSON data files, `scripts.js`
 
+> **Developer Note:** `11_Entity_Breakdown.csv` reveals 28 total unique entities: 19 in SM (have quotations), 21 in GSA (have POs), 7 PO-only entities (CENTRICO, Unknown, MVL VENTURES, MVL ENERGY, MVL SOLUTIONS, MVL FACILITIES, MVL TRADING, MVL PROJECTS, MVL ARABIA). The master entity list will have all 28 — each tab shows only those with relevant records. CENTRICO has 26 POs worth $314K — legitimate entity. "Unknown" has 92 POs worth $8.7M — blank entity field in source data.
+
 ---
 
 ### GSA-Q2: Supplier List Incomplete + No Type-Ahead
@@ -523,6 +634,8 @@
 **Complexity:** Low (after SearchableSelect is built)  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** After SearchableSelect is built (SM-Q3), applying to GSA suppliers is a 3-line change: `new SearchableSelect(document.getElementById('gsaFilterSupplier'))`. Remove the `.slice(0, 200)` cap at L~2970. Add `gsaFilterSupplier.addEventListener('change', () => applyGSAFilters())`.
+
 ---
 
 ### GSA-Q3: Projects Need Type-Ahead Search
@@ -542,6 +655,8 @@
 **Complexity:** Low (after SearchableSelect is built)  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** Same pattern as GSA-Q2. Remove `.slice(0, 100)` cap on projects. Apply SearchableSelect. Wire `change` listener.
+
 ---
 
 ### GSA-Q4: Only 14 of 30 Materials Shown
@@ -560,6 +675,8 @@
 
 **Complexity:** Low (after data pipeline fix)  
 **Files Changed:** `build_v7_data.py`, `scripts.js`
+
+> **Developer Note:** Current GSA has 14 material values because PO data has fewer distinct materials than quotation data. After pipeline fix, `gsaData.filters.materials` will have all 30 from official CSV (some may have 0 POs but should still appear in filter). Also add `filters.materialCodes` (12 items) for the separate Material Code dropdown.
 
 ---
 
@@ -582,6 +699,8 @@
 
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
+
+> **Developer Note:** PO Type filter uses `gsaFilterDiscipline` variable name internally (misnomer). Business rule: RFPO ending in "-1" = Base PO, "-2" or higher = Change Order. Current code at `applyGSAFilters()` checks `po.type` field which was set by `build_v7_data.py`. Audit confirms 3,208 Base POs + 314 Change Orders = 3,522 total. Just needs `change` listener — the filter logic itself works.
 
 ---
 
@@ -607,6 +726,8 @@
 **Complexity:** Low  
 **Files Changed:** `scripts.js`, `index.html`
 
+> **Developer Note:** `gsaData.annualTrend` has data from 2012–2026. Year dropdown is populated from actual PO dates — filter to 2010+ in pipeline. Set `<input type="date" max="${new Date().toISOString().split('T')[0]}">` dynamically. Add `change` listeners to all 3 date inputs. Validate FROM ≤ TO on change.
+
 ---
 
 ### GSA-Q7: Search Not Working
@@ -626,6 +747,8 @@
 
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
+
+> **Developer Note:** GSA search at L3831 is inside `applyGSAFilters()` — already has the search logic but only fires on Apply click. Add `gsaSearchInput.addEventListener('input', debounce(() => applyGSAFilters(), 300))`. Reuse the `showFilterIndicator()` utility from SM-Q6.
 
 ---
 
@@ -654,6 +777,8 @@
 **Complexity:** Low  
 **Files Changed:** `index.html`, `scripts.js`
 
+> **Developer Note:** Audit `09_KPI_Reference_Map.csv` explains the SM vs GSA mismatch: SM tracks quotations (12,072 records, $3.0B quoted, 7,671 won POs at $334M). GSA tracks actual POs (3,522 records at $396M). These are different data scopes — not a bug. Add KPI_INFO popup: "SM tracks quotation lifecycle. GSA tracks actual Purchase Orders." Entity 21→19 gap is due to PO-only entities per `11_Entity_Breakdown.csv`.
+
 ---
 
 ### GSA-Q9: Annual Spend Trend Not Responding to Filters + Make Interactive
@@ -672,6 +797,8 @@
 
 **Complexity:** Medium  
 **Files Changed:** `scripts.js`
+
+> **Developer Note:** `applyGSAFilters()` DOES call chart rebuild functions with filtered data. If chart doesn't update, likely the chart instance isn't being destroyed/recreated properly (Chart.js requires `chart.destroy()` before `new Chart()`). Check `destroyChart()` pattern. Add `onClick` using Chart.js `getElementsAtEventForMode('nearest')` → extract month/year → filter table.
 
 ---
 
@@ -697,6 +824,8 @@
 **Complexity:** Medium  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** GSA `#gsaSupplierCard` HTML structure is already in place (L620). Create `updateGSASupplierProfile(name)` that: (1) looks up `suppliersData.suppliers.find(s => s.name === name)`, (2) populates card fields. Wire to: supplier filter `change`, Top 10 chart click, Bottom 10 chart click, supplier table row click. Use same `renderSupplierProfile()` helper from SM-Q9 fix.
+
 ---
 
 ### GSA-Q11: Spend by Entity — Says "Top 5" Shows 8
@@ -716,6 +845,8 @@
 
 **Complexity:** Low  
 **Files Changed:** `scripts.js`, `index.html`
+
+> **Developer Note:** `createGSAEntityChart()` slices top 8 but title says "Top 5". Fix: either `data.slice(0, 5)` or change title to "Top 8". Switching to pie chart: `type: 'pie'` in Chart.js config. Existing click handler at L3229–3246 should work after adding `change` listeners (it calls `applyGSAFilters()`).
 
 ---
 
@@ -737,6 +868,8 @@
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** Same Top 5 vs 8 issue. "3 Days Rental Of Scorpio" at ~$250M is a DATA issue — many POs tagged to this project name. Not a code fix. Add PO count next to spend value in chart tooltip: `"${project}: $${spend} (${count} POs)"`. Existing click handler at L3296–3325.
+
 ---
 
 ### GSA-Q13: Top 10 Suppliers — Repeating Colors + Make Interactive
@@ -754,6 +887,8 @@
 
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
+
+> **Developer Note:** Generate 10 unique colors: `const colors = Array.from({length: 10}, (_, i) => \`hsl(${i * 36}, 70%, 55%)\`)`  . Existing click handler at L3387–3418. Also wire to `updateGSASupplierProfile()` from GSA-Q10.
 
 ---
 
@@ -776,6 +911,8 @@
 **Complexity:** Low  
 **Files Changed:** `index.html`, `scripts.js`
 
+> **Developer Note:** HTML L649 has "Top Suppliers" — copy-paste from Top 10. Rename to "Most Inactive Suppliers". $1 orders are a data quality flag for reviewer. Same unique colors fix as GSA-Q13. Wire click to `updateGSASupplierProfile()`.
+
 ---
 
 ### GSA-Q15: PO Details Table "All Materials" Showing Disciplines
@@ -795,6 +932,8 @@
 **Complexity:** Low (after data pipeline fix)  
 **Files Changed:** `index.html`, `scripts.js`
 
+> **Developer Note:** After pipeline fix delivers `filters.materials` (30) and `filters.materialCodes` (12), the PO Details filter currently labeled "All Materials" will be split: one dropdown for Materials (30), one for Material Codes (12). Or rename current to "All Material Codes" if only one dropdown is desired.
+
 ---
 
 ### GSA-Q16: Marketplace Workbench Button on GSA Tab
@@ -813,9 +952,13 @@
 **Complexity:** Low  
 **Files Changed:** `index.html`, `scripts.js`
 
+> **Developer Note:** `toggleGSATableView()` at L3804 is copy-pasted from SM tab. Remove the "Marketplace Workbench" button from HTML L673. If a toggle is still desired, replace with "Base POs" / "Change Orders" toggle which would actually be useful for GSA.
+
 ---
 
 ## DOC 3: Materials & Disciplines
+
+> **Developer Notes — M&D Tab Overview:** M&D tab shows 12,072 quotations + 3,522 POs grouped by disciplines. The #1 issue is that both Materials and Disciplines filters read from the same `mdData.filters.disciplines` array (7 items). After pipeline fix, Materials will have 30 items and Material Codes will have 12. Search input (`mdSearchInput`) is completely unwired — no event listener. `updateMdSupplierProfile()` at L3897 has the [object Object] bug. Audit `08_MD_Summary_KPIs.csv` confirms both Materials and Disciplines KPIs show 7 (wrong — should be 30 and 12).
 
 ### MD-Q1: "All Materials" Dropdown Showing 7 Disciplines Instead of 30 Materials
 
@@ -834,24 +977,28 @@
 **Complexity:** Low (after data pipeline fix)  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** `initMdFilters()` at L3949 has: `mdData.filters.disciplines.forEach(d => ...)` for the material dropdown. Change to `mdData.filters.materials.forEach(m => ...)`. The official 30 materials from `Material and Material Codes.csv` will be in `filters.materials` after rebuild.
+
 ---
 
 ### MD-Q2: Disciplines Filter Showing Same 7 Items as Materials
 
-**Reviewer Comment:** Disciplines filter identical to Materials filter. Should read from Material Code field (13 distinct values).
+**Reviewer Comment:** Disciplines filter identical to Materials filter. Should read from Material Code field (12 distinct values).
 
 **Current Behavior:**  
 - Both `filterMdMaterial` and `filterMdDiscipline` read from `mdData.filters.disciplines` — 7 items.
-- DISCIPLINE_MAP consolidation reduced 13→7.
+- DISCIPLINE_MAP consolidation reduced 12→7.
 
 **Planned Action:**
-1. After data pipeline fix: `filters.disciplines` will have 13 items (pre-consolidation Material Code values).
-2. `filterMdDiscipline` reads from `filters.disciplines` (13 items).
+1. After data pipeline fix: `filters.materialCodes` will have 12 items (from official Material Codes CSV).
+2. `filterMdDiscipline` reads from `filters.materialCodes` (12 items).
 3. `filterMdMaterial` reads from `filters.materials` (30 items).
 4. Both will be distinct.
 
 **Complexity:** Low (after data pipeline fix)  
 **Files Changed:** `scripts.js`
+
+> **Developer Note:** In `initMdFilters()`, the discipline dropdown population currently iterates the same array as materials. After fix: disciplines dropdown reads `mdData.filters.materialCodes` (12 items: Architectural, Chemicals, Electrical, Fire, Logistics, Mechanical, Office Assets, Protection, Rental, Services, Tools, Various).
 
 ---
 
@@ -860,6 +1007,8 @@
 **Reviewer Comment:** M&D shows 20 entities vs SM's 19. What is CENTRICO? What is Unknown?
 
 **Identical to GSA-Q1.** Same root cause, same planned action. See GSA-Q1.
+
+> **Developer Note:** `11_Entity_Breakdown.csv` shows M&D has the same 21 entities as GSA (all entities with PO records). SM has 19 (quotation-only entities like MV LLC, DEFENSE, MPG JV don't appear in GSA/M&D).
 
 ---
 
@@ -879,11 +1028,15 @@
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** In `applyMdFilters()`, after the filter logic, add: `if (filterMdSupplier.value !== '') { const s = suppliersData.suppliers.find(s => s.name === filterMdSupplier.value); if (s) updateMdSupplierProfile(s); }`. The profile update function exists at L3897 — just not called from the filter flow.
+
 ---
 
 ### MD-Q5: Add Clear Button for M&D
 
 **Identical to SM-Q1.** Same approach — add Clear button + `clearMdFilters()` function.
+
+> **Developer Note:** Same pattern as SM Clear button. Reset all M&D dropdowns (`filterMdEntity`, `filterMdDiscipline`, `filterMdMaterial`, `filterMdSupplier`) to default "All" values, clear search, reset `mdState`, call `applyMdFilters()`.
 
 ---
 
@@ -904,11 +1057,13 @@
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** `mdSearchInput` exists in HTML L854 but has ZERO event listeners. Add: `document.getElementById('mdSearchInput').addEventListener('input', debounce(() => applyMdFilters(), 300))`. In `applyMdFilters()`, add search filtering against PO number, material, materialCode, supplier, project fields. Reuse `showFilterIndicator()` utility.
+
 ---
 
 ### MD-Q7: KPI Ribbon Reading Data Incorrectly
 
-**Reviewer Comment:** Materials should be 30, Disciplines should be 13. Total Material Spend should match SM/GSA. What is "% utilized"? Supplier count seems low.
+**Reviewer Comment:** Materials should be 30, Disciplines should be 12. Total Material Spend should match SM/GSA. What is "% utilized"? Supplier count seems low.
 
 **Current Behavior:**  
 - Materials = 7, Disciplines = 7 (both read `summary.disciplineCount`).
@@ -919,8 +1074,8 @@
 
 **Planned Action:**
 1. Materials KPI: Read from `filters.materials.length` = 30.
-2. Disciplines KPI: Read from `filters.disciplines.length` = 13.
-3. Total Material Spend vs Total Discipline Spend: These should be different values. Material Spend = sum of POs grouped by material. Discipline Spend = sum grouped by discipline. Currently both show total — need separate aggregations.
+2. Disciplines KPI: Read from `filters.materialCodes.length` = 12.
+3. Total Material Spend vs Total Discipline Spend: These should be different values. Material Spend = sum of POs grouped by material. Discipline Spend = sum grouped by materialCode. Currently both show total — need separate aggregations.
 4. "% utilized" → Rename to **"Conversion Rate"** and add info icon: "Percentage of quoted value that was converted to purchase orders."
 5. **Fix "Active Projects" bug**: Change line 4083 to count distinct **projects** (not entities).
 6. Verify supplier count against full `suppliersData.suppliers` dataset.
@@ -928,11 +1083,13 @@
 **Complexity:** Medium  
 **Files Changed:** `scripts.js`, `build_v7_data.py`
 
+> **Developer Note:** `updateMdKPIs()` at L4293 reads `summary.disciplineCount` for BOTH Materials and Disciplines KPIs. After pipeline fix: read `summary.materialCount` (30) for Materials KPI and `summary.materialCodeCount` (12) for Disciplines KPI. Active Projects bug at L4083: `new Set(filteredPOs.map(p => p.entity))` counts entities, should be `new Set(filteredPOs.map(p => p.project))`. Audit `08_MD_Summary_KPIs.csv` documents current wrong values.
+
 ---
 
-### MD-Q8: Discipline Spend Chart — Rename "Actual" + Show 13 Disciplines
+### MD-Q8: Discipline Spend Chart — Rename "Actual" + Show 12 Material Codes
 
-**Reviewer Comment:** Replace "Actual" with "Ordered". Show 13 disciplines, not 7.
+**Reviewer Comment:** Replace "Actual" with "Ordered". Show 12 Material Codes, not 7.
 
 **Current Behavior:**  
 - Chart legend: "Quoted" and "Actual".
@@ -941,11 +1098,13 @@
 
 **Planned Action:**
 1. Change dataset label: `"Actual"` → `"Ordered"` in `createDisciplineSpendChart()`.
-2. After data pipeline fix: `mdData.disciplines` will have 13 entries → chart auto-shows 13.
-3. Adjust chart height if needed for 13 bars.
+2. After data pipeline fix: `mdData.disciplines` will have 12 entries (Material Codes) → chart auto-shows 12.
+3. Adjust chart height if needed for 12 bars.
 
 **Complexity:** Low (label change) + Medium (data dependency)  
 **Files Changed:** `scripts.js`, `build_v7_data.py`
+
+> **Developer Note:** `createDisciplineSpendChart()` at L4381 has `label: 'Actual'` — simple string replacement to `'Ordered'`. After pipeline fix, `mdData.disciplines` will auto-expand from 7 to 12 Material Code categories. Chart height: `Math.max(300, mdData.disciplines.length * 40)` px.
 
 ---
 
@@ -965,6 +1124,8 @@
 
 **Complexity:** Medium  
 **Files Changed:** `scripts.js`
+
+> **Developer Note:** After pipeline fix, feed 30 material values into doughnut chart. For 30 segments, use Chart.js `plugins.legend.display = false` and build a custom scrollable HTML legend. Consider "Top 15 + Other" grouping if chart is too crowded. Click handler: `chart.getElementsAtEventForMode(e, 'nearest')` → get material name → set filter → `applyMdFilters()`.
 
 ---
 
@@ -989,6 +1150,8 @@
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
 
+> **Developer Note — P0 BUG:** `suppliers.json` structure: `{ name, location: {latitude, longitude}, address: {country, country_standardized}, contact: {primary_contact, email, phone}, rating }`. Code at L3913 does `supplier.location` which renders `{latitude: ..., longitude: ...}` as "[object Object]". Fix: `supplier.address?.country_standardized || supplier.address?.country || '-'`. Same for contact: `supplier.contact?.primary_contact || '-'`.
+
 ---
 
 ### MD-Q11: Supplier Overview — Show All Suppliers, Filter Responsive
@@ -1009,6 +1172,8 @@
 **Complexity:** Medium  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** Current code has `slice(0, 10)` in two places: initial load and filtered view. Remove both caps. Add pagination: 20 per page with Previous/Next buttons. Reuse pagination pattern from SM tab if one exists, or create a `paginate(items, page, perPage)` utility. Column header click sorting is a nice-to-have.
+
 ---
 
 ### MD-Q12: Approved Materials — Fake/Unknown Data Source
@@ -1027,6 +1192,8 @@ Same as SM-Q15 — replace with "Coming Soon" placeholder.
 
 **Complexity:** Low  
 **Files Changed:** `scripts.js`
+
+> **Developer Note:** `updateMdApprovedMaterials()` at L4353 builds from `mdData.quotations` — repurposes PO reference numbers as "spec numbers". Not genuine approved materials data. Replace with styled placeholder card. When real data arrives, load from `approved_materials.json`.
 
 ---
 
@@ -1048,27 +1215,37 @@ Same as SM-Q15 — replace with "Coming Soon" placeholder.
 **Complexity:** Medium (debugging)  
 **Files Changed:** `scripts.js`
 
+> **Developer Note:** `updateMdPoTable()` IS called in `applyMdFilters()` with `mdState.filteredPOs` at L4052. If table doesn't update, debug: (1) verify `mdState.filteredPOs` is correctly filtered (add `console.log('Filtered POs:', mdState.filteredPOs.length)`), (2) check if pagination resets to page 1, (3) verify DOM element IDs match. The filter → table pipeline: `applyMdFilters()` → filter data → `updateMdPoTable(mdState.filteredPOs)` → render rows.
+
 ---
 
 ## Cross-Tab Systemic Issues
 
 These issues appear across multiple questions and require a unified approach:
 
-### Issue 1: Materials vs Disciplines Data Separation
+### Issue 1: Materials vs Material Codes Data Separation
 **Affects:** SM-Q5, SM-Q11, GSA-Q4, GSA-Q15, MD-Q1, MD-Q2, MD-Q7, MD-Q8, MD-Q9  
-**Fix:** Single data pipeline change in `build_v7_data.py` to preserve 30 raw materials + 13 original disciplines
+**Fix:** Single data pipeline change in `build_v7_data.py` to preserve 30 raw materials + 12 Material Codes (from official `Material and Material Codes.csv`, replacing current 7 DISCIPLINE_MAP categories)
+
+> **Developer Note:** This is the #1 blocking change. New `MATERIAL_CODE_MAP` will read the CSV file directly. JSON output will have `filters.materials` (30), `filters.materialCodes` (12). Every quotation/PO record gets `material` (raw name) + `materialCode` (12 codes).
 
 ### Issue 2: All Filters Need Instant Filtering
 **Affects:** GSA-Q1 through Q7, MD-Q6  
 **Fix:** Add `change` event listeners to all GSA dropdowns; wire M&D search input
 
+> **Developer Note:** Pattern: `document.querySelectorAll('#gsa-filters select').forEach(s => s.addEventListener('change', () => applyGSAFilters()))`. One loop, 6 dropdowns.
+
 ### Issue 3: SearchableSelect Component Needed
 **Affects:** SM-Q3, SM-Q4, SM-Q5, GSA-Q2, GSA-Q3, GSA-Q4  
 **Fix:** Build ONE reusable component, apply to all dropdowns with 10+ options
 
+> **Developer Note:** ~150 lines vanilla JS. Wrap `<select>` with custom dropdown: text input + filtered option list + keyboard nav. No dependencies.
+
 ### Issue 4: Cross-Filtering Interactivity
 **Affects:** SM-Q7, SM-Q10, SM-Q11, SM-Q13, GSA-Q9, GSA-Q11, GSA-Q12, GSA-Q13, GSA-Q14, MD-Q9  
 **Fix:** Add Chart.js `onClick` handlers to all charts; clicking filters entire dashboard
+
+> **Developer Note:** Unified pattern: `onClick: (e) => { const el = chart.getElementsAtEventForMode(e, 'nearest', {intersect: true}); if (el.length) { setFilter(labels[el[0].index]); applyFilters(); } }`. Same 5-line callback on every chart.
 
 ### Issue 5: Supplier Profile Across All Tabs
 **Affects:** SM-Q9, GSA-Q10, MD-Q4, MD-Q10  
@@ -1092,7 +1269,7 @@ These issues appear across multiple questions and require a unified approach:
 
 | Priority | Category | Questions | Impact | Effort |
 |----------|----------|-----------|--------|--------|
-| **P0** | Data Pipeline — Materials/Disciplines separation | SM-Q5, MD-Q1, Q2, Q7, Q8, Q9 | Critical | High |
+| **P0** | Data Pipeline — Materials/Material Codes separation | SM-Q5, MD-Q1, Q2, Q7, Q8, Q9 | Critical | High |
 | **P0** | Fix [object Object] bug | MD-Q10 | Critical (visible bug) | Low |
 | **P0** | Fix undefined `updateSupplierProfile()` | SM-Q9 | Critical (silent failure) | Low |
 | **P1** | GSA instant filtering | GSA-Q1–Q7 | High | Medium |
