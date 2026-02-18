@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MVL World Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; }
+  #header {
+    background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+    color: #ffffff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+    position: relative;
+  }
+  #header h1 { font-size: 22px; font-weight: 600; letter-spacing: 1px; display: flex; align-items: center; gap: 12px; }
+  #header span { font-size: 13px; opacity: 0.7; }
+  .mvl-logo-img { height: 32px; vertical-align: middle; }
+  .mvl-logo-img.small { height: 20px; }
+  #map { height: calc(100vh - 52px); width: 100%; }
+
+  .custom-pin {
+    position: relative;
+    width: 0; height: 0;
+  }
+  .pin-marker {
+    width: 14px; height: 14px;
+    background: #e94560;
+    border: 2.5px solid #333;
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(233,69,96,0.7), 0 2px 6px rgba(0,0,0,0.4);
+    position: absolute;
+    top: -7px; left: -7px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .pin-marker:hover { transform: scale(1.4); }
+  .pin-marker.country { background: #e94560; }
+  .pin-marker.us-state { background: #0ea5e9; border-color: #333; box-shadow: 0 0 6px rgba(14,165,233,0.7), 0 2px 6px rgba(0,0,0,0.2); }
+  .pin-marker.territory { background: #f59e0b; border-color: #333; box-shadow: 0 0 6px rgba(245,158,11,0.7), 0 2px 6px rgba(0,0,0,0.2); }
+  .pin-marker.japan-region { background: #a855f7; border-color: #333; box-shadow: 0 0 6px rgba(168,85,247,0.7), 0 2px 6px rgba(0,0,0,0.2); }
+
+  .pin-label {
+    position: absolute;
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 700;
+    color: #1e293b;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2px 7px;
+    border-radius: 3px;
+    pointer-events: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    border: 1px solid rgba(0,0,0,0.15);
+    letter-spacing: 0.5px;
+    z-index: 10;
+  }
+
+  .pulse-ring {
+    position: absolute;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 2px solid rgba(233,69,96,0.5);
+    top: -15px; left: -15px;
+    animation: pulse 2s ease-out infinite;
+    pointer-events: none;
+  }
+  .us-state ~ .pulse-ring, .pin-marker.us-state + .pulse-ring { border-color: rgba(14,165,233,0.5); }
+  .territory ~ .pulse-ring, .pin-marker.territory + .pulse-ring { border-color: rgba(245,158,11,0.5); }
+  .japan-region ~ .pulse-ring, .pin-marker.japan-region + .pulse-ring { border-color: rgba(168,85,247,0.5); }
+
+  @keyframes pulse {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+
+  .leaflet-popup-content-wrapper {
+    background: #ffffff;
+    color: #1e293b;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .leaflet-popup-tip { background: #ffffff; }
+  .leaflet-popup-content { margin: 12px 16px; font-size: 13px; line-height: 1.6; }
+  .leaflet-popup-content h3 { margin: 0 0 6px; font-size: 16px; color: #dc2626; }
+  .leaflet-popup-content .type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .type-country { background: rgba(220,38,38,0.1); color: #dc2626; }
+  .type-us-state { background: rgba(14,165,233,0.1); color: #0284c7; }
+  .type-territory { background: rgba(245,158,11,0.1); color: #d97706; }
+  .type-japan-region { background: rgba(147,51,234,0.1); color: #7c3aed; }
+
+  #legend {
+    position: absolute;
+    bottom: 30px;
+    left: 12px;
+    z-index: 1000;
+    background: rgba(255,255,255,0.95);
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #1e293b;
+    font-size: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  #legend h4 { margin-bottom: 8px; font-size: 13px; opacity: 0.9; }
+  .legend-item { display: flex; align-items: center; margin-bottom: 5px; }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    border: 2px solid #475569;
+  }
+  #branding {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    z-index: 1000;
+    background: rgba(255,255,255,0.92);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1d4ed8;
+    letter-spacing: 1.5px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  #branding span { color: #64748b; font-weight: 400; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>
+    <img src="MVLlogo.png" alt="MVL Logo" class="mvl-logo-img">
+    World Map
+  </h1>
+  <span>Locations Overview</span>
+</div>
+
+<div id="map"></div>
+
+<div id="branding">
+  <img src="MVLlogo.png" alt="MVL" class="mvl-logo-img small"> <span style="font-weight:700; color:#1d4ed8; letter-spacing:1.5px;">IT</span>
+</div>
+
+<div id="legend">
+  <h4>LEGEND</h4>
+  <div class="legend-item"><div class="legend-dot" style="background:#e94560"></div> Country</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0ea5e9"></div> U.S. State</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> Territory / Base</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div> Japan Region</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Pixel offsets (dx, dy) for labels — fixed in screen pixels, converted to lat/lng per zoom
+// This keeps labels close when zoomed in, spread when zoomed out
+const locations = [
+  // Middle East / Mediterranean cluster
+  { name: "Lebanon",        lat: 33.8547,  lng: 35.8623,   type: "country",      desc: "Lebanese Republic, Eastern Mediterranean",          dx: -80, dy: -20 },
+  { name: "UAE",             lat: 24.4539,  lng: 54.3773,   type: "country",      desc: "United Arab Emirates, Arabian Peninsula",           dx: 30,  dy: 30 },
+  { name: "Italy",           lat: 41.8719,  lng: 12.5674,   type: "country",      desc: "Italian Republic, Southern Europe",                 dx: -70, dy: -25 },
+  { name: "Greece",          lat: 39.0742,  lng: 21.8243,   type: "country",      desc: "Hellenic Republic, Southeastern Europe",            dx: 0,   dy: -35 },
+  { name: "Kuwait",          lat: 29.3117,  lng: 47.4818,   type: "country",      desc: "State of Kuwait, Arabian Peninsula",                dx: 55,  dy: -10 },
+  { name: "Qatar",           lat: 25.2854,  lng: 51.531,    type: "country",      desc: "State of Qatar, Arabian Peninsula",                 dx: -50, dy: 30 },
+  { name: "Georgia",         lat: 42.3154,  lng: 43.3569,   type: "country",      desc: "Georgia, South Caucasus, Eastern Europe",           dx: 40,  dy: -35 },
+
+  // U.S. States
+  { name: "North Carolina",  lat: 35.7596,  lng: -79.0193,  type: "us-state",    desc: "U.S. State, Southeastern United States",            dx: 0,   dy: 30 },
+  { name: "Washington",      lat: 47.7511,  lng: -120.7401, type: "us-state",    desc: "Washington State, Pacific Northwest, USA",          dx: -50, dy: -30 },
+  { name: "Michigan",        lat: 44.3148,  lng: -85.6024,  type: "us-state",    desc: "U.S. State, Great Lakes Region, USA",               dx: 40,  dy: -30 },
+
+  // Territories / Bases
+  { name: "Kwajalein",       lat: 8.7167,   lng: 167.7333,  type: "territory",   desc: "Kwajalein Atoll, Marshall Islands, Pacific Ocean",  dx: 40,  dy: -10 },
+  { name: "Diego Garcia",    lat: -7.3195,  lng: 72.4229,   type: "territory",   desc: "British Indian Ocean Territory, Indian Ocean",      dx: 0,   dy: -35 },
+
+  // Japan Regions
+  { name: "Okinawa",         lat: 26.5013,  lng: 127.9454,  type: "japan-region", desc: "Okinawa Prefecture, Ryukyu Islands, Japan",        dx: -60, dy: 25 },
+  { name: "Kanagawa",        lat: 35.4478,  lng: 139.6425,  type: "japan-region", desc: "Kanagawa Prefecture, Kanto Region, Japan",         dx: 50,  dy: -30 },
+  { name: "Sagami",          lat: 35.3833,  lng: 139.3667,  type: "japan-region", desc: "Sagami Area (Sagamihara), Kanagawa, Japan",        dx: -70, dy: 25 },
+];
+
+function getTypeColor(type) {
+  return { "country": "#e94560", "us-state": "#0ea5e9", "territory": "#d97706", "japan-region": "#a855f7" }[type] || "#888";
+}
+
+// Initialize map
+const map = L.map('map', {
+  center: [25, 45],
+  zoom: 3,
+  minZoom: 2,
+  maxZoom: 18,
+  zoomControl: true,
+  worldCopyJump: true,
+  attributionControl: false
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(map);
+
+// Convert a pixel offset to a lat/lng offset at a given point and zoom
+function pixelToLatLng(lat, lng, dx, dy) {
+  const point = map.latLngToLayerPoint(L.latLng(lat, lng));
+  return map.layerPointToLatLng(L.point(point.x + dx, point.y + dy));
+}
+
+// Store references for dynamic updates
+const labelMarkers = [];
+const leaderLines = [];
+
+// Create pins (static), labels and lines (dynamic)
+locations.forEach((loc, i) => {
+  const typeClass = loc.type;
+  const typeBadgeClass = 'type-' + loc.type;
+  const typeLabel = loc.type === 'us-state' ? 'U.S. State'
+                  : loc.type === 'japan-region' ? 'Japan Region'
+                  : loc.type === 'territory' ? 'Territory / Base'
+                  : 'Country';
+  const color = getTypeColor(loc.type);
+
+  // Pin marker (stays fixed)
+  const pinIcon = L.divIcon({
+    className: 'custom-pin',
+    html: '<div class="pin-marker ' + typeClass + '"></div><div class="pulse-ring"></div>',
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+    popupAnchor: [0, -12]
+  });
+  const marker = L.marker([loc.lat, loc.lng], { icon: pinIcon, zIndexOffset: 500 }).addTo(map);
+  marker.bindPopup(
+    '<div>' +
+      '<span class="type-badge ' + typeBadgeClass + '">' + typeLabel + '</span>' +
+      '<h3>' + loc.name + '</h3>' +
+      '<p>' + loc.desc + '</p>' +
+      '<p style="opacity:0.6;font-size:11px;margin-top:4px;">' +
+        loc.lat.toFixed(4) + '&deg;, ' + loc.lng.toFixed(4) + '&deg;' +
+      '</p>' +
+    '</div>'
+  );
+
+  // Label marker (will be repositioned on zoom)
+  const labelIcon = L.divIcon({
+    className: 'custom-pin',
+    html: '<div class="pin-label">' + loc.name + '</div>',
+    iconSize: [0, 0],
+    iconAnchor: [0, 10]
+  });
+  const labelPos = pixelToLatLng(loc.lat, loc.lng, loc.dx, loc.dy);
+  const labelMarker = L.marker(labelPos, { icon: labelIcon, interactive: false, zIndexOffset: 600 }).addTo(map);
+  labelMarkers.push(labelMarker);
+
+  // Leader line (will be repositioned on zoom)
+  const line = L.polyline([[loc.lat, loc.lng], labelPos], {
+    color: color,
+    weight: 1.5,
+    opacity: 0.65,
+    dashArray: '5 4',
+    interactive: false
+  }).addTo(map);
+  leaderLines.push(line);
+});
+
+// Reposition labels and lines on every zoom change
+function updateLabelPositions() {
+  locations.forEach((loc, i) => {
+    const newPos = pixelToLatLng(loc.lat, loc.lng, loc.dx, loc.dy);
+    labelMarkers[i].setLatLng(newPos);
+    leaderLines[i].setLatLngs([[loc.lat, loc.lng], newPos]);
+  });
+}
+
+map.on('zoom', updateLabelPositions);
+map.on('zoomend', updateLabelPositions);
+
+// Fit map to pins only
+const group = L.featureGroup(locations.map(l => L.marker([l.lat, l.lng])));
+map.fitBounds(group.getBounds().pad(0.15));
+</script>
+</body>
+</html>
