@@ -333,7 +333,6 @@ function enrichDashboardWithRealData() {
             }
 
             dashboardData.supplierMarketplace.entityComparison = smData.entities
-                .slice(0, 8)
                 .map((e, i) => {
                     // Try to match entity name with PO spend data
                     const entityName = e.Entity;
@@ -368,11 +367,9 @@ function enrichDashboardWithRealData() {
         // These are the procurement contacts (e.g., "Lince M.", "Marman I.") not supplier companies
         if (smData.suppliers) {
             dashboardData.supplierMarketplace.responsibleEmployees = smData.suppliers
-                .filter(s => s.SupplierName && s.SupplierName.trim())
-                .slice(0, 6)
                 .map((s, i) => ({
                     rank: i + 1,
-                    name: s.SupplierName.trim(),
+                    name: (s.SupplierName && s.SupplierName.trim()) ? s.SupplierName.trim() : 'Unassigned',
                     poCount: s.POCount || 0,
                     totalSpend: s.TotalSpendUSD || 0,
                     winRate: 100
@@ -502,11 +499,10 @@ function enrichDashboardWithRealData() {
         entityData[company].poCount++;
     });
 
-    const entityColors = ['#0066CC', '#339933', '#FF9900', '#9966CC', '#CC6699'];
-    // Sort by total value (quote + po) to get most active entities
+    const entityColors = ['#0066CC', '#339933', '#FF9900', '#9966CC', '#CC6699', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96E6A4', '#D4A574'];
+    // Sort by total value (quote + po) to get most active entities — show ALL
     const entityComparison = Object.values(entityData)
         .sort((a, b) => (b.quoteValue + b.poSpend) - (a.quoteValue + a.poSpend))
-        .slice(0, 5)
         .map((e, i) => ({ ...e, color: entityColors[i % entityColors.length] }));
 
     console.log('📊 Entity comparison built:', entityComparison.map(e => ({ entity: e.entity, quoteValue: e.quoteValue, poSpend: e.poSpend })));
@@ -519,13 +515,12 @@ function enrichDashboardWithRealData() {
     const contactPerf = quotationsData.metadata.contact_performance || {};
     const employeeList = Object.entries(contactPerf)
         .map(([name, data]) => ({
-            name,
+            name: name === 'Unknown' ? 'Unassigned' : name,
             poCount: data.won || 0,
             totalSpend: data.won_value || 0,
             winRate: data.win_rate || 0
         }))
         .sort((a, b) => b.totalSpend - a.totalSpend)
-        .slice(0, 6)
         .map((e, i) => ({ rank: i + 1, ...e }));
 
     if (employeeList.length > 0) {
@@ -900,7 +895,7 @@ function populateBottomFilters(tabType) {
 
         countrySelect.innerHTML = '<option value="">All Countries</option>' +
             [...countries].sort().map(c => `<option value="${c}">${c}</option>`).join('');
-        materialSelect.innerHTML = '<option value="">All Categories</option>' +
+        materialSelect.innerHTML = '<option value="">All Materials</option>' +
             [...materials].sort().map(m => `<option value="${m}">${m}</option>`).join('');
     } else {
         // Populate status and material from quotations
@@ -1437,6 +1432,18 @@ function handleSearch(event) {
     const query = event.target.value.toLowerCase();
     currentFilters.search = query;
     applyFilters();
+    // SM-Q6: Show search feedback indicator
+    const indicator = document.getElementById('searchFeedback');
+    if (indicator) {
+        if (query) {
+            const total = smData?.workbench?.length || 0;
+            const filtered = document.getElementById('kpiRfqCount')?.textContent || '0';
+            indicator.textContent = `Showing ${filtered} of ${total.toLocaleString()} for "${event.target.value}"`;
+            indicator.style.display = 'block';
+        } else {
+            indicator.style.display = 'none';
+        }
+    }
 }
 
 function handleFilterChange(event) {
@@ -1604,11 +1611,10 @@ function applyFilters() {
             }
         });
 
-        const entityColors = ['#0066CC', '#339933', '#FF9900', '#9966CC', '#CC6699'];
+        const entityColors = ['#0066CC', '#339933', '#FF9900', '#9966CC', '#CC6699', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96E6A4', '#D4A574'];
         const entityComparison = Object.values(entitySpend)
             .filter(e => e.entity !== 'Unknown')
             .sort((a, b) => (b.quoteValue + b.poSpend) - (a.quoteValue + a.poSpend))
-            .slice(0, 5)
             .map((e, i) => ({ ...e, color: entityColors[i % entityColors.length] }));
 
         if (dashboardData?.supplierMarketplace) {
@@ -1686,39 +1692,7 @@ function applyFilters() {
             'MW-OCS': 'United Arab Emirates'
         };
 
-        // Normalize country names for map lookup
-        const normalizeCountry = (country) => {
-            if (!country) return country;
-            const lower = country.toLowerCase().trim();
-            const normalize = {
-                'dubai': 'United Arab Emirates',
-                'abu dhabi': 'United Arab Emirates',
-                'sharjah': 'United Arab Emirates',
-                'uae': 'United Arab Emirates',
-                'u.a.e': 'United Arab Emirates',
-                'u.a.e.': 'United Arab Emirates',
-                'united arab emirates': 'United Arab Emirates',
-                'usa': 'United States',
-                'us': 'United States',
-                'united states of america': 'United States',
-                'uk': 'United Kingdom',
-                'great britain': 'United Kingdom',
-                'england': 'United Kingdom',
-                'ksa': 'Saudi Arabia',
-                'kingdom of saudi arabia': 'Saudi Arabia',
-                'oman': 'Oman',
-                'bahrain': 'Bahrain',
-                'kuwait': 'Kuwait',
-                'qatar': 'Qatar',
-                'india': 'India',
-                'china': 'China',
-                'germany': 'Germany',
-                'france': 'France',
-                'italy': 'Italy'
-            };
-            return normalize[lower] || country;
-        };
-
+        // Normalize country names — uses global normalizeCountry()
         // Count quotations/spend by country from filtered data using client country
         const countrySpend = {};
         filtered.forEach(q => {
@@ -1795,9 +1769,8 @@ function applyFilters() {
         });
 
         const employeeList = Object.values(contactPerf)
-            .filter(e => e.name !== 'Unknown')
+            .map(e => ({ ...e, name: e.name === 'Unknown' ? 'Unassigned' : e.name }))
             .sort((a, b) => b.totalSpend - a.totalSpend)
-            .slice(0, 10)
             .map((e, i) => ({ rank: i + 1, ...e }));
 
         renderEmployeeList(employeeList);
@@ -1910,11 +1883,10 @@ function applyFilters() {
         entityData[company].poCount++;
     });
 
-    const entityColors = ['#0066CC', '#339933', '#FF9900', '#9966CC', '#CC6699'];
-    // Sort by total value to get most active entities
+    const entityColors = ['#0066CC', '#339933', '#FF9900', '#9966CC', '#CC6699', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96E6A4', '#D4A574'];
+    // Sort by total value to get most active entities — show ALL
     const entityComparison = Object.values(entityData)
         .sort((a, b) => (b.quoteValue + b.poSpend) - (a.quoteValue + a.poSpend))
-        .slice(0, 5)
         .map((e, i) => ({ ...e, color: entityColors[i % entityColors.length] }));
 
     console.log('📊 Filtered entity comparison:', entityComparison.map(e => ({ entity: e.entity, quoteValue: e.quoteValue, poSpend: e.poSpend })));
@@ -2075,7 +2047,7 @@ function renderStatusChart(data) {
     const total = data.reduce((sum, d) => sum + d.count, 0);
 
     container.innerHTML = data.map(item => `
-        <div class="status-bar-item" title="${item.status}: ${formatNumber(item.count)} quotes (${((item.count / total) * 100).toFixed(1)}%)">
+        <div class="status-bar-item" style="cursor:pointer" title="${item.status}: ${formatNumber(item.count)} quotes (${((item.count / total) * 100).toFixed(1)}%)" onclick="filterByStatus('${item.status}')">
             <div class="status-bar-label">${item.status}</div>
             <div class="status-bar-track">
                 <div class="status-bar-fill ${item.status.toLowerCase()}" 
@@ -2085,6 +2057,21 @@ function renderStatusChart(data) {
         </div>
     `).join('');
 }
+
+// SM-Q7: Click status bar to filter dashboard
+function filterByStatus(status) {
+    const filterStatus = document.getElementById('filterStatus');
+    if (!filterStatus) return;
+    // Toggle: if already selected, clear it
+    if (filterStatus.value === status) {
+        filterStatus.selectedIndex = 0;
+    } else {
+        filterStatus.value = status;
+    }
+    if (typeof handleFilterChange === 'function') handleFilterChange();
+    else if (typeof applyFilters === 'function') applyFilters();
+}
+window.filterByStatus = filterByStatus;
 
 // ============================================
 // RENDER: ENTITY COMPARISON
@@ -2754,6 +2741,40 @@ function formatCurrency(value) {
     return '$' + value.toFixed(0);
 }
 
+// SM-Q8: Global normalizeCountry() for map lookup and cross-filtering
+function normalizeCountry(country) {
+    if (!country) return country;
+    const lower = country.toLowerCase().trim();
+    const normalize = {
+        'dubai': 'United Arab Emirates',
+        'abu dhabi': 'United Arab Emirates',
+        'sharjah': 'United Arab Emirates',
+        'uae': 'United Arab Emirates',
+        'u.a.e': 'United Arab Emirates',
+        'u.a.e.': 'United Arab Emirates',
+        'united arab emirates': 'United Arab Emirates',
+        'usa': 'United States',
+        'us': 'United States',
+        'united states of america': 'United States',
+        'uk': 'United Kingdom',
+        'great britain': 'United Kingdom',
+        'england': 'United Kingdom',
+        'ksa': 'Saudi Arabia',
+        'kingdom of saudi arabia': 'Saudi Arabia',
+        'oman': 'Oman',
+        'bahrain': 'Bahrain',
+        'kuwait': 'Kuwait',
+        'qatar': 'Qatar',
+        'india': 'India',
+        'china': 'China',
+        'germany': 'Germany',
+        'france': 'France',
+        'italy': 'Italy'
+    };
+    return normalize[lower] || country;
+}
+window.normalizeCountry = normalizeCountry;
+
 function formatCurrencyShort(value) {
     if (value === undefined || value === null) return '-';
     if (value >= 1000000000) {
@@ -3074,6 +3095,10 @@ function initGlobalSpendAnalysis() {
         if (years.length > 0) {
             const minYear = Math.min(...years);
             fromEl.setAttribute('min', minYear + '-01-01');
+            // GSA-Q6: Set default FROM value so range is always bounded
+            if (!fromEl.value) {
+                fromEl.value = minYear + '-01-01';
+            }
         }
     }
     if (toEl) {
@@ -3312,6 +3337,13 @@ function createGSASpendTrendChart() {
                     position: 'right',
                     grid: { display: false },
                     ticks: { callback: (v) => formatCurrencyShort(v) }
+                }
+            },
+            onClick: (evt, elements) => {
+                if (elements.length > 0) {
+                    const idx = elements[0].index;
+                    const monthLabel = labels[idx];
+                    console.log('📊 GSA Trend clicked:', monthLabel);
                 }
             }
         }
@@ -3554,7 +3586,7 @@ function createGSASupplierCharts() {
                 labels: topSuppliers.map(s => truncateText(s.name, 30)),
                 datasets: [{
                     data: topSuppliers.map(s => s.spend),
-                    backgroundColor: ['#339933', '#339933', '#0066CC', '#0066CC', '#FF8C00', '#FF8C00', '#FFD700', '#FFD700', '#004578', '#004578'],
+                    backgroundColor: ['#339933', '#2EA043', '#0066CC', '#3B82F6', '#FF8C00', '#F59E0B', '#FFD700', '#9966CC', '#004578', '#CC6699'],
                     borderRadius: 4
                 }]
             },
@@ -3639,7 +3671,7 @@ function createGSASupplierCharts() {
                 labels: bottomSuppliers.map(s => truncateText(s.name, 30)),
                 datasets: [{
                     data: bottomSuppliers.map(s => s.spend),
-                    backgroundColor: ['#CC3333', '#CC3333', '#FF8C00', '#FF8C00', '#FFD700', '#FFD700', '#0066CC', '#0066CC', '#339933', '#339933'],
+                    backgroundColor: ['#CC3333', '#EF4444', '#FF8C00', '#F59E0B', '#FFD700', '#9966CC', '#0066CC', '#3B82F6', '#339933', '#2EA043'],
                     borderRadius: 4
                 }]
             },
@@ -4321,6 +4353,13 @@ function applyMdFilters() {
     updateMdApprovedMaterialsFiltered();
     updateMdPoTable(mdState.filteredPOs);
 
+    // MD-Q4: Update supplier profile when supplier is selected in filter
+    const supplierFilter = document.getElementById('filterMdSupplier');
+    if (supplierFilter && supplierFilter.value && supplierFilter.value !== 'All Suppliers') {
+        const sup = (suppliersData?.suppliers || []).find(s => s.name === supplierFilter.value);
+        if (sup) updateMdSupplierProfile(sup);
+    }
+
     console.log('📊 MD filters applied:', mdState.filteredPOs.length, 'POs,', mdState.filteredQuotations.length, 'quotations');
 }
 
@@ -4345,8 +4384,8 @@ function updateMdKPIsFiltered() {
     const utilization = totalQuoted > 0 ? ((totalOrdered / totalQuoted) * 100).toFixed(1) : 0;
     const matUtilEl = document.getElementById('kpiMdMatUtil');
     const discUtilEl = document.getElementById('kpiMdDiscUtil');
-    if (matUtilEl) matUtilEl.textContent = `${utilization}% utilized`;
-    if (discUtilEl) discUtilEl.textContent = `${utilization}% utilized`;
+    if (matUtilEl) matUtilEl.textContent = `${utilization}% conversion`;
+    if (discUtilEl) discUtilEl.textContent = `${utilization}% conversion`;
 
     // Unique suppliers and projects (fix: count projects, not entities)
     const suppliers = new Set(pos.map(po => po.supplier).filter(Boolean));
@@ -4689,8 +4728,8 @@ function updateMdKPIs() {
     // Update utilization subtexts
     const matUtilEl = document.getElementById('kpiMdMatUtil');
     const discUtilEl = document.getElementById('kpiMdDiscUtil');
-    if (matUtilEl) matUtilEl.textContent = `${utilization}% utilized`;
-    if (discUtilEl) discUtilEl.textContent = `${utilization}% utilized`;
+    if (matUtilEl) matUtilEl.textContent = `${utilization}% conversion`;
+    if (discUtilEl) discUtilEl.textContent = `${utilization}% conversion`;
 
     // Active Projects - count unique projects from PO data
     const activeProjects = summary.projectCount || mdData.filters?.projects?.length || 4;
@@ -4923,6 +4962,22 @@ function createMaterialDistributionChart() {
                         }
                     }
                 }
+            },
+            onClick: (evt, elements) => {
+                if (elements.length > 0) {
+                    const idx = elements[0].index;
+                    const matName = disciplines[idx]?.name;
+                    const matFilter = document.getElementById('filterMdMaterial');
+                    if (matFilter && matName) {
+                        for (let opt of matFilter.options) {
+                            if (opt.value === matName || opt.textContent === matName) {
+                                matFilter.value = opt.value;
+                                applyMdFilters();
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
     });
@@ -5146,7 +5201,7 @@ const KPI_INFO = {
         source: 'md_data.json → pos[].value (amountValue)',
         field: 'PO ordered amount (in original currency)',
         example: 'Total ordered value across all M&D POs',
-        note: 'Shows actual PO spend. "% utilized" = (totalOrdered / totalQuoted × 100). When filtered, recalculated from filtered POs.'
+        note: 'Shows actual PO spend. "% conversion" = (totalOrdered / totalQuoted × 100). When filtered, recalculated from filtered POs.'
     },
     'md-disciplineSpend': {
         title: 'Total Discipline Spend',

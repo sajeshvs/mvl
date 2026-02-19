@@ -272,12 +272,19 @@ def main():
     clean_workbench = []
     removed_empty = 0
     removed_dup = 0
+    removed_iq = 0
     status_fixed = 0
 
     for q in workbench:
         # Skip empty/padding records
         if is_empty_record(q):
             removed_empty += 1
+            continue
+
+        # Skip IQ (Internal Quotation) records — only keep RFQ records
+        q_type = str(q.get('QuotationType', '')).strip().upper()
+        if q_type == 'IQ':
+            removed_iq += 1
             continue
 
         # Deduplicate by quotation number
@@ -305,9 +312,10 @@ def main():
         clean_workbench.append(q)
 
     print(f'  Removed empty/padding: {removed_empty}')
+    print(f'  Removed IQ records: {removed_iq}')
     print(f'  Removed duplicates: {removed_dup}')
     print(f'  Status fixed: {status_fixed}')
-    print(f'  Clean workbench records: {len(clean_workbench)}')
+    print(f'  Clean workbench records (RFQ only): {len(clean_workbench)}')
 
     sm_data['workbench'] = clean_workbench
 
@@ -617,13 +625,21 @@ def main():
     print(f'  Original M&D quotations: {len(md_quotations)}')
     print(f'  Original M&D POs: {len(md_pos_raw)}')
 
-    # Clean M&D quotations — apply material code mapping
+    # Clean M&D quotations — apply material code mapping, exclude IQ records
     seen_md_q = set()
     clean_md_q = []
+    md_removed_iq = 0
     for q in md_quotations:
         qnum = q.get('number', q.get('quotationNumber', ''))
         if not qnum or not str(qnum).strip():
             continue
+
+        # Skip IQ (Internal Quotation) records — only keep RFQ records
+        q_type = str(q.get('type', '')).strip().upper()
+        if q_type == 'IQ':
+            md_removed_iq += 1
+            continue
+
         if str(qnum) in seen_md_q:
             continue
         seen_md_q.add(str(qnum))
@@ -672,7 +688,7 @@ def main():
         }
         clean_md_pos.append(md_po)
 
-    print(f'  Clean M&D quotations: {len(clean_md_q)}')
+    print(f'  Clean M&D quotations (RFQ only): {len(clean_md_q)} (removed {md_removed_iq} IQ records)')
     print(f'  Clean M&D POs: {len(clean_md_pos)}')
 
     # Recompute M&D summary
