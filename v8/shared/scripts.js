@@ -902,7 +902,10 @@ function populateBottomFilters(tabType) {
         const statuses = new Set();
         const materials = new Set();
         (quotationsData?.quotations || []).forEach(q => {
-            if (q.outcome?.status) statuses.add(q.outcome.status);
+            if (q.outcome?.status) {
+                const st = q.outcome.status === 'Cancled' ? 'Cancelled' : q.outcome.status;
+                statuses.add(st);
+            }
             if (q.details?.material_category) materials.add(q.details.material_category);
         });
 
@@ -2264,6 +2267,22 @@ function renderMaterialChart(data) {
 // ============================================
 // RENDER: EMPLOYEE LIST
 // ============================================
+// SM-Q12: Toggle employee sort between PO count and spend
+let employeeSortBySpend = false;
+function toggleEmployeeSort(event) {
+    if (event) event.preventDefault();
+    employeeSortBySpend = !employeeSortBySpend;
+    const link = event?.target;
+    if (link) link.textContent = employeeSortBySpend ? 'BY COUNT' : 'BY SPEND';
+    const employees = dashboardData?.supplierMarketplace?.responsibleEmployees;
+    if (!employees) return;
+    const sorted = [...employees].sort((a, b) =>
+        employeeSortBySpend ? b.totalSpend - a.totalSpend : b.poCount - a.poCount
+    ).map((e, i) => ({ ...e, rank: i + 1 }));
+    renderEmployeeList(sorted);
+}
+window.toggleEmployeeSort = toggleEmployeeSort;
+
 function renderEmployeeList(data) {
     const container = document.getElementById('employeeList');
     if (!container || !data) return;
@@ -4518,6 +4537,22 @@ function createMaterialDistributionChartFiltered() {
             plugins: {
                 legend: { display: true, position: 'right', labels: { boxWidth: 10, font: { size: 10 }, padding: 6 } },
                 tooltip: { callbacks: { label: ctx => ctx.label + ': ' + formatCurrencyShort(ctx.raw) } }
+            },
+            onClick: (evt, elements) => {
+                if (elements.length > 0) {
+                    const idx = elements[0].index;
+                    const matName = materials[idx]?.name;
+                    const matFilter = document.getElementById('filterMdMaterial');
+                    if (matFilter && matName) {
+                        for (let opt of matFilter.options) {
+                            if (opt.value === matName || opt.textContent === matName) {
+                                matFilter.value = opt.value;
+                                applyMdFilters();
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
     });
