@@ -615,9 +615,8 @@ body {
    RANKED LIST (Top Suppliers, Employees)
    ============================================ */
 .ranked-list {
-    flex: 1;
     overflow-y: auto;
-    min-height: 200px;
+    min-height: 120px;
 }
 
 /* Top Suppliers specific styling */
@@ -625,6 +624,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    max-height: 420px;
+    overflow-y: auto;
 }
 
 #topSuppliers .rank-item {
@@ -647,6 +648,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    max-height: 420px;
+    overflow-y: auto;
 }
 
 #employeeList .rank-item {
