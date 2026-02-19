@@ -265,7 +265,7 @@
                                         title="Average number of days from Quotation Date to PO Date, calculated per month. Formula: (PO Date − Quotation Date) averaged per month.">ℹ️</span>
                                 </h3>
                             </div>
-                            <div class="chart-body">
+                            <div class="chart-body" style="height: 200px; max-height: 200px; overflow: hidden;">
                                 <canvas id="quotationTimeChart"></canvas>
                             </div>
                         </div>
@@ -320,7 +320,9 @@
                                     Responsible MVL Employee
                                 </h3>
                                 <div class="chart-actions">
-                                    <a href="#" style="font-size:11px; color:#0078D4;" onclick="toggleEmployeeSort(event)" title="Toggle ranking between PO Count and Total Spend">BY SPEND</a>
+                                    <a href="#" style="font-size:11px; color:#0078D4;"
+                                        onclick="toggleEmployeeSort(event)"
+                                        title="Toggle ranking between PO Count and Total Spend">BY SPEND</a>
                                 </div>
                             </div>
                             <div class="chart-body">

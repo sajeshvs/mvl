@@ -2440,7 +2440,12 @@ function renderQuotationTimeChart(data) {
                 duration: 0
             },
             plugins: {
-                legend: { display: false }
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => `${ctx.raw} days`
+                    }
+                }
             },
             scales: {
                 y: {
@@ -2450,13 +2455,33 @@ function renderQuotationTimeChart(data) {
                         text: 'Days',
                         font: { size: 10 }
                     },
-                    ticks: { font: { size: 9 } }
+                    ticks: { font: { size: 9 }, stepSize: 5 },
+                    grid: { color: '#eee' }
                 },
                 x: {
-                    ticks: { font: { size: 9 } }
+                    ticks: { font: { size: 8 }, maxRotation: 45, minRotation: 0 },
+                    grid: { display: false }
                 }
             }
-        }
+        },
+        plugins: [{
+            id: 'daysLabel',
+            afterDatasetsDraw(chart) {
+                const { ctx: c, data, chartArea } = chart;
+                const meta = chart.getDatasetMeta(0);
+                c.save();
+                c.font = 'bold 9px Segoe UI, sans-serif';
+                c.fillStyle = '#333';
+                c.textAlign = 'center';
+                meta.data.forEach((bar, i) => {
+                    const val = data.datasets[0].data[i];
+                    if (val != null) {
+                        c.fillText(val + 'd', bar.x, bar.y - 4);
+                    }
+                });
+                c.restore();
+            }
+        }]
     });
 }
 
