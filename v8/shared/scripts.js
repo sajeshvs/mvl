@@ -3265,13 +3265,13 @@ function updateGSAKPIs() {
         const activeEntities = new Set(pos.map(po => po.entity).filter(Boolean)).size;
         document.getElementById('gsaKpiActiveEntities').textContent = activeEntities.toLocaleString();
 
-        // CO subtext: groups count and % of spend
+        // CO subtext: groups count (only multi-PO OrderID groups, not orphan COs)
         const coGroupsEl = document.getElementById('gsaKpiCoGroups');
         if (coGroupsEl) {
             const orderIdGroups = {};
             changeOrders.forEach(po => {
                 const oid = po.orderId || '';
-                if (oid) orderIdGroups[oid] = true;
+                if (oid && po.changeOrderTotal > 1) orderIdGroups[oid] = true;
             });
             coGroupsEl.textContent = Object.keys(orderIdGroups).length + ' groups';
         }
