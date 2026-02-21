@@ -5099,169 +5099,169 @@ const KPI_INFO = {
     // ── SM Tab KPIs ──
     'sm-rfq': {
         title: 'Request for Quotation (RFQ)',
-        description: 'Total number of quotation records in the SM workbench.',
+        description: 'Total number of RFQ quotation records in the SM workbench. IQ records are auto-filtered by the pipeline.',
         formula: 'COUNT(sm_data.workbench)',
-        source: 'sm_data.json → workbench[] array',
-        field: 'Each record = 1 quotation row from SM Workbench export',
-        example: 'Records where WorkbenchNo exists → counted',
-        note: 'Includes all statuses: Order, Quotation, Waiting, Cancelled, Closed. When filtered, counts only records matching active entity/type/status/date/search filters.'
+        source: 'sm_data.json → workbench[] array (built dynamically by build_v8_data.py)',
+        field: 'Each record = 1 RFQ quotation row from Quotation Excel export',
+        example: 'All RFQ records counted dynamically from loaded quotation fragments',
+        note: 'Includes all statuses: Order, Quotation, Waiting, Cancelled. IQ records are removed by the pipeline. When filtered, counts only records matching active entity/type/status/date/search filters.'
     },
     'sm-quoteValue': {
         title: 'Quote Value',
-        description: 'Total value of all quotations, converted to USD.',
+        description: 'Total value of all quotations, converted to USD using embedded FX rates.',
         formula: 'SUM( convertToUSD(q.QuotationValue, q.Currency) )  for all quotations',
         source: 'sm_data.json → workbench[].QuotationValue + Currency',
-        field: 'QuotationValue (original currency) → converted via FX rates',
+        field: 'QuotationValue (original currency) → converted via FX rates to USD',
         example: 'If QuotationValue=100,000 JPY and USD/JPY=150 → $666.67',
-        note: 'FX conversion uses embedded rates: JPY÷150, AED÷3.67, QAR÷3.64, NPR÷133.5, etc. Default assumes USD if currency missing.'
+        note: 'FX conversion uses embedded rates (JPY÷150, AED÷3.67, QAR÷3.64, NPR÷133.5, etc.). Unknown currencies are logged by the pipeline and treated as USD. Browser also fetches live rates from open.er-api.com.'
     },
     'sm-po': {
         title: 'Purchase Orders',
-        description: 'Count of quotation records with Status = "Order".',
+        description: 'Count of quotation records with Status = "Order" — quotations that converted to POs.',
         formula: 'COUNT(workbench WHERE Status = "Order")',
-        source: 'sm_data.json → workbench[] filtered by Status',
+        source: 'sm_data.json → workbench[] filtered by Status field',
         field: 'Status field = "Order"',
-        example: 'N out of total records have Status=Order (computed dynamically)',
-        note: 'This counts SM workbench rows with Order status — these are quotations that converted to POs. Not the same as gsa_data PO count which counts actual PO documents.'
+        example: 'Dynamically counted from all records where Status = "Order"',
+        note: 'This counts SM workbench rows with Order status — these are quotations that converted to POs. Different from the GSA PO count which counts actual PO documents from the PO Excel export.'
     },
     'sm-poValue': {
         title: 'PO Values',
         description: 'Total value of quotations with Status = "Order", converted to USD.',
         formula: 'SUM( convertToUSD(q.QuotationValue, q.Currency) )  WHERE Status = "Order"',
         source: 'sm_data.json → workbench[] WHERE Status="Order"',
-        field: 'QuotationValue for Order-status records only',
+        field: 'QuotationValue for Order-status records only, FX-converted to USD',
         example: 'Sum of all QuotationValues where Status=Order → USD converted',
-        note: 'Uses SM quotation values (not PO values from gsa_data). These represent the quoted amounts for won bids.'
+        note: 'Uses SM quotation values (not PO values from gsa_data). These represent the quoted amounts for won bids. When filtered, recalculated from filtered Order-status records.'
     },
     'sm-winRate': {
         title: 'Win Rate',
         description: 'Percentage of quotations that converted to orders.',
-        formula: 'Orders ÷ Total Quotations × 100',
-        source: 'Calculated from sm_data.json',
+        formula: 'COUNT(Status="Order") ÷ COUNT(all quotations) × 100',
+        source: 'sm_data.json → summary.winRate (pre-calculated by build_v8_data.py)',
         field: 'COUNT(Status="Order") / COUNT(all) × 100',
-        example: 'Orders ÷ Total × 100 (computed dynamically from data)',
-        note: 'Pre-calculated in build_v7_data.py as sm_data.summary.winRate. When filters are active, recalculated from filtered subset.'
+        example: 'Dynamically computed: Orders ÷ Total Quotations × 100',
+        note: 'Pre-calculated in build_v8_data.py as sm_data.summary.winRate. When filters are active, recalculated from filtered subset using convertToUSD() for each record.'
     },
     'sm-co': {
         title: 'Change Orders',
-        description: 'Total number of Change Order POs from Global Spend Analysis data.',
+        description: 'Total number of Change Order POs from the GSA dataset. Identified by PO suffix: -1 = Base Order, -2 or higher = Change Order.',
         formula: 'COUNT(gsa_data.pos WHERE poType = "Change Order")',
-        source: 'gsa_data.json → summary.changeOrders',
-        field: 'poType field = "Change Order" (vs "Base Order")',
-        example: 'N out of total POs are Change Orders (computed dynamically)',
-        note: 'Sourced from GSA data (actual PO documents), NOT from SM workbench. SM does not track change orders — they are post-award modifications tracked in the PO system.'
+        source: 'gsa_data.json → summary.changeOrders (computed by build_v8_data.py)',
+        field: 'poType = "Change Order" — detected via Order ID suffix analysis',
+        example: 'Dynamically counted: POs with suffix -2 or higher on the Order ID',
+        note: 'Sourced from GSA data (actual PO documents), NOT from SM workbench. SM does not track change orders — they are post-award modifications tracked in the PO system. This value does not change with SM filters.'
     },
     'sm-coValue': {
         title: 'CO Value',
-        description: 'Total USD value of all Change Order POs.',
+        description: 'Total USD value of all Change Order POs from the GSA dataset.',
         formula: 'SUM(gsa_data.pos.valueUSD WHERE poType = "Change Order")',
-        source: 'gsa_data.json → summary.changeOrderValue',
-        field: 'valueUSD for Change Order type POs',
-        example: 'Sum of all Change Order PO values (computed dynamically)',
-        note: 'Pre-calculated in build_v7_data.py. This value does not change with SM filters since COs come from the GSA dataset.'
+        source: 'gsa_data.json → summary.changeOrderValue (computed by build_v8_data.py)',
+        field: 'valueUSD for Change Order type POs, pre-converted in pipeline',
+        example: 'Sum of all Change Order PO values, dynamically computed',
+        note: 'Pre-calculated in build_v8_data.py from PO Excel data. This value does not change with SM filters since COs come from the GSA dataset.'
     },
 
     // ── GSA Tab KPIs ──
     'gsa-po': {
         title: 'Total No. of Purchase Orders',
-        description: 'Total count of all PO records in the GSA dataset (Base + Change Orders).',
+        description: 'Total count of all PO records in the GSA dataset (Base Orders + Change Orders). Auto-detected from PO Excel file.',
         formula: 'COUNT(gsa_data.pos)',
-        source: 'gsa_data.json → pos[] array',
-        field: 'All PO records regardless of poType',
-        example: 'Base Orders + Change Orders = Total POs (computed dynamically)',
-        note: 'When filtered, counts only POs matching active entity/supplier/date/material filters. Each PO has poType = "Base Order" or "Change Order".'
+        source: 'gsa_data.json → pos[] array (built from auto-detected PO_List_*.xls)',
+        field: 'All PO records regardless of poType (Base PO + Change Order)',
+        example: 'Dynamically counted: Base Orders + Change Orders = Total POs',
+        note: 'Pipeline auto-detects PO file via glob and uses header-based column lookup. When filtered, counts only POs matching active entity/supplier/date/material filters. Each PO has poType = "Base PO" or "Change Order".'
     },
     'gsa-spend': {
         title: 'Total Spend',
-        description: 'Sum of USD values for all POs.',
+        description: 'Sum of USD values for all POs. Converted from original currencies in the pipeline.',
         formula: 'SUM(gsa_data.pos[].valueUSD)',
-        source: 'gsa_data.json → pos[].valueUSD',
-        field: 'valueUSD (pre-converted to USD in build pipeline)',
-        example: 'Total USD spend across all POs (computed dynamically)',
-        note: 'Values are pre-converted to USD in build_v7_data.py. When filters active, SUM is recalculated with convertToUSD() applied to each PO\'s original value + currency.'
+        source: 'gsa_data.json → pos[].valueUSD (pre-converted by build_v8_data.py)',
+        field: 'valueUSD — pre-converted to USD in build pipeline using embedded FX rates',
+        example: 'Total USD spend across all POs, dynamically computed from data',
+        note: 'Values are pre-converted to USD in build_v8_data.py. Unknown currencies are logged and treated as USD. When filters active, SUM is recalculated with convertToUSD() applied to each PO\'s original value + currency.'
     },
     'gsa-co': {
         title: 'Total No. of Change Orders',
-        description: 'Count of POs where poType = "Change Order". Calculated by Order ID grouping: same Order ID + PO suffix > 1.',
+        description: 'Count of POs where poType = "Change Order". Detected via Order ID suffix: same Order ID with PO suffix > -1.',
         formula: 'COUNT(gsa_data.pos WHERE poType = "Change Order")',
         source: 'gsa_data.json → pos[] filtered by poType',
-        field: 'poType === "Change Order"',
-        example: 'N Change Orders in M groups out of total POs (computed dynamically)',
-        note: 'Subtext shows number of unique Order ID groups with multiple POs. When filtered, counts Change Orders within the filtered PO subset only.'
+        field: 'poType === "Change Order" — POs with Order ID suffix -2 or higher',
+        example: 'Dynamically counted: N Change Orders in M groups (groups with changeOrderTotal > 1)',
+        note: 'Subtext shows number of unique Order ID groups with multiple POs (excludes orphan COs where changeOrderTotal = 1). When filtered, counts Change Orders within the filtered PO subset only.'
     },
     'gsa-coAmount': {
         title: 'Total Amount of Change Orders',
         description: 'Sum of USD values for Change Order POs. Subtext shows CO % of total spend.',
         formula: 'SUM(valueUSD WHERE poType = "Change Order")',
-        source: 'gsa_data.json → pos[] filtered + summed',
-        field: 'valueUSD for Change Order records',
-        example: 'CO spend as % of total spend (computed dynamically)',
-        note: 'When filtered, recalculated from filtered Change Orders only. % is relative to filtered total spend.'
+        source: 'gsa_data.json → pos[] filtered by poType + summed',
+        field: 'valueUSD for Change Order records, pre-converted in pipeline',
+        example: 'CO spend and percentage of total spend, dynamically computed',
+        note: 'When filtered, recalculated from filtered Change Orders only. Percentage is relative to filtered total spend. All values computed dynamically from data.'
     },
     'gsa-suppliers': {
         title: 'Active Suppliers',
-        description: 'Count of unique supplier names across all POs.',
+        description: 'Count of unique supplier names across all POs in the dataset.',
         formula: 'COUNT(DISTINCT gsa_data.pos[].supplier)',
-        source: 'gsa_data.json → pos[].supplier',
-        field: 'Unique supplier names (vendor companies)',
-        example: 'Unique supplier count across all POs (computed dynamically)',
-        note: 'When filtered, counts unique suppliers in the filtered PO subset.'
+        source: 'gsa_data.json → pos[].supplier (unique vendor names)',
+        field: 'Unique supplier names (vendor companies) from PO Excel data',
+        example: 'Dynamically counted: unique supplier names across all POs',
+        note: 'When filtered, counts unique suppliers in the filtered PO subset. Uses Set-based counting for accuracy.'
     },
     'gsa-entities': {
         title: 'Active Entities',
         description: 'Count of unique MVL business entities across all POs.',
         formula: 'COUNT(DISTINCT gsa_data.pos[].entity)',
-        source: 'gsa_data.json → pos[].entity',
-        field: 'Unique entity names (MVL business units)',
-        example: '21 entities e.g. "Yamauchi Gumi", "MACRO", "MVL Nepal"',
-        note: 'When filtered, counts unique entities in the filtered PO subset.'
+        source: 'gsa_data.json → pos[].entity (mapped from entityCode via entity_code_map.json)',
+        field: 'Unique entity names — mapped from entity codes in PO Excel data',
+        example: 'Dynamically counted: unique MVL business entities e.g. "Yamauchi Gumi", "MACRO"',
+        note: 'Entity codes are mapped to full names via entity_code_map.json. When filtered, counts unique entities in the filtered PO subset.'
     },
 
     // ── M&D Tab KPIs ──
     'md-materials': {
-        title: 'Materials / Disciplines',
-        description: 'Count of unique discipline categories after consolidation.',
-        formula: 'COUNT(DISTINCT discipline) across POs + Quotations',
-        source: 'md_data.json → summary.disciplineCount',
-        field: 'discipline field (mapped via DISCIPLINE_MAP)',
-        example: '7 disciplines: Mechanical, Electrical, Civil, HVAC, etc.',
-        note: 'Original 27+ raw materials are mapped to 7 standard disciplines in build_v7_data.py using DISCIPLINE_MAP. When filtered, counts unique disciplines in filtered data.'
+        title: 'Materials',
+        description: 'Count of unique raw material names across POs and Quotations.',
+        formula: 'COUNT(DISTINCT material) across POs + Quotations',
+        source: 'md_data.json → summary.materialCount (from build_v8_data.py)',
+        field: 'material field — raw material names from Excel (e.g. "Steel Rebar", "Electrical Cables")',
+        example: 'Dynamically counted: unique material names from combined PO + Quotation data',
+        note: 'Raw material names come from the Material column in Excel. Pipeline uses header-based lookup to find the column. When filtered, counts unique materials in filtered data.'
     },
     'md-disciplines': {
-        title: 'Disciplines',
-        description: 'Same as Materials count — unique discipline categories.',
-        formula: 'COUNT(DISTINCT discipline) across POs + Quotations',
-        source: 'md_data.json → summary.disciplineCount',
-        field: 'Same as Materials — both show discipline count',
-        example: '7 consolidated disciplines',
-        note: 'Materials and Disciplines show the same count because materials are mapped 1:1 to discipline categories.'
+        title: 'Material Codes',
+        description: 'Count of unique material code categories (consolidated groupings).',
+        formula: 'COUNT(DISTINCT materialCode) across POs + Quotations',
+        source: 'md_data.json → summary.materialCodeCount (from build_v8_data.py)',
+        field: 'materialCode field — consolidated categories (e.g. Mechanical, Electrical, Civil)',
+        example: 'Dynamically counted: unique material code categories',
+        note: 'Material codes are consolidated groupings from the Material Code column in Excel. When filtered, counts unique material codes in filtered data.'
     },
     'md-materialSpend': {
         title: 'Total Material Spend',
-        description: 'Sum of PO ordered values across all disciplines.',
+        description: 'Sum of PO ordered values across all materials. Subtext shows conversion % (ordered/quoted).',
         formula: 'SUM(md_data.pos[].value)',
-        source: 'md_data.json → pos[].value (amountValue)',
+        source: 'md_data.json → pos[].value (amountValue from PO Excel)',
         field: 'PO ordered amount (in original currency)',
-        example: 'Total ordered value across all M&D POs',
-        note: 'Shows actual PO spend. "% conversion" = (totalOrdered / totalQuoted × 100). When filtered, recalculated from filtered POs.'
+        example: 'Total ordered value across all M&D POs, dynamically computed',
+        note: 'Shows actual PO spend. Subtext "% conversion" = (totalOrdered / totalQuoted × 100). When filtered, recalculated from filtered POs.'
     },
     'md-disciplineSpend': {
-        title: 'Total Discipline Spend',
-        description: 'Same as Material Spend — total PO ordered values.',
+        title: 'Total Material Code Spend',
+        description: 'Same as Material Spend — total PO ordered values grouped by material code.',
         formula: 'SUM(md_data.pos[].value)',
         source: 'md_data.json → pos[].value',
-        field: 'Same as Material Spend',
-        example: 'Identical to Total Material Spend value',
-        note: 'Both Material Spend and Discipline Spend show the same total ordered value.'
+        field: 'Same as Material Spend — both show total ordered value',
+        example: 'Identical to Total Material Spend value, dynamically computed',
+        note: 'Both Material Spend and Material Code Spend show the same total ordered value. Subtext shows conversion percentage.'
     },
     'md-projects': {
         title: 'Active Projects / Suppliers',
-        description: 'Unique entities (projects) and suppliers from PO data.',
-        formula: 'Projects: COUNT(DISTINCT entity)  |  Suppliers: COUNT(DISTINCT supplier)',
-        source: 'md_data.json → summary.supplierCount + entityBreakdown',
-        field: 'entity = project/business unit, supplier = vendor name',
-        example: 'Unique projects and suppliers (computed dynamically)',
-        note: 'Projects counts unique MVL entities with POs. Suppliers counts unique vendor names. When filtered, recalculated from filtered PO subset.'
+        description: 'Unique projects (entities) and suppliers from PO data.',
+        formula: 'Projects: COUNT(DISTINCT project)  |  Suppliers: COUNT(DISTINCT supplier)',
+        source: 'md_data.json → summary.projectCount + summary.supplierCount',
+        field: 'project = project name, supplier = vendor name (both from PO Excel)',
+        example: 'Dynamically counted: unique projects and suppliers from PO data',
+        note: 'Projects counts unique project names from POs. Suppliers counts unique vendor names. When filtered, recalculated from filtered PO subset.'
     }
 };
 
