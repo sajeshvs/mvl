@@ -1,218 +1,123 @@
-# V5 - Supply Chain Intel Hub (Unified Dashboard)
+# V8 — MVL Supply Chain Intel Hub
 
-_Version: 5.0_
-_Created: February 12, 2026_
-_Source: Visio Wireframe from Rita (SharePoint)_
+> **Live:** [https://sajeshvs.github.io/mvl/v8](https://sajeshvs.github.io/mvl/v8)  
+> **Data Source:** Feb 20, 2026 Excel export (PO List + Quotation Reports)  
+> **Stack:** HTML + CSS + Vanilla JS + Chart.js + Leaflet.js 1.9.4  
+> **Architecture:** Single-page app, monolithic `scripts.js` (~5,545 lines)
 
 ---
 
-## Overview
+## What's New in V8
 
-V5 is a **unified single-page dashboard** with three navigation tabs, replacing the separate v4 pages. All tabs share the same header, filters, and KPI row.
-
-### Key Changes from V4
-| Aspect | V4 | V5 |
-|--------|----|----|
-| Structure | 3 separate HTML pages | 1 unified page with tabs |
-| Navigation | Portal landing page + links | Tab switching within page |
-| Header | Different per dashboard | Single header, shared logos |
-| Filters | Separate per page | Global filters affecting all tabs |
-| Data | Separate data files | Unified data model |
+- **Excel-based data pipeline** — `build_v8_data.py` reads `.xls` files via `xlrd`, replaces API-based approach
+- **Change Order tracking** — 309 COs in 191 groups with CO/Base badges in GSA tab
+- **Order ID linkage** — RFQ→PO traceability via shared Order ID (441 linked records)
+- **Conversion time analytics** — Monthly average RFQ→PO conversion days
+- **Quotation revisions** — 219 letter-suffix revisions tracked in SM tab
+- **Unified data model** — `mainOrderId`, `orderId`, `isChangeOrder`, `changeOrderNumber` fields across all tabs
 
 ---
 
 ## Folder Structure
 
 ```
-v5/
-├── README.md                    # This file
-├── index.html                   # Main unified dashboard
-├── data/
-│   ├── material_codes.json      # Material code reference (from v4)
-│   ├── dashboard_data.json      # Unified dashboard data
-│   ├── orders.json              # Main Order data (210 records)
-│   └── README.md                # Data documentation
+v8/
+├── index.html                  # Single-page app (3 tabs)
+├── README.md                   # This file
+├── NEW_DATA_ANALYSIS.md        # Feb 20 data analysis report
+├── REVIEW_RESPONSE.md          # Stakeholder review (47 questions)
+│
 ├── shared/
-│   ├── styles.css               # Main stylesheet
-│   ├── scripts.js               # Main JavaScript
-│   ├── images/
-│   │   ├── supply-chain-intel-hub-logo.png  # Left header logo
-│   │   └── README.md            # Image documentation
-│   └── components/
-│       └── README.md            # Component documentation
-└── docs/
-    └── DEVELOPMENT.md           # Development guide
+│   ├── scripts.js              # All dashboard logic (~5,545 lines)
+│   └── styles.css              # Complete CSS with design tokens
+│
+├── data/
+│   ├── build_v8_data.py        # Python pipeline (1,118 lines)
+│   ├── sm_data.json            # 3,946 RFQ quotations
+│   ├── gsa_data.json           # 3,596 POs with change order data
+│   ├── md_data.json            # Combined RFQs + POs for M&D
+│   ├── change_orders.json      # 191 CO groups with details
+│   ├── conversion_times.json   # 441 RFQ→PO links, monthly averages
+│   └── data_metadata.json      # Build timestamp and source info
+│
+├── Re_ Main order XLS and Export feature ready for use/
+│   ├── PO_List_Feb-20-2026.xls           # 3,613 POs
+│   ├── Quotation_Report_Feb-20-2026.xls  # Quotations batch 1
+│   ├── Quotation_Report_Feb-20-2026 (1).xls
+│   ├── Quotation_Report_Feb-20-2026 (2).xls
+│   ├── Quotation_Report_Feb-20-2026 (3).xls
+│   └── Quotation_Report_Feb-20-2026 (4).xls
+│
+└── libs/                       # Chart.js, Leaflet.js (vendored)
 ```
 
 ---
 
-## Design Specification
+## Dashboard Tabs
 
-### Reference Document
-See: `docs/reference/Main Dashboard - Visio Wireframe.md`
+### 1. Supplier Marketplace (SM) — `#004578`
+- **Data:** 3,946 RFQ quotations from `sm_data.json`
+- **Charts:** Status distribution, material breakdown, entity comparison, monthly trends
+- **Features:** Win rate analysis (94.3%), revision tracking (219), supplier table with pagination
+- **Filters:** Entity, Material, Material Code, Status, Date Range
 
-### Three Navigation Tabs
-1. **Supplier Marketplace** (Default/Active) - ✅ Fully documented
-2. **Global Spend Analysis** - 🔄 Pending Visio extraction
-3. **Materials & Disciplines** - 🔄 Pending Visio extraction
+### 2. Global Spend Analysis (GSA) — `#d96f3c`
+- **Data:** 3,596 POs ($147.84M total spend) from `gsa_data.json`
+- **Charts:** Spend by entity, material, supplier, monthly trends
+- **Features:** Change order section (309 COs / $30.04M), CO/Base badges, group indicators
+- **Filters:** Entity, Material, Material Code, Supplier, Date Range
 
----
-
-## Header Layout
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ [◆ Supply Chain Intel Hub Logo]           [Last Refresh: ...] [MVL Logo]   │
-│   (LEFT - network cube + text)                              (RIGHT)        │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ [Supplier Marketplace] | [Global Spend Analysis] | [Materials & Disciplines]│
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-- **Background:** Blue (#004578)
-- **Left Logo:** Supply Chain Intel Hub (network cube icon)
-- **Right Logo:** MVL company logo
-- **Tabs:** Clickable, active tab highlighted
+### 3. Materials & Disciplines (M&D) — `#0f3d5e`
+- **Data:** Combined RFQs + POs from `md_data.json`
+- **Charts:** Material code heatmap, RFQ→PO conversion rates (56.7%), conversion time trends
+- **Features:** 12 material codes, 33 materials, 1,103 suppliers, 27 entities
+- **Filters:** Material Code, Material, Entity, Supplier
 
 ---
 
-## Shared Components
+## Data Stats
 
-### Filter Row (6 Filters)
-| Filter | Default | Type |
-|--------|---------|------|
-| ENTITY | All Entities | Dropdown |
-| PROJECT | All Projects | Dropdown |
-| SUPPLIER | All Suppliers | Dropdown |
-| STATUS | All Statuses | Dropdown |
-| MATERIAL | All Materials | Dropdown |
-| Search | "Search..." | Text Input |
-
-### KPI Row (7 Cards)
-| # | KPI | Sample Value |
-|---|-----|--------------|
-| 1 | Request for Quotation | 12,532 |
-| 2 | Quote Value | $3.6B |
-| 3 | Purchase Orders | 7,697 |
-| 4 | PO Values | $721.3M |
-| 5 | Win Rate | 97.7% |
-| 6 | Change Orders | 7,697 |
-| 7 | CO Value | $721.3M |
+| Dataset | Records | Key Metric |
+|---------|---------|------------|
+| SM (RFQs) | 3,946 | 94.3% win rate |
+| GSA (POs) | 3,596 | $147.84M total spend |
+| Change Orders | 309 in 191 groups | $30.04M CO value |
+| Conversions | 441 linked | Monthly avg days |
+| M&D | 12 material codes | 56.7% conversion rate |
 
 ---
 
-## Tab 1: Supplier Marketplace (Documented)
+## Data Rebuild
 
-### Layout
-```
-┌─────────────────┬─────────────────┬─────────────────┐
-│   Left Column   │  Center Column  │  Right Column   │
-├─────────────────┼─────────────────┼─────────────────┤
-│ Status Chart    │ Location Map    │ Supplier Profile│
-│ Entity Compare  │ Material Dist.  │ MVL Employee    │
-│ Top 10 Suppliers│ Quote→PO Time   │ Approved Mat.   │
-└─────────────────┴─────────────────┴─────────────────┘
-┌─────────────────────────────────────────────────────┐
-│              Monthly Trend Chart                     │
-└─────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────┐
-│ [Supplier List] | [Marketplace Workbench]           │
-│ ┌─────────────────────────────────────────────────┐ │
-│ │             Data Table                          │ │
-│ └─────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────┘
+```bash
+cd v8/data
+& "C:\Users\Sajesh V S\AppData\Local\Programs\Python\Python312\python.exe" build_v8_data.py
 ```
 
-### Components
-See `docs/reference/Main Dashboard - Visio Wireframe.md` Section 5 for full details.
+Reads all `.xls` files from the source folder and outputs 5 JSON data files + metadata.
 
 ---
 
-## Tab 2: Global Spend Analysis (Pending)
+## Key Technical Details
 
-_Awaiting Visio wireframe extraction_
-
----
-
-## Tab 3: Materials & Disciplines (Pending)
-
-_Awaiting Visio wireframe extraction_
-
----
-
-## Data Model
-
-### RFQ/PO Numbering System
-- **RFQ Format:** `RFQ-{sequence}-{material_letter}{number}-{version}`
-- **PO Format:** `RFPO-{sequence}-{material_letter}{number}-{order_type}`
-- **Order Type:** `1` = Main PO, `2+` = Change Order
-
-### Example
-- RFQ: `RFQ-7139-V4359-1`
-- PO: `RFPO-7139-V4359-1` (Main Order)
-- CO: `RFPO-7139-V4359-2` (Change Order)
-
-### Material Code Letters
-| Code | Letter |
-|------|--------|
-| Architectural | A |
-| Chemicals | C |
-| Electrical | E |
-| Fire | F |
-| Logistics | L |
-| Mechanical | M |
-| Various | V |
-| Services | S |
-| Tools | T |
-
-See `data/material_codes.json` for complete mapping.
+- **No build tools** — served as static files, no npm/webpack
+- **No ES6 modules** — all logic in single `scripts.js` (not modular)
+- **SearchableSelect** — custom dropdown component for filters with 10+ options
+- **Chart lifecycle** — `destroyChart(id)` before recreating Chart.js instances
+- **Currency formatting** — `formatCurrency()` and `formatCurrencyShort()` utilities
+- **Responsive** — CSS Grid/Flexbox layout, mobile-friendly cards
 
 ---
 
-## Development Progress
+## Documentation
 
-### Phase 1: Supplier Marketplace ✅
-- [x] Wireframe documented
-- [ ] HTML structure
-- [ ] CSS styling
-- [ ] JavaScript functionality
-- [ ] Data integration
-
-### Phase 2: Global Spend Analysis 🔄
-- [ ] Wireframe documentation
-- [ ] HTML structure
-- [ ] CSS styling
-- [ ] JavaScript functionality
-
-### Phase 3: Materials & Disciplines 🔄
-- [ ] Wireframe documentation
-- [ ] HTML structure
-- [ ] CSS styling
-- [ ] JavaScript functionality
+| File | Purpose |
+|------|---------|
+| [AGENT_INSTRUCTIONS.md](../AGENT_INSTRUCTIONS.md) | Full architecture guide, field schemas, function map |
+| [REVIEW_RESPONSE.md](REVIEW_RESPONSE.md) | 47 stakeholder review questions with status |
+| [NEW_DATA_ANALYSIS.md](NEW_DATA_ANALYSIS.md) | Feb 20 data analysis and findings |
+| [copilot-instructions.md](../.github/copilot-instructions.md) | GitHub Copilot workspace context |
 
 ---
 
-## Color Scheme
-
-| Element | Color | Hex |
-|---------|-------|-----|
-| Header Background | Blue | #004578 |
-| Order Status | Green | #c6f6d5 |
-| Waiting Status | Yellow | #fff4ce |
-| Quotation Status | Blue | #cce5ff |
-| Cancelled Status | Red | #ffe0e0 |
-| Logo Primary | Dark Blue | #1a3a5c |
-| Logo Secondary | Light Blue | #5da0d1 |
-
----
-
-## Quick Start
-
-1. Open `index.html` in browser
-2. Use navigation tabs to switch views
-3. Apply filters to refine data
-4. Click charts/lists for drill-down
-
----
-
-_Document maintained: February 2026_
+*V8 — February 2026*

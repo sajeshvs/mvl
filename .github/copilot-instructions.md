@@ -1,43 +1,48 @@
 # MVL Supply Chain Intel Hub — Copilot Instructions
 
-This is a **V6 modular dashboard** project built with vanilla ES6 modules (no build tools).
+This is a **V8 unified dashboard** project built with vanilla JS (no build tools, no ES6 modules).
 
 ## Quick Context
-- **Stack:** HTML + CSS + ES6 Modules + Chart.js 4.4.1 + Leaflet.js 1.9.4
-- **Data pipeline:** Python 3.13 (`v6/data/build_data.py`)
+- **Stack:** HTML + CSS + Vanilla JS + Chart.js + Leaflet.js 1.9.4
+- **Data pipeline:** Python 3.12 (`v8/data/build_v8_data.py`) — reads Excel .xls via xlrd
 - **3 Tabs:** Supplier Marketplace (Blue), Global Spend Analysis (Orange), Materials & Disciplines (Dark Blue)
-- **State management:** Centralized in `v6/js/state.js`
+- **Architecture:** Single `scripts.js` (~5,545 lines) — NOT modular ES6
 - **No npm/webpack:** Pure vanilla JS served as static files
+- **Data:** 3,946 RFQ quotations + 3,596 POs (309 Change Orders) from Feb 20, 2026 Excel export
 
 ## Key Conventions
-- Use `import`/`export` for all module dependencies
-- Always `destroyChart(id)` before recreating Chart.js instances
+- Single `scripts.js` file — all logic in one file (no import/export)
 - Tab panels have `id="tab-<tabId>"`, nav buttons have `data-tab="<tabId>"`
-- Apply filter functions are window-scoped: `window.applySMFilters`, `window.applyGSAFilters`, `window.applyMdFilters`
-- Currency values stored in `valueUSD` / `poSpendUSD` fields, formatted with `formatCurrency()`
-- Data JSON files wrap records in `{ "records": [...] }` (except `dashboard.json`)
+- Filter functions: `applyFilters()` (SM), `applyGSAFilters()` (GSA), `applyMdFilters()` (M&D)
+- Clear functions: `clearSMFilters()`, `clearGSAFilters()`, `clearMdFilters()`
+- Currency values in `valueUSD` / `poSpendUSD` fields, formatted with `formatCurrency()`
+- Blanks displayed as `(Blank)` in filters for visibility
+- Change orders identified by PO suffix: `-1` = Base, `-2`+ = Change Order
+- SearchableSelect component wraps all filter dropdowns with 10+ options
 
 ## File Roles
 | File | Purpose |
 |------|---------|
-| `v6/js/app.js` | Entry point, tab switching, keyboard shortcuts |
-| `v6/js/state.js` | Shared state, filters, pagination, chart lifecycle |
-| `v6/js/utils.js` | `formatCurrency()`, `debounce()`, pagination HTML |
-| `v6/js/dataLoader.js` | Parallel data fetch, FX rate refresh |
-| `v6/js/tab-sm.js` | SM tab controller |
-| `v6/js/tab-gsa.js` | GSA tab controller |
-| `v6/js/tab-md.js` | M&D tab controller |
-| `v6/js/charts-*.js` | Chart rendering per tab |
-| `v6/js/map.js` | Leaflet supplier location map |
+| `v8/index.html` | Single-page app with 3 tabs |
+| `v8/shared/scripts.js` | All dashboard logic (~5,545 lines) |
+| `v8/shared/styles.css` | Complete CSS with design tokens |
+| `v8/data/build_v8_data.py` | Python pipeline reading Excel files (1,118 lines) |
+| `v8/data/gsa_data.json` | GSA: 3,596 POs with change order data |
+| `v8/data/sm_data.json` | SM: 3,946 RFQ quotations |
+| `v8/data/md_data.json` | M&D: combined RFQs + POs |
+| `v8/data/change_orders.json` | 191 CO groups with details |
+| `v8/data/conversion_times.json` | 441 RFQ→PO links, monthly averages |
 
 ## Design Tokens
 - SM: `#004578`, GSA: `#d96f3c`, M&D: `#0f3d5e`
 - Font: `'Segoe UI', system-ui, sans-serif`
-- Status colors: Green (#2ecc71), Blue (#3498db), Orange (#f39c12), Red (#e74c3c), Gray (#95a5a6)
+- Status: Green (#2ecc71), Blue (#3498db), Orange (#f39c12), Red (#e74c3c), Gray (#95a5a6)
+- CO Badges: Red (#e74c3c) for CO, Green (#2ecc71) for Base, Gold (#f39c12) for group indicator
 
 ## Data Rebuild
 ```bash
-cd v6/data && python build_data.py
+cd v8/data
+& "C:\Users\Sajesh V S\AppData\Local\Programs\Python\Python312\python.exe" build_v8_data.py
 ```
 
 ## Detailed Instructions

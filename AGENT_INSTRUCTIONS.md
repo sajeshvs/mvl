@@ -1,64 +1,51 @@
 # MVL Supply Chain Intel Hub — Agent Instructions
 
-**Last Updated:** February 16, 2026  
-**Current Version:** V6 (Modular Dashboard)  
-**Previous Version:** V5 (Unified Dashboard — archived reference)
+**Last Updated:** February 21, 2026  
+**Current Version:** V8 (Excel-based Pipeline with Change Orders)  
+**Previous Versions:** V7 (CSV Pipeline), V6 (Modular JS), V5 (Unified Dashboard)
 
 ---
 
-## 📁 Workspace Structure
+## Workspace Structure
 
 ```
 mvl-powerbi-dashboards/
-├── v6/                              # 🚀 CURRENT VERSION
+├── v8/                              # CURRENT VERSION
 │   ├── index.html                   # Single-page app with 3 tabs
-│   ├── css/
-│   │   └── styles.css               # Complete CSS with design tokens
-│   ├── js/
-│   │   ├── app.js                   # Entry point, tab switching, global events
-│   │   ├── state.js                 # Centralized state + filter logic
-│   │   ├── utils.js                 # Formatting, debounce, pagination helpers
-│   │   ├── dataLoader.js            # Parallel data fetching, FX rate refresh
-│   │   ├── tab-sm.js                # Supplier Marketplace tab controller
-│   │   ├── tab-gsa.js               # Global Spend Analysis tab controller
-│   │   ├── tab-md.js                # Materials & Disciplines tab controller
-│   │   ├── charts-sm.js             # SM charts (entity, material, trend, etc.)
-│   │   ├── charts-gsa.js            # GSA charts (spend trend, entity/project)
-│   │   ├── charts-md.js             # M&D charts (discipline spend, distribution)
-│   │   └── map.js                   # Leaflet supplier location map
-│   ├── data/
-│   │   ├── build_data.py            # Python data build pipeline
-│   │   ├── dashboard.json           # Pre-calculated summary, filters, aggregations
-│   │   ├── quotations.json          # 12,072 quotation records
-│   │   ├── purchase_orders.json     # 3,522 PO records
-│   │   ├── suppliers.json           # 2,189 supplier records
-│   │   ├── employees.json           # 54 MVL employee records
-│   │   └── client_country_map.json  # Client-to-country mapping
-│   ├── assets/
-│   │   └── mvl-logo.png             # MVL Group logo
-│   └── docs/
-│       ├── README.md                # V6 architecture documentation
-│       └── DEVELOPMENT_NOTES.md     # Build notes and changelog
-│
-├── v5/                              # Previous version (reference only)
-│   ├── index.html                   # Unified dashboard with 3 tabs
 │   ├── shared/
-│   │   ├── scripts.js               # Monolithic JavaScript (4,624 lines)
-│   │   ├── styles.css               # Global CSS
-│   │   └── images/                  # Logo and images
-│   ├── data/                        # JSON data files (13 files, ~97MB)
-│   └── docs/
-│       ├── V5_COMPREHENSIVE_ANALYSIS.md  # V5 code analysis
-│       └── V5_DATA_DEEP_ANALYSIS.md      # V5 data issues analysis
+│   │   ├── scripts.js               # All dashboard logic (~5,545 lines)
+│   │   ├── styles.css               # Complete CSS with design tokens
+│   │   ├── images/                  # Logo and image assets
+│   │   └── components/              # Component docs
+│   ├── data/
+│   │   ├── build_v8_data.py         # Python pipeline (1,118 lines) — reads Excel via xlrd
+│   │   ├── gsa_data.json            # GSA tab: 3,596 POs with change orders (2,894 KB)
+│   │   ├── sm_data.json             # SM tab: 3,946 RFQ quotations (2,889 KB)
+│   │   ├── md_data.json             # M&D tab: combined RFQs + POs (4,248 KB)
+│   │   ├── change_orders.json       # 191 CO groups, 268 CO PO lines (42 KB)
+│   │   ├── conversion_times.json    # 441 RFQ→PO links, monthly averages (97 KB)
+│   │   ├── employees.json           # MVL employee performance records
+│   │   ├── data_metadata.json       # Build metadata, source files, dates
+│   │   ├── entity_code_map.json     # Entity code to name mapping
+│   │   ├── build_v8_data_old.py     # Old pipeline (preserved)
+│   │   └── backup_old_Feb12/        # Pre-change data backup
+│   ├── Re_ Main order XLS and.../   # Source Excel files (Feb 20, 2026 export)
+│   │   ├── PO_List_Feb-20-2026.xls          # 3,613 PO records
+│   │   ├── Quotation_Report_Feb-20-2026.xls # Fragment 1 (Q1-3000)
+│   │   ├── Quotation_Report_...(1).xls      # Fragment 2 (Q3001-6000)
+│   │   ├── Quotation_Report_...(2).xls      # Fragment 3 (Q6001-9000)
+│   │   ├── Quotation_Report_...(3).xls      # Fragment 4 (Q9001-12000)
+│   │   └── Quotation_Report_...(4).xls      # Fragment 5 (Q12001-12215)
+│   ├── Material and Material Codes.csv       # Official material reference (30 → 12)
+│   ├── REVIEW_RESPONSE.md           # 47 review questions status (31✅, 12⚠️, 4❌)
+│   ├── NEW_DATA_ANALYSIS.md         # Feb 20 data analysis report
+│   ├── README.md                    # V8 architecture documentation
+│   └── docs/                        # Historical documentation
 │
-├── v3/                              # Legacy version (backup reference)
-│
-├── docs/                            # Documentation
-│   ├── reference/                   # Original requirements & narratives
-│   ├── AGENT_INSTRUCTIONS_*.md      # Domain-specific instructions
-│   └── DATA_MAPPING_RULES.md
-│
-├── Data/                            # Source CSV files
+├── v8-backup/                       # Complete V8 pre-change backup
+├── v7/                              # Previous version (CSV pipeline)
+├── v6/                              # Modular ES6 version (reference)
+├── v5/                              # Legacy unified dashboard
 │
 ├── .github/
 │   └── copilot-instructions.md      # GitHub Copilot workspace instructions
@@ -69,280 +56,318 @@ mvl-powerbi-dashboards/
 
 ---
 
-## 🌐 Live URLs
+## Live URLs
 
 | Environment | URL |
 |-------------|-----|
-| **GitHub Pages (V6)** | https://sajeshvs.github.io/mvl-powerbi-dashboards/v6/ |
-| **GitHub Pages (V5)** | https://sajeshvs.github.io/mvl/v5/ |
+| **GitHub Pages (V8)** | https://sajeshvs.github.io/mvl/v8 |
 | **Local Development** | http://localhost:8080 |
 
-### To Deploy V6:
+### Repositories
+
+| Repository | Remote | Purpose |
+|-----------|--------|---------|
+| `sajeshvs/mvl-powerbi-dashboards` | origin | Private development workspace |
+| `sajeshvs/mvl` | mvl | Public GitHub Pages deployment |
+
+### To Deploy V8:
 ```bash
 cd mvl-powerbi-dashboards
 git add -A
-git commit -m "Update V6 dashboard"
+git commit -m "v8: <description>"
 git push origin main
+git push mvl main
 ```
 
 ---
 
-## 📊 V6 Dashboard Tabs
+## V8 Dashboard Tabs
 
 ### Tab 1: Supplier Marketplace (SM)
 - **Theme:** Blue `#004578`
 - **Tab ID:** `supplier-marketplace`
 - **Panel ID:** `tab-supplier-marketplace`
-- **Data Sources:** `quotations.json`, `employees.json`, `dashboard.json`
-- **Records:** 12,072 quotations, 54 employees
-- **KPIs (9):** Total Quotations, Total Orders, Win Rate, Quotation Value, Order Value, Clients, Entities, Employees, Conversion Rate
-- **Charts:** Entity Comparison (horizontal bar, toggleable quote/spend), Status Breakdown (HTML bars), Top Suppliers (ranked list), Material Distribution (bar/pie/doughnut/radar toggleable), Employee Performance (ranked list), Conversion Rate by Entity (horizontal bar), Monthly Trend (line), Supplier Map (Leaflet)
-- **Tables:** Approved Materials, Marketplace Workbench (quotation detail), Supplier List
-- **Filters:** Entity, Project, Status, Material, Discipline, Search
-- **Controller:** `tab-sm.js` → `charts-sm.js`, `map.js`
+- **Data Source:** `sm_data.json`
+- **Records:** 3,946 RFQ-only quotations (IQ records removed)
+- **Key Fields:** QuotationNumber, orderId, mainOrderId, isRevision, revisionLetter, material, materialCode, Entity, Status, Client
+- **KPIs (7):** RFQ Count, Quote Value, PO Count, PO Value, Win Rate (94.3%), Change Orders, CO Value
+- **Charts:** Status Breakdown (clickable bars), Entity Comparison (clickable), Top 10 Suppliers (ranked list), Material Distribution, Employee Performance (sort toggle), Supplier Map (Leaflet), Monthly Trend (line), Quotation-to-PO Time
+- **Tables:** Supplier List, Marketplace Workbench (paginated, sortable)
+- **Filters:** Entity, Project, Supplier, Status, Material — all with SearchableSelect + instant filtering
+- **Special:** Clear button, search with feedback indicator, normalizeCountry() for map
 
 ### Tab 2: Global Spend Analysis (GSA)
-- **Theme:** Orange `#d96f3c`
-- **Tab ID:** `global-spend-analysis`
-- **Panel ID:** `tab-global-spend-analysis`
-- **Data Sources:** `purchase_orders.json`, `dashboard.json`
-- **Records:** 3,522 POs
-- **KPIs (6):** Total POs, Total Spend, Change Orders, CO Amount, Active Suppliers, Entities
-- **Charts:** Annual Spend Trend (stacked bar + running total line), Entity Spend (horizontal bar), Project Spend (horizontal bar), Top 10 Suppliers (horizontal bar), Bottom 10 Suppliers (horizontal bar)
-- **Tables:** PO Details with sorting and pagination
-- **Filters:** Entity, Supplier, Project, Material, Discipline, PO Type, Year, Date Range, Search
-- **Controller:** `tab-gsa.js` → `charts-gsa.js`
+- **Theme:** Orange `#d96f3c`  
+- **Tab ID:** `global-spend`
+- **Panel ID:** `tab-global-spend`
+- **Data Source:** `gsa_data.json`, `change_orders.json`
+- **Records:** 3,596 POs (3,287 Base + 309 Change Orders)
+- **Key Fields:** poNumber, orderId, mainOrderId, isChangeOrder, poType ("Base PO"/"Change Order"), changeOrderGroup, material, materialCode, entity, supplier, valueUSD
+- **KPIs (6):** Total POs (3,596), Total Spend ($147.84M), Change Orders (309), CO Amount ($30.04M), Suppliers (1,103), Entities (18)
+- **KPI Subtexts:** CO groups count (191), CO % of total spend (20.3%)
+- **Charts:** Annual Spend Trend (stacked bar), Spend by Entity (top 8, clickable), Spend by Projects (top 8, clickable), Top 10 Suppliers (clickable → supplier card), Bottom 10 Suppliers (clickable → supplier card)
+- **Tables:** PO Details with Order ID column, CO type badges (Base/CO), group indicators ("2 of 3"), sorting, pagination
+- **Filters:** Entity, Supplier, Project, Material, PO Type (Base/CO), Year, Date Range, Search — all instant + SearchableSelect
 
 ### Tab 3: Materials & Disciplines (M&D)
 - **Theme:** Dark Blue `#0f3d5e`
 - **Tab ID:** `materials-disciplines`
 - **Panel ID:** `tab-materials-disciplines`
-- **Data Sources:** `purchase_orders.json`, `quotations.json`, `suppliers.json`, `dashboard.json`
-- **Records:** 3,522 POs + 12,072 quotations
-- **KPIs (6):** Disciplines, Total Quoted, Total Ordered, Active Suppliers, Projects, Conversion Rate
-- **Charts:** Discipline Spend Quoted vs Actual (grouped bar), Material Distribution (doughnut), Supplier Profile Card
-- **Tables:** Supplier Overview, Approved Materials, PO Details
-- **Filters:** Discipline, Entity, Project, Supplier, Material, Year, Date Range, Search
-- **Controller:** `tab-md.js` → `charts-md.js`
+- **Data Source:** `md_data.json`
+- **Records:** 3,946 RFQs + 3,596 POs
+- **Key Fields:** material, materialCode (12 codes), entity, supplier, project
+- **KPIs (5):** Materials (33), Material Codes (12), Total Material Spend, Total Material Code Spend, Active Projects + supplier count
+- **Charts:** Total Spend by Material Code (grouped bar: Quoted vs Ordered), Material Distribution (doughnut, clickable), Supplier Profile Card
+- **Tables:** Supplier Overview (paginated, filtered), Approved Materials, PO/Material Details
+- **Filters:** Material Code, Material, Entity, Project, Supplier, Year, Date Range, Search — all with Clear button
 
 ---
 
-## 🏗️ V6 Architecture
+## V8 Architecture
 
-### Module Dependency Graph
-```
-index.html
-  └── app.js (entry point)
-        ├── state.js (shared state, filters, pagination)
-        ├── utils.js (formatting, debounce, DOM helpers)
-        ├── dataLoader.js (fetch all data, FX rates)
-        ├── tab-sm.js → charts-sm.js, map.js
-        ├── tab-gsa.js → charts-gsa.js
-        └── tab-md.js → charts-md.js
-```
+### Single-File JavaScript (scripts.js ~5,545 lines)
 
-### State Management (state.js)
-```javascript
-state = {
-  dashboard: null,          // dashboard.json (summary, filters, aggregations)
-  quotations: [],           // quotations.json records
-  purchaseOrders: [],       // purchase_orders.json records
-  suppliers: [],            // suppliers.json records
-  employees: [],            // employees.json records
-  clientCountryMap: {},     // client_country_map.json
-  fxRates: { USD: 1, AED: 3.6725, ... },
-  activeTab: 'supplier-marketplace',
-  filters: {
-    sm:  { entity, project, supplier, status, material, discipline, search },
-    gsa: { entity, supplier, project, material, discipline, poType, year, dateFrom, dateTo, search },
-    md:  { entity, supplier, project, material, discipline, year, dateFrom, dateTo, search }
-  },
-  pagination: {
-    sm:  { page, pageSize: 25 },
-    gsa: { page, pageSize: 25, sortField: 'poDate', sortDir: 'desc' },
-    md:  { page, pageSize: 25 }
-  },
-  charts: {},               // Chart.js instances by ID
-  initialized: { sm: false, gsa: false, md: false },
-  selectedSupplier: null
-}
+Unlike V6's modular ES6 architecture, V8 uses a single `scripts.js` file with all logic:
+
+```
+scripts.js
+├── Global Variables & State (L1-50)
+├── Data Loading (L51-300)          — loadAllData(), FX rates
+├── Tab Switching (L301-400)        — switchTab(), bottom tabs
+├── SM Tab (L400-2900)              — filters, KPIs, charts, workbench, map
+├── GSA Tab (L2900-4200)            — filters, KPIs, charts, PO table, CO badges
+├── M&D Tab (L4200-5400)            — filters, KPIs, charts, supplier overview
+├── SearchableSelect (L5400-5600)   — Reusable type-ahead dropdown component
+└── Initialization (L5600+)         — DOMContentLoaded, window functions
 ```
 
-### Key Exported Functions
+### Key Functions by Tab
 
-**app.js:** Entry point — tab switching, global event delegation, keyboard shortcuts  
-**state.js:** `setFilter()`, `clearFilters()`, `getFilteredQuotations()`, `getFilteredPOs()`, `getFilteredMdPOs()`, `getFilteredMdQuotations()`, `destroyChart()`, `setChart()`, `paginate()`  
-**utils.js:** `convertToUSD()`, `formatCurrency()`, `formatNumber()`, `formatPercent()`, `formatDate()`, `debounce()`, `getStatusBadge()`, `generatePaginationHTML()`, `truncateText()`  
-**dataLoader.js:** `loadAllData()`, `refreshFxRates()`, `getDataStats()`  
-**tab-sm.js:** `initSupplierMarketplace()`, `applySMFilters()`, `clearSMFilters()`, `renderSMTab()`  
-**tab-gsa.js:** `initGlobalSpendAnalysis()`, `applyGSAFilters()`, `clearGSAFilters()`, `renderGSATab()`  
-**tab-md.js:** `initMaterialsDisciplines()`, `applyMdFilters()`, `clearMdFilters()`, `renderMdTab()`
+**SM Tab:**
+- `initFilters()` — Populate all SM dropdowns (sorted, from sm_data.json)
+- `applyFilters()` → `updateAll()` — Filter + render entire SM tab
+- `clearSMFilters()` — Reset all SM filters
+- `filterByStatus(status)` — Click status bar → cross-filter
+- `updateSupplierProfile(name)` — Populate supplier profile card
+- `renderEntityChartCanvas()` — Entity chart with onClick
+- `renderTrendChartLine()` — Monthly trend chart
+- `normalizeCountry()` — Global country name normalization
 
-### Custom Events
-| Event | Target | Detail | Purpose |
-|-------|--------|--------|---------|
-| `fxRatesUpdated` | document | — | FX rates refreshed from API |
-| `chartTypeChanged` | window | `{ target, type }` | Chart toggle button clicked |
-| `chartFilterApplied` | window | `{ type, value }` | GSA chart bar clicked |
-| `supplierSelected` | element (bubbles) | `{ name }` | Top Suppliers list item clicked |
-| `bottomTabChanged` | window | `{ type }` | SM bottom tab switching |
+**GSA Tab:**
+- `initGSAFilters()` — Populate GSA dropdowns + wire change listeners
+- `applyGSAFilters()` — Filter POs + rebuild all GSA components
+- `clearGSAFilters()` — Reset all GSA filters
+- `updateGSAKPIs(data)` — Compute & display 6 KPIs + CO subtexts
+- `updateGSATable(data)` — Render PO table with Order ID, CO badges, sorting
+- `createGSASpendTrendChart()` — Annual spend trend
+- `updateGSASupplierCard(name)` — Supplier details card
+- `sortGSATable(field)` — Multi-field sorting including order_id
+
+**M&D Tab:**
+- `initMdFilters()` — Populate M&D dropdowns (materialCodes + materials separate)
+- `applyMdFilters()` — Filter + render M&D tab
+- `clearMdFilters()` — Reset all M&D filters
+- `updateMdKPIs()` — Materials (33), Material Codes (12), spend, projects
+- `updateMdSupplierProfile(supplier)` — With object property guards
+- `createDisciplineSpendChartFiltered()` — Material Code spend chart ("Ordered" label)
+
+**Shared:**
+- `SearchableSelect` class (L5414) — Type-ahead wrapper for `<select>` elements
+- `initSearchableSelects()` (L5520) — Applies to 12+ dropdowns across all tabs
+- `formatCurrency()`, `formatCurrencyShort()` — Currency formatting
+- `debounce()` — Input debouncing (300ms)
 
 ---
 
-## 📦 V6 Data Files Reference
+## V8 Data Files Reference
 
-### Quotation Record Fields
+### Purchase Order Record Fields (gsa_data.json)
 ```javascript
 {
-  quotationNumber, quotationType, status, entity, client, projectName,
-  description, materialCode, material, discipline, value, currency, valueUSD,
-  contact, date, year, month, yearMonth, statusNormalized, convertedToPO,
-  linkedPONumber, daysToResponse, daysToClose, clientType
+  poNumber, poDate, poName, supplier, originalValue, currency,
+  mainOrderId, orderId, entityCode, entity, material, materialCode,
+  poVersion, isChangeOrder, year, month, yearMonth,
+  valueUSD, poSpendUSD, poType, // "Base PO" or "Change Order"
+  changeOrderGroup, changeOrderTotal, project
 }
 ```
 
-### Purchase Order Record Fields
+### Quotation Record Fields (sm_data.json)
 ```javascript
 {
-  poNumber, poDate, poDateOriginal, poName, supplier, value, currency, valueUSD,
-  poType, isChangeOrder, entity, entityCode, project, material, discipline,
-  year, month, yearMonth, expectedDelivery, actualDelivery, supplierId,
-  supplierMatched, dataQualityScore, category
+  QuotationNumber, QuotationType, // always "RFQ" in V8
+  Status, ProjectName, Description, Material, materialCode,
+  Entity, Client, QuotationValue, Currency,
+  Contact, Date, mainOrderId, orderId,
+  isRevision, revisionLetter, baseNumber // letter suffix tracking
 }
 ```
 
-### Dashboard.json Structure
+### Change Order Group (change_orders.json)
 ```javascript
 {
-  version, buildDate,
-  summary: { totalQuotations, totalOrders, winRate, totalQuotationValueUSD, totalOrderValueUSD,
-             totalClients, totalEntities, totalEmployees, totalPOs, totalPOSpendUSD,
-             basePOCount, basePOValueUSD, changeOrderCount, changeOrderValueUSD,
-             changeOrderRatio, avgPOValueUSD, activeSupplierCount, totalSupplierCount, totalProjects },
-  filters: { entities, disciplines, materials, statuses, clients, contacts, projects,
-             suppliers, poTypes, years, currencies, countries },
-  aggregations: { statusSummary, entityBreakdown, disciplineBreakdown, supplierRankings,
-                  annualTrend, monthlyTrend, quotationTrend, projectBreakdown, materialBreakdown }
+  orderId, mainOrderId, basePO, totalPOs, totalValueUSD,
+  pos: [{ poNumber, poDate, supplier, value, currency, version }]
 }
 ```
 
-### Quotation Trend Item (aggregations.quotationTrend)
+### Summary Fields (gsa_data.json → summary)
 ```javascript
-{ yearMonth: '2012-06', quotes: 2, orders: 2, cancelled: 0, quoteValueUSD: 117874.4, orderValueUSD: 117874.4 }
+{
+  totalSpendUSD: 147840010.12,
+  totalPOs: 3596,
+  basePOs: 3287,
+  changeOrders: 309,
+  changeOrderValue: 30036794.2,
+  basePOValue: 117803215.93,
+  supplierCount: 1103,
+  entityCount: 18,
+  changeOrderGroups: 191
+}
+```
+
+### Filter Arrays
+```javascript
+// gsa_data.json → filters
+{
+  entities: 19,        // including (Blank)
+  suppliers: 1104,
+  materials: 30,       // raw material names from Excel
+  materialCodes: 12,   // Architectural, Chemicals, Electrical, etc.
+  poTypes: 2,          // "Base PO", "Change Order"
+  years: 15,           // 2012-2026
+  currencies: 12
+}
+
+// sm_data.json → filters  
+{
+  entities: 19,
+  statuses: 4,         // Order, Quotation, Waiting, Cancelled
+  contacts: 18,
+  materials: 27,       // RFQ-only materials
+  materialCodes: 12,
+  currencies: 12
+}
+
+// md_data.json → filters
+{
+  entities: 19,
+  materialCodes: 12,
+  materials: 33,       // combined from PO + RFQ
+  disciplines: 12,     // alias for materialCodes
+  projects: 200,
+  suppliers: 1103
+}
 ```
 
 ---
 
-## 🔄 Data Rebuild
+## Data Rebuild
 
 ```bash
-cd v6/data
-python build_data.py
+cd v8/data
+& "C:\Users\Sajesh V S\AppData\Local\Programs\Python\Python312\python.exe" build_v8_data.py
 ```
 
-The pipeline reads V5 raw data from `../../v5/data/`, deduplicates, normalizes, and outputs clean V6 JSON files.
+The pipeline reads Excel .xls files from `../Re_ Main order XLS and Export feature ready for use/`, processes them with `xlrd`, and outputs JSON files.
 
-**What it fixes:**
-- Deduplicates records across overlapping V5 data files
+**What it does:**
+- Reads PO data (3,613 rows) and 5 quotation fragments (12,215 rows total)
+- Auto-detects and skips title rows in quotation fragments
+- Filters to RFQ-only quotations (removes IQ records)
+- Extracts Main Order ID and Order ID from explicit Excel columns
+- Detects change orders via PO suffix analysis (-1 = Base, -2+ = CO)
+- Detects quotation revisions via letter suffixes (A-P)
+- Links RFQ→PO via shared Order ID (441 links found)
+- Converts currencies to USD using hardcoded FX rates
+- Handles blanks with `(Blank)` placeholder for filter visibility
 - Normalizes "Cancled" → "Cancelled"
-- Separates employees from suppliers into `employees.json`
-- Consolidates 29+ disciplines to 7 categories
-- Removes blank supplier records
-- Pre-computes dashboard KPIs, filter options, and aggregations
+- Generates 7 output JSON files
 
 ---
 
-## 🎨 Design Guidelines
+## Design Guidelines
 
 ### Color Themes
-| Tab | Primary | Secondary | CSS Attribute |
-|-----|---------|-----------|---------------|
-| SM | #004578 | #0064a3 | `data-theme="sm"` |
-| GSA | #d96f3c | #e8824a | `data-theme="gsa"` |
-| M&D | #0f3d5e | #1a5a8a | `data-theme="md"` |
+| Tab | Primary | CSS |
+|-----|---------|-----|
+| SM | #004578 | Blue header/chart accents |
+| GSA | #d96f3c | Orange KPI top borders |
+| M&D | #0f3d5e | Dark blue accents |
 
 ### Status Colors
-- **Order/Completed:** Green `#2ecc71`
-- **Quotation/Open:** Blue `#3498db`
-- **Waiting/Pending:** Orange `#f39c12`
-- **Cancelled:** Red `#e74c3c`
-- **Closed/Unknown:** Gray `#95a5a6`
+- **Order:** Green `#4CAF50` / `#2ecc71`
+- **Quotation:** Blue `#2196F3` / `#3498db`
+- **Waiting:** Yellow `#FFC107` / `#f39c12`
+- **Cancelled:** Red `#F44336` / `#e74c3c`
+- **Closed:** Gray `#9E9E9E` / `#95a5a6`
+
+### Change Order Badge Colors
+- **CO Type Badge:** Red `#e74c3c` (for Change Orders)
+- **Base Type Badge:** Green `#2ecc71` (for Base POs)
+- **CO Group Badge:** Gold `#f39c12` background (group indicators like "2 of 3")
 
 ### Typography
-- Font Family: `'Segoe UI', system-ui, sans-serif`
-- KPI Values: 1.6rem - 2rem, bold
-- Table Text: 0.8rem - 0.85rem
-
-### Currency Conversion (Default FX Rates)
-AED=3.6725, SAR=3.75, KWD=0.3077, QAR=3.64, NPR=133.5, EUR=0.92, GBP=0.79, INR=83, JPY=149.5, BHD=0.376, OMR=0.385
+- Font: `'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif`
+- KPI Values: 26px, bold
+- Table: 11-12px
 
 ---
 
-## 📋 Common Development Tasks
+## Common Development Tasks
 
-### 1. Add a New Chart
-1. Add `<canvas id="newChart">` in `v6/index.html`
-2. Create render function in appropriate charts module (e.g., `charts-sm.js`)
-3. Export the function and import it in the tab controller
-4. Call the function from the tab's `render*Tab()` method
-5. Use `destroyChart('chartId')` before recreating
+### 1. Update Data from New Excel Export
+1. Place new .xls files in `v8/Re_ Main order XLS and Export feature ready for use/`
+2. Update filenames in `build_v8_data.py` if changed
+3. Run: `python build_v8_data.py`
+4. Verify JSON output files generated
+5. Start HTTP server: `python -m http.server 8080`
+6. Test dashboard at http://localhost:8080
 
-### 2. Add a New Filter
-1. Add `<select id="filterName">` in `v6/index.html`
-2. Add filter field to `state.filters.<tab>` in `state.js`
-3. Add filter logic to `getFiltered*()` in `state.js`
-4. Populate dropdown in tab controller's `populate*Filters()` function
-5. Wire up change event in `attach*FilterHandlers()`
+### 2. Add a New KPI
+1. Add HTML card in `index.html` within the appropriate tab
+2. Add computation in `updateXXKPIs()` function in `scripts.js`
+3. Use `formatCurrency()` or `formatNumber()` for display
 
-### 3. Add a New KPI Card
-1. Add KPI card HTML with `id="tabKpiName"` in `v6/index.html`
-2. Compute value in tab controller's `render*Tab()` method
-3. Call `setText('tabKpiName', formatCurrency(value))`
+### 3. Add a Filter
+1. Add `<select>` in `index.html`
+2. Populate in `initFilters()` / `initGSAFilters()` / `initMdFilters()`
+3. Wire `change` event listener
+4. Add filter logic in `applyFilters()` / `applyGSAFilters()` / `applyMdFilters()`
 
-### 4. Update Data
-1. Place updated source files in `v5/data/`
-2. Run `python v6/data/build_data.py` to regenerate V6 data
-3. Verify dashboard renders correctly at http://localhost:8080
-
-### 5. Local Development
+### 4. Local Development
 ```bash
-cd v6
+cd v8
 python -m http.server 8080
 # Open http://localhost:8080
 ```
 
-### Keyboard Shortcuts
-- `Ctrl+1` — Supplier Marketplace
-- `Ctrl+2` — Global Spend Analysis
-- `Ctrl+3` — Materials & Disciplines
+---
+
+## Critical Implementation Notes
+
+1. **Single JS File:** V8 uses monolithic `scripts.js` (~5,545 lines), not modular ES6
+2. **No Build Tools:** Pure vanilla JS — no webpack, npm, or transpilation
+3. **Excel Source:** Data from .xls files (not .xlsx), requires `xlrd` Python package
+4. **RFQ Only:** V8 filters out IQ records — only RFQ quotations displayed (3,946 of 12,215)
+5. **Change Orders:** Tracked via PO suffix (-1=Base, -2+=CO) and Order ID grouping
+6. **Quotation Revisions:** Letter suffixes (A-P) track re-quotes — different Order IDs per revision
+7. **Blank Handling:** Empty values displayed as `(Blank)` in filters for visibility
+8. **Python:** System Python 3.12 at `C:\Users\Sajesh V S\AppData\Local\Programs\Python\Python312\python.exe` (venv broken — use full path)
+9. **FX Rates:** Hardcoded in pipeline; live rates fetched in browser from `open.er-api.com`
+10. **SearchableSelect:** Applied to all dropdowns ≥10 options; keyboard navigable
 
 ---
 
-## ⚠️ Critical Implementation Notes
+## Review Status
 
-1. **ES Modules:** All JS files use `import`/`export` — must be served via HTTP server (not `file://` protocol)
-2. **Chart Lifecycle:** Always call `destroyChart(id)` before recreating a chart to prevent memory leaks
-3. **Filter Events:** Dropdown changes auto-apply filters; search uses 300ms debounce
-4. **Apply Buttons:** Use `window.applySMFilters()` etc. because `onclick` handlers need window scope in ES modules
-5. **Tab Panel IDs:** HTML panels use `id="tab-<tabId>"` prefix; nav buttons use `data-tab="<tabId>"`
-6. **Data Attributes:** Chart toggles use `data-chart-target` and `data-chart-type`; bottom tabs use `data-bottom-tab`
-7. **FX Rates:** Fetched from `open.er-api.com`; falls back to hardcoded defaults if API unreachable
-8. **Lazy Init:** Tabs only initialize on first visit — `state.initialized.<tab>` prevents duplicate init
-9. **No Build Tools:** Pure vanilla JS — no webpack, no npm, no transpilation required
-10. **Data JSON Structure:** All data files wrap records in `{ "records": [...] }` except `dashboard.json` and `client_country_map.json`
+47 stakeholder review questions tracked in `v8/REVIEW_RESPONSE.md`:
+- **31 Resolved** (Clear buttons, SearchableSelect, filters, data pipeline, supplier profiles, etc.)
+- **12 Partial** (trend chart labels, badge contrast, material distribution chart refinement)
+- **4 Remaining** (Approved Materials placeholder, GSA Workbench toggle, GSA search feedback, badge contrast)
+
+See `v8/REVIEW_RESPONSE.md` for detailed status per question.
 
 ---
 
-## 🔗 Related Repositories
-
-| Repository | Purpose |
-|------------|---------|
-| `sajeshvs/mvl-powerbi-dashboards` | Main development workspace |
-| `sajeshvs/mvl` | GitHub Pages deployment |
-
----
-
-## 📞 Contact
-
-**Project Owner:** Sajesh  
-**Email:** sajesh.admin@mvlgroupusa.onmicrosoft.com
+*Updated: February 21, 2026*

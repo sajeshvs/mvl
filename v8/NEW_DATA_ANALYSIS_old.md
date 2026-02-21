@@ -2,8 +2,7 @@
 
 > **Source folder:** `v8/Re_ Main order XLS and Export feature ready for use/`  
 > **Analysis date:** February 21, 2026  
-> **Purpose:** Evaluate new PO & Quotation data with `Main Order ID` and `Order ID` fields  
-> **Status:** ✅ **Implemented in V8** — All findings below have been integrated into the V8 dashboard and `build_v8_data.py` pipeline
+> **Purpose:** Evaluate new PO & Quotation data with `Main Order ID` and `Order ID` fields for v9
 
 ---
 
@@ -186,21 +185,17 @@ PO-1005-A5306:  v1→v2→v3→v4      (3 change orders, same OrderID=1247)
 
 ---
 
-## 10. Comparison with Previous Data
+## 10. Comparison with Old v8 Data
 
-| Metric | Previous | Feb 20 Export | Change |
+| Metric | Old (v8) | New (Feb 20) | Change |
 |--------|----------|--------------|--------|
-| PO records | 3,539 | 3,613 → **3,596 (after pipeline)** | +57 net |
-| Quotation records | 12,136 | 12,215 → **3,946 RFQ (filtered)** | RFQ-only |
+| PO records | 3,539 | 3,613 | +74 |
+| Quotation records | 12,136 | 12,215 | +79 |
 | PO columns | 9 nested fields | 9 flat columns | Simplified |
 | Quotation columns | 17 nested fields | 16 flat columns | Simplified |
 | **Main Order ID** | N/A (derived from PO#) | **Explicit field** | NEW |
 | **Order ID** | N/A | **Explicit field** | NEW |
-| Change order tracking | Not tracked | **309 COs in 191 groups** | NEW |
-
-> **V8 Pipeline Output:** `build_v8_data.py` processes these raw files into 5 JSON outputs:  
-> `sm_data.json` (3,946 RFQs), `gsa_data.json` (3,596 POs), `md_data.json` (combined),  
-> `change_orders.json` (191 groups), `conversion_times.json` (441 RFQ→PO links)
+| Change order tracking | Not tracked | **Detectable via suffix** | NEW |
 
 ---
 
@@ -251,25 +246,22 @@ PO-1005-A5306:  v1→v2→v3→v4      (3 change orders, same OrderID=1247)
 
 ---
 
-## 13. Features Enabled (Implemented in V8)
+## 13. What This Enables for v9
 
-1. ✅ **Project-level filtering** — Filter all POs + RFQs by Main Order ID
-2. ✅ **Change Order tracking** — 309 COs in 191 groups with CO/Base badges, dedicated CO section in GSA
-3. ✅ **RFQ-to-PO traceability** — 441 linked records via Order ID, conversion time analytics
-4. ✅ **Change Order value analysis** — $30.04M total CO value tracked, per-group breakdowns
-5. ✅ **Quotation revision tracking** — 219 revisions identified via letter suffixes in SM tab
+1. **Project-level filtering** — Filter all POs + RFQs by Main Order ID
+2. **Change Order tracking** — Count and display PO revisions
+3. **RFQ-to-PO traceability** — Link quotation to resulting PO via Order ID
+4. **Change Order value analysis** — Compare original vs revised PO values
 
 ---
 
-## 14. Investigation Status
+## 14. Pending / To Investigate
 
-- [x] Deep change order analysis — PO suffix patterns (see Section 15) — **Implemented in V8**
-- [x] Letter suffixes (A-D) in quotation numbers — quotation revisions (see Section 16) — **Implemented in V8**
-- [x] RFQ-only cross-reference with PO via Order ID (see Section 17) — **Implemented in V8**
-- [x] Change order badges (CO/Base) and group indicators — **Implemented in V8 GSA tab**
-- [x] Conversion time analytics (RFQ→PO) — **441 links, monthly averages in V8**
-- [ ] Additional linkage field (user to advise) — awaiting user input
-- [ ] Verify Order ID linkage accuracy for edge cases — ongoing
+- [x] Deep change order analysis — PO suffix patterns (see Section 15)
+- [x] Letter suffixes (A-D) in quotation numbers — NOT change orders, they are quotation revisions (see Section 16)
+- [x] RFQ-only cross-reference with PO via Order ID (see Section 17)
+- [ ] Additional linkage field (user to advise)
+- [ ] Verify Order ID linkage accuracy for RFQ→PO conversion tracking
 
 ---
 
@@ -458,6 +450,4 @@ OrderID=1247:
 
 ---
 
-*Original analysis: February 21, 2026. Updated: February 2026 — V8 implementation complete.*  
-*All core findings integrated into `build_v8_data.py` pipeline and V8 dashboard.*  
-*Remaining: additional linkage field (awaiting user input).*
+*Updated: February 21, 2026. Ready for further investigation with additional linkage field.*
