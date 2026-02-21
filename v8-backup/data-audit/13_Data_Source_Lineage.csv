@@ -1,0 +1,14 @@
+﻿Step,Stage,File,Description,Format,RecordCount,Notes
+1,Source CSV,Data/Order_LIST_Feb-12-2026.csv,Original order/quotation data exported from SM Workbench,CSV,"~12,470",Raw export from MVL system
+2,V5 Conversion,v5/data/orders.json + v5/data/sm_data.json,"CSV converted to JSON, SM workbench built with entities/materials",JSON,"~12,470",V5 build pipeline
+3,V5 GSA Data,v5/data/gsa_data.json,"Purchase orders with PO numbers, suppliers, values",JSON,"~3,539",From PO system export
+4,V5 → V7 Copy,v7/data/*.json (initial),V5 JSON files copied to v7/data/ as starting point,JSON,Same as V5,"Exact copy, no transforms"
+5,V7 Pipeline,v7/data/build_v7_data.py,"Cleanup: dedup, status normalize, FX convert, discipline map",Python,N/A,"Reads V5 copies, overwrites with clean data"
+6,SM Output,v7/data/sm_data.json,"12,072 quotation records + summary KPIs",JSON,"12,072","Deduped, status-normalized, FX-converted"
+7,GSA Output,v7/data/gsa_data.json,"3,522 PO records + summary + trends",JSON,"3,522","Deduped, value-fixed, annual/monthly trends built"
+8,M&D Output,v7/data/md_data.json,"12,072 quotations + 3,522 POs with discipline mapping",JSON,"12,072 + 3,522",Discipline consolidated 27→7 via DISCIPLINE_MAP
+9,Employees Output,v7/data/employees.json,42 MVL employee performance records,JSON,42,Extracted from SM suppliers using name heuristic
+10,Browser Load,v7/shared/scripts.js → loadAllData(),Fetches all JSON files in parallel on page load,JS fetch(),9 files loaded,Lines ~203-236 in scripts.js
+11,SM Tab Render,scripts.js → enrichDashboardWithRealData(),"Populates SM KPIs, status chart, entity chart, supplier list",DOM update,7 KPIs + 5 charts,Uses smData + gsaData (for COs)
+12,GSA Tab Render,scripts.js → initGSATab() → updateGSAKPIs(),"Populates GSA KPIs, spend trend, supplier table, PO table",DOM update,6 KPIs + 4 charts,Uses gsaData exclusively
+13,M&D Tab Render,scripts.js → initMdTab() → updateMdKPIs(),"Populates M&D KPIs, discipline chart, trend, PO table",DOM update,5 KPIs + 3 charts,Uses mdData exclusively

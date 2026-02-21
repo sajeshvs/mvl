@@ -242,9 +242,20 @@ async function loadAllData() {
             window._conversionTimes = null;
         }
 
-        console.log('📊 Loaded suppliers:', suppliersData.metadata.total_records);
-        console.log('📊 Loaded POs:', purchaseOrdersData.metadata.total_records);
-        console.log('📊 Loaded quotations:', quotationsData.metadata.total_records);
+        // Load change orders data (optional)
+        try {
+            const coRes = await fetch('data/change_orders.json');
+            if (coRes.ok) {
+                window._changeOrders = await coRes.json();
+                console.log('📊 Loaded change orders:', window._changeOrders?.totalGroups || 0, 'groups');
+            }
+        } catch (e) {
+            window._changeOrders = null;
+        }
+
+        console.log('📊 Loaded suppliers:', suppliersData?.metadata?.total_records || 0);
+        console.log('📊 Loaded POs:', purchaseOrdersData?.metadata?.total_records || 0);
+        console.log('📊 Loaded quotations:', quotationsData?.metadata?.total_records || 0);
         console.log('📊 Loaded GSA data:', gsaData?.workbench?.length || 0, 'POs');
         console.log('📊 Loaded SM data:', smData?.summary?.totalQuotations || 0, 'quotations');
         console.log('📊 Loaded MD data:', mdData?.summary?.materialCodeCount || 0, 'material codes');
@@ -1191,7 +1202,9 @@ function generateWorkbenchRowsPaginated() {
                     q.Contact,
                     q.Status,
                     q.MaterialCode,
-                    q.Client
+                    q.Client,
+                    q.orderId,
+                    q.mainOrderId
                 ].filter(Boolean).join(' ').toLowerCase();
                 if (!searchFields.includes(searchTerm)) return false;
             }
@@ -3232,6 +3245,14 @@ function updateGSAKPIs() {
         document.getElementById('gsaKpiCoAmount').textContent = formatCurrencyShort(summary.changeOrderValue || 0);
         document.getElementById('gsaKpiActiveSuppliers').textContent = summary.supplierCount?.toLocaleString() || '0';
         document.getElementById('gsaKpiActiveEntities').textContent = summary.entityCount?.toLocaleString() || '0';
+        // CO subtext: groups and % of total spend
+        const coGroupsEl = document.getElementById('gsaKpiCoGroups');
+        if (coGroupsEl) coGroupsEl.textContent = (summary.changeOrderGroups || 0) + ' groups';
+        const coPctEl = document.getElementById('gsaKpiCoPct');
+        if (coPctEl && summary.totalSpendUSD > 0) {
+            const pct = ((summary.changeOrderValue || 0) / summary.totalSpendUSD * 100).toFixed(1);
+            coPctEl.textContent = pct + '% of total spend';
+        }
     } else {
         // Calculate from filtered data - convert each PO value to USD
         document.getElementById('gsaKpiPoCount').textContent = pos.length.toLocaleString();
@@ -3258,6 +3279,23 @@ function updateGSAKPIs() {
 
         const activeEntities = new Set(pos.map(po => po.entity).filter(Boolean)).size;
         document.getElementById('gsaKpiActiveEntities').textContent = activeEntities.toLocaleString();
+
+        // CO subtext: groups count and % of spend
+        const coGroupsEl = document.getElementById('gsaKpiCoGroups');
+        if (coGroupsEl) {
+            const orderIdGroups = {};
+            changeOrders.forEach(po => {
+                const oid = po.orderId || '';
+                if (oid) orderIdGroups[oid] = true;
+            });
+            coGroupsEl.textContent = Object.keys(orderIdGroups).length + ' groups';
+        }
+        const coPctEl = document.getElementById('gsaKpiCoPct');
+        if (coPctEl && totalSpend > 0) {
+            const coVal = changeOrders.reduce((sum, po) => sum + (po.valueUSD || po.value || 0), 0);
+            const pct = (coVal / totalSpend * 100).toFixed(1);
+            coPctEl.textContent = pct + '% of total spend';
+        }
     }
 }
 
@@ -3879,6 +3917,10 @@ function updateGSATable() {
                 aVal = a.material || '';
                 bVal = b.material || '';
                 break;
+            case 'order_id':
+                aVal = parseInt(a.orderId) || 0;
+                bVal = parseInt(b.orderId) || 0;
+                break;
             case 'po_value':
                 aVal = a.valueUSD || 0;
                 bVal = b.valueUSD || 0;
@@ -3906,10 +3948,18 @@ function updateGSATable() {
         const currency = po.currency || 'USD';
         // Convert to USD using FX rates
         const valueInUSD = convertToUSD(poValue, currency);
+        // Change order group indicator
+        const coGroup = po.changeOrderTotal > 1
+            ? `<span class="co-badge" title="${po.changeOrderTotal} POs in this order group">${po.poVersion} of ${po.changeOrderTotal}</span>`
+            : '';
+        const typeLabel = po.poType === 'Change Order'
+            ? `<span class="co-type-badge">CO</span>`
+            : `<span class="base-type-badge">Base</span>`;
         return `
             <tr class="${idx % 2 === 1 ? 'alt-row' : ''}" onclick="selectGSARow(this)">
                 <td><a href="#">${po.poNumber || '-'}</a></td>
-                <td>${po.poType || '-'}</td>
+                <td>${typeLabel} ${coGroup}</td>
+                <td>${po.orderId || '-'}</td>
                 <td title="${po.project || ''}">${truncateText(po.project || '-', 40)}</td>
                 <td>${formattedDate}</td>
                 <td>${po.supplier || '-'}</td>
@@ -3996,7 +4046,9 @@ function filterGSATable() {
                 po.project,
                 po.supplier,
                 po.material,
-                po.entity
+                po.entity,
+                po.orderId,
+                po.mainOrderId
             ].filter(Boolean).join(' ').toLowerCase();
             if (!searchFields.includes(searchTerm)) return false;
         }
@@ -4061,7 +4113,9 @@ function applyGSAFilters() {
                 po.project,
                 po.supplier,
                 po.material,
-                po.entity
+                po.entity,
+                po.orderId,
+                po.mainOrderId
             ].filter(Boolean).join(' ').toLowerCase();
             if (!searchFields.includes(search)) return false;
         }
@@ -5200,21 +5254,21 @@ const KPI_INFO = {
     },
     'gsa-co': {
         title: 'Total No. of Change Orders',
-        description: 'Count of POs where poType = "Change Order".',
+        description: 'Count of POs where poType = "Change Order". Calculated by Order ID grouping: same Order ID + PO suffix > 1.',
         formula: 'COUNT(gsa_data.pos WHERE poType = "Change Order")',
         source: 'gsa_data.json → pos[] filtered by poType',
         field: 'poType === "Change Order"',
-        example: '314 Change Orders out of 3,522 total POs',
-        note: 'When filtered, counts Change Orders within the filtered PO subset only.'
+        example: '309 Change Orders in 191 groups out of 3,596 total POs',
+        note: 'Subtext shows number of unique Order ID groups with multiple POs. When filtered, counts Change Orders within the filtered PO subset only.'
     },
     'gsa-coAmount': {
         title: 'Total Amount of Change Orders',
-        description: 'Sum of USD values for Change Order POs.',
+        description: 'Sum of USD values for Change Order POs. Subtext shows CO % of total spend.',
         formula: 'SUM(valueUSD WHERE poType = "Change Order")',
         source: 'gsa_data.json → pos[] filtered + summed',
         field: 'valueUSD for Change Order records',
-        example: '$30.4M across 314 Change Orders',
-        note: 'When filtered, recalculated from filtered Change Orders only.'
+        example: '$30.0M across 309 Change Orders (20.3% of $147.8M total)',
+        note: 'When filtered, recalculated from filtered Change Orders only. % is relative to filtered total spend.'
     },
     'gsa-suppliers': {
         title: 'Active Suppliers',

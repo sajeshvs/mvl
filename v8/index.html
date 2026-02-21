@@ -536,7 +536,7 @@
                         <div class="gsa-kpi-content">
                             <div class="gsa-kpi-label">Total No. of Change Orders</div>
                             <div class="gsa-kpi-value" id="gsaKpiCoCount">0</div>
-                            <div class="gsa-kpi-subtext">All records</div>
+                            <div class="gsa-kpi-subtext" id="gsaKpiCoGroups">0 groups</div>
                         </div>
                     </div>
                     <div class="gsa-kpi-card gsa-kpi-yellow">
@@ -545,7 +545,7 @@
                         <div class="gsa-kpi-content">
                             <div class="gsa-kpi-label">Total Amount of Change Orders</div>
                             <div class="gsa-kpi-value" id="gsaKpiCoAmount">$0</div>
-                            <div class="gsa-kpi-subtext"></div>
+                            <div class="gsa-kpi-subtext" id="gsaKpiCoPct"></div>
                         </div>
                     </div>
                     <div class="gsa-kpi-card gsa-kpi-gold">
@@ -681,6 +681,7 @@
                                     <tr>
                                         <th onclick="sortGSATable('po_no')">PO No. <span class="sort-icon">↕</span></th>
                                         <th onclick="sortGSATable('type')">Type <span class="sort-icon">↕</span></th>
+                                        <th onclick="sortGSATable('order_id')">Order ID <span class="sort-icon">↕</span></th>
                                         <th onclick="sortGSATable('project')">Project <span class="sort-icon">↕</span>
                                         </th>
                                         <th onclick="sortGSATable('po_date')">PO Date <span class="sort-icon">↕</span>

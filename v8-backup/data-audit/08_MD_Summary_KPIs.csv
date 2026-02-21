@@ -1,0 +1,7 @@
+﻿KPI,ElementID,Value,Formula,DataSource,Verified,ActualCount,DisciplineList
+Materials / Disciplines Count,kpiMdMaterials / kpiMdDisciplines,7,COUNT(DISTINCT discipline) across quotations + POs,md_data.json → summary.disciplineCount,True,7,"Construction, Electrical, Fire Protection, General, Logistics, Mechanical, Services"
+Total Material Spend,kpiMdMaterialSpend,"$396,041,496.65",SUM(md_data.pos[].value),md_data.json → summary.totalOrdered,"Sum of PO values = $396,041,496.65","$396,041,496.65",
+Total Discipline Spend,kpiMdDisciplineSpend,"$396,041,496.65",Same as Total Material Spend,md_data.json → summary.totalOrdered,True,,
+Utilization %,kpiMdMatUtil / kpiMdDiscUtil,13.2%,(totalOrdered / totalQuoted) × 100,md_data.json → summary.conversionRate,"(396,041,496.65 / 3,004,946,326.20) × 100 = 13.2%",13.2%,
+Supplier Count,kpiMdSupplierCount,1089,COUNT(DISTINCT supplier) from POs only,md_data.json → summary.supplierCount,True,1089,
+Project Count,kpiMdActiveProjects,98,COUNT(DISTINCT project) from POs only,md_data.json → summary.projectCount,True,98,
