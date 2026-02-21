@@ -450,3 +450,20 @@ Waiting badge text color darkened to #332200 for >7:1 contrast ratio, exceeding 
 ---
 
 *Document finalized: February 21, 2026. All 47 review items resolved. Previous versions preserved as `REVIEW_RESPONSE_v7.md`.*
+
+---
+
+## Post-Review Audit (February 21, 2026)
+
+A deep code audit was performed after all 47 items were resolved. The following issues were found and fixed:
+
+| # | Severity | Issue | Fix |
+|---|----------|-------|-----|
+| 1 | **Critical** | `initGSATab()` called in `refreshAllTabsWithNewRates()` but function doesn't exist | Changed to `initGlobalSpendAnalysis()` |
+| 2 | Medium | Version header said "V5" in scripts.js and console log | Updated to "V8" |
+| 3 | Medium | `updateMdSupplierProfile()` rating could crash if rating is `{score: N}` object | Added `typeof` guard: `(typeof supplier.rating === 'object' ? supplier.rating?.score : supplier.rating)` |
+| 4 | Low | `filterMdProject` and `gsaFilterDiscipline` missing from `initSearchableSelects()` | Added both to the selector list (now 16 dropdowns total) |
+| 5 | Low | Dead code: `renderEntityChart()` (HTML-based, never called) | Removed |
+| 6 | Low | Dead code: `generateWorkbenchRows()` and `generateSupplierListRows()` legacy wrappers (never called) | Removed |
+
+**Post-audit line count:** ~5,555 lines (down from ~5,590 after dead code removal).

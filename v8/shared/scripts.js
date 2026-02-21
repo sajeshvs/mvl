@@ -1,6 +1,6 @@
 /**
- * V5 Supply Chain Intel Hub - Main JavaScript
- * Based on Visio Wireframe Specification
+ * V8 Supply Chain Intel Hub - Main JavaScript
+ * Unified dashboard with Excel-based data pipeline
  */
 
 // ============================================
@@ -160,7 +160,7 @@ function refreshAllTabsWithNewRates() {
     if (tabId === 'supplier-marketplace' && dashboardData) {
         renderSupplierMarketplace();
     } else if (tabId === 'global-spend' && gsaData) {
-        initGSATab();
+        initGlobalSpendAnalysis();
     } else if (tabId === 'materials-disciplines' && mdData) {
         initMaterialsDisciplines();
     }
@@ -172,7 +172,7 @@ function refreshAllTabsWithNewRates() {
 // INITIALIZATION
 // ============================================
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 Supply Chain Intel Hub v5 initializing...');
+    console.log('🚀 Supply Chain Intel Hub v8 initializing...');
 
     // Load all data sources
     await loadAllData();
@@ -1124,12 +1124,6 @@ function generateSupplierListRowsPaginated() {
     };
 }
 
-function generateSupplierListRows() {
-    // Legacy function - redirect to paginated version
-    const result = generateSupplierListRowsPaginated();
-    return result.rows;
-}
-
 function selectSupplierByName(name) {
     const suppliers = dashboardData.supplierMarketplace.topSuppliers;
     const index = suppliers.findIndex(s => s.name === name);
@@ -1316,12 +1310,6 @@ function generateWorkbenchRowsPaginated() {
         total: allQuotes.length,
         filtered: filtered.length
     };
-}
-
-function generateWorkbenchRows() {
-    // Legacy function - redirect to paginated version
-    const result = generateWorkbenchRowsPaginated();
-    return result.rows;
 }
 
 function truncateText(text, maxLen) {
@@ -2095,28 +2083,6 @@ function filterByStatus(status) {
     else if (typeof applyFilters === 'function') applyFilters();
 }
 window.filterByStatus = filterByStatus;
-
-// ============================================
-// RENDER: ENTITY COMPARISON
-// ============================================
-function renderEntityChart(data) {
-    const container = document.getElementById('entityChart');
-    if (!container || !data) return;
-
-    const maxValue = Math.max(...data.map(d => d.quoteValue));
-
-    container.innerHTML = data.map(item => `
-        <div class="bar-chart-item">
-            <div class="bar-chart-label">${item.entity}</div>
-            <div class="bar-chart-track">
-                <div class="bar-chart-fill" 
-                     style="width: ${(item.quoteValue / maxValue * 100)}%; background: ${item.color}">
-                </div>
-            </div>
-            <div class="bar-chart-value">${formatCurrencyShort(item.quoteValue)}</div>
-        </div>
-    `).join('');
-}
 
 // ============================================
 // RENDER: TOP SUPPLIERS
@@ -4328,7 +4294,7 @@ function updateMdSupplierProfile(supplier = null) {
     }
 
     // Calculate rating stars (out of 5)
-    const rating = supplier.rating || 4.37;
+    const rating = (typeof supplier.rating === 'object' ? supplier.rating?.score : supplier.rating) || 4.37;
     const fullStars = Math.floor(rating);
     const hasHalf = (rating - fullStars) >= 0.5;
     let starsHtml = '⭐'.repeat(fullStars);
@@ -5565,8 +5531,8 @@ class SearchableSelect {
 function initSearchableSelects() {
     const selectors = [
         'filterSupplier', 'filterProject', 'filterEntity', 'filterMaterial', 'filterMaterialCode',
-        'gsaFilterSupplier', 'gsaFilterProject', 'gsaFilterEntity', 'gsaFilterMaterial', 'gsaFilterMaterialCode',
-        'filterMdDiscipline', 'filterMdMaterial', 'filterMdSupplier', 'filterMdEntity'
+        'gsaFilterSupplier', 'gsaFilterProject', 'gsaFilterEntity', 'gsaFilterMaterial', 'gsaFilterMaterialCode', 'gsaFilterDiscipline',
+        'filterMdDiscipline', 'filterMdMaterial', 'filterMdSupplier', 'filterMdEntity', 'filterMdProject'
     ];
     selectors.forEach(id => {
         const el = document.getElementById(id);
