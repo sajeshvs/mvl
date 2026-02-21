@@ -99,6 +99,12 @@
                             <option>All Materials</option>
                         </select>
                     </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Material Code</label>
+                        <select class="filter-select" id="filterMaterialCode">
+                            <option>All Material Codes</option>
+                        </select>
+                    </div>
                     <div class="filter-group filter-search">
                         <label class="filter-label">Search</label>
                         <input type="text" id="searchInput" placeholder="Search Quotes, Projects, etc.">
@@ -378,7 +384,7 @@
                     <div class="bottom-tabs">
                         <button class="bottom-tab" data-bottom-tab="supplier-list">Supplier List (<span
                                 id="supplierCount">2189</span>)</button>
-                        <button class="bottom-tab active" data-bottom-tab="workbench">Marketplace Workbench</button>
+                        <button class="bottom-tab active" data-bottom-tab="workbench">Quotation Details</button>
                     </div>
 
                     <!-- Filter Bar for Bottom Tables -->
@@ -477,6 +483,12 @@
                         </select>
                     </div>
                     <div class="filter-group">
+                        <label class="filter-label">Material Code</label>
+                        <select class="filter-select" id="gsaFilterMaterialCode">
+                            <option>All Material Codes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
                         <label class="filter-label">PO Type</label>
                         <select class="filter-select" id="gsaFilterDiscipline">
                             <option>All Types</option>
@@ -505,6 +517,7 @@
                     <div class="filter-group filter-search">
                         <label class="filter-label">Search</label>
                         <input type="text" id="gsaSearchInput" placeholder="Search POs, Projects, etc.">
+                        <div id="gsaSearchFeedback" style="display:none;font-size:11px;color:#666;margin-top:2px;"></div>
                     </div>
                     <button class="gsa-filter-btn" onclick="applyGSAFilters()">Apply</button>
                     <button class="gsa-filter-btn gsa-clear-btn" onclick="clearGSAFilters()">Clear</button>

@@ -1188,7 +1188,9 @@ function generateWorkbenchRowsPaginated() {
             // Top-level supplier filter (using Client field)
             if (currentFilters.supplier && q.Client !== currentFilters.supplier) return false;
             // Top-level material filter
-            if (currentFilters.material && q.MaterialCode !== currentFilters.material) return false;
+            if (currentFilters.material && q.Material !== currentFilters.material) return false;
+            // Top-level material code filter
+            if (currentFilters.materialCode && q.materialCode !== currentFilters.materialCode) return false;
             // Top-level status filter  
             if (currentFilters.status && q.Status !== currentFilters.status) return false;
 
@@ -1336,6 +1338,7 @@ let currentFilters = {
     supplier: null,
     status: null,
     material: null,
+    materialCode: null,
     search: ''
 };
 
@@ -1381,7 +1384,8 @@ function initFilters() {
             projects: projectNames,
             suppliers: supplierNames,
             statuses: ['All Statuses', 'Order', 'Quotation', 'Waiting', 'Cancelled'],
-            materials: ['All Materials', ...(smData.materialsByDiscipline || []).map(m => m.MaterialCode).filter(Boolean).sort()]
+            materials: ['All Materials', ...(smData.filters?.materials || smData.materialsByDiscipline?.map(m => m.MaterialCode) || []).filter(Boolean).sort()],
+            materialCodes: ['All Material Codes', ...(smData.filters?.materialCodes || []).filter(Boolean).sort()]
         };
     } else if (dashboardData && dashboardData.filters) {
         filters = dashboardData.filters;
@@ -1402,6 +1406,7 @@ function initFilters() {
     populateSelect('filterProject', filters.projects || []);
     populateSelect('filterSupplier', filters.suppliers || []);
     populateSelect('filterMaterial', filters.materials || []);
+    populateSelect('filterMaterialCode', filters.materialCodes || []);
 
     // Search input handler
     const searchInput = document.getElementById('searchInput');
@@ -1410,7 +1415,7 @@ function initFilters() {
     }
 
     // Add change handlers to all filter dropdowns
-    ['filterEntity', 'filterProject', 'filterSupplier', 'filterStatus', 'filterMaterial'].forEach(id => {
+    ['filterEntity', 'filterProject', 'filterSupplier', 'filterStatus', 'filterMaterial', 'filterMaterialCode'].forEach(id => {
         const select = document.getElementById(id);
         if (select) {
             select.addEventListener('change', handleFilterChange);
@@ -1472,7 +1477,8 @@ function handleFilterChange(event) {
         'filterProject': 'project',
         'filterSupplier': 'supplier',
         'filterStatus': 'status',
-        'filterMaterial': 'material'
+        'filterMaterial': 'material',
+        'filterMaterialCode': 'materialCode'
     };
 
     const filterKey = filterMap[id];
@@ -1541,7 +1547,8 @@ function applyFilters() {
                 if (currentFilters.entity && q.Entity !== currentFilters.entity) return false;
                 if (currentFilters.project && q.ProjectName !== currentFilters.project) return false;
                 if (currentFilters.supplier && q.Client !== currentFilters.supplier) return false;
-                if (currentFilters.material && q.MaterialCode !== currentFilters.material) return false;
+                if (currentFilters.material && q.Material !== currentFilters.material) return false;
+                if (currentFilters.materialCode && q.materialCode !== currentFilters.materialCode) return false;
                 if (currentFilters.status && q.Status !== currentFilters.status) return false;
                 if (currentFilters.search) {
                     const searchFields = [q.QuotationNumber, q.Entity, q.ProjectName, q.Description, q.Client].filter(Boolean).join(' ').toLowerCase();
@@ -1659,10 +1666,10 @@ function applyFilters() {
 
         renderTopSuppliers(topSuppliers);
 
-        // Update Material Distribution chart from filtered data
+        // Update Material Distribution chart from filtered data (SM-Q11: use Material names, not codes)
         const materialCounts = {};
         filtered.forEach(q => {
-            const material = q.MaterialCode || q.Material || 'Unknown';
+            const material = q.Material || q.materialCode || 'Unknown';
             if (material && material !== 'Unknown') {
                 const val = q.QuotationValue || 0;
                 const curr = q.Currency || 'USD';
@@ -3131,7 +3138,7 @@ function initGlobalSpendAnalysis() {
 
     // Add instant filtering - change listeners on all GSA dropdowns
     ['gsaFilterEntity', 'gsaFilterSupplier', 'gsaFilterProject', 'gsaFilterMaterial',
-        'gsaFilterDiscipline', 'gsaFilterYear'].forEach(id => {
+        'gsaFilterMaterialCode', 'gsaFilterDiscipline', 'gsaFilterYear'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.addEventListener('change', applyGSAFilters);
         });
@@ -3174,11 +3181,15 @@ function populateGSAFilters() {
     const pos = gsaData?.workbench || [];
 
     // Entity filter from filters.entities
+    // Entity filter from filters.entities (GSA-Q1: with trim normalization)
     const entities = filters.entities || [];
     const entitySelect = document.getElementById('gsaFilterEntity');
     if (entitySelect) {
         entitySelect.innerHTML = '<option>All Entities</option>' +
-            entities.filter(e => e && e !== 'Unknown').map(e => `<option value="${e}">${e}</option>`).join('');
+            entities.filter(e => e && e.trim() !== 'Unknown').map(e => {
+                const trimmed = e.trim();
+                return `<option value="${trimmed}">${trimmed}</option>`;
+            }).join('');
     }
 
     // Supplier filter from filters.suppliers (no cap)
@@ -3203,6 +3214,14 @@ function populateGSAFilters() {
     if (materialSelect) {
         materialSelect.innerHTML = '<option>All Materials</option>' +
             materials.map(m => `<option value="${m}">${m}</option>`).join('');
+    }
+
+    // Material Code filter from filters.materialCodes (GSA-Q15)
+    const materialCodes = filters.materialCodes || [];
+    const materialCodeSelect = document.getElementById('gsaFilterMaterialCode');
+    if (materialCodeSelect) {
+        materialCodeSelect.innerHTML = '<option>All Material Codes</option>' +
+            materialCodes.map(m => `<option value="${m}">${m}</option>`).join('');
     }
 
     // PO Type filter from filters.poTypes
@@ -3658,6 +3677,18 @@ function createGSASupplierCharts() {
         bottomSuppliers = [...allSuppliers].sort((a, b) => a.spend - b.spend).slice(0, 10);
     }
 
+    // GSA-Q13: Generate unique HSL colors for top/bottom charts
+    function generateUniqueColors(count, saturation = 65, lightness = 50) {
+        const colors = [];
+        for (let i = 0; i < count; i++) {
+            const hue = Math.round((i * 360) / count + 15) % 360;
+            colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+        }
+        return colors;
+    }
+    const topColors = generateUniqueColors(topSuppliers.length, 65, 45);
+    const bottomColors = generateUniqueColors(bottomSuppliers.length, 55, 55);
+
     // Top Suppliers Chart
     const topCtx = document.getElementById('gsaTopSuppliersChart');
     if (topCtx) {
@@ -3668,7 +3699,7 @@ function createGSASupplierCharts() {
                 labels: topSuppliers.map(s => truncateText(s.name, 30)),
                 datasets: [{
                     data: topSuppliers.map(s => s.spend),
-                    backgroundColor: ['#339933', '#2EA043', '#0066CC', '#3B82F6', '#FF8C00', '#F59E0B', '#FFD700', '#9966CC', '#004578', '#CC6699'],
+                    backgroundColor: topColors,
                     borderRadius: 4
                 }]
             },
@@ -3753,7 +3784,7 @@ function createGSASupplierCharts() {
                 labels: bottomSuppliers.map(s => truncateText(s.name, 30)),
                 datasets: [{
                     data: bottomSuppliers.map(s => s.spend),
-                    backgroundColor: ['#CC3333', '#EF4444', '#FF8C00', '#F59E0B', '#FFD700', '#9966CC', '#0066CC', '#3B82F6', '#339933', '#2EA043'],
+                    backgroundColor: bottomColors,
                     borderRadius: 4
                 }]
             },
@@ -4066,13 +4097,7 @@ function selectGSARow(row) {
     row.classList.add('selected');
 }
 
-function toggleGSATableView(view) {
-    document.querySelectorAll('.gsa-toggle-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.view === view);
-    });
-    // For now, both views show PO data (workbench can be customized later)
-    updateGSATable();
-}
+// GSA-Q16: toggleGSATableView removed — was orphaned, no toggle buttons in GSA tab
 
 // Apply GSA Filters
 function applyGSAFilters() {
@@ -4080,6 +4105,7 @@ function applyGSAFilters() {
     const supplier = document.getElementById('gsaFilterSupplier')?.value;
     const project = document.getElementById('gsaFilterProject')?.value;
     const material = document.getElementById('gsaFilterMaterial')?.value;
+    const materialCode = document.getElementById('gsaFilterMaterialCode')?.value;
     const poType = document.getElementById('gsaFilterDiscipline')?.value;
     const year = document.getElementById('gsaFilterYear')?.value;
     const fromDate = document.getElementById('gsaFilterFrom')?.value;
@@ -4087,14 +4113,16 @@ function applyGSAFilters() {
     const search = document.getElementById('gsaSearchInput')?.value?.toLowerCase();
 
     gsaState.filteredData = gsaState.allPOs.filter(po => {
-        // Entity filter
-        if (entity && entity !== 'All Entities' && po.entity !== entity) return false;
+        // Entity filter (with trim normalization GSA-Q1)
+        if (entity && entity !== 'All Entities' && (po.entity || '').trim() !== entity.trim()) return false;
         // Supplier filter
         if (supplier && supplier !== 'All Suppliers' && po.supplier !== supplier) return false;
         // Project filter
         if (project && project !== 'All Projects' && po.project !== project) return false;
         // Material filter
         if (material && material !== 'All Materials' && po.material !== material) return false;
+        // Material Code filter (GSA-Q15)
+        if (materialCode && materialCode !== 'All Material Codes' && po.materialCode !== materialCode) return false;
         // PO Type filter
         if (poType && poType !== 'All Types' && po.poType !== poType) return false;
         // Year filter
@@ -4113,6 +4141,7 @@ function applyGSAFilters() {
                 po.project,
                 po.supplier,
                 po.material,
+                po.materialCode,
                 po.entity,
                 po.orderId,
                 po.mainOrderId
@@ -4132,6 +4161,17 @@ function applyGSAFilters() {
     createGSASupplierCharts();
     updateGSATable();
 
+    // GSA-Q7: Show search feedback indicator
+    const gsaFeedback = document.getElementById('gsaSearchFeedback');
+    if (gsaFeedback) {
+        if (search) {
+            gsaFeedback.textContent = `Showing ${gsaState.filteredData.length.toLocaleString()} of ${gsaState.allPOs.length.toLocaleString()} for "${search}"`;
+            gsaFeedback.style.display = 'block';
+        } else {
+            gsaFeedback.style.display = 'none';
+        }
+    }
+
     // Update supplier card if a specific supplier is selected
     if (supplier && supplier !== 'All Suppliers') {
         updateGSASupplierCard(supplier);
@@ -4146,6 +4186,8 @@ function clearGSAFilters() {
     document.getElementById('gsaFilterSupplier').value = 'All Suppliers';
     document.getElementById('gsaFilterProject').value = 'All Projects';
     document.getElementById('gsaFilterMaterial').value = 'All Materials';
+    const gsaMcEl = document.getElementById('gsaFilterMaterialCode');
+    if (gsaMcEl) gsaMcEl.value = 'All Material Codes';
     document.getElementById('gsaFilterDiscipline').value = 'All Types';
     document.getElementById('gsaFilterYear').value = 'All Years';
     document.getElementById('gsaFilterFrom').value = '';
@@ -4153,6 +4195,9 @@ function clearGSAFilters() {
     document.getElementById('gsaSearchInput').value = '';
     document.getElementById('gsaTableSearch').value = '';
     document.getElementById('gsaTableTypeFilter').value = '';
+    // GSA-Q7: Hide search feedback
+    const gsaFeedback = document.getElementById('gsaSearchFeedback');
+    if (gsaFeedback) gsaFeedback.style.display = 'none';
 
     gsaState.filteredData = [...gsaState.allPOs];
     gsaState.currentPage = 1;
@@ -4169,14 +4214,14 @@ function clearGSAFilters() {
 
 // Clear SM Filters
 function clearSMFilters() {
-    ['filterEntity', 'filterProject', 'filterSupplier', 'filterStatus', 'filterMaterial'].forEach(id => {
+    ['filterEntity', 'filterProject', 'filterSupplier', 'filterStatus', 'filterMaterial', 'filterMaterialCode'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.selectedIndex = 0;
     });
     const searchEl = document.getElementById('searchInput');
     if (searchEl) searchEl.value = '';
 
-    currentFilters = { entity: null, project: null, supplier: null, status: null, material: null, search: '' };
+    currentFilters = { entity: null, project: null, supplier: null, status: null, material: null, materialCode: null, search: '' };
     applyFilters();
     console.log('📊 SM: Filters cleared');
 }
@@ -4314,11 +4359,11 @@ function initMdFilters() {
         disciplineSelect.addEventListener('change', applyMdFilters);
     }
 
-    // Populate entity filter
+    // Populate entity filter (MD-Q3: with trim normalization)
     const entitySelect = document.getElementById('filterMdEntity');
     if (entitySelect && filters.entities) {
         entitySelect.innerHTML = '<option>All Entities</option>' +
-            filters.entities.map(e => `<option>${e}</option>`).join('');
+            filters.entities.map(e => e.trim()).filter(e => e && e !== 'Unknown').map(e => `<option>${e}</option>`).join('');
         entitySelect.addEventListener('change', applyMdFilters);
     }
 
@@ -4579,10 +4624,10 @@ function createMaterialDistributionChartFiltered() {
         mdState.materialDistChartInstance.destroy();
     }
 
-    // Aggregate by materialCode for pie chart
+    // MD-Q9: Aggregate by material name for pie chart (prefer material over materialCode)
     const materialMap = {};
     mdState.filteredPOs.forEach(po => {
-        const m = po.materialCode || po.discipline || po.material || 'Various';
+        const m = po.material || po.materialCode || po.discipline || 'Various';
         materialMap[m] = (materialMap[m] || 0) + (po.value || po.amountValue || 0);
     });
 
@@ -5519,8 +5564,8 @@ class SearchableSelect {
 // Apply SearchableSelect to all filter dropdowns with many options
 function initSearchableSelects() {
     const selectors = [
-        'filterSupplier', 'filterProject', 'filterEntity', 'filterMaterial',
-        'gsaFilterSupplier', 'gsaFilterProject', 'gsaFilterEntity', 'gsaFilterMaterial',
+        'filterSupplier', 'filterProject', 'filterEntity', 'filterMaterial', 'filterMaterialCode',
+        'gsaFilterSupplier', 'gsaFilterProject', 'gsaFilterEntity', 'gsaFilterMaterial', 'gsaFilterMaterialCode',
         'filterMdDiscipline', 'filterMdMaterial', 'filterMdSupplier', 'filterMdEntity'
     ];
     selectors.forEach(id => {

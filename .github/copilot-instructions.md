@@ -6,9 +6,10 @@ This is a **V8 unified dashboard** project built with vanilla JS (no build tools
 - **Stack:** HTML + CSS + Vanilla JS + Chart.js + Leaflet.js 1.9.4
 - **Data pipeline:** Python 3.12 (`v8/data/build_v8_data.py`) — reads Excel .xls via xlrd
 - **3 Tabs:** Supplier Marketplace (Blue), Global Spend Analysis (Orange), Materials & Disciplines (Dark Blue)
-- **Architecture:** Single `scripts.js` (~5,545 lines) — NOT modular ES6
+- **Architecture:** Single `scripts.js` (~5,590 lines) — NOT modular ES6
 - **No npm/webpack:** Pure vanilla JS served as static files
 - **Data:** 3,946 RFQ quotations + 3,596 POs (309 Change Orders) from Feb 20, 2026 Excel export
+- **Review Status:** All 47 stakeholder review items resolved
 
 ## Key Conventions
 - Single `scripts.js` file — all logic in one file (no import/export)
@@ -19,12 +20,14 @@ This is a **V8 unified dashboard** project built with vanilla JS (no build tools
 - Blanks displayed as `(Blank)` in filters for visibility
 - Change orders identified by PO suffix: `-1` = Base, `-2`+ = Change Order
 - SearchableSelect component wraps all filter dropdowns with 10+ options
+- Material (30 names) and Material Code (12 categories) filters separated on all tabs
+- `generateUniqueColors(count, sat, light)` for dynamic HSL chart colors
 
 ## File Roles
 | File | Purpose |
 |------|---------|
 | `v8/index.html` | Single-page app with 3 tabs |
-| `v8/shared/scripts.js` | All dashboard logic (~5,545 lines) |
+| `v8/shared/scripts.js` | All dashboard logic (~5,590 lines) |
 | `v8/shared/styles.css` | Complete CSS with design tokens |
 | `v8/data/build_v8_data.py` | Python pipeline reading Excel files (1,118 lines) |
 | `v8/data/gsa_data.json` | GSA: 3,596 POs with change order data |
