@@ -1757,6 +1757,7 @@ body {
     margin-left: 4px;
     white-space: nowrap;
 }
+
 .co-type-badge {
     display: inline-block;
     background: #e74c3c;
@@ -1766,6 +1767,7 @@ body {
     padding: 1px 6px;
     border-radius: 3px;
 }
+
 .base-type-badge {
     display: inline-block;
     background: #2ecc71;
