@@ -1,22 +1,26 @@
 """
-V8 Data Pipeline — Feb 20 2026 Excel Integration
-=================================================
-Reads the NEW Excel exports (PO_List + Quotation_Report fragments)
-directly from v8/Re_ Main order XLS and Export feature ready for use/
+V8 Data Pipeline — Dynamic Excel Integration
+=============================================
+Reads Excel exports (PO_List_*.xls + Quotation_Report_*.xls fragments)
+from the configured EXCEL_DIR. Fully dynamic: handles any data size,
+auto-detects PO file, uses header-based column lookup.
 
-NEW features over previous build:
-  - Reads from .xls Excel files (xlrd) instead of old JSON
+Key capabilities:
+  - Auto-detects PO_List_*.xls (any date in filename)
+  - Header-based column lookup (resilient to column reordering)
   - Adds Main Order ID (project number) and Order ID fields
   - Calculates change orders by Order ID (same OrderID, PO suffix 1,2,3…)
   - Detects quotation revisions (letter suffixes A,B,C,D…)
   - Handles blanks with "(Blank)" placeholders for filtering
   - Derives entity, material, materialCode from PO/quotation number structure
   - Filters to RFQ-only (no IQ records)
+  - Logs unknown currencies and unmapped materials
 
 Input:  v8/Re_ Main order XLS and Export feature ready for use/*.xls
 Output: v8/data/*.json (same structure scripts.js expects)
 """
 
+import glob
 import json
 import os
 import re
@@ -74,6 +78,11 @@ if os.path.exists(entity_map_path):
         ENTITY_CODE_MAP = json.load(f)
 
 
+# Track unmapped values for logging
+_unmapped_materials = set()
+_unknown_currencies = set()
+
+
 def get_material_code(raw):
     """Map raw material name to one of 12 official Material Codes."""
     if not raw or not str(raw).strip():
@@ -84,6 +93,7 @@ def get_material_code(raw):
     for key, val in MATERIAL_CODE_MAP.items():
         if key in normalized or normalized in key:
             return val
+    _unmapped_materials.add(str(raw).strip())
     return 'Various'
 
 
@@ -95,7 +105,11 @@ def to_usd(value, currency):
         val = 0
     if not currency or str(currency).strip().upper() == 'USD':
         return val
-    rate = FX_RATES.get(str(currency).strip().upper(), 1)
+    curr = str(currency).strip().upper()
+    rate = FX_RATES.get(curr)
+    if rate is None:
+        _unknown_currencies.add(curr)
+        rate = 1  # treat as USD if unknown
     return round(val / rate, 2) if rate else val
 
 
@@ -254,32 +268,103 @@ def save_json(data, filename):
     print(f'  [SAVED] {filename} ({size_kb:.1f} KB)')
 
 
+def find_column(headers, *candidates):
+    """Find column index by header name (case-insensitive, partial match).
+    Returns index or -1 if not found."""
+    lower_headers = [h.lower().strip() for h in headers]
+    for candidate in candidates:
+        c = candidate.lower().strip()
+        # Exact match first
+        for i, h in enumerate(lower_headers):
+            if h == c:
+                return i
+        # Partial match
+        for i, h in enumerate(lower_headers):
+            if c in h or h in c:
+                return i
+    return -1
+
+
+def build_column_map(headers, mapping):
+    """Build a {field_name: column_index} dict from headers using mapping.
+    mapping = {field_name: [candidate_header_1, candidate_header_2, ...]}
+    Returns dict and list of warnings for unmapped fields."""
+    col_map = {}
+    warnings = []
+    for field, candidates in mapping.items():
+        idx = find_column(headers, *candidates)
+        if idx >= 0:
+            col_map[field] = idx
+        else:
+            warnings.append(f'Column not found for "{field}" (tried: {candidates})')
+    return col_map, warnings
+
+
 # ═══════════════════════════════════════════════════════════════
 # DATA LOADING FROM EXCEL
 # ═══════════════════════════════════════════════════════════════
 
 def load_po_excel():
-    """Load PO data from PO_List_Feb-20-2026.xls.
-    Columns: No, PO number, Po Date, PO Name, Supplier, Total, Cur., Main Order ID, Order ID
+    """Load PO data from PO_List_*.xls (auto-detected).
+    Uses header-based column lookup for resilience to column reordering.
+    Expected columns: No, PO number, Po Date, PO Name, Supplier, Total, Cur.,
+                      Main Order ID, Order ID
     """
-    po_file = os.path.join(EXCEL_DIR, 'PO_List_Feb-20-2026.xls')
-    print(f'  Loading: {os.path.basename(po_file)}')
+    # Auto-detect PO file via glob
+    po_pattern = os.path.join(EXCEL_DIR, 'PO_List_*.xls')
+    po_files = sorted(glob.glob(po_pattern))
+    if not po_files:
+        raise FileNotFoundError(f'No PO_List_*.xls found in {EXCEL_DIR}')
+    po_file = po_files[-1]  # Use most recent if multiple
+    print(f'  Loading: {os.path.basename(po_file)} (auto-detected)')
+
+    # Extract export date from filename (PO_List_MMM-DD-YYYY.xls)
+    date_match = re.search(r'PO_List_(.+)\.xls', os.path.basename(po_file))
+    global _po_export_date, _po_filename
+    _po_filename = os.path.basename(po_file)
+    _po_export_date = date_match.group(1) if date_match else 'unknown'
+
     wb = xlrd.open_workbook(po_file, ignore_workbook_corruption=True)
     sheet = wb.sheet_by_index(0)
 
-    # Read header row
+    # Header-based column lookup
     headers = [cell_str(sheet.cell(0, c)) for c in range(sheet.ncols)]
     print(f'  Columns: {headers}')
+
+    # Map field names to expected header labels
+    PO_COLUMN_MAP = {
+        'po_number':     ['PO number', 'PO No', 'PO Number', 'PO No.'],
+        'po_date':       ['Po Date', 'PO Date', 'Date'],
+        'po_name':       ['PO Name', 'Name', 'Description'],
+        'supplier':      ['Supplier', 'Vendor', 'Supplier Name'],
+        'total':         ['Total', 'Amount', 'Value', 'PO Value'],
+        'currency':      ['Cur.', 'Currency', 'Cur', 'CCY'],
+        'main_order_id': ['Main Order ID', 'Main Order', 'MainOrderID'],
+        'order_id':      ['Order ID', 'OrderID', 'Order No'],
+    }
+    col, warnings = build_column_map(headers, PO_COLUMN_MAP)
+    for w in warnings:
+        print(f'  ⚠️ {w}')
+
+    # Fallback to positional if header lookup fails
+    po_num_col = col.get('po_number', 1)
+    date_col = col.get('po_date', 2)
+    name_col = col.get('po_name', 3)
+    supplier_col = col.get('supplier', 4)
+    total_col = col.get('total', 5)
+    currency_col = col.get('currency', 6)
+    main_oid_col = col.get('main_order_id', 7 if sheet.ncols > 7 else -1)
+    oid_col = col.get('order_id', 8 if sheet.ncols > 8 else -1)
 
     records = []
     for r in range(1, sheet.nrows):
         row_cells = [sheet.cell(r, c) for c in range(sheet.ncols)]
-        po_num = cell_str(row_cells[1])  # PO number
+        po_num = cell_str(row_cells[po_num_col])
         if not po_num:
             continue
 
         # Parse date
-        dt = parse_excel_date(row_cells[2], wb)
+        dt = parse_excel_date(row_cells[date_col], wb)
         date_str = dt.strftime('%d %b %Y') if dt else ''
 
         # Parse PO number structure
@@ -297,8 +382,8 @@ def load_po_excel():
         material_from_prefix = PO_CODE_PREFIX_MAP.get(code_prefix, 'Various')
 
         # Get Main Order ID and Order ID from Excel
-        main_order_id = cell_str(row_cells[7]) if sheet.ncols > 7 else ''
-        order_id = cell_str(row_cells[8]) if sheet.ncols > 8 else ''
+        main_order_id = cell_str(row_cells[main_oid_col]) if main_oid_col >= 0 else ''
+        order_id = cell_str(row_cells[oid_col]) if oid_col >= 0 else ''
 
         if not main_order_id:
             main_order_id = po_parsed['mainOrderId']
@@ -306,10 +391,10 @@ def load_po_excel():
         records.append({
             'poNumber': po_num,
             'poDate': date_str,
-            'poName': cell_str(row_cells[3]),
-            'supplier': clean_supplier_name(cell_str(row_cells[4])),
-            'originalValue': cell_float(row_cells[5]),
-            'currency': cell_str(row_cells[6]).strip().upper() or 'AED',
+            'poName': cell_str(row_cells[name_col]),
+            'supplier': clean_supplier_name(cell_str(row_cells[supplier_col])),
+            'originalValue': cell_float(row_cells[total_col]),
+            'currency': cell_str(row_cells[currency_col]).strip().upper() or 'AED',
             'mainOrderId': main_order_id,
             'orderId': order_id,
             'entityCode': entity_code,
@@ -329,18 +414,41 @@ def load_po_excel():
 
 
 def load_quotation_excel():
-    """Load Quotation data from 5 fragment files.
-    Columns: No, Number, Company, Date, Type, Client, Project Name, Description,
-             Material, Material Code, Quo. Value, Cur., MVL Contact, Status,
-             Main Order ID, Order ID
+    """Load Quotation data from fragment files (auto-detected).
+    Uses header-based column lookup for resilience to column reordering.
+    Expected columns: No, Number, Company, Date, Type, Client, Project Name,
+                      Description, Material, Material Code, Quo. Value, Cur.,
+                      MVL Contact, Status, Main Order ID, Order ID
     """
     fragments = sorted([
         f for f in os.listdir(EXCEL_DIR)
         if f.startswith('Quotation_Report_') and f.endswith('.xls')
     ])
+    if not fragments:
+        print('  ⚠️ No Quotation_Report_*.xls files found!')
     print(f'  Found {len(fragments)} quotation fragment files')
 
+    # Column mapping for quotation headers
+    Q_COLUMN_MAP = {
+        'number':        ['Number', 'Quo. Number', 'Quotation Number', 'No.'],
+        'company':       ['Company', 'Entity', 'Company Name'],
+        'date':          ['Date', 'Quo. Date', 'Quotation Date'],
+        'type':          ['Type', 'Quo. Type', 'Quotation Type'],
+        'client':        ['Client', 'Client Name'],
+        'project':       ['Project Name', 'Project', 'Project Title'],
+        'description':   ['Description', 'Desc', 'Details'],
+        'material':      ['Material', 'Material Name'],
+        'material_code': ['Material Code', 'Mat. Code', 'MaterialCode'],
+        'value':         ['Quo. Value', 'Value', 'Amount', 'Quotation Value'],
+        'currency':      ['Cur.', 'Currency', 'Cur', 'CCY'],
+        'contact':       ['MVL Contact', 'Contact', 'Contact Person'],
+        'status':        ['Status', 'Quo. Status'],
+        'main_order_id': ['Main Order ID', 'Main Order', 'MainOrderID'],
+        'order_id':      ['Order ID', 'OrderID', 'Order No'],
+    }
+
     all_records = []
+    col = None  # Will be built from first file's headers
     for fname in fragments:
         fpath = os.path.join(EXCEL_DIR, fname)
         print(f'    Loading: {fname}')
@@ -356,13 +464,35 @@ def load_quotation_excel():
             headers = [cell_str(sheet.cell(1, c)) for c in range(sheet.ncols)]
         else:
             headers = [cell_str(sheet.cell(0, c)) for c in range(sheet.ncols)]
-        if not all_records:
+
+        # Build column map from first file (assume consistent across fragments)
+        if col is None:
+            col, warnings = build_column_map(headers, Q_COLUMN_MAP)
+            for w in warnings:
+                print(f'    ⚠️ {w}')
             print(f'    Columns: {headers}')
             print(f'    Data starts at row: {data_start}')
 
+        # Map with fallbacks to positional indices
+        num_col = col.get('number', 1)
+        company_col = col.get('company', 2)
+        date_col = col.get('date', 3)
+        type_col = col.get('type', 4)
+        client_col = col.get('client', 5)
+        project_col = col.get('project', 6)
+        desc_col = col.get('description', 7)
+        mat_col = col.get('material', 8)
+        matcode_col = col.get('material_code', 9)
+        val_col = col.get('value', 10)
+        curr_col = col.get('currency', 11)
+        contact_col = col.get('contact', 12)
+        status_col = col.get('status', 13)
+        main_oid_col = col.get('main_order_id', 14 if sheet.ncols > 14 else -1)
+        oid_col = col.get('order_id', 15 if sheet.ncols > 15 else -1)
+
         for r in range(data_start, sheet.nrows):
             row_cells = [sheet.cell(r, c) for c in range(sheet.ncols)]
-            q_num = cell_str(row_cells[1])  # Number
+            q_num = cell_str(row_cells[num_col])
             if not q_num:
                 continue
             # Skip header rows mistakenly in data range
@@ -370,31 +500,31 @@ def load_quotation_excel():
                 continue
 
             # Parse date
-            dt = parse_excel_date(row_cells[3], wb)
+            dt = parse_excel_date(row_cells[date_col], wb)
             date_str = dt.strftime('%d %b %Y') if dt else ''
 
             # Parse quotation number
             q_parsed = parse_quotation_number(q_num)
 
             # Get Main Order ID and Order ID from Excel
-            main_order_id = cell_str(row_cells[14]) if sheet.ncols > 14 else ''
-            order_id = cell_str(row_cells[15]) if sheet.ncols > 15 else ''
+            main_order_id = cell_str(row_cells[main_oid_col]) if main_oid_col >= 0 else ''
+            order_id = cell_str(row_cells[oid_col]) if oid_col >= 0 else ''
             if not main_order_id:
                 main_order_id = q_parsed['mainOrderId']
 
-            raw_material = cell_str(row_cells[8])
-            raw_mat_code = cell_str(row_cells[9])
+            raw_material = cell_str(row_cells[mat_col])
+            raw_mat_code = cell_str(row_cells[matcode_col])
             material_code = get_material_code(raw_material)
 
-            company = cell_str(row_cells[2])
-            q_type = cell_str(row_cells[4]).strip().upper()
-            client = cell_str(row_cells[5])
-            project_name = cell_str(row_cells[6])
-            description = cell_str(row_cells[7])
-            quo_value = cell_float(row_cells[10])
-            currency = cell_str(row_cells[11]).strip().upper() or 'AED'
-            contact = cell_str(row_cells[12])
-            status = cell_str(row_cells[13])
+            company = cell_str(row_cells[company_col])
+            q_type = cell_str(row_cells[type_col]).strip().upper()
+            client = cell_str(row_cells[client_col])
+            project_name = cell_str(row_cells[project_col])
+            description = cell_str(row_cells[desc_col])
+            quo_value = cell_float(row_cells[val_col])
+            currency = cell_str(row_cells[curr_col]).strip().upper() or 'AED'
+            contact = cell_str(row_cells[contact_col])
+            status = cell_str(row_cells[status_col])
 
             all_records.append({
                 'QuotationNumber': q_num,
@@ -427,9 +557,14 @@ def load_quotation_excel():
 # MAIN PIPELINE
 # ═══════════════════════════════════════════════════════════════
 
+# Module globals set by load_po_excel()
+_po_export_date = 'unknown'
+_po_filename = 'unknown'
+
+
 def main():
     print('=' * 60)
-    print('V8 Data Pipeline — Feb 20 2026 Excel Integration')
+    print('V8 Data Pipeline — Dynamic Excel Integration')
     print('=' * 60)
 
     # ── 1. Load Excel data ───────────────────────────────────
@@ -803,7 +938,7 @@ def main():
             'basePO': {'count': len(base_pos), 'valueUSD': round(base_value, 2)},
             'changeOrder': {'count': len(change_orders_list), 'valueUSD': round(co_value, 2)}
         },
-        'changeOrderDetails': sorted(change_order_details, key=lambda x: x['poCount'], reverse=True)[:50],
+        'changeOrderDetails': sorted(change_order_details, key=lambda x: x['poCount'], reverse=True),
         'changeOrderMonthly': [
             {'yearMonth': ym, 'count': d['count'], 'value': round(d['value'], 2)}
             for ym, d in sorted(co_monthly.items())
@@ -1088,12 +1223,22 @@ def main():
         'details': change_order_details,
     }, 'change_orders.json')
 
+    # Log any unmapped values
+    if _unmapped_materials:
+        print(f'\n  ⚠️  {len(_unmapped_materials)} unmapped materials defaulted to "Various":')
+        for m in sorted(_unmapped_materials):
+            print(f'      - {m}')
+    if _unknown_currencies:
+        print(f'  ⚠️  {len(_unknown_currencies)} unknown currencies treated as USD:')
+        for c in sorted(_unknown_currencies):
+            print(f'      - {c}')
+
     metadata = {
         'sourceFiles': {
-            'po': 'PO_List_Feb-20-2026.xls',
+            'po': _po_filename,
             'quotations': [f for f in sorted(os.listdir(EXCEL_DIR)) if f.startswith('Quotation_Report_')],
         },
-        'exportDate': '2026-02-20',
+        'exportDate': _po_export_date,
         'buildDate': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'counts': {
             'rawPOs': len(raw_pos),

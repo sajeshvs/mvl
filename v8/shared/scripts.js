@@ -482,8 +482,8 @@ function enrichDashboardWithRealData() {
     // Build status chart from quotation data
     const statusDist = quotationsData.metadata.status_distribution;
     dashboardData.supplierMarketplace.statusChart = [
-        { status: 'Order', count: statusDist?.won || 7697, color: '#4CAF50' },
-        { status: 'Quotation', count: statusDist?.unknown || 4439, color: '#2196F3' },
+        { status: 'Order', count: statusDist?.won || 0, color: '#4CAF50' },
+        { status: 'Quotation', count: statusDist?.unknown || 0, color: '#2196F3' },
         { status: 'Waiting', count: statusDist?.pending || 0, color: '#FFC107' },
         { status: 'Cancelled', count: statusDist?.lost || 0, color: '#F44336' },
         { status: 'Closed', count: 0, color: '#9E9E9E' }
@@ -669,120 +669,37 @@ async function loadDashboardData() {
 }
 
 function getFallbackData() {
+    // Fallback with zero values — all real values come from data pipeline
+    // This ensures the UI renders structure even if data fetch fails
+    console.warn('⚠️ Using fallback data — real data files did not load');
     return {
         summary: {
-            rfqCount: 12532,
-            quoteValue: 3600000000,
-            poCount: 7697,
-            poValue: 721300000,
-            winRate: 97.7,
-            coCount: 314,
-            coValue: 30400000,
-            openQuotes: 4650,
-            conversionRate: 97.7
+            rfqCount: 0,
+            quoteValue: 0,
+            poCount: 0,
+            poValue: 0,
+            winRate: 0,
+            coCount: 0,
+            coValue: 0,
+            openQuotes: 0,
+            conversionRate: 0
         },
         supplierMarketplace: {
             statusChart: [
-                { status: 'Order', count: 7697, color: '#c6f6d5' },
-                { status: 'Quotation', count: 4249, color: '#cce5ff' },
-                { status: 'Waiting', count: 150, color: '#fff4ce' },
-                { status: 'Cancelled', count: 86, color: '#ffe0e0' },
-                { status: 'Closed', count: 350, color: '#e5e5e5' }
+                { status: 'Order', count: 0, color: '#c6f6d5' },
+                { status: 'Quotation', count: 0, color: '#cce5ff' },
+                { status: 'Waiting', count: 0, color: '#fff4ce' },
+                { status: 'Cancelled', count: 0, color: '#ffe0e0' },
+                { status: 'Closed', count: 0, color: '#e5e5e5' }
             ],
-            entityComparison: [
-                { entity: 'Yamauchi Gumi', quoteValue: 1800000000, poSpend: 1200000000, color: '#0066CC' },
-                { entity: 'MACRO', quoteValue: 800000000, poSpend: 650000000, color: '#339933' },
-                { entity: 'MVL Nepal', quoteValue: 300000000, poSpend: 280000000, color: '#339933' }
-            ],
-            topSuppliers: [
-                { rank: 1, name: 'Rastra Bhusan Construction', poCount: 21, spend: 74650000 },
-                { rank: 2, name: 'KATKUWA SUPPLIERS', poCount: 10, spend: 49010000 },
-                { rank: 3, name: 'Shivam Traders', poCount: 13, spend: 41260000 }
-            ],
-            materialDistribution: [
-                { material: 'Logistics', value: 1900000000, color: '#0066CC' },
-                { material: 'Tools', value: 450000000, color: '#3399FF' },
-                { material: 'Various', value: 350000000, color: '#339933' }
-            ],
-            responsibleEmployees: [
-                { rank: 1, name: 'Admin User', poCount: 1965, totalSpend: 503800000 },
-                { rank: 2, name: 'Lince M.', poCount: 256, totalSpend: 41400000 }
-            ],
-            monthlyTrend: [
-                { month: 'Jan', quotes: 850, orders: 620, cos: 45 },
-                { month: 'Feb', quotes: 920, orders: 710, cos: 52 },
-                { month: 'Mar', quotes: 780, orders: 590, cos: 38 },
-                { month: 'Apr', quotes: 1050, orders: 820, cos: 61 },
-                { month: 'May', quotes: 1120, orders: 890, cos: 72 },
-                { month: 'Jun', quotes: 980, orders: 760, cos: 55 },
-                { month: 'Jul', quotes: 890, orders: 680, cos: 48 },
-                { month: 'Aug', quotes: 1200, orders: 950, cos: 85 },
-                { month: 'Sep', quotes: 1080, orders: 840, cos: 68 },
-                { month: 'Oct', quotes: 1150, orders: 920, cos: 78 },
-                { month: 'Nov', quotes: 1300, orders: 1050, cos: 92 },
-                { month: 'Dec', quotes: 1214, orders: 985, cos: 88 }
-            ],
-            quotationToPoTime: [
-                { month: 'Jan', avgDays: 12 },
-                { month: 'Feb', avgDays: 15 },
-                { month: 'Mar', avgDays: 8 },
-                { month: 'Apr', avgDays: 10 },
-                { month: 'May', avgDays: 14 },
-                { month: 'Jun', avgDays: 11 },
-                { month: 'Jul', avgDays: 9 },
-                { month: 'Aug', avgDays: 13 },
-                { month: 'Sep', avgDays: 7 },
-                { month: 'Oct', avgDays: 16 },
-                { month: 'Nov', avgDays: 12 },
-                { month: 'Dec', avgDays: 10 }
-            ],
-            approvedMaterials: [
-                {
-                    supplier: 'Rastra Bhusan Construction', materials: [
-                        { material: 'Steel Rebar', spec: 'ASTM-A615-GR60', leadTime: '14 days' },
-                        { material: 'Concrete Mix', spec: 'ACI-318-21', leadTime: '7 days' },
-                        { material: 'Formwork Panels', spec: 'ISO-9001', leadTime: '21 days' }
-                    ]
-                },
-                {
-                    supplier: 'KATKUWA SUPPLIERS', materials: [
-                        { material: 'Electrical Cables', spec: 'IEC-60502', leadTime: '10 days' },
-                        { material: 'Junction Boxes', spec: 'NEMA-4X', leadTime: '5 days' }
-                    ]
-                },
-                {
-                    supplier: 'Shivam Traders', materials: [
-                        { material: 'PVC Pipes', spec: 'ASTM-D2241', leadTime: '7 days' },
-                        { material: 'Pipe Fittings', spec: 'ANSI-B16.9', leadTime: '3 days' },
-                        { material: 'Valves', spec: 'API-600', leadTime: '14 days' },
-                        { material: 'Flanges', spec: 'ASME-B16.5', leadTime: '10 days' }
-                    ]
-                },
-                {
-                    supplier: 'Yamauchi Gumi', materials: [
-                        { material: 'Heavy Machinery', spec: 'JIS-B8100', leadTime: '45 days' },
-                        { material: 'Crane Parts', spec: 'OSHA-1910', leadTime: '30 days' },
-                        { material: 'Safety Equipment', spec: 'ANSI-Z89.1', leadTime: '14 days' }
-                    ]
-                },
-                {
-                    supplier: 'Kuwait Materials Co', materials: [
-                        { material: 'Sand & Aggregate', spec: 'ASTM-C33', leadTime: '5 days' },
-                        { material: 'Cement', spec: 'ASTM-C150', leadTime: '7 days' }
-                    ]
-                }
-            ],
-            supplierLocations: [
-                { name: 'Rastra Bhusan Construction', lat: 27.7172, lng: 85.3240, country: 'Nepal', poCount: 21, spend: 74650000 },
-                { name: 'KATKUWA SUPPLIERS', lat: 27.6915, lng: 85.3420, country: 'Nepal', poCount: 10, spend: 49010000 },
-                { name: 'Shivam Traders', lat: 27.7050, lng: 85.3145, country: 'Nepal', poCount: 13, spend: 41260000 },
-                { name: 'Oman Cables Industry', lat: 23.5880, lng: 58.3829, country: 'Oman', poCount: 5, spend: 7630000 },
-                { name: 'Yamauchi Gumi Japan', lat: 35.6762, lng: 139.6503, country: 'Japan', poCount: 45, spend: 125000000 },
-                { name: 'US Supplier Corp', lat: 40.7128, lng: -74.0060, country: 'USA', poCount: 18, spend: 35000000 },
-                { name: 'Kuwait Materials Co', lat: 29.3759, lng: 47.9774, country: 'Kuwait', poCount: 28, spend: 52000000 },
-                { name: 'Diego Garcia Logistics', lat: -7.3195, lng: 72.4229, country: 'Diego Garcia', poCount: 12, spend: 28000000 },
-                { name: 'Qatar Construction LLC', lat: 25.2854, lng: 51.5310, country: 'Qatar', poCount: 15, spend: 42000000 }
-            ]
+            entityComparison: [],
+            topSuppliers: [],
+            materialDistribution: [],
+            responsibleEmployees: [],
+            monthlyTrend: [],
+            quotationToPoTime: [],
+            approvedMaterials: [],
+            supplierLocations: []
         }
     };
 }
@@ -5204,8 +5121,8 @@ const KPI_INFO = {
         formula: 'COUNT(workbench WHERE Status = "Order")',
         source: 'sm_data.json → workbench[] filtered by Status',
         field: 'Status field = "Order"',
-        example: '7,671 out of 12,072 total records have Status=Order',
-        note: 'This counts SM workbench rows with Order status — these are quotations that converted to POs. Not the same as gsa_data PO count (3,522) which counts actual PO documents.'
+        example: 'N out of total records have Status=Order (computed dynamically)',
+        note: 'This counts SM workbench rows with Order status — these are quotations that converted to POs. Not the same as gsa_data PO count which counts actual PO documents.'
     },
     'sm-poValue': {
         title: 'PO Values',
@@ -5222,7 +5139,7 @@ const KPI_INFO = {
         formula: 'Orders ÷ Total Quotations × 100',
         source: 'Calculated from sm_data.json',
         field: 'COUNT(Status="Order") / COUNT(all) × 100',
-        example: '7,671 ÷ 12,072 × 100 = 63.5%',
+        example: 'Orders ÷ Total × 100 (computed dynamically from data)',
         note: 'Pre-calculated in build_v7_data.py as sm_data.summary.winRate. When filters are active, recalculated from filtered subset.'
     },
     'sm-co': {
@@ -5231,7 +5148,7 @@ const KPI_INFO = {
         formula: 'COUNT(gsa_data.pos WHERE poType = "Change Order")',
         source: 'gsa_data.json → summary.changeOrders',
         field: 'poType field = "Change Order" (vs "Base Order")',
-        example: '314 out of 3,522 total POs are Change Orders',
+        example: 'N out of total POs are Change Orders (computed dynamically)',
         note: 'Sourced from GSA data (actual PO documents), NOT from SM workbench. SM does not track change orders — they are post-award modifications tracked in the PO system.'
     },
     'sm-coValue': {
@@ -5240,7 +5157,7 @@ const KPI_INFO = {
         formula: 'SUM(gsa_data.pos.valueUSD WHERE poType = "Change Order")',
         source: 'gsa_data.json → summary.changeOrderValue',
         field: 'valueUSD for Change Order type POs',
-        example: 'Sum of 314 Change Order PO values = $30.4M',
+        example: 'Sum of all Change Order PO values (computed dynamically)',
         note: 'Pre-calculated in build_v7_data.py. This value does not change with SM filters since COs come from the GSA dataset.'
     },
 
@@ -5251,7 +5168,7 @@ const KPI_INFO = {
         formula: 'COUNT(gsa_data.pos)',
         source: 'gsa_data.json → pos[] array',
         field: 'All PO records regardless of poType',
-        example: '3,208 Base Orders + 314 Change Orders = 3,522 total',
+        example: 'Base Orders + Change Orders = Total POs (computed dynamically)',
         note: 'When filtered, counts only POs matching active entity/supplier/date/material filters. Each PO has poType = "Base Order" or "Change Order".'
     },
     'gsa-spend': {
@@ -5260,7 +5177,7 @@ const KPI_INFO = {
         formula: 'SUM(gsa_data.pos[].valueUSD)',
         source: 'gsa_data.json → pos[].valueUSD',
         field: 'valueUSD (pre-converted to USD in build pipeline)',
-        example: '$396M across 3,522 POs',
+        example: 'Total USD spend across all POs (computed dynamically)',
         note: 'Values are pre-converted to USD in build_v7_data.py. When filters active, SUM is recalculated with convertToUSD() applied to each PO\'s original value + currency.'
     },
     'gsa-co': {
@@ -5269,7 +5186,7 @@ const KPI_INFO = {
         formula: 'COUNT(gsa_data.pos WHERE poType = "Change Order")',
         source: 'gsa_data.json → pos[] filtered by poType',
         field: 'poType === "Change Order"',
-        example: '309 Change Orders in 191 groups out of 3,596 total POs',
+        example: 'N Change Orders in M groups out of total POs (computed dynamically)',
         note: 'Subtext shows number of unique Order ID groups with multiple POs. When filtered, counts Change Orders within the filtered PO subset only.'
     },
     'gsa-coAmount': {
@@ -5278,7 +5195,7 @@ const KPI_INFO = {
         formula: 'SUM(valueUSD WHERE poType = "Change Order")',
         source: 'gsa_data.json → pos[] filtered + summed',
         field: 'valueUSD for Change Order records',
-        example: '$30.0M across 309 Change Orders (20.3% of $147.8M total)',
+        example: 'CO spend as % of total spend (computed dynamically)',
         note: 'When filtered, recalculated from filtered Change Orders only. % is relative to filtered total spend.'
     },
     'gsa-suppliers': {
@@ -5287,7 +5204,7 @@ const KPI_INFO = {
         formula: 'COUNT(DISTINCT gsa_data.pos[].supplier)',
         source: 'gsa_data.json → pos[].supplier',
         field: 'Unique supplier names (vendor companies)',
-        example: '1,089 unique suppliers across 3,522 POs',
+        example: 'Unique supplier count across all POs (computed dynamically)',
         note: 'When filtered, counts unique suppliers in the filtered PO subset.'
     },
     'gsa-entities': {
@@ -5343,7 +5260,7 @@ const KPI_INFO = {
         formula: 'Projects: COUNT(DISTINCT entity)  |  Suppliers: COUNT(DISTINCT supplier)',
         source: 'md_data.json → summary.supplierCount + entityBreakdown',
         field: 'entity = project/business unit, supplier = vendor name',
-        example: '98 projects, 1,089 suppliers',
+        example: 'Unique projects and suppliers (computed dynamically)',
         note: 'Projects counts unique MVL entities with POs. Suppliers counts unique vendor names. When filtered, recalculated from filtered PO subset.'
     }
 };
