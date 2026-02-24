@@ -391,9 +391,6 @@ body {
     grid-template-columns: 1fr 1fr 1fr;
     gap: var(--space-lg);
     margin-bottom: var(--space-lg);
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .column {
@@ -402,17 +399,18 @@ body {
     gap: var(--space-lg);
 }
 
-/* Make last chart-card in column fill remaining space */
+/* Last chart-card in column — constrained height, no unbounded stretch */
 .column .chart-card:last-child {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    max-height: 380px;
 }
 
 .column .chart-card:last-child .chart-body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* ============================================
@@ -531,7 +529,7 @@ body {
 
 .quotation-time-scroll {
     flex: 1;
-    min-height: 160px;
+    min-height: 120px;
     position: relative;
 }
 
@@ -654,6 +652,7 @@ body {
     flex-direction: column;
     gap: 2px;
     flex: 1;
+    max-height: 320px;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -2641,10 +2640,9 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 30px 20px;
     text-align: center;
-    flex: 1;
-    min-height: 120px;
+    min-height: 100px;
 }
 
 .coming-soon-icon {
