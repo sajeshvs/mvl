@@ -399,23 +399,6 @@ body {
     gap: var(--space-lg);
 }
 
-/* Make last chart-card in column fill remaining space */
-.column .chart-card:last-child {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.column .chart-card:last-child .chart-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.column .chart-card:last-child .data-table {
-    flex: 1;
-}
-
 /* ============================================
    CHART CARDS
    ============================================ */
