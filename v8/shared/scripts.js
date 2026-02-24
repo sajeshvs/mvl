@@ -2377,17 +2377,6 @@ function renderQuotationTimeChart(data) {
         quotationTimeChartInstance = null;
     }
 
-    // Dynamic width: 40px per bar, minimum fits container
-    const containerWidth = scrollContainer ? scrollContainer.clientWidth : 400;
-    const dynamicWidth = Math.max(containerWidth, chartData.length * 40);
-    canvas.style.width = dynamicWidth + 'px';
-    canvas.style.height = '240px';
-
-    // Scroll to the right (most recent months)
-    if (scrollContainer && dynamicWidth > containerWidth) {
-        setTimeout(() => { scrollContainer.scrollLeft = scrollContainer.scrollWidth; }, 100);
-    }
-
     const ctx = canvas.getContext('2d');
 
     quotationTimeChartInstance = new Chart(ctx, {
@@ -2400,11 +2389,11 @@ function renderQuotationTimeChart(data) {
                 backgroundColor: 'rgba(0, 120, 212, 0.7)',
                 borderColor: '#0078D4',
                 borderWidth: 1,
-                borderRadius: 4
+                borderRadius: 3
             }]
         },
         options: {
-            responsive: false,
+            responsive: true,
             maintainAspectRatio: false,
             animation: {
                 duration: 0
@@ -2429,7 +2418,13 @@ function renderQuotationTimeChart(data) {
                     grid: { color: '#eee' }
                 },
                 x: {
-                    ticks: { font: { size: 8 }, maxRotation: 45, minRotation: 45 },
+                    ticks: {
+                        font: { size: 7 },
+                        maxRotation: 90,
+                        minRotation: 45,
+                        autoSkip: true,
+                        maxTicksLimit: 24
+                    },
                     grid: { display: false }
                 }
             }
@@ -2859,20 +2854,11 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
         entityChartInstance = null;
     }
 
-    // Dynamic canvas height: 40px per entity, minimum 180px
-    // Container has max-height with scroll; canvas expands inside it
-    const dynamicHeight = Math.max(180, data.length * 40);
-    const containerWidth = container.clientWidth || 400;
-    canvas.style.height = dynamicHeight + 'px';
-    canvas.style.width = containerWidth + 'px';
-    canvas.width = containerWidth;
-    canvas.height = dynamicHeight;
-
     const ctx = canvas.getContext('2d');
     const valueKey = viewType === 'quote' ? 'quoteValue' : 'poSpend';
     const labelSuffix = viewType === 'quote' ? 'Quote Value' : 'PO Spend';
 
-    console.log(`📊 Rendering entity chart - View: ${viewType}, Key: ${valueKey}, Height: ${dynamicHeight}px`);
+    console.log(`📊 Rendering entity chart - View: ${viewType}, Key: ${valueKey}`);
 
     entityChartInstance = new Chart(ctx, {
         type: 'bar',
@@ -2884,12 +2870,11 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
                 backgroundColor: data.map(d => d.color),
                 borderColor: data.map(d => d.color),
                 borderWidth: 1,
-                borderRadius: 4,
-                barThickness: Math.max(14, Math.min(22, Math.floor(dynamicHeight / data.length * 0.5)))
+                borderRadius: 4
             }]
         },
         options: {
-            responsive: false,
+            responsive: true,
             maintainAspectRatio: false,
             indexAxis: 'y',
             plugins: {
