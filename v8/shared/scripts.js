@@ -1333,7 +1333,7 @@ function initFilters() {
     ['filterDateFrom', 'filterDateTo'].forEach(id => {
         const dateInput = document.getElementById(id);
         if (dateInput) {
-            dateInput.addEventListener('change', function() {
+            dateInput.addEventListener('change', function () {
                 currentFilters.dateFrom = document.getElementById('filterDateFrom')?.value || null;
                 currentFilters.dateTo = document.getElementById('filterDateTo')?.value || null;
                 console.log(`📅 Date filter: ${currentFilters.dateFrom} → ${currentFilters.dateTo}`);
@@ -2377,11 +2377,11 @@ function renderQuotationTimeChart(data) {
         quotationTimeChartInstance = null;
     }
 
-    // Dynamic width: 35px per bar, minimum fits container
+    // Dynamic width: 40px per bar, minimum fits container
     const containerWidth = scrollContainer ? scrollContainer.clientWidth : 400;
-    const dynamicWidth = Math.max(containerWidth, chartData.length * 35);
+    const dynamicWidth = Math.max(containerWidth, chartData.length * 40);
     canvas.style.width = dynamicWidth + 'px';
-    canvas.style.height = '220px';
+    canvas.style.height = '240px';
 
     // Scroll to the right (most recent months)
     if (scrollContainer && dynamicWidth > containerWidth) {
@@ -2859,9 +2859,14 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
         entityChartInstance = null;
     }
 
-    // Dynamic height: 40px per entity, minimum 180px
+    // Dynamic canvas height: 40px per entity, minimum 180px
+    // Container has max-height with scroll; canvas expands inside it
     const dynamicHeight = Math.max(180, data.length * 40);
-    container.style.height = dynamicHeight + 'px';
+    const containerWidth = container.clientWidth || 400;
+    canvas.style.height = dynamicHeight + 'px';
+    canvas.style.width = containerWidth + 'px';
+    canvas.width = containerWidth;
+    canvas.height = dynamicHeight;
 
     const ctx = canvas.getContext('2d');
     const valueKey = viewType === 'quote' ? 'quoteValue' : 'poSpend';
@@ -2880,11 +2885,11 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
                 borderColor: data.map(d => d.color),
                 borderWidth: 1,
                 borderRadius: 4,
-                barThickness: Math.max(14, Math.min(24, Math.floor(dynamicHeight / data.length * 0.5)))
+                barThickness: Math.max(14, Math.min(22, Math.floor(dynamicHeight / data.length * 0.5)))
             }]
         },
         options: {
-            responsive: true,
+            responsive: false,
             maintainAspectRatio: false,
             indexAxis: 'y',
             plugins: {
