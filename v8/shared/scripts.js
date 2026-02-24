@@ -1761,7 +1761,12 @@ function applyFilters() {
         // Update Quotation to PO Time chart from conversion_times.json if available
         const quotationTimeData = [];
         if (window._conversionTimes && window._conversionTimes.monthlyAverage && window._conversionTimes.monthlyAverage.length > 0) {
+            const dateFrom = currentFilters.dateFrom ? currentFilters.dateFrom.substring(0, 7) : null; // YYYY-MM
+            const dateTo = currentFilters.dateTo ? currentFilters.dateTo.substring(0, 7) : null;
             window._conversionTimes.monthlyAverage.forEach(item => {
+                // Filter by date range if set
+                if (dateFrom && item.month < dateFrom) return;
+                if (dateTo && item.month > dateTo) return;
                 quotationTimeData.push({ month: item.month, avgDays: item.avgDays });
             });
         }
