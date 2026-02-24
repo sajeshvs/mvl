@@ -652,6 +652,7 @@ body {
     gap: 2px;
     max-height: 280px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #topSuppliers .rank-item {
