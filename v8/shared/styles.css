@@ -506,9 +506,13 @@ body {
 }
 
 #entityAxisBar {
-    height: 30px;
+    height: 35px;
     overflow: hidden;
-    border-top: 1px solid #eee;
+    background: #fff;
+}
+
+#entityAxisBar canvas {
+    display: block;
 }
 
 #materialChartContainer {
@@ -527,7 +531,7 @@ body {
 }
 
 .quotation-time-scroll {
-    height: 200px;
+    height: 180px;
     position: relative;
 }
 

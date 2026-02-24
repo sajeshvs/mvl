@@ -20,7 +20,6 @@ let clientCountryMap = null;
 let trendChartInstance = null;
 let quotationTimeChartInstance = null;
 let entityChartInstance = null;
-let entityAxisChartInstance = null;
 let materialChartInstance = null;
 let supplierMap = null;
 
@@ -2851,14 +2850,10 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
         return;
     }
 
-    // Destroy previous instances
+    // Destroy previous instance
     if (entityChartInstance) {
         entityChartInstance.destroy();
         entityChartInstance = null;
-    }
-    if (entityAxisChartInstance) {
-        entityAxisChartInstance.destroy();
-        entityAxisChartInstance = null;
     }
 
     // Dynamic canvas height: 28px per entity for nice bar thickness
@@ -2880,48 +2875,44 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
     const renderFrozenAxis = () => {
         if (!entityChartInstance || !axisCanvas) return;
         const chartLeft = entityChartInstance.chartArea.left;
-        const xMax = entityChartInstance.scales.x.max;
+        const chartRight = entityChartInstance.chartArea.right;
+        const xScale = entityChartInstance.scales.x;
+        const xMax = xScale.max;
 
         axisCanvas.width = containerWidth;
-        axisCanvas.height = 30;
+        axisCanvas.height = 35;
         axisCanvas.style.width = containerWidth + 'px';
-        axisCanvas.style.height = '30px';
+        axisCanvas.style.height = '35px';
 
-        if (entityAxisChartInstance) {
-            entityAxisChartInstance.destroy();
-        }
+        // Draw axis directly on canvas — no Chart.js needed
+        const axCtx = axisCanvas.getContext('2d');
+        axCtx.clearRect(0, 0, containerWidth, 35);
 
-        entityAxisChartInstance = new Chart(axisCanvas.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: [''],
-                datasets: [{ data: [0], backgroundColor: 'transparent', borderWidth: 0 }]
-            },
-            options: {
-                responsive: false,
-                indexAxis: 'y',
-                animation: false,
-                plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                scales: {
-                    x: {
-                        min: 0,
-                        max: xMax,
-                        beginAtZero: true,
-                        grid: { display: false },
-                        ticks: {
-                            callback: function(value) { return formatCurrencyShort(value); },
-                            font: { size: 10 }
-                        },
-                        border: { display: false }
-                    },
-                    y: {
-                        display: true,
-                        afterFit: function(axis) { axis.width = chartLeft; },
-                        ticks: { display: false },
-                        grid: { display: false },
-                        border: { display: false }
-                    }
-                }
+        // Draw top line
+        axCtx.strokeStyle = '#ddd';
+        axCtx.lineWidth = 1;
+        axCtx.beginPath();
+        axCtx.moveTo(chartLeft, 0.5);
+        axCtx.lineTo(chartRight, 0.5);
+        axCtx.stroke();
+
+        // Draw tick labels
+        axCtx.font = '10px Segoe UI, sans-serif';
+        axCtx.fillStyle = '#666';
+        axCtx.textAlign = 'center';
+        axCtx.textBaseline = 'top';
+        const ticks = xScale.ticks;
+        ticks.forEach(tick => {
+            const x = xScale.getPixelForValue(tick.value);
+            if (x >= chartLeft && x <= chartRight) {
+                // Tick mark
+                axCtx.strokeStyle = '#ddd';
+                axCtx.beginPath();
+                axCtx.moveTo(x, 0);
+                axCtx.lineTo(x, 5);
+                axCtx.stroke();
+                // Label
+                axCtx.fillText(formatCurrencyShort(tick.value), x, 8);
             }
         });
     };
