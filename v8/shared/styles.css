@@ -399,6 +399,19 @@ body {
     gap: var(--space-lg);
 }
 
+/* Make last chart-card in column fill remaining space */
+.column .chart-card:last-child {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.column .chart-card:last-child .chart-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 /* ============================================
    CHART CARDS
    ============================================ */
@@ -514,7 +527,8 @@ body {
 }
 
 .quotation-time-scroll {
-    height: 160px;
+    flex: 1;
+    min-height: 160px;
     position: relative;
 }
 
@@ -636,7 +650,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    max-height: 420px;
+    max-height: 350px;
     overflow-y: auto;
 }
 
@@ -2625,6 +2639,7 @@ body {
     justify-content: center;
     padding: 40px 20px;
     text-align: center;
+    flex: 1;
     min-height: 120px;
 }
 
