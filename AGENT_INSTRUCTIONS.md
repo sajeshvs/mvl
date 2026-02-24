@@ -1,6 +1,6 @@
 # MVL Supply Chain Intel Hub — Agent Instructions
 
-**Last Updated:** February 21, 2026  
+**Last Updated:** February 24, 2026  
 **Current Version:** V8 (Dynamic Excel Pipeline with Change Orders)  
 **Previous Versions:** V7 (CSV Pipeline), V6 (Modular JS), V5 (Unified Dashboard)
 
@@ -11,10 +11,10 @@
 ```
 mvl-powerbi-dashboards/
 ├── v8/                              # CURRENT VERSION
-│   ├── index.html                   # Single-page app with 3 tabs (1,047 lines)
+│   ├── index.html                   # Single-page app with 3 tabs (1,063 lines)
 │   ├── shared/
-│   │   ├── scripts.js               # All dashboard logic (~5,470 lines)
-│   │   ├── styles.css               # Complete CSS with design tokens
+│   │   ├── scripts.js               # All dashboard logic (~5,860 lines)
+│   │   ├── styles.css               # Complete CSS with design tokens (~2,820 lines)
 │   │   ├── images/                  # Logo and image assets
 │   │   └── components/              # Component docs
 │   ├── data/
@@ -24,6 +24,9 @@ mvl-powerbi-dashboards/
 │   │   ├── md_data.json             # M&D tab: combined RFQs + POs
 │   │   ├── change_orders.json       # CO groups with CO PO lines
 │   │   ├── conversion_times.json    # RFQ→PO links, monthly averages
+│   │   ├── client_country_map.json  # Client→country mapping (1,098 entries, multi-source)
+│   │   ├── build_client_country_map.py  # Country mapping pipeline (multi-source: address, phone, email, entity)
+│   │   ├── build_client_country_map_backup.py  # Original single-source backup
 │   │   ├── employees.json           # MVL employee performance records
 │   │   ├── data_metadata.json       # Build metadata, source files, dates
 │   │   ├── entity_code_map.json     # Entity code to name mapping
@@ -95,6 +98,8 @@ git push mvl main
 - **Tables:** Supplier List (paginated), Quotation Details (paginated, sortable)
 - **Filters:** Entity, Project, Supplier, Status, Material, Material Code — all with SearchableSelect + instant filtering
 - **Special:** Clear button, search with feedback indicator, `normalizeCountry()` for map
+- **Map Data:** `clientCountryMap` (1,098 entries from `client_country_map.json`) with entity-based fallback
+- **Country Detection:** Multi-source priority: address → phone_validation → phone_prefix → email_tld → entity → default (UAE)
 
 ### Tab 2: Global Spend Analysis (GSA)
 - **Theme:** Orange `#d96f3c`  
@@ -126,7 +131,7 @@ git push mvl main
 
 ## V8 Architecture
 
-### Single-File JavaScript (scripts.js ~5,470 lines)
+### Single-File JavaScript (scripts.js ~5,860 lines)
 
 Unlike V6's modular ES6 architecture, V8 uses a single `scripts.js` file with all logic:
 
@@ -142,6 +147,7 @@ scripts.js
 ├── SM Rendering (L1550-2100)           — renderSupplierMarketplace(), KPIs, status, material distribution
 ├── SM Top Suppliers & Map (L2100-2900) — renderTopSuppliers(), Leaflet map, supplier profile, employee list
 ├── SM Charts (L2900-3100)              — renderEntityChartCanvas(), renderTrendChartLine(), quotation-to-PO time
+├── Country Normalization (L2980)        — normalizeCountry() (~150 entries), countryCoords (60+ countries)
 ├── GSA Tab (L3100-4200)                — initGlobalSpendAnalysis(), filters, KPIs, charts, PO table, CO badges
 ├── GSA/SM Clear Functions (L4200-4260) — clearGSAFilters(), clearSMFilters(), clearMdFilters()
 ├── M&D Tab (L4260-5400)               — initMaterialsDisciplines(), filters, KPIs, charts, supplier overview
@@ -159,7 +165,7 @@ scripts.js
 - `updateSupplierProfile(name)` — Populate supplier profile card
 - `renderEntityChartCanvas()` — Entity chart with onClick cross-filter
 - `renderTrendChartLine()` — Monthly trend chart with year labels
-- `normalizeCountry()` — Global country name normalization
+- `normalizeCountry()` — Global country name normalization (~150 entries; covers cities, states, typos, variants)
 
 **GSA Tab:**
 - `initGlobalSpendAnalysis()` — Main GSA init function (populates filters, renders all charts)
@@ -402,6 +408,10 @@ python -m http.server 8080
 14. **Header-Based Columns:** Pipeline uses `find_column()` + `build_column_map()` for column lookup with positional fallback
 15. **Zero Fallbacks:** `getFallbackData()` returns zeros/empty arrays — never shows stale snapshot data
 16. **No Hardcoded Counts:** All KPI examples in code use generic phrasing, not snapshot numbers
+17. **Country Normalization:** `normalizeCountry()` applied across all 3 tabs — SM map, supplier table, supplier profiles (SM/GSA/M&D), M&D supplier table
+18. **Country Mapping Pipeline:** `build_client_country_map.py` uses 4-source priority: address → phone_validation → phone_prefix → email_tld, with entity-based fallback and 27 manual overrides
+19. **CountryCoords:** 60+ country coordinates for Leaflet map (including smaller nations); non-standard country names like "Dubai", "Türkiye", "TURKEY", "Pakisatn" all normalized before coord lookup
+20. **Entity Country Map:** 29 entities mapped (20 original + 9 GSA-only: MVL VENTURES, MVL ENERGY, MVL SOLUTIONS, CENTRICO, MVL TRADING, MVL FACILITIES, MVL ARABIA, MVL PROJECTS, Unknown)
 
 ---
 
@@ -412,4 +422,4 @@ See `v8/REVIEW_RESPONSE.md` for the complete question-by-question breakdown with
 
 ---
 
-*Updated: February 21, 2026*
+*Updated: February 24, 2026*
