@@ -2356,6 +2356,7 @@ function renderTrendChartLine(data) {
 // ============================================
 function renderQuotationTimeChart(data) {
     const canvas = document.getElementById('quotationTimeChart');
+    const scrollContainer = document.getElementById('quotationTimeScroll');
     if (!canvas) return;
 
     // Use provided data; no fallback with fake numbers
@@ -2376,6 +2377,17 @@ function renderQuotationTimeChart(data) {
         quotationTimeChartInstance = null;
     }
 
+    // Dynamic width: 35px per bar, minimum fits container
+    const containerWidth = scrollContainer ? scrollContainer.clientWidth : 400;
+    const dynamicWidth = Math.max(containerWidth, chartData.length * 35);
+    canvas.style.width = dynamicWidth + 'px';
+    canvas.style.height = '220px';
+
+    // Scroll to the right (most recent months)
+    if (scrollContainer && dynamicWidth > containerWidth) {
+        setTimeout(() => { scrollContainer.scrollLeft = scrollContainer.scrollWidth; }, 100);
+    }
+
     const ctx = canvas.getContext('2d');
 
     quotationTimeChartInstance = new Chart(ctx, {
@@ -2392,7 +2404,7 @@ function renderQuotationTimeChart(data) {
             }]
         },
         options: {
-            responsive: true,
+            responsive: false,
             maintainAspectRatio: false,
             animation: {
                 duration: 0
@@ -2401,7 +2413,7 @@ function renderQuotationTimeChart(data) {
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: (ctx) => `${ctx.raw} days`
+                        label: (ctx) => `${ctx.raw} days (${chartData[ctx.dataIndex]?.count || 0} POs)`
                     }
                 }
             },
@@ -2413,11 +2425,11 @@ function renderQuotationTimeChart(data) {
                         text: 'Days',
                         font: { size: 10 }
                     },
-                    ticks: { font: { size: 9 }, stepSize: 5 },
+                    ticks: { font: { size: 9 }, stepSize: 50 },
                     grid: { color: '#eee' }
                 },
                 x: {
-                    ticks: { font: { size: 8 }, maxRotation: 45, minRotation: 0 },
+                    ticks: { font: { size: 8 }, maxRotation: 45, minRotation: 45 },
                     grid: { display: false }
                 }
             }
@@ -2428,13 +2440,13 @@ function renderQuotationTimeChart(data) {
                 const { ctx: c, data, chartArea } = chart;
                 const meta = chart.getDatasetMeta(0);
                 c.save();
-                c.font = 'bold 9px Segoe UI, sans-serif';
+                c.font = 'bold 8px Segoe UI, sans-serif';
                 c.fillStyle = '#333';
                 c.textAlign = 'center';
                 meta.data.forEach((bar, i) => {
                     const val = data.datasets[0].data[i];
-                    if (val != null) {
-                        c.fillText(val + 'd', bar.x, bar.y - 4);
+                    if (val != null && bar.y < chartArea.bottom - 10) {
+                        c.fillText(Math.round(val) + 'd', bar.x, bar.y - 4);
                     }
                 });
                 c.restore();
@@ -2835,7 +2847,8 @@ document.addEventListener('click', (e) => {
 // ============================================
 function renderEntityChartCanvas(data, viewType = 'quote') {
     const canvas = document.getElementById('entityChartCanvas');
-    if (!canvas || !data || data.length === 0) {
+    const container = document.getElementById('entityChartContainer');
+    if (!canvas || !container || !data || data.length === 0) {
         console.warn('⚠️ Cannot render entity chart - missing canvas or data');
         return;
     }
@@ -2846,12 +2859,15 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
         entityChartInstance = null;
     }
 
+    // Dynamic height: 40px per entity, minimum 180px
+    const dynamicHeight = Math.max(180, data.length * 40);
+    container.style.height = dynamicHeight + 'px';
+
     const ctx = canvas.getContext('2d');
     const valueKey = viewType === 'quote' ? 'quoteValue' : 'poSpend';
     const labelSuffix = viewType === 'quote' ? 'Quote Value' : 'PO Spend';
 
-    console.log(`📊 Rendering entity chart - View: ${viewType}, Key: ${valueKey}`);
-    console.log('📊 Entity data:', data.map(d => ({ entity: d.entity, [valueKey]: d[valueKey] })));
+    console.log(`📊 Rendering entity chart - View: ${viewType}, Key: ${valueKey}, Height: ${dynamicHeight}px`);
 
     entityChartInstance = new Chart(ctx, {
         type: 'bar',
@@ -2863,7 +2879,8 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
                 backgroundColor: data.map(d => d.color),
                 borderColor: data.map(d => d.color),
                 borderWidth: 1,
-                borderRadius: 4
+                borderRadius: 4,
+                barThickness: Math.max(14, Math.min(24, Math.floor(dynamicHeight / data.length * 0.5)))
             }]
         },
         options: {
@@ -2891,7 +2908,10 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
                     }
                 },
                 y: {
-                    grid: { display: false }
+                    grid: { display: false },
+                    ticks: {
+                        font: { size: 11 }
+                    }
                 }
             },
             onClick: (evt, elements) => {
@@ -2905,7 +2925,36 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
                     }
                 }
             }
-        }
+        },
+        plugins: [{
+            // Value labels on bars
+            id: 'entityBarLabels',
+            afterDatasetsDraw(chart) {
+                const { ctx: c, data: chartData, chartArea } = chart;
+                const meta = chart.getDatasetMeta(0);
+                c.save();
+                c.font = 'bold 9px Segoe UI, sans-serif';
+                c.textBaseline = 'middle';
+                meta.data.forEach((bar, i) => {
+                    const val = chartData.datasets[0].data[i];
+                    if (val != null && val > 0) {
+                        const label = formatCurrencyShort(val);
+                        const barWidth = bar.width || (bar.x - chartArea.left);
+                        // Place label inside bar if wide enough, otherwise outside
+                        if (barWidth > 60) {
+                            c.fillStyle = '#fff';
+                            c.textAlign = 'right';
+                            c.fillText(label, bar.x - 6, bar.y);
+                        } else {
+                            c.fillStyle = '#333';
+                            c.textAlign = 'left';
+                            c.fillText(label, bar.x + 4, bar.y);
+                        }
+                    }
+                });
+                c.restore();
+            }
+        }]
     });
 }
 

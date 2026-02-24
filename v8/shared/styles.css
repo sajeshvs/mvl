@@ -496,7 +496,8 @@ body {
 }
 
 #entityChartContainer {
-    height: 180px;
+    min-height: 180px;
+    /* Dynamic height set by JS based on entity count */
 }
 
 #materialChartContainer {
@@ -510,7 +511,17 @@ body {
 }
 
 #quotationTimeChart {
-    height: 200px;
+    min-height: 220px;
+}
+
+.quotation-time-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+}
+
+.quotation-time-scroll canvas {
+    min-height: 220px;
 }
 
 .trend-chart-wrapper {
