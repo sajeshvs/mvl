@@ -2897,8 +2897,8 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
         axCtx.stroke();
 
         // Draw tick labels
-        axCtx.font = '10px Segoe UI, sans-serif';
-        axCtx.fillStyle = '#666';
+        axCtx.font = 'bold 12px Segoe UI, sans-serif';
+        axCtx.fillStyle = '#555';
         axCtx.textAlign = 'center';
         axCtx.textBaseline = 'top';
         const ticks = xScale.ticks;

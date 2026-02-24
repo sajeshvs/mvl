@@ -531,7 +531,8 @@ body {
 }
 
 .quotation-time-scroll {
-    height: 180px;
+    flex: 1;
+    min-height: 160px;
     position: relative;
 }
 
