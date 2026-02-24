@@ -20,6 +20,7 @@ let clientCountryMap = null;
 let trendChartInstance = null;
 let quotationTimeChartInstance = null;
 let entityChartInstance = null;
+let entityAxisChartInstance = null;
 let materialChartInstance = null;
 let supplierMap = null;
 
@@ -2843,21 +2844,27 @@ document.addEventListener('click', (e) => {
 function renderEntityChartCanvas(data, viewType = 'quote') {
     const canvas = document.getElementById('entityChartCanvas');
     const container = document.getElementById('entityChartContainer');
+    const scrollContainer = document.getElementById('entityChartScroll');
+    const axisCanvas = document.getElementById('entityAxisCanvas');
     if (!canvas || !container || !data || data.length === 0) {
         console.warn('⚠️ Cannot render entity chart - missing canvas or data');
         return;
     }
 
-    // Destroy previous instance
+    // Destroy previous instances
     if (entityChartInstance) {
         entityChartInstance.destroy();
         entityChartInstance = null;
+    }
+    if (entityAxisChartInstance) {
+        entityAxisChartInstance.destroy();
+        entityAxisChartInstance = null;
     }
 
     // Dynamic canvas height: 28px per entity for nice bar thickness
     const barHeight = 28;
     const dynamicHeight = Math.max(180, data.length * barHeight);
-    const containerWidth = container.clientWidth || 400;
+    const containerWidth = (scrollContainer || container).clientWidth || 400;
     canvas.style.width = containerWidth + 'px';
     canvas.style.height = dynamicHeight + 'px';
     canvas.width = containerWidth;
@@ -2868,6 +2875,56 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
     const labelSuffix = viewType === 'quote' ? 'Quote Value' : 'PO Spend';
 
     console.log(`📊 Rendering entity chart - View: ${viewType}, Key: ${valueKey}`);
+
+    // Function to render frozen x-axis after main chart completes
+    const renderFrozenAxis = () => {
+        if (!entityChartInstance || !axisCanvas) return;
+        const chartLeft = entityChartInstance.chartArea.left;
+        const xMax = entityChartInstance.scales.x.max;
+
+        axisCanvas.width = containerWidth;
+        axisCanvas.height = 30;
+        axisCanvas.style.width = containerWidth + 'px';
+        axisCanvas.style.height = '30px';
+
+        if (entityAxisChartInstance) {
+            entityAxisChartInstance.destroy();
+        }
+
+        entityAxisChartInstance = new Chart(axisCanvas.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: [''],
+                datasets: [{ data: [0], backgroundColor: 'transparent', borderWidth: 0 }]
+            },
+            options: {
+                responsive: false,
+                indexAxis: 'y',
+                animation: false,
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                scales: {
+                    x: {
+                        min: 0,
+                        max: xMax,
+                        beginAtZero: true,
+                        grid: { display: false },
+                        ticks: {
+                            callback: function(value) { return formatCurrencyShort(value); },
+                            font: { size: 10 }
+                        },
+                        border: { display: false }
+                    },
+                    y: {
+                        display: true,
+                        afterFit: function(axis) { axis.width = chartLeft; },
+                        ticks: { display: false },
+                        grid: { display: false },
+                        border: { display: false }
+                    }
+                }
+            }
+        });
+    };
 
     entityChartInstance = new Chart(ctx, {
         type: 'bar',
@@ -2887,6 +2944,9 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
             responsive: false,
             maintainAspectRatio: false,
             indexAxis: 'y',
+            animation: {
+                onComplete: renderFrozenAxis
+            },
             plugins: {
                 legend: { display: false },
                 tooltip: {
@@ -2899,13 +2959,8 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
             },
             scales: {
                 x: {
-                    beginAtZero: true,
-                    grid: { display: false },
-                    ticks: {
-                        callback: function (value) {
-                            return formatCurrencyShort(value);
-                        }
-                    }
+                    display: false,
+                    beginAtZero: true
                 },
                 y: {
                     grid: { display: false },

@@ -496,9 +496,19 @@ body {
 }
 
 #entityChartContainer {
-    max-height: 300px;
+    position: relative;
+}
+
+#entityChartScroll {
+    max-height: 270px;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+#entityAxisBar {
+    height: 30px;
+    overflow: hidden;
+    border-top: 1px solid #eee;
 }
 
 #materialChartContainer {
@@ -517,7 +527,7 @@ body {
 }
 
 .quotation-time-scroll {
-    height: 260px;
+    height: 200px;
     position: relative;
 }
 
