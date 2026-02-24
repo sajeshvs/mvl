@@ -457,7 +457,7 @@ function enrichDashboardWithRealData() {
             name: s.name,
             lat: s.location.latitude,
             lng: s.location.longitude,
-            country: s.address?.country_standardized || s.address?.country || 'Unknown',
+            country: normalizeCountry(s.address?.country_standardized || s.address?.country) || 'Unknown',
             poCount: supplierSpend[s.name]?.poCount || 0,
             spend: supplierSpend[s.name]?.spend || 0
         }));
@@ -817,7 +817,8 @@ function populateBottomFilters(tabType) {
         const countries = new Set();
         const materials = new Set();
         (suppliersData?.suppliers || []).forEach(s => {
-            if (s.address?.country_standardized) countries.add(s.address.country_standardized);
+            const c = normalizeCountry(s.address?.country_standardized || s.address?.country);
+            if (c) countries.add(c);
             if (s.material_category) materials.add(s.material_category);
         });
 
@@ -1006,12 +1007,12 @@ function generateSupplierListRowsPaginated() {
                 s.name,
                 s.contact?.primary_contact,
                 s.contact?.email,
-                s.address?.country_standardized,
+                normalizeCountry(s.address?.country_standardized),
                 s.material_category
             ].filter(Boolean).join(' ').toLowerCase();
             if (!searchFields.includes(searchTerm)) return false;
         }
-        if (countryFilter && (s.address?.country_standardized || '') !== countryFilter) return false;
+        if (countryFilter && normalizeCountry(s.address?.country_standardized || '') !== countryFilter) return false;
         if (materialFilter && (s.material_category || '') !== materialFilter) return false;
         return true;
     });
@@ -1029,7 +1030,7 @@ function generateSupplierListRowsPaginated() {
             <td>${s.contact?.primary_contact || '-'}</td>
             <td><a href="mailto:${s.contact?.email || ''}" onclick="event.stopPropagation();">${s.contact?.email || '-'}</a></td>
             <td>${s.contact?.phone || '-'}</td>
-            <td>${s.address?.country_standardized || s.address?.country || '-'}</td>
+            <td>${normalizeCountry(s.address?.country_standardized || s.address?.country) || '-'}</td>
             <td><span class="material-tag">${s.material_category || '-'}</span></td>
         </tr>
     `).join('');
@@ -1056,7 +1057,7 @@ function selectSupplierByName(name) {
                 spend: 0
             };
             document.getElementById('supplierName').textContent = fullSupplier.name;
-            document.getElementById('supplierLocation').textContent = fullSupplier.address?.country_standardized || fullSupplier.address?.country || '-';
+            document.getElementById('supplierLocation').textContent = normalizeCountry(fullSupplier.address?.country_standardized || fullSupplier.address?.country) || '-';
             document.getElementById('supplierAvatar').textContent = fullSupplier.name.charAt(0);
             document.getElementById('supplierContact').textContent = fullSupplier.contact?.primary_contact || '-';
             document.getElementById('supplierEmail').textContent = fullSupplier.contact?.email || '-';
@@ -1645,7 +1646,16 @@ function applyFilters() {
             'Gov Svcs': 'United Arab Emirates',
             'MV LLC': 'United Arab Emirates',
             'MPG JV': 'United Arab Emirates',
-            'MW-OCS': 'United Arab Emirates'
+            'MW-OCS': 'United Arab Emirates',
+            'MVL VENTURES': 'United Arab Emirates',
+            'MVL ENERGY': 'United Arab Emirates',
+            'MVL SOLUTIONS': 'United Arab Emirates',
+            'CENTRICO': 'United Arab Emirates',
+            'MVL TRADING': 'United Arab Emirates',
+            'MVL FACILITIES': 'United Arab Emirates',
+            'MVL ARABIA': 'Saudi Arabia',
+            'MVL PROJECTS': 'United Arab Emirates',
+            'Unknown': 'United Arab Emirates'
         };
 
         // Normalize country names — uses global normalizeCountry()
@@ -1709,8 +1719,7 @@ function applyFilters() {
                 document.getElementById('supplierName').textContent = currentFilters.supplier;
                 document.getElementById('supplierAvatar').textContent = currentFilters.supplier.charAt(0).toUpperCase();
                 document.getElementById('supplierLocation').textContent =
-                    fullSupplier?.address?.country_standardized ||
-                    fullSupplier?.phone_validation?.phone_country ||
+                    normalizeCountry(fullSupplier?.address?.country_standardized || fullSupplier?.phone_validation?.phone_country) ||
                     (supplierQuotes.length > 0 ? `${supplierQuotes.length} Quotations` : '-');
                 document.getElementById('supplierContact').textContent =
                     fullSupplier?.contact?.primary_contact || '-';
@@ -2121,8 +2130,7 @@ function selectSupplier(index) {
     // Update profile card with real data
     document.getElementById('supplierName').textContent = supplier.name;
     document.getElementById('supplierLocation').textContent =
-        fullSupplier?.address?.country_standardized ||
-        fullSupplier?.phone_validation?.phone_country ||
+        normalizeCountry(fullSupplier?.address?.country_standardized || fullSupplier?.phone_validation?.phone_country) ||
         `${supplier.poCount} Purchase Orders`;
     document.getElementById('supplierAvatar').textContent = supplier.name.charAt(0).toUpperCase();
     document.getElementById('supplierContact').textContent =
@@ -2526,7 +2534,38 @@ const countryCoords = {
     'Mexico': { lat: 23.6345, lng: -102.5528 },
     'Brazil': { lat: -14.2350, lng: -51.9253 },
     'Russia': { lat: 61.5240, lng: 105.3188 },
-    'South Africa': { lat: -30.5595, lng: 22.9375 }
+    'South Africa': { lat: -30.5595, lng: 22.9375 },
+    'Hungary': { lat: 47.1625, lng: 19.5033 },
+    'Switzerland': { lat: 46.8182, lng: 8.2275 },
+    'Finland': { lat: 61.9241, lng: 25.7482 },
+    'Ireland': { lat: 53.1424, lng: -7.6921 },
+    'Sweden': { lat: 60.1282, lng: 18.6435 },
+    'Norway': { lat: 60.4720, lng: 8.4689 },
+    'Denmark': { lat: 56.2639, lng: 9.5018 },
+    'Portugal': { lat: 39.3999, lng: -8.2245 },
+    'Poland': { lat: 51.9194, lng: 19.1451 },
+    'Czech Republic': { lat: 49.8175, lng: 15.4730 },
+    'Austria': { lat: 47.5162, lng: 14.5501 },
+    'Taiwan': { lat: 23.6978, lng: 120.9605 },
+    'Vietnam': { lat: 14.0583, lng: 108.2772 },
+    'Thailand': { lat: 15.8700, lng: 100.9925 },
+    'Malaysia': { lat: 4.2105, lng: 101.9758 },
+    'Indonesia': { lat: -0.7893, lng: 113.9213 },
+    'Ukraine': { lat: 48.3794, lng: 31.1656 },
+    'Cyprus': { lat: 35.1264, lng: 33.4299 },
+    'Armenia': { lat: 40.0691, lng: 45.0382 },
+    'Belize': { lat: 17.1899, lng: -88.4976 },
+    'Ethiopia': { lat: 9.1450, lng: 40.4897 },
+    'Niger': { lat: 17.6078, lng: 8.0817 },
+    'Nigeria': { lat: 9.0820, lng: 8.6753 },
+    'Uganda': { lat: 1.3733, lng: 32.2903 },
+    'Zimbabwe': { lat: -19.0154, lng: 29.1549 },
+    'Marshall Islands': { lat: 7.1315, lng: 171.1845 },
+    'Central African Republic': { lat: 6.6111, lng: 20.9394 },
+    'Iran': { lat: 32.4279, lng: 53.6880 },
+    'Hong Kong': { lat: 22.3193, lng: 114.1694 },
+    'Russia': { lat: 61.5240, lng: 105.3188 },
+    'Palestine': { lat: 31.9522, lng: 35.2332 }
 };
 
 // ============================================
@@ -2633,7 +2672,7 @@ function renderSupplierMapFiltered(suppliers, pos) {
         if (!country || country === 'null') return;
 
         // Normalize country names
-        if (country === 'Dubai' || country === 'Dubai, UAE') country = 'United Arab Emirates';
+        country = normalizeCountry(country);
 
         if (!countryGroups[country]) {
             countryGroups[country] = {
@@ -2782,23 +2821,142 @@ function formatCurrency(value) {
 // SM-Q8: Global normalizeCountry() for map lookup and cross-filtering
 function normalizeCountry(country) {
     if (!country) return country;
-    const lower = country.toLowerCase().trim();
+    const trimmed = country.trim();
+    if (!trimmed || trimmed === '---' || trimmed === '--' || trimmed === '...') return 'United Arab Emirates';
+    const lower = trimmed.toLowerCase();
     const normalize = {
+        // UAE variants
         'dubai': 'United Arab Emirates',
+        'dubai, uae': 'United Arab Emirates',
         'abu dhabi': 'United Arab Emirates',
         'sharjah': 'United Arab Emirates',
+        'sharjah-u.a.e': 'United Arab Emirates',
+        'ajman': 'United Arab Emirates',
+        'ajman, uae': 'United Arab Emirates',
+        'rak': 'United Arab Emirates',
+        'ras al khaimah': 'United Arab Emirates',
+        'ras alkhaimah': 'United Arab Emirates',
+        'fujairah': 'United Arab Emirates',
         'uae': 'United Arab Emirates',
+        'uuae': 'United Arab Emirates',
         'u.a.e': 'United Arab Emirates',
         'u.a.e.': 'United Arab Emirates',
+        'uae, dubai': 'United Arab Emirates',
+        'dubai, u.a.e': 'United Arab Emirates',
+        'unted arab emirates': 'United Arab Emirates',
         'united arab emirates': 'United Arab Emirates',
-        'usa': 'United States',
-        'us': 'United States',
-        'united states of america': 'United States',
-        'uk': 'United Kingdom',
-        'great britain': 'United Kingdom',
-        'england': 'United Kingdom',
+        // Saudi Arabia
         'ksa': 'Saudi Arabia',
         'kingdom of saudi arabia': 'Saudi Arabia',
+        'kingdom of sadui arabia': 'Saudi Arabia',
+        'riyadh': 'Saudi Arabia',
+        'riyadh/kharj': 'Saudi Arabia',
+        'dammam': 'Saudi Arabia',
+        'dammam/khobar/dahran': 'Saudi Arabia',
+        'jeddah': 'Saudi Arabia',
+        'makkah': 'Saudi Arabia',
+        // Turkey
+        'turkey': 'Turkey',
+        'türkiye': 'Turkey',
+        'turkiye': 'Turkey',
+        'istanbul': 'Turkey',
+        'istanbul (anatolia)': 'Turkey',
+        'istanbul (europe)': 'Turkey',
+        'ankara': 'Turkey',
+        'manisa': 'Turkey',
+        'kocaeli': 'Turkey',
+        // Greece
+        'athens': 'Greece',
+        'athens/piraeus/salamina': 'Greece',
+        'thessaloniki': 'Greece',
+        'chania': 'Greece',
+        // US
+        'usa': 'United States',
+        'us': 'United States',
+        'u.s.a': 'United States',
+        'u.s.a.': 'United States',
+        'united states of america': 'United States',
+        'guam': 'United States',
+        'honolulu, hi': 'United States',
+        'newport news, va': 'United States',
+        'compton, ca': 'United States',
+        'lafayette, la': 'United States',
+        'oregon': 'United States',
+        'california': 'United States',
+        'texas': 'United States',
+        'new york': 'United States',
+        'florida': 'United States',
+        'illinois': 'United States',
+        // UK
+        'uk': 'United Kingdom',
+        'u.k.': 'United Kingdom',
+        'great britain': 'United Kingdom',
+        'england': 'United Kingdom',
+        'scotland': 'United Kingdom',
+        'london': 'United Kingdom',
+        'bolton': 'United Kingdom',
+        'aberdeen': 'United Kingdom',
+        // China
+        'guangzhou, guangdong': 'China',
+        'zhengzhou, henan': 'China',
+        'zhengzhou/henan': 'China',
+        'ningbo, zhejiang': 'China',
+        'ningbo/zhejiang': 'China',
+        'zhuzhou/changsha/xiangtan, hunan': 'China',
+        'shanghai': 'China',
+        'shanghai china': 'China',
+        'beijing': 'China',
+        'shenzhen': 'China',
+        'qingdao': 'China',
+        'province,china': 'China',
+        'shandong province, china': 'China',
+        'hebei province': 'China',
+        'shina': 'China',
+        // Afghanistan
+        'kabul': 'Afghanistan',
+        'kabul afghanistan': 'Afghanistan',
+        'kabul, afghanistan.': 'Afghanistan',
+        'helmand of afghanistan': 'Afghanistan',
+        'afghanistani': 'Afghanistan',
+        // Pakistan
+        'pakisatn': 'Pakistan',
+        // India
+        'mumbai': 'India',
+        'new delhi': 'India',
+        'delhi': 'India',
+        'maharashtra': 'India',
+        'karnataka': 'India',
+        // Nepal
+        'kathmandu': 'Nepal',
+        // Japan
+        'naha, okinawa': 'Japan',
+        'okinawa': 'Japan',
+        'tokyo': 'Japan',
+        // Germany
+        'wittlich': 'Germany',
+        // Korea
+        'korea, democratic people\'s republic of': 'South Korea',
+        // Taiwan
+        'taiwan, province of china': 'Taiwan',
+        // Turkey (encoded)
+        'akden\u0130z/mers\u0130n': 'Turkey',
+        // Kuwait
+        'kuwait, 64030': 'Kuwait',
+        // Oman
+        'oman, al-qurum': 'Oman',
+        // Russia
+        'russian federation': 'Russia',
+        // Iran
+        'iran, islamic republic of': 'Iran',
+        // Vietnam
+        'viet nam': 'Vietnam',
+        // Marshall Islands
+        'majuro, marshall islands': 'Marshall Islands',
+        // Czech
+        'czechia': 'Czech Republic',
+        // South Asia (generic)
+        'south asia': 'India',
+        // Standard passthrough
         'oman': 'Oman',
         'bahrain': 'Bahrain',
         'kuwait': 'Kuwait',
@@ -2807,8 +2965,47 @@ function normalizeCountry(country) {
         'china': 'China',
         'germany': 'Germany',
         'france': 'France',
-        'italy': 'Italy'
+        'italy': 'Italy',
+        'japan': 'Japan',
+        'nepal': 'Nepal',
+        'pakistan': 'Pakistan',
+        'afghanistan': 'Afghanistan',
+        'jordan': 'Jordan',
+        'lebanon': 'Lebanon',
+        'egypt': 'Egypt',
+        'iraq': 'Iraq',
+        'singapore': 'Singapore',
+        'canada': 'Canada',
+        'australia': 'Australia',
+        'spain': 'Spain',
+        'netherlands': 'Netherlands',
+        'belgium': 'Belgium',
+        'switzerland': 'Switzerland',
+        'ireland': 'Ireland',
+        'ukraine': 'Ukraine',
+        'south africa': 'South Africa',
+        'hungary': 'Hungary',
+        'finland': 'Finland',
+        'cyprus': 'Cyprus',
+        'belize': 'Belize',
+        'armenia': 'Armenia',
+        'ethiopia': 'Ethiopia',
+        'niger': 'Niger',
+        'nigeria': 'Nigeria',
+        'uganda': 'Uganda',
+        'zimbabwe': 'Zimbabwe',
+        'thailand': 'Thailand',
+        'malaysia': 'Malaysia',
+        'south korea': 'South Korea',
+        'greece': 'Greece',
+        'turkey': 'Turkey',
+        'saudi arabia': 'Saudi Arabia',
+        'united states': 'United States',
+        'united kingdom': 'United Kingdom',
     };
+    // Check for address-like strings containing /Germany etc.
+    if (lower.includes('/germany')) return 'Germany';
+    if (lower.includes('4350 east-west highway')) return 'United States';
     return normalize[lower] || country;
 }
 window.normalizeCountry = normalizeCountry;
@@ -3959,7 +4156,7 @@ function updateGSASupplierCard(supplierName) {
     nameEl.textContent = supplierName;
 
     if (supplier) {
-        const loc = supplier.address?.country_standardized || supplier.country || supplier.phone_validation?.phone_country || '-';
+        const loc = normalizeCountry(supplier.address?.country_standardized || supplier.phone_validation?.phone_country) || '-';
         locEl.textContent = (typeof loc === 'object') ? (loc.country_standardized || '-') : loc;
         emailEl.textContent = supplier.contact?.email || supplier.email || '-';
         contactEl.textContent = supplier.contact?.primary_contact || supplier.contact_name || '-';
@@ -4390,8 +4587,9 @@ function updateMdSupplierProfile(supplier = null) {
     if (nameEl) nameEl.textContent = supplier.name || '-';
     if (locationEl) {
         // Handle location object or string
-        const loc = supplier.country || supplier.address?.country_standardized || supplier.phone_validation?.phone_country || '-';
-        locationEl.textContent = (typeof loc === 'object') ? (loc.country_standardized || loc.name || loc.city || Object.values(loc).find(v => typeof v === 'string') || '-') : loc;
+        const raw = supplier.country || supplier.address?.country_standardized || supplier.phone_validation?.phone_country || '-';
+        const loc = (typeof raw === 'object') ? (raw.country_standardized || raw.name || '-') : raw;
+        locationEl.textContent = normalizeCountry(loc) || '-';
     }
     if (emailEl) {
         const em = supplier.email || supplier.contact?.email || '-';
@@ -4774,7 +4972,7 @@ function buildMdSupplierRows(sourceSuppliers) {
     return sourceSuppliers.map(s => {
         const name = s.name || s.supplier_name || '-';
         const fullInfo = suppliersData?.suppliers?.find(ss => (ss.name || ss.supplier_name) === name) || s;
-        const country = fullInfo.address?.country_standardized || fullInfo.phone_validation?.phone_country || fullInfo.country || '-';
+        const country = normalizeCountry(fullInfo.address?.country_standardized || fullInfo.phone_validation?.phone_country || fullInfo.country) || '-';
         const ratingVal = fullInfo.rating?.score || fullInfo.rating || 4.0;
         const rating = typeof ratingVal === 'number' ? ratingVal : parseFloat(ratingVal) || 4.0;
         const email = fullInfo.contact?.email || fullInfo.email || '-';

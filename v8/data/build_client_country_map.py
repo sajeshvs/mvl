@@ -34,6 +34,15 @@ ENTITY_COUNTRY_MAP = {
     'MV LLC': 'United Arab Emirates',
     'MPG JV': 'United Arab Emirates',
     'MW-OCS': 'United Arab Emirates',
+    'MVL VENTURES': 'United Arab Emirates',
+    'MVL ENERGY': 'United Arab Emirates',
+    'MVL SOLUTIONS': 'United Arab Emirates',
+    'CENTRICO': 'United Arab Emirates',
+    'MVL TRADING': 'United Arab Emirates',
+    'MVL FACILITIES': 'United Arab Emirates',
+    'MVL ARABIA': 'Saudi Arabia',
+    'MVL PROJECTS': 'United Arab Emirates',
+    'Unknown': 'United Arab Emirates',
 }
 
 # ── Expanded country normalization (cities, states, regions, typos) ────
