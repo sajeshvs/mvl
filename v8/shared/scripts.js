@@ -3377,6 +3377,7 @@ let gsaTopSuppliersChart = null;
 let gsaBottomSuppliersChart = null;
 
 // Initialize GSA Tab
+let gsaListenersAttached = false;
 function initGlobalSpendAnalysis() {
     if (!gsaData) {
         console.warn('⚠️ GSA: GSA data not loaded');
@@ -3404,17 +3405,25 @@ function initGlobalSpendAnalysis() {
     // Populate table
     updateGSATable();
 
-    // Add instant filtering - change listeners on all GSA dropdowns
-    ['gsaFilterEntity', 'gsaFilterSupplier', 'gsaFilterProject', 'gsaFilterMaterial',
-        'gsaFilterMaterialCode', 'gsaFilterDiscipline', 'gsaFilterYear'].forEach(id => {
+    // Add instant filtering - only attach once to avoid duplicate listeners
+    if (!gsaListenersAttached) {
+        gsaListenersAttached = true;
+        ['gsaFilterEntity', 'gsaFilterSupplier', 'gsaFilterProject', 'gsaFilterMaterial',
+            'gsaFilterMaterialCode', 'gsaFilterDiscipline', 'gsaFilterYear'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('change', applyGSAFilters);
+            });
+        // Date + search instant
+        ['gsaFilterFrom', 'gsaFilterTo'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.addEventListener('change', applyGSAFilters);
         });
-    // Date + search instant
-    ['gsaFilterFrom', 'gsaFilterTo'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('change', applyGSAFilters);
-    });
+
+        const gsaSearchInput = document.getElementById('gsaSearchInput');
+        if (gsaSearchInput) {
+            gsaSearchInput.addEventListener('input', debounce(applyGSAFilters, 300));
+        }
+    }
 
     // Set date filter constraints - block future dates and set sensible defaults
     const today = new Date().toISOString().split('T')[0];
@@ -3435,11 +3444,6 @@ function initGlobalSpendAnalysis() {
     }
     if (toEl) {
         toEl.setAttribute('max', today);
-    }
-
-    const gsaSearchInput = document.getElementById('gsaSearchInput');
-    if (gsaSearchInput) {
-        gsaSearchInput.addEventListener('input', debounce(applyGSAFilters, 300));
     }
 }
 
@@ -3579,7 +3583,11 @@ function updateGSAKPIs() {
         }
         const coPctEl = document.getElementById('gsaKpiCoPct');
         if (coPctEl && totalSpend > 0) {
-            const coVal = changeOrders.reduce((sum, po) => sum + (po.valueUSD || po.value || 0), 0);
+            const coVal = changeOrders.reduce((sum, po) => {
+                const val = po.valueUSD || po.value || 0;
+                const curr = po.currency || 'USD';
+                return sum + convertToUSD(val, curr);
+            }, 0);
             const pct = (coVal / totalSpend * 100).toFixed(1);
             coPctEl.textContent = pct + '% of total spend';
         }
@@ -3597,6 +3605,16 @@ function createGSASpendTrendChart() {
 
     const pos = gsaState.filteredData;
     const isFiltered = pos.length !== gsaState.allPOs.length;
+
+    // Empty state handling
+    if (pos.length === 0) {
+        gsaSpendTrendChart = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: ['No Data'], datasets: [{ data: [0], backgroundColor: '#ccc' }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+        });
+        return;
+    }
 
     // Use pre-calculated monthly trend if not filtered
     let sortedMonths, labels, baseData, changeData;
@@ -3731,6 +3749,16 @@ function createGSAEntityChart() {
     const pos = gsaState.filteredData;
     const isFiltered = pos.length !== gsaState.allPOs.length;
 
+    // Empty state handling
+    if (pos.length === 0) {
+        gsaEntityChart = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: ['No Data'], datasets: [{ data: [0], backgroundColor: '#ccc' }] },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+        });
+        return;
+    }
+
     let sorted;
 
     if (!isFiltered && gsaData?.entityBreakdown) {
@@ -3823,6 +3851,16 @@ function createGSAProjectChart() {
     }
 
     const pos = gsaState.filteredData;
+
+    // Empty state handling
+    if (pos.length === 0) {
+        gsaProjectChart = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: ['No Data'], datasets: [{ data: [0], backgroundColor: '#ccc' }] },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+        });
+        return;
+    }
 
     // Calculate from filtered data using correct field names
     const projectSpend = {};
@@ -3920,6 +3958,21 @@ function createGSAProjectChart() {
 function createGSASupplierCharts() {
     const pos = gsaState.filteredData;
     const isFiltered = pos.length !== gsaState.allPOs.length;
+
+    // Empty state handling
+    if (pos.length === 0) {
+        const topCtx = document.getElementById('gsaTopSuppliersChart');
+        const bottomCtx = document.getElementById('gsaBottomSuppliersChart');
+        if (topCtx) {
+            if (gsaTopSuppliersChart) gsaTopSuppliersChart.destroy();
+            gsaTopSuppliersChart = new Chart(topCtx, { type: 'bar', data: { labels: ['No Data'], datasets: [{ data: [0], backgroundColor: '#ccc' }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } } });
+        }
+        if (bottomCtx) {
+            if (gsaBottomSuppliersChart) gsaBottomSuppliersChart.destroy();
+            gsaBottomSuppliersChart = new Chart(bottomCtx, { type: 'bar', data: { labels: ['No Data'], datasets: [{ data: [0], backgroundColor: '#ccc' }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } } });
+        }
+        return;
+    }
 
     let topSuppliers, bottomSuppliers;
 
@@ -5141,10 +5194,10 @@ function updateMdKPIs() {
     const summary = mdData.summary;
 
     // Materials count (raw materials)
-    document.getElementById('kpiMdMaterials').textContent = summary.materialCount || summary.disciplineCount || 28;
+    document.getElementById('kpiMdMaterials').textContent = summary.materialCount || summary.disciplineCount || 0;
 
     // Material Codes count (consolidated codes)
-    document.getElementById('kpiMdDisciplines').textContent = summary.materialCodeCount || summary.disciplineCount || 12;
+    document.getElementById('kpiMdDisciplines').textContent = summary.materialCodeCount || summary.disciplineCount || 0;
 
     // Total Material Spend
     const materialSpend = summary.totalOrdered || 0;
@@ -5164,11 +5217,11 @@ function updateMdKPIs() {
     if (discUtilEl) discUtilEl.textContent = `${utilization}% conversion`;
 
     // Active Projects - count unique projects from PO data
-    const activeProjects = summary.projectCount || mdData.filters?.projects?.length || 4;
+    const activeProjects = summary.projectCount || mdData.filters?.projects?.length || 0;
     document.getElementById('kpiMdActiveProjects').textContent = activeProjects;
 
     // Supplier count
-    document.getElementById('kpiMdSupplierCount').textContent = `${summary.supplierCount || 12} suppliers`;
+    document.getElementById('kpiMdSupplierCount').textContent = `${summary.supplierCount || 0} suppliers`;
 
     console.log('📊 MD KPIs updated - utilization:', utilization + '%');
 }
@@ -5481,6 +5534,9 @@ function mdPoPageChange(delta) {
     mdState.currentPage = Math.max(1, Math.min(totalPages, mdState.currentPage + delta));
     updateMdPoTable(mdState.filteredPOs);
 }
+window.clearMdFilters = clearMdFilters;
+window.updateMdSupplierProfile = updateMdSupplierProfile;
+window.mdPoPageChange = mdPoPageChange;
 
 // ============================================
 // KPI INFO POPUP SYSTEM (Temporary Dev Notes)
