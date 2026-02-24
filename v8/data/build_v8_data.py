@@ -41,6 +41,9 @@ FX_RATES = {
     'PKR': 278, 'EGP': 30.9, 'JOD': 0.709, 'LKR': 320
 }
 
+# PO FX overrides — workbench treats NPR/JPY as 1:1 with USD for PO values
+PO_FX_OVERRIDES = {'NPR': 1, 'JPY': 1}
+
 # ─── Material Code Map ──────────────────────────────────────
 MATERIAL_CODE_MAP = {
     'sandwich panel': 'Architectural', 'accessories / connection for sandwich panel': 'Architectural',
@@ -111,6 +114,17 @@ def to_usd(value, currency):
         _unknown_currencies.add(curr)
         rate = 1  # treat as USD if unknown
     return round(val / rate, 2) if rate else val
+
+
+def to_usd_po(value, currency):
+    """Convert PO value to USD (workbench-compatible: NPR/JPY treated as 1:1)."""
+    curr = str(currency).strip().upper() if currency else 'USD'
+    if curr in PO_FX_OVERRIDES:
+        try:
+            return float(value) if value else 0
+        except (ValueError, TypeError):
+            return 0
+    return to_usd(value, currency)
 
 
 def normalize_status(status):
@@ -577,18 +591,21 @@ def main():
     seen_qnums = set()
     clean_quotes = []
     removed_iq = 0
+    removed_non_rfq = 0
     removed_dup = 0
     removed_empty = 0
 
     for q in raw_quotes:
         q_type = q['QuotationType']
+        qnum = q['QuotationNumber']
+
+        # Filter: must be RFQ type AND have RFQ- prefix
         if q_type == 'IQ':
             removed_iq += 1
             continue
 
-        qnum = q['QuotationNumber']
-        if not qnum:
-            removed_empty += 1
+        if not qnum or not qnum.startswith('RFQ-'):
+            removed_non_rfq += 1
             continue
 
         if q['QuotationValue'] == 0 and q['Entity'] == '(Blank)' and q['Material'] == '(Blank)':
@@ -603,6 +620,7 @@ def main():
         clean_quotes.append(q)
 
     print(f'  Removed IQ: {removed_iq}')
+    print(f'  Removed non-RFQ prefix: {removed_non_rfq}')
     print(f'  Removed empty: {removed_empty}')
     print(f'  Removed duplicates: {removed_dup}')
     print(f'  Clean RFQ quotations: {len(clean_quotes)}')
@@ -620,7 +638,7 @@ def main():
             continue
         seen_pos.add(pnum)
 
-        val_usd = to_usd(po['originalValue'], po['currency'])
+        val_usd = to_usd_po(po['originalValue'], po['currency'])
         po['valueUSD'] = val_usd
         po['poSpendUSD'] = val_usd
         po['poType'] = 'Change Order' if po['isChangeOrder'] else 'Base PO'
@@ -722,10 +740,14 @@ def main():
 
     total_quotations = len(clean_quotes)
     orders = [q for q in clean_quotes if q['Status'] == 'Order']
-    total_orders = len(orders)
-    win_rate = round((total_orders / total_quotations * 100), 1) if total_quotations else 0
     total_quote_value = sum(to_usd(q['QuotationValue'], q['Currency']) for q in clean_quotes)
-    total_order_value = sum(to_usd(q['QuotationValue'], q['Currency']) for q in orders)
+
+    # PO count/value from actual PO data (not quotation Status=Order)
+    # Exclude SPOs (subcontract POs) — SPO-* and RFSPO-* prefixes
+    non_spo_pos = [po for po in clean_pos if not (po['poNumber'].startswith('SPO') or po['poNumber'].startswith('RFSPO'))]
+    total_pos = len(non_spo_pos)
+    total_po_spend = sum(po['poSpendUSD'] for po in non_spo_pos)
+    win_rate = round((total_pos / total_quotations * 100), 1) if total_quotations else 0
 
     status_counts = defaultdict(lambda: {'Count': 0, 'TotalValueUSD': 0})
     for q in clean_quotes:
@@ -783,10 +805,10 @@ def main():
         'workbench': clean_quotes,
         'summary': {
             'totalQuotations': total_quotations,
-            'totalPOs': total_orders,
+            'totalPOs': total_pos,
             'winRate': win_rate,
             'totalQuotationValueUSD': round(total_quote_value, 2),
-            'totalPOSpendUSD': round(total_order_value, 2),
+            'totalPOSpendUSD': round(total_po_spend, 2),
             'revisionCount': revision_count,
             'revisionLetters': dict(revision_letters),
         },
@@ -808,7 +830,8 @@ def main():
     }
 
     print(f'  Total Quotations: {total_quotations}')
-    print(f'  Orders (won): {total_orders}')
+    print(f'  Total POs (excl. SPOs): {total_pos}')
+    print(f'  Total PO Spend USD: ${total_po_spend:,.2f}')
     print(f'  Win Rate: {win_rate}%')
     print(f'  Revisions: {revision_count}')
 
@@ -822,7 +845,60 @@ def main():
     base_pos = [po for po in clean_pos if po['poType'] == 'Base PO']
     change_orders_list = [po for po in clean_pos if po['poType'] == 'Change Order']
     base_value = sum(po['poSpendUSD'] for po in base_pos)
-    co_value = sum(po['poSpendUSD'] for po in change_orders_list)
+
+    # CO Value: incremental deduction logic
+    # Rule 1: Same value as previous version → $0 (count only)
+    # Rule 2: Version gap (non-consecutive) → full CO amount
+    # Rule 3: Normal consecutive → CO amount − previous version amount
+    co_value = 0.0
+    co_same_val = 0
+    co_gap_ver = 0
+    co_normal = 0
+    co_orphan = 0
+
+    for oid, po_list in po_by_order_id.items():
+        if len(po_list) <= 1:
+            # Orphan CO (single-PO group marked as CO)
+            if po_list[0].get('poType') == 'Change Order':
+                co_value += po_list[0]['poSpendUSD']
+                co_orphan += 1
+            continue
+
+        po_list_sorted = sorted(po_list, key=lambda p: p.get('poVersion', 1))
+        for i in range(1, len(po_list_sorted)):
+            cur = po_list_sorted[i]
+            prev = po_list_sorted[i - 1]
+            if cur.get('poType') != 'Change Order':
+                continue
+
+            cur_spend = cur.get('poSpendUSD', 0) or 0
+            prev_spend = prev.get('poSpendUSD', 0) or 0
+            cur_ver = cur.get('poVersion', 1)
+            prev_ver = prev.get('poVersion', 1)
+
+            if cur_spend == prev_spend:
+                # Same value — count only, no value contribution
+                co_same_val += 1
+            elif (cur_ver - prev_ver) != 1:
+                # Version gap — full amount (no deduction)
+                co_value += cur_spend
+                co_gap_ver += 1
+            else:
+                # Normal consecutive — deduct previous
+                co_value += (cur_spend - prev_spend)
+                co_normal += 1
+
+    # Handle COs at index 0 of multi-groups (first PO is a CO, no previous)
+    for oid, po_list in po_by_order_id.items():
+        if len(po_list) <= 1:
+            continue
+        po_list_sorted = sorted(po_list, key=lambda p: p.get('poVersion', 1))
+        if po_list_sorted[0].get('poType') == 'Change Order':
+            co_value += po_list_sorted[0]['poSpendUSD']
+
+    print(f'  CO Value (deduction logic): ${co_value:,.2f}')
+    print(f'    Normal deductions: {co_normal}, Same value (skipped): {co_same_val}')
+    print(f'    Version gaps (full): {co_gap_ver}, Orphan COs: {co_orphan}')
     unique_suppliers = set(po['supplier'] for po in clean_pos if po['supplier'] != 'Unspecified Supplier')
     unique_entities = set(po['entity'] for po in clean_pos if po['entity'] and po['entity'] != 'Unknown')
 

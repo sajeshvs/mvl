@@ -41,19 +41,19 @@
   },
   {
     "name": "Mahesh B.",
-    "quotationCount": 7,
-    "orderCount": 7,
+    "quotationCount": 6,
+    "orderCount": 6,
     "winRate": 100.0,
-    "totalQuotedUSD": 143170.16,
-    "totalOrderedUSD": 143170.16
+    "totalQuotedUSD": 142150.16,
+    "totalOrderedUSD": 142150.16
   },
   {
     "name": "Maricar I.",
-    "quotationCount": 229,
-    "orderCount": 221,
+    "quotationCount": 228,
+    "orderCount": 220,
     "winRate": 96.5,
-    "totalQuotedUSD": 6929695.08,
-    "totalOrderedUSD": 6872632.9
+    "totalQuotedUSD": 6889017.08,
+    "totalOrderedUSD": 6831954.9
   },
   {
     "name": "Marman I.",
@@ -65,8 +65,8 @@
   },
   {
     "name": "Marty A.M.",
-    "quotationCount": 10,
-    "orderCount": 10,
+    "quotationCount": 9,
+    "orderCount": 9,
     "winRate": 100.0,
     "totalQuotedUSD": 369941.64,
     "totalOrderedUSD": 369941.64

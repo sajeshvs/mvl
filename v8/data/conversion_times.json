@@ -1993,14 +1993,6 @@
       "orderId": "672"
     },
     {
-      "quotationNumber": "Q-1213-660",
-      "quotationDate": "2013-12-10",
-      "poDate": "2014-09-03",
-      "daysToConvert": 267,
-      "month": "2013-12",
-      "orderId": "660"
-    },
-    {
       "quotationNumber": "RFQ-256-648",
       "quotationDate": "2013-11-27",
       "poDate": "2014-08-28",
@@ -2129,14 +2121,6 @@
       "orderId": "533"
     },
     {
-      "quotationNumber": "Q-913-521",
-      "quotationDate": "2013-09-23",
-      "poDate": "2014-04-15",
-      "daysToConvert": 204,
-      "month": "2013-09",
-      "orderId": "521"
-    },
-    {
       "quotationNumber": "RFQ-913-512",
       "quotationDate": "2013-09-19",
       "poDate": "2014-04-13",
@@ -2167,70 +2151,6 @@
       "daysToConvert": 204,
       "month": "2013-09",
       "orderId": "509"
-    },
-    {
-      "quotationNumber": "Q-613-363",
-      "quotationDate": "2013-06-20",
-      "poDate": "2013-12-17",
-      "daysToConvert": 180,
-      "month": "2013-06",
-      "orderId": "363"
-    },
-    {
-      "quotationNumber": "Q-613-359",
-      "quotationDate": "2013-06-19",
-      "poDate": "2013-12-19",
-      "daysToConvert": 183,
-      "month": "2013-06",
-      "orderId": "359"
-    },
-    {
-      "quotationNumber": "Q-613-343",
-      "quotationDate": "2013-06-09",
-      "poDate": "2013-11-10",
-      "daysToConvert": 154,
-      "month": "2013-06",
-      "orderId": "343"
-    },
-    {
-      "quotationNumber": "Q-613-335",
-      "quotationDate": "2013-06-04",
-      "poDate": "2013-11-05",
-      "daysToConvert": 154,
-      "month": "2013-06",
-      "orderId": "335"
-    },
-    {
-      "quotationNumber": "Q-513-322",
-      "quotationDate": "2013-05-27",
-      "poDate": "2013-10-31",
-      "daysToConvert": 157,
-      "month": "2013-05",
-      "orderId": "322"
-    },
-    {
-      "quotationNumber": "Q-513-318",
-      "quotationDate": "2013-05-22",
-      "poDate": "2013-10-28",
-      "daysToConvert": 159,
-      "month": "2013-05",
-      "orderId": "318"
-    },
-    {
-      "quotationNumber": "Q-513-317",
-      "quotationDate": "2013-05-22",
-      "poDate": "2013-10-30",
-      "daysToConvert": 161,
-      "month": "2013-05",
-      "orderId": "317"
-    },
-    {
-      "quotationNumber": "Q-513-291",
-      "quotationDate": "2013-05-01",
-      "poDate": "2013-10-06",
-      "daysToConvert": 158,
-      "month": "2013-05",
-      "orderId": "291"
     },
     {
       "quotationNumber": "RFQ-5153-V4351",
@@ -3531,19 +3451,9 @@
   ],
   "monthlyAverage": [
     {
-      "month": "2013-05",
-      "avgDays": 158.8,
-      "count": 4
-    },
-    {
-      "month": "2013-06",
-      "avgDays": 167.8,
-      "count": 4
-    },
-    {
       "month": "2013-09",
-      "avgDays": 143.5,
-      "count": 10
+      "avgDays": 136.8,
+      "count": 9
     },
     {
       "month": "2013-10",
@@ -3557,8 +3467,8 @@
     },
     {
       "month": "2013-12",
-      "avgDays": 260.0,
-      "count": 4
+      "avgDays": 257.7,
+      "count": 3
     },
     {
       "month": "2014-01",
@@ -3981,6 +3891,6 @@
       "count": 4
     }
   ],
-  "totalLinked": 441,
-  "avgDays": 224.1
+  "totalLinked": 431,
+  "avgDays": 225.2
 }

@@ -1464,23 +1464,20 @@ function applyFilters() {
         }
 
         // Calculate KPIs from filtered smData
-        const orderCount = filtered.filter(q => q.Status === 'Order').length;
+        // PO count/value from actual PO data (not quotation Status=Order)
+        const smTotalPOs = smData?.summary?.totalPOs || 0;
+        const smTotalPOSpend = smData?.summary?.totalPOSpendUSD || 0;
         const totalQuoteValue = filtered.reduce((sum, q) => {
             const val = q.QuotationValue || 0;
             const curr = q.Currency || 'USD';
             return sum + convertToUSD(val, curr);
         }, 0);
-        const totalPOValue = filtered.filter(q => q.Status === 'Order').reduce((sum, q) => {
-            const val = q.QuotationValue || 0;
-            const curr = q.Currency || 'USD';
-            return sum + convertToUSD(val, curr);
-        }, 0);
-        const winRate = filtered.length > 0 ? (orderCount / filtered.length * 100).toFixed(1) : 0;
+        const winRate = filtered.length > 0 ? (smTotalPOs / filtered.length * 100).toFixed(1) : 0;
 
         document.getElementById('kpiRfqCount').textContent = filtered.length.toLocaleString();
         document.getElementById('kpiQuoteValue').textContent = formatCurrencyShort(totalQuoteValue);
-        document.getElementById('kpiPoCount').textContent = orderCount.toLocaleString();
-        document.getElementById('kpiPoValue').textContent = formatCurrencyShort(totalPOValue);
+        document.getElementById('kpiPoCount').textContent = smTotalPOs.toLocaleString();
+        document.getElementById('kpiPoValue').textContent = formatCurrencyShort(smTotalPOSpend);
         document.getElementById('kpiWinRate').textContent = winRate + '%';
 
         // CO Count/Value: Show actual change orders from GSA data
