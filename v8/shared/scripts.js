@@ -1785,7 +1785,16 @@ function applyFilters() {
                 quotationTimeChartInstance = new Chart(ctx, {
                     type: 'bar',
                     data: { labels: ['No Data'], datasets: [{ label: 'Avg Days', data: [0], backgroundColor: '#ccc' }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'No Q→PO link data available' } } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: { padding: { bottom: 10 } },
+                        plugins: { legend: { display: false }, title: { display: true, text: 'No Q→PO link data for selected range', font: { size: 11 } } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { font: { size: 9 } } },
+                            x: { ticks: { font: { size: 9 } } }
+                        }
+                    }
                 });
             }
         }
@@ -2068,6 +2077,11 @@ function renderTopSuppliers(data) {
     const container = document.getElementById('topSuppliers');
     if (!container || !data) return;
 
+    if (data.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:#888; padding:20px; font-size:13px;">No suppliers found for selected filters</div>';
+        return;
+    }
+
     const maxSpend = Math.max(...data.map(d => d.spend));
 
     // Rank circle colors
@@ -2250,6 +2264,11 @@ function renderEmployeeList(data) {
     const container = document.getElementById('employeeList');
     if (!container || !data) return;
 
+    if (data.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:#888; padding:20px; font-size:13px;">No employee data for selected filters</div>';
+        return;
+    }
+
     const maxSpend = Math.max(...data.map(d => d.totalSpend));
 
     // Rank circle colors
@@ -2400,6 +2419,11 @@ function renderQuotationTimeChart(data) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    bottom: 10
+                }
+            },
             animation: {
                 duration: 0
             },
@@ -2424,8 +2448,8 @@ function renderQuotationTimeChart(data) {
                 },
                 x: {
                     ticks: {
-                        font: { size: 7 },
-                        maxRotation: 90,
+                        font: { size: 9 },
+                        maxRotation: 45,
                         minRotation: 45,
                         autoSkip: true,
                         maxTicksLimit: 24
@@ -2851,6 +2875,15 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
     const scrollContainer = document.getElementById('entityChartScroll');
     const axisCanvas = document.getElementById('entityAxisCanvas');
     if (!canvas || !container || !data || data.length === 0) {
+        if (canvas && container) {
+            // Clear previous chart and show empty state
+            if (entityChartInstance) {
+                entityChartInstance.destroy();
+                entityChartInstance = null;
+            }
+            const scrollEl = document.getElementById('entityChartScroll');
+            if (scrollEl) scrollEl.innerHTML = '<canvas id="entityChartCanvas"></canvas>';
+        }
         console.warn('⚠️ Cannot render entity chart - missing canvas or data');
         return;
     }

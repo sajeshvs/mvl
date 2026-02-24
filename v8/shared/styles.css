@@ -650,7 +650,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    max-height: 280px;
+    flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
 }
