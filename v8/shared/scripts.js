@@ -1244,7 +1244,9 @@ let currentFilters = {
     status: null,
     material: null,
     materialCode: null,
-    search: ''
+    search: '',
+    dateFrom: null,
+    dateTo: null
 };
 
 function initFilters() {
@@ -1324,6 +1326,19 @@ function initFilters() {
         const select = document.getElementById(id);
         if (select) {
             select.addEventListener('change', handleFilterChange);
+        }
+    });
+
+    // Add date range filter handlers
+    ['filterDateFrom', 'filterDateTo'].forEach(id => {
+        const dateInput = document.getElementById(id);
+        if (dateInput) {
+            dateInput.addEventListener('change', function() {
+                currentFilters.dateFrom = document.getElementById('filterDateFrom')?.value || null;
+                currentFilters.dateTo = document.getElementById('filterDateTo')?.value || null;
+                console.log(`📅 Date filter: ${currentFilters.dateFrom} → ${currentFilters.dateTo}`);
+                applyFilters();
+            });
         }
     });
 }
@@ -1459,6 +1474,21 @@ function applyFilters() {
                     const searchFields = [q.QuotationNumber, q.Entity, q.ProjectName, q.Description, q.Client].filter(Boolean).join(' ').toLowerCase();
                     if (!searchFields.includes(currentFilters.search)) return false;
                 }
+                // Date range filter — parse "11 Nov 2022" format
+                if (currentFilters.dateFrom || currentFilters.dateTo) {
+                    if (!q.Date) return false;
+                    const qDate = new Date(q.Date);
+                    if (isNaN(qDate)) return false;
+                    if (currentFilters.dateFrom) {
+                        const fromDate = new Date(currentFilters.dateFrom);
+                        if (qDate < fromDate) return false;
+                    }
+                    if (currentFilters.dateTo) {
+                        const toDate = new Date(currentFilters.dateTo);
+                        toDate.setHours(23, 59, 59, 999); // Include the entire "to" day
+                        if (qDate > toDate) return false;
+                    }
+                }
                 return true;
             });
         }
@@ -1512,6 +1542,7 @@ function applyFilters() {
         renderStatusChart(filteredStatusChart);
 
         // Update Conversion Rate and Open Quotes KPIs
+        const orderCount = statusCounts['Order'] || 0;
         const quotationCount = statusCounts['Quotation'] || 0;
         const waitingCount = statusCounts['Waiting'] || 0;
         const openQuotesCount = quotationCount + waitingCount;
@@ -1661,22 +1692,49 @@ function applyFilters() {
         console.log('🗺️ Map locations:', filteredMapLocations.map(l => `${l.name}: ${l.supplierCount}`).join(', '));
         renderSupplierMapFromLocations(filteredMapLocations);
 
-        // Update supplier profile with first client if supplier filter is active
+        // Update supplier profile with full details when supplier filter is active
         if (currentFilters.supplier) {
             const supplierQuotes = filtered.filter(q => q.Client === currentFilters.supplier);
-            if (supplierQuotes.length > 0) {
+            // Look up full supplier details from suppliersData
+            const allSuppliers = suppliersData?.suppliers || [];
+            const fullSupplier = allSuppliers.find(s => s.name === currentFilters.supplier);
+            if (fullSupplier || supplierQuotes.length > 0) {
                 const totalSpend = supplierQuotes.reduce((sum, q) => {
                     const val = q.QuotationValue || 0;
                     const curr = q.Currency || 'USD';
                     return sum + convertToUSD(val, curr);
                 }, 0);
-                updateSupplierProfile({
-                    name: currentFilters.supplier,
-                    location: 'N/A',
-                    poCount: supplierQuotes.filter(q => q.Status === 'Order').length,
-                    spend: totalSpend,
-                    rating: 4.0
+
+                // Update profile card with full supplier details (same as Top 10 click)
+                document.getElementById('supplierName').textContent = currentFilters.supplier;
+                document.getElementById('supplierAvatar').textContent = currentFilters.supplier.charAt(0).toUpperCase();
+                document.getElementById('supplierLocation').textContent =
+                    fullSupplier?.address?.country_standardized ||
+                    fullSupplier?.phone_validation?.phone_country ||
+                    (supplierQuotes.length > 0 ? `${supplierQuotes.length} Quotations` : '-');
+                document.getElementById('supplierContact').textContent =
+                    fullSupplier?.contact?.primary_contact || '-';
+                document.getElementById('supplierEmail').textContent =
+                    fullSupplier?.contact?.email || '-';
+                document.getElementById('supplierPhone').textContent =
+                    fullSupplier?.contact?.phone || '-';
+
+                // Rating stars
+                const rating = fullSupplier?.rating?.score ?? (typeof fullSupplier?.rating === 'number' ? fullSupplier.rating : 3);
+                const fullStars = Math.floor(rating);
+                const hasHalf = (rating - fullStars) >= 0.3;
+                const stars = '★'.repeat(fullStars) + (hasHalf ? '★' : '') + '☆'.repeat(5 - fullStars - (hasHalf ? 1 : 0));
+                document.getElementById('supplierRating').textContent = stars;
+
+                // Highlight matching supplier in Top 10 list if present
+                const topSuppliers = dashboardData?.supplierMarketplace?.topSuppliers || [];
+                const topIndex = topSuppliers.findIndex(s => s.name === currentFilters.supplier);
+                document.querySelectorAll('.rank-item').forEach((el, i) => {
+                    el.classList.toggle('selected', i === topIndex);
                 });
+
+                // Update approved materials
+                renderApprovedMaterials(currentFilters.supplier);
             }
         }
 
@@ -4098,10 +4156,14 @@ function clearSMFilters() {
         const el = document.getElementById(id);
         if (el) el.selectedIndex = 0;
     });
+    ['filterDateFrom', 'filterDateTo'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
     const searchEl = document.getElementById('searchInput');
     if (searchEl) searchEl.value = '';
 
-    currentFilters = { entity: null, project: null, supplier: null, status: null, material: null, materialCode: null, search: '' };
+    currentFilters = { entity: null, project: null, supplier: null, status: null, material: null, materialCode: null, search: '', dateFrom: null, dateTo: null };
     applyFilters();
     console.log('📊 SM: Filters cleared');
 }
