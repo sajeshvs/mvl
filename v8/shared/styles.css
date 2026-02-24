@@ -401,6 +401,7 @@ body {
 
 /* Last chart-card in column — constrained height, no unbounded stretch */
 .column .chart-card:last-child {
+    flex: 1;
     display: flex;
     flex-direction: column;
     max-height: 380px;

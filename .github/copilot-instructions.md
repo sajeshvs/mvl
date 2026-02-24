@@ -53,5 +53,12 @@ cd v8/data
 & "C:\Users\Sajesh V S\AppData\Local\Programs\Python\Python312\python.exe" build_v8_data.py
 ```
 
+## Appearance Rules
+- When user says "width" or "reduce width", they mean **vertical height** — NOT horizontal width
+- Never change SM grid column proportions (`1fr 1fr 1fr`)
+- Bottom row last-child cards: `flex: 1` + `max-height: 380px` — all three must align vertically
+- Top 10 Suppliers inner list: `max-height: 320px` with scroll
+- Approved Material card must stretch to match the other two bottom cards
+
 ## Detailed Instructions
 See `AGENT_INSTRUCTIONS.md` in the repo root for comprehensive architecture docs, field schemas, and development guides.

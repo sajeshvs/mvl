@@ -335,6 +335,20 @@ The pipeline reads Excel .xls files from `../Re_ Main order XLS and Export featu
 - KPI Values: 26px, bold
 - Table: 11-12px
 
+### Layout & Appearance Preferences
+> **IMPORTANT:** When the user says "width" or "reduce width", they mean **vertical height** — NOT horizontal width. Do NOT change horizontal grid proportions or add `width: 80%` to the grid. Always confirm before changing horizontal layout.
+
+- **SM 3-column grid:** `1fr 1fr 1fr` — never change column proportions
+- **Bottom row cards** (Top 10, Quotation, Approved Material): these are last-child in each column
+  - Use `flex: 1` with `max-height: 380px` — fill remaining space but don't grow unbounded
+  - Top 10 Suppliers: `max-height: 320px` inner list, overflow-y scroll
+  - Quotation to PO Time: `min-height: 120px`, `responsive: true`, `maintainAspectRatio: false`
+  - Approved Material (Coming Soon): must stretch vertically to align with the other two bottom cards
+- **Entity chart:** Frozen x-axis via separate canvas (35px), scroll area max-height 270px
+- **Chart labels:** Quotation x-axis font 9px, rotation 45°, Chart.js layout padding bottom 10px
+- **Empty states:** Show "No data for selected filters" message when filters yield zero results
+- **Cache-busting:** CSS/JS referenced with `?v=YYYYMMDD` query string
+
 ---
 
 ## Common Development Tasks
