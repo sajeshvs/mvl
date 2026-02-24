@@ -496,7 +496,9 @@ body {
 }
 
 #entityChartContainer {
-    height: 500px;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #materialChartContainer {

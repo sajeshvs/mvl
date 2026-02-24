@@ -2854,6 +2854,15 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
         entityChartInstance = null;
     }
 
+    // Dynamic canvas height: 28px per entity for nice bar thickness
+    const barHeight = 28;
+    const dynamicHeight = Math.max(180, data.length * barHeight);
+    const containerWidth = container.clientWidth || 400;
+    canvas.style.width = containerWidth + 'px';
+    canvas.style.height = dynamicHeight + 'px';
+    canvas.width = containerWidth;
+    canvas.height = dynamicHeight;
+
     const ctx = canvas.getContext('2d');
     const valueKey = viewType === 'quote' ? 'quoteValue' : 'poSpend';
     const labelSuffix = viewType === 'quote' ? 'Quote Value' : 'PO Spend';
@@ -2870,11 +2879,12 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
                 backgroundColor: data.map(d => d.color),
                 borderColor: data.map(d => d.color),
                 borderWidth: 1,
-                borderRadius: 4
+                borderRadius: 4,
+                barThickness: Math.max(12, Math.min(20, barHeight * 0.6))
             }]
         },
         options: {
-            responsive: true,
+            responsive: false,
             maintainAspectRatio: false,
             indexAxis: 'y',
             plugins: {
