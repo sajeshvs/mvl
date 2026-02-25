@@ -20,6 +20,7 @@ Input:  v8/Re_ Main order XLS and Export feature ready for use/*.xls
 Output: v8/data/*.json (same structure scripts.js expects)
 """
 
+import csv
 import glob
 import json
 import os
@@ -32,13 +33,15 @@ import xlrd
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.dirname(BASE_DIR)
 EXCEL_DIR = os.path.join(PARENT_DIR, 'Re_ Main order XLS and Export feature ready for use')
+CSV_DIR = os.path.join(PARENT_DIR, 'Data-New')  # New CSV-based PO data source
 
 # ─── FX Rates ────────────────────────────────────────────────
 FX_RATES = {
     'USD': 1, 'AED': 3.6725, 'SAR': 3.75, 'KWD': 0.3077,
     'QAR': 3.64, 'NPR': 133.5, 'EUR': 0.92, 'GBP': 0.79,
     'INR': 83, 'JPY': 149.5, 'BHD': 0.376, 'OMR': 0.385,
-    'PKR': 278, 'EGP': 30.9, 'JOD': 0.709, 'LKR': 320
+    'PKR': 278, 'EGP': 30.9, 'JOD': 0.709, 'LKR': 320,
+    'ZAR': 18.5, 'SGD': 1.34, 'EURO': 0.92,
 }
 
 # PO FX overrides — workbench treats NPR/JPY as 1:1 with USD for PO values
@@ -209,26 +212,73 @@ def cell_float(cell):
         return 0.0
 
 
+# Maximum revision number to consider as Change Order for PO/RFPO prefixes.
+# Revisions beyond this are treated as independent new orders.
+MAX_CO_REVISION = 6
+
+
 def parse_po_number(po_num):
-    """Parse PO number structure: RFPO-{mainOrderId}-{code}-{version}
-    or older format: PO-{mainOrderId}-{code}-{version}
-    Returns dict with: mainOrderId, entityCode, codePrefix, version, isChangeOrder
+    """Parse PO number structure and determine Change Order status.
+
+    New 3-tier CO logic (Feb 2026):
+      1. Prefix PO or RFPO, revision 1        → Base PO
+      2. Prefix PO or RFPO, revision 2–6      → Change Order (grouped with base)
+      3. Prefix PO or RFPO, revision 7+        → Independent standalone PO (NOT a CO)
+      4. Any other prefix (SPO, RFSPO, Fresh PO, etc.) → Standalone PO (never CO)
+
+    Returns dict with: prefix, mainOrderId, entityCode, codePrefix, version,
+                        isChangeOrder, baseGroupKey, isStandalone
     """
-    parts = str(po_num).strip().split('-')
-    result = {'mainOrderId': '', 'entityCode': '', 'codePrefix': '', 'version': 1, 'isChangeOrder': False}
-    if len(parts) >= 4:
+    s = str(po_num).strip()
+    result = {
+        'prefix': '', 'mainOrderId': '', 'entityCode': '', 'codePrefix': '',
+        'version': 1, 'isChangeOrder': False, 'baseGroupKey': s, 'isStandalone': False,
+    }
+
+    parts = s.split('-')
+    if not parts:
+        return result
+
+    # Determine prefix
+    prefix = parts[0]
+    result['prefix'] = prefix
+
+    # Only PO and RFPO prefixes participate in CO logic
+    is_co_eligible = prefix in ('PO', 'RFPO')
+
+    if is_co_eligible and len(parts) >= 4:
+        # Standard: {Prefix}-{Number_1}-{Letter_1}{Number_2}{Letter_2?}-{Revision}
         result['mainOrderId'] = parts[1]
         result['entityCode'] = parts[2]
         result['codePrefix'] = parts[2][0] if parts[2] else ''
         try:
-            result['version'] = int(parts[3])
-            result['isChangeOrder'] = result['version'] > 1
+            ver = int(parts[3])
+            result['version'] = ver
+            # Base group key = everything except revision
+            result['baseGroupKey'] = f'{parts[0]}-{parts[1]}-{parts[2]}'
+            if ver == 1:
+                result['isChangeOrder'] = False
+            elif 2 <= ver <= MAX_CO_REVISION:
+                result['isChangeOrder'] = True
+            else:
+                # Revision > MAX_CO_REVISION → independent standalone PO
+                result['isChangeOrder'] = False
+                result['isStandalone'] = True
+                result['baseGroupKey'] = s  # self is its own group
         except ValueError:
             result['version'] = 1
-    elif len(parts) == 3:
+    elif is_co_eligible and len(parts) == 3:
         result['mainOrderId'] = parts[1]
         result['entityCode'] = parts[2]
         result['codePrefix'] = parts[2][0] if parts[2] else ''
+        result['baseGroupKey'] = s
+    else:
+        # Non-CO-eligible prefix: SPO, RFSPO, Fresh PO, USACE, etc.
+        result['isStandalone'] = True
+        result['baseGroupKey'] = s
+        if len(parts) >= 2:
+            result['mainOrderId'] = parts[1] if len(parts) > 1 else ''
+
     return result
 
 
@@ -318,8 +368,92 @@ def build_column_map(headers, mapping):
 # DATA LOADING FROM EXCEL
 # ═══════════════════════════════════════════════════════════════
 
+def load_po_csv():
+    """Load PO data from PO_List_*.csv in Data-New folder.
+    CSV has 7 columns: No, PO number, Po Date, PO Name, Supplier, Total, Cur.
+    Main Order ID and Order ID are derived from PO number parsing.
+    """
+    csv_pattern = os.path.join(CSV_DIR, 'PO_List_*.csv')
+    csv_files = sorted(glob.glob(csv_pattern))
+    if not csv_files:
+        raise FileNotFoundError(f'No PO_List_*.csv found in {CSV_DIR}')
+    csv_file = csv_files[-1]
+    print(f'  Loading CSV: {os.path.basename(csv_file)} (auto-detected)')
+
+    date_match = re.search(r'PO_List_(.+)\.csv', os.path.basename(csv_file))
+    global _po_export_date, _po_filename
+    _po_filename = os.path.basename(csv_file)
+    _po_export_date = date_match.group(1) if date_match else 'unknown'
+
+    records = []
+    with open(csv_file, 'r', encoding='utf-8-sig') as f:
+        reader = csv.DictReader(f)
+        print(f'  Columns: {reader.fieldnames}')
+        for row in reader:
+            po_num = row.get('PO number', '').strip()
+            if not po_num:
+                continue
+
+            # Parse date (format: "25 Feb 2026")
+            date_str = row.get('Po Date', '').strip()
+            dt = parse_date_str(date_str)
+
+            # Parse PO number structure (new 3-tier CO logic)
+            po_parsed = parse_po_number(po_num)
+
+            # Derive entity from entity code map
+            entity_code = po_parsed['entityCode']
+            entity_name = ENTITY_CODE_MAP.get(entity_code, '')
+            if not entity_name:
+                entity_name = 'Unknown'
+
+            # Derive material category from code prefix
+            code_prefix = po_parsed['codePrefix']
+            material_from_prefix = PO_CODE_PREFIX_MAP.get(code_prefix, 'Various')
+
+            # Derive Main Order ID and Order ID from PO number
+            main_order_id = po_parsed['mainOrderId']
+            # Order ID = baseGroupKey for CO-eligible POs, else the full PO number
+            order_id = po_parsed['baseGroupKey']
+
+            # Parse total value
+            raw_total = row.get('Total', '0').replace(',', '').strip()
+            try:
+                total_val = float(raw_total) if raw_total else 0.0
+            except (ValueError, TypeError):
+                total_val = 0.0
+
+            currency = row.get('Cur.', '').strip().upper() or 'AED'
+
+            records.append({
+                'poNumber': po_num,
+                'poDate': date_str,
+                'poName': row.get('PO Name', '').strip(),
+                'supplier': clean_supplier_name(row.get('Supplier', '').strip()),
+                'originalValue': total_val,
+                'currency': currency,
+                'mainOrderId': main_order_id,
+                'orderId': order_id,
+                'entityCode': entity_code,
+                'entity': entity_name,
+                'material': material_from_prefix,
+                'materialCode': material_from_prefix,
+                'poVersion': po_parsed['version'],
+                'isChangeOrder': po_parsed['isChangeOrder'],
+                'isStandalone': po_parsed['isStandalone'],
+                'baseGroupKey': po_parsed['baseGroupKey'],
+                'year': dt.year if dt else None,
+                'month': dt.month if dt else None,
+                'yearMonth': dt.strftime('%Y-%m') if dt else None,
+                '_dt': dt,
+            })
+
+    print(f'  Loaded {len(records)} PO records from CSV')
+    return records
+
+
 def load_po_excel():
-    """Load PO data from PO_List_*.xls (auto-detected).
+    """Load PO data from PO_List_*.xls (auto-detected) — legacy XLS loader.
     Uses header-based column lookup for resilience to column reordering.
     Expected columns: No, PO number, Po Date, PO Name, Supplier, Total, Cur.,
                       Main Order ID, Order ID
@@ -417,6 +551,8 @@ def load_po_excel():
             'materialCode': material_from_prefix,
             'poVersion': po_parsed['version'],
             'isChangeOrder': po_parsed['isChangeOrder'],
+            'isStandalone': po_parsed.get('isStandalone', False),
+            'baseGroupKey': po_parsed.get('baseGroupKey', po_num),
             'year': dt.year if dt else None,
             'month': dt.month if dt else None,
             'yearMonth': dt.strftime('%Y-%m') if dt else None,
@@ -581,9 +717,16 @@ def main():
     print('V8 Data Pipeline — Dynamic Excel Integration')
     print('=' * 60)
 
-    # ── 1. Load Excel data ───────────────────────────────────
-    print('\n[1/9] Loading Excel data files...')
-    raw_pos = load_po_excel()
+    # ── 1. Load data ─────────────────────────────────────────
+    print('\n[1/9] Loading data files...')
+    # Prefer CSV from Data-New; fallback to legacy XLS
+    csv_pattern = os.path.join(CSV_DIR, 'PO_List_*.csv')
+    if glob.glob(csv_pattern):
+        print('  Using CSV source (Data-New/)')
+        raw_pos = load_po_csv()
+    else:
+        print('  CSV not found, falling back to legacy XLS')
+        raw_pos = load_po_excel()
     raw_quotes = load_quotation_excel()
 
     # ── 2. Filter & deduplicate quotations (RFQ only) ────────
@@ -648,26 +791,36 @@ def main():
     print(f'  Removed duplicates: {po_dup}')
     print(f'  Clean POs: {len(clean_pos)}')
 
-    # ── 4. Change Order Calculation by Order ID ──────────────
-    print('\n[4/9] Calculating change orders by Order ID...')
+    # ── 4. Change Order Calculation by Base Group Key ──────
+    print('\n[4/9] Calculating change orders by base group key...')
+    print(f'  CO logic: PO/RFPO revision 2-{MAX_CO_REVISION} = Change Order, >{MAX_CO_REVISION} = Independent')
 
-    po_by_order_id = defaultdict(list)
+    # Group POs by their baseGroupKey (derived from PO number parsing)
+    po_by_group = defaultdict(list)
     for po in clean_pos:
-        oid = po.get('orderId', '')
-        if oid:
-            po_by_order_id[oid].append(po)
+        gk = po.get('baseGroupKey', po['poNumber'])
+        po_by_group[gk].append(po)
 
     single_po_orders = 0
     change_order_groups = 0
     total_change_order_pos = 0
+    standalone_high_rev = 0
+    standalone_other_prefix = 0
     change_order_details = []
 
-    for oid, po_list in po_by_order_id.items():
+    for gk, po_list in po_by_group.items():
         if len(po_list) == 1:
             single_po_orders += 1
-            po_list[0]['changeOrderGroup'] = 1
-            po_list[0]['changeOrderTotal'] = 1
+            po = po_list[0]
+            po['changeOrderGroup'] = 1
+            po['changeOrderTotal'] = 1
+            # Track standalone reasons
+            if po.get('isStandalone') and po.get('poVersion', 1) > MAX_CO_REVISION:
+                standalone_high_rev += 1
+            elif po.get('isStandalone'):
+                standalone_other_prefix += 1
         else:
+            # Multi-PO group — these are CO-eligible (PO/RFPO with revision ≤ MAX_CO_REVISION)
             change_order_groups += 1
             po_list.sort(key=lambda p: p.get('poVersion', 1))
             for i, po in enumerate(po_list):
@@ -681,23 +834,25 @@ def main():
 
             group_total = sum(p['poSpendUSD'] for p in po_list)
             change_order_details.append({
-                'orderId': oid,
+                'orderId': gk,
                 'poCount': len(po_list),
                 'totalValueUSD': round(group_total, 2),
                 'poNumbers': [p['poNumber'] for p in po_list],
                 'mainOrderId': po_list[0].get('mainOrderId', ''),
             })
 
-    no_oid_count = sum(1 for po in clean_pos if not po.get('orderId'))
+    no_group_count = sum(1 for po in clean_pos if not po.get('baseGroupKey'))
     for po in clean_pos:
-        if not po.get('orderId'):
+        if not po.get('baseGroupKey'):
             po['changeOrderGroup'] = 1
             po['changeOrderTotal'] = 1
 
-    print(f'  Single-PO Order IDs: {single_po_orders}')
+    print(f'  Single-PO groups: {single_po_orders}')
     print(f'  Change order groups (multi-PO): {change_order_groups}')
     print(f'  Total change order POs: {total_change_order_pos}')
-    print(f'  POs without Order ID: {no_oid_count}')
+    print(f'  Standalone (revision >{MAX_CO_REVISION}): {standalone_high_rev}')
+    print(f'  Standalone (non-PO/RFPO prefix): {standalone_other_prefix}')
+    print(f'  POs without group key: {no_group_count}')
 
     # ── 5. Enrich POs with material from quotation linkage ───
     print('\n[5/9] Enriching POs via quotation linkage...')
@@ -840,6 +995,8 @@ def main():
 
     for po in clean_pos:
         po.pop('_dt', None)
+        po.pop('isStandalone', None)
+        po.pop('baseGroupKey', None)
 
     total_spend = sum(po['poSpendUSD'] for po in clean_pos)
     base_pos = [po for po in clean_pos if po['poType'] == 'Base PO']
@@ -856,7 +1013,7 @@ def main():
     co_normal = 0
     co_orphan = 0
 
-    for oid, po_list in po_by_order_id.items():
+    for gk, po_list in po_by_group.items():
         if len(po_list) <= 1:
             # Orphan CO (single-PO group marked as CO)
             if po_list[0].get('poType') == 'Change Order':
@@ -889,7 +1046,7 @@ def main():
                 co_normal += 1
 
     # Handle COs at index 0 of multi-groups (first PO is a CO, no previous)
-    for oid, po_list in po_by_order_id.items():
+    for gk, po_list in po_by_group.items():
         if len(po_list) <= 1:
             continue
         po_list_sorted = sorted(po_list, key=lambda p: p.get('poVersion', 1))

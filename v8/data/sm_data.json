@@ -86265,10 +86265,10 @@
   ],
   "summary": {
     "totalQuotations": 3921,
-    "totalPOs": 3589,
-    "winRate": 91.5,
-    "totalQuotationValueUSD": 259089662.92,
-    "totalPOSpendUSD": 411816892.32,
+    "totalPOs": 3738,
+    "winRate": 95.3,
+    "totalQuotationValueUSD": 259427171.68,
+    "totalPOSpendUSD": 478576435.59,
     "revisionCount": 219,
     "revisionLetters": {
       "C": 7,
@@ -86281,7 +86281,7 @@
     {
       "Status": "Order",
       "Count": 3701,
-      "TotalValueUSD": 237038403.47
+      "TotalValueUSD": 237361325.35
     },
     {
       "Status": "Quotation",
@@ -86291,19 +86291,19 @@
     {
       "Status": "Waiting",
       "Count": 72,
-      "TotalValueUSD": 1657770.74
+      "TotalValueUSD": 1672302.84
     },
     {
       "Status": "Cancelled",
       "Count": 51,
-      "TotalValueUSD": 10297242.5
+      "TotalValueUSD": 10297297.28
     }
   ],
   "entities": [
     {
       "Entity": "MACRO",
       "QuotationCount": 1969,
-      "TotalValueUSD": 165505593.9
+      "TotalValueUSD": 165512648.41
     },
     {
       "Entity": "MVL USA, INC",
@@ -86313,7 +86313,7 @@
     {
       "Entity": "MVL USA JV LLC",
       "QuotationCount": 665,
-      "TotalValueUSD": 24424567.39
+      "TotalValueUSD": 24402560.6
     },
     {
       "Entity": "MVL Nepal",
@@ -86323,12 +86323,12 @@
     {
       "Entity": "FIRESTOP",
       "QuotationCount": 331,
-      "TotalValueUSD": 6777576.04
+      "TotalValueUSD": 6780512.92
     },
     {
       "Entity": "MVL Greece",
       "QuotationCount": 27,
-      "TotalValueUSD": 3746130.44
+      "TotalValueUSD": 4037772.56
     },
     {
       "Entity": "MVL-Al Othman",
@@ -86343,7 +86343,7 @@
     {
       "Entity": "Yamauchi Gumi",
       "QuotationCount": 58,
-      "TotalValueUSD": 654676.74
+      "TotalValueUSD": 654850.65
     },
     {
       "Entity": "MW-OCS",
@@ -86358,22 +86358,22 @@
     {
       "Entity": "MICRON",
       "QuotationCount": 27,
-      "TotalValueUSD": 528254.58
+      "TotalValueUSD": 528390.75
     },
     {
       "Entity": "MPG JV",
       "QuotationCount": 6,
-      "TotalValueUSD": 386517.33
+      "TotalValueUSD": 420127.54
     },
     {
       "Entity": "MVL Italy",
       "QuotationCount": 16,
-      "TotalValueUSD": 305917.53
+      "TotalValueUSD": 329247.46
     },
     {
       "Entity": "MVL Qatar",
       "QuotationCount": 14,
-      "TotalValueUSD": 294133.57
+      "TotalValueUSD": 294765.39
     },
     {
       "Entity": "DEFENSE",
@@ -86400,42 +86400,42 @@
     {
       "MaterialCode": "Services",
       "QuotationNumber": 369,
-      "QuotationValueUSD": 120207253.31
+      "QuotationValueUSD": 120207655.19
     },
     {
       "MaterialCode": "Various",
       "QuotationNumber": 2170,
-      "QuotationValueUSD": 79922157.55
+      "QuotationValueUSD": 80133411.44
     },
     {
       "MaterialCode": "Electrical",
       "QuotationNumber": 465,
-      "QuotationValueUSD": 21558909.24
+      "QuotationValueUSD": 21569830.8
     },
     {
       "MaterialCode": "Mechanical",
       "QuotationNumber": 353,
-      "QuotationValueUSD": 14650236.53
+      "QuotationValueUSD": 14672916.18
     },
     {
       "MaterialCode": "Architectural",
       "QuotationNumber": 177,
-      "QuotationValueUSD": 13628464.04
+      "QuotationValueUSD": 13661516.74
     },
     {
       "MaterialCode": "Fire",
       "QuotationNumber": 121,
-      "QuotationValueUSD": 5658777.13
+      "QuotationValueUSD": 5661262.29
     },
     {
       "MaterialCode": "Chemicals",
       "QuotationNumber": 22,
-      "QuotationValueUSD": 1591448.82
+      "QuotationValueUSD": 1647941.27
     },
     {
       "MaterialCode": "Office Assets",
       "QuotationNumber": 160,
-      "QuotationValueUSD": 1213847.63
+      "QuotationValueUSD": 1214069.1
     },
     {
       "MaterialCode": "Rental",
@@ -86482,7 +86482,7 @@
     {
       "SupplierName": "Lince M.",
       "POCount": 262,
-      "TotalSpendUSD": 22620331.41
+      "TotalSpendUSD": 22877984.96
     },
     {
       "SupplierName": "Mahesh B.",
@@ -86492,12 +86492,12 @@
     {
       "SupplierName": "Maricar I.",
       "POCount": 220,
-      "TotalSpendUSD": 6831954.9
+      "TotalSpendUSD": 6836977.68
     },
     {
       "SupplierName": "Marman I.",
       "POCount": 657,
-      "TotalSpendUSD": 16597429.03
+      "TotalSpendUSD": 16695793.01
     },
     {
       "SupplierName": "Marty A.M.",
@@ -86507,7 +86507,7 @@
     {
       "SupplierName": "Rahul N.",
       "POCount": 606,
-      "TotalSpendUSD": 13772671.99
+      "TotalSpendUSD": 13728653.83
     },
     {
       "SupplierName": "Raquel I.",
