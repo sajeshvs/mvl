@@ -1,0 +1,7 @@
+﻿KPI,ElementID,Value,Formula,DataSource,Verified,ActualCount
+Total No. of Purchase Orders,gsaKpiPoCount,3522,COUNT(gsa_data.workbench),gsa_data.json → summary.totalPOs,True,3522
+Total Spend,gsaKpiTotalSpend,"$396,042,175.60",SUM(gsa_data.workbench[].poSpendUSD),gsa_data.json → summary.totalSpendUSD,"Sum of poSpendUSD in workbench = $396,042,175.60","$396,042,175.60"
+Total No. of Change Orders,gsaKpiCoCount,314,"COUNT(workbench WHERE poType=""Change Order"")",gsa_data.json → summary.changeOrders,True,314
+Total Amount of Change Orders,gsaKpiCoAmount,"$30,368,822.75","SUM(poSpendUSD WHERE poType=""Change Order"")",gsa_data.json → summary.changeOrderValue,"Sum of CO poSpendUSD = $30,368,822.75","$30,368,822.75"
+Active Suppliers,gsaKpiActiveSuppliers,1089,"COUNT(DISTINCT supplier) excl. ""Unspecified Supplier""",gsa_data.json → summary.supplierCount,True,1089
+Active Entities,gsaKpiActiveEntities,21,COUNT(DISTINCT entity),gsa_data.json → summary.entityCount,True,21

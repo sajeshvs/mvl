@@ -1,0 +1,16 @@
+﻿Category,Metric,Value
+sourceFiles,po,PO_List_Feb-20-2026.xls
+sourceFiles,quotations,"['Quotation_Report_Feb-20-2026 (1).xls', 'Quotation_Report_Feb-20-2026 (2).xls', 'Quotation_Report_Feb-20-2026 (3).xls', 'Quotation_Report_Feb-20-2026 (4).xls', 'Quotation_Report_Feb-20-2026.xls']"
+,exportDate,Feb-20-2026
+,buildDate,2026-02-24 12:58:20
+counts,rawPOs,3613
+counts,cleanPOs,3596
+counts,rawQuotations,12215
+counts,cleanRFQs,3921
+counts,removedIQ,8252
+counts,basePOs,3287
+counts,changeOrders,309
+counts,changeOrderGroups,191
+counts,revisions,219
+counts,employees,18
+counts,conversionLinks,431
