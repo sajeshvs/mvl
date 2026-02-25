@@ -93658,7 +93658,8 @@
     "changeOrders": 296,
     "changeOrderValue": 12082912.89,
     "basePOValue": 439976493.09,
-    "supplierCount": 1133,
+    "supplierCount": 2189,
+    "activeSupplierCount": 1133,
     "entityCount": 18,
     "changeOrderGroups": 192
   },

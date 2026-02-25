@@ -1059,6 +1059,21 @@ def main():
     unique_suppliers = set(po['supplier'] for po in clean_pos if po['supplier'] != 'Unspecified Supplier')
     unique_entities = set(po['entity'] for po in clean_pos if po['entity'] and po['entity'] != 'Unknown')
 
+    # Load master supplier list from suppliers.json for total supplier count
+    master_supplier_count = 0
+    suppliers_json_path = os.path.join(BASE_DIR, 'suppliers.json')
+    if os.path.exists(suppliers_json_path):
+        with open(suppliers_json_path, 'r', encoding='utf-8') as f:
+            suppliers_master = json.load(f)
+            if isinstance(suppliers_master, dict) and 'suppliers' in suppliers_master:
+                master_supplier_count = len(suppliers_master['suppliers'])
+            elif isinstance(suppliers_master, list):
+                master_supplier_count = len(suppliers_master)
+        print(f'  Master supplier list: {master_supplier_count} suppliers (from suppliers.json)')
+    else:
+        master_supplier_count = len(unique_suppliers)
+        print(f'  ⚠️ suppliers.json not found, using PO-derived count: {master_supplier_count}')
+
     supplier_spend = defaultdict(lambda: {'valueUSD': 0, 'poCount': 0, 'basePOs': 0, 'changeOrders': 0})
     for po in clean_pos:
         s = po['supplier']
@@ -1143,7 +1158,8 @@ def main():
             'changeOrders': len(change_orders_list),
             'changeOrderValue': round(co_value, 2),
             'basePOValue': round(base_value, 2),
-            'supplierCount': len(unique_suppliers),
+            'supplierCount': master_supplier_count,
+            'activeSupplierCount': len(unique_suppliers),
             'entityCount': len(unique_entities),
             'changeOrderGroups': change_order_groups,
         },
@@ -1183,7 +1199,8 @@ def main():
     print(f'  Base POs: {len(base_pos)} (${base_value:,.2f})')
     print(f'  Change Orders: {len(change_orders_list)} (${co_value:,.2f})')
     print(f'  Change Order Groups: {change_order_groups}')
-    print(f'  Unique Suppliers: {len(unique_suppliers)}')
+    print(f'  Suppliers (master list): {master_supplier_count}')
+    print(f'  Suppliers (active in POs): {len(unique_suppliers)}')
     print(f'  Unique Entities: {len(unique_entities)}')
 
     # ── 8. Build M&D data ────────────────────────────────────
@@ -1327,7 +1344,8 @@ def main():
             'materialCount': len(md_raw_materials),
             'totalQuoted': round(md_total_quoted, 2),
             'totalOrdered': round(md_total_ordered, 2),
-            'supplierCount': len(md_po_suppliers),
+            'supplierCount': master_supplier_count,
+            'activeSupplierCount': len(md_po_suppliers),
             'projectCount': len(md_po_projects),
             'entityCount': len(md_entities_set),
             'conversionRate': conversion_rate,
