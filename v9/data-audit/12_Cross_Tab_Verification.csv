@@ -1,0 +1,13 @@
+﻿CheckNo,Description,Expected,Actual,Result,Source1,Source2
+1,SM summary.totalPOs matches workbench Order count,7671,7671,PASS,sm_data.summary.totalPOs,COUNT(sm_data.workbench WHERE Status=Order)
+2,GSA summary.totalPOs matches workbench count,3522,3522,PASS,gsa_data.summary.totalPOs,len(gsa_data.workbench)
+3,GSA basePOs + changeOrders = totalPOs,3522,3522,PASS,gsa_data.summary.totalPOs,basePOs + changeOrders
+4,GSA summary.changeOrders matches workbench Change Order count,314,314,PASS,gsa_data.summary.changeOrders,"COUNT(workbench WHERE poType contains ""change"")"
+5,M&D PO count matches GSA workbench count,3522,3522,PASS,len(gsa_data.workbench),len(md_data.pos)
+6,M&D quotation count matches SM workbench count,12072,12072,PASS,len(sm_data.workbench),len(md_data.quotations)
+7,SM summary.totalQuotations matches workbench length,12072,12072,PASS,sm_data.summary.totalQuotations,len(sm_data.workbench)
+8,M&D supplierCount matches GSA supplierCount,1089,1089,PASS,gsa_data.summary.supplierCount,md_data.summary.supplierCount
+9,M&D disciplineCount = 7 (consolidated),7,7,PASS,Expected: 7,md_data.summary.disciplineCount
+10,SM tab CO KPI should show GSA changeOrders (not SM PO count),314,314,PASS (code verified: kpiCoCount ← gsaData.summary.changeOrders),gsa_data.summary.changeOrders,scripts.js enrichDashboardWithRealData()
+11,GSA basePOValue + changeOrderValue = totalSpendUSD,396042175.6,396042175.6,PASS,gsa_data.summary.totalSpendUSD,basePOValue + changeOrderValue
+12,SM status counts sum to total workbench,12072,12072,PASS,"Status breakdown: {'Order': 7671, 'Quotation': 3819, 'Cancelled': 181, 'Waiting': 401}",Sum of all statuses

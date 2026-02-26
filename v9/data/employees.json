@@ -1,0 +1,146 @@
+[
+  {
+    "name": "Arun N.",
+    "quotationCount": 1,
+    "orderCount": 1,
+    "winRate": 100.0,
+    "totalQuotedUSD": 1445528.0,
+    "totalOrderedUSD": 1445528.0
+  },
+  {
+    "name": "Cecil R.",
+    "quotationCount": 3,
+    "orderCount": 3,
+    "winRate": 100.0,
+    "totalQuotedUSD": 16687528.53,
+    "totalOrderedUSD": 16687528.53
+  },
+  {
+    "name": "Hamza M.",
+    "quotationCount": 1,
+    "orderCount": 1,
+    "winRate": 100.0,
+    "totalQuotedUSD": 400.0,
+    "totalOrderedUSD": 400.0
+  },
+  {
+    "name": "Jailani M.",
+    "quotationCount": 4,
+    "orderCount": 4,
+    "winRate": 100.0,
+    "totalQuotedUSD": 450004.0,
+    "totalOrderedUSD": 450004.0
+  },
+  {
+    "name": "Lince M.",
+    "quotationCount": 268,
+    "orderCount": 265,
+    "winRate": 98.9,
+    "totalQuotedUSD": 21927713.17,
+    "totalOrderedUSD": 21898228.62
+  },
+  {
+    "name": "Mahesh B.",
+    "quotationCount": 6,
+    "orderCount": 6,
+    "winRate": 100.0,
+    "totalQuotedUSD": 142150.16,
+    "totalOrderedUSD": 142150.16
+  },
+  {
+    "name": "Maricar I.",
+    "quotationCount": 230,
+    "orderCount": 221,
+    "winRate": 96.1,
+    "totalQuotedUSD": 6813691.13,
+    "totalOrderedUSD": 6756647.51
+  },
+  {
+    "name": "Marman I.",
+    "quotationCount": 691,
+    "orderCount": 662,
+    "winRate": 95.8,
+    "totalQuotedUSD": 17593587.05,
+    "totalOrderedUSD": 16497684.38
+  },
+  {
+    "name": "Marty A.M.",
+    "quotationCount": 9,
+    "orderCount": 9,
+    "winRate": 100.0,
+    "totalQuotedUSD": 369941.64,
+    "totalOrderedUSD": 369941.64
+  },
+  {
+    "name": "Rahul N.",
+    "quotationCount": 627,
+    "orderCount": 609,
+    "winRate": 97.1,
+    "totalQuotedUSD": 13921320.05,
+    "totalOrderedUSD": 13733885.54
+  },
+  {
+    "name": "Raquel I.",
+    "quotationCount": 1,
+    "orderCount": 1,
+    "winRate": 100.0,
+    "totalQuotedUSD": 1596.0,
+    "totalOrderedUSD": 1596.0
+  },
+  {
+    "name": "Rufino S.J.",
+    "quotationCount": 1,
+    "orderCount": 1,
+    "winRate": 100.0,
+    "totalQuotedUSD": 5756.5,
+    "totalOrderedUSD": 5756.5
+  },
+  {
+    "name": "Rusevalt S.",
+    "quotationCount": 2,
+    "orderCount": 2,
+    "winRate": 100.0,
+    "totalQuotedUSD": 758.34,
+    "totalOrderedUSD": 758.34
+  },
+  {
+    "name": "Shah F.",
+    "quotationCount": 207,
+    "orderCount": 202,
+    "winRate": 97.6,
+    "totalQuotedUSD": 4140437.26,
+    "totalOrderedUSD": 3872825.77
+  },
+  {
+    "name": "Shahbas A.S.",
+    "quotationCount": 1,
+    "orderCount": 0,
+    "winRate": 0.0,
+    "totalQuotedUSD": 70.8,
+    "totalOrderedUSD": 0
+  },
+  {
+    "name": "Shinso M.",
+    "quotationCount": 66,
+    "orderCount": 64,
+    "winRate": 97.0,
+    "totalQuotedUSD": 1593951.22,
+    "totalOrderedUSD": 1551051.22
+  },
+  {
+    "name": "Tamraz M.",
+    "quotationCount": 2,
+    "orderCount": 2,
+    "winRate": 100.0,
+    "totalQuotedUSD": 78505.0,
+    "totalOrderedUSD": 78505.0
+  },
+  {
+    "name": "Vinith B.",
+    "quotationCount": 182,
+    "orderCount": 176,
+    "winRate": 96.7,
+    "totalQuotedUSD": 5015241.19,
+    "totalOrderedUSD": 4993068.82
+  }
+]

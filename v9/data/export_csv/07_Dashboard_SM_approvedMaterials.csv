@@ -1,0 +1,6 @@
+﻿supplier,materials
+Rastra Bhusan Construction,"[{'material': 'Steel Rebar', 'spec': 'ASTM-A615-GR60', 'leadTime': '14 days'}, {'material': 'Concrete Mix', 'spec': 'ACI-318-21', 'leadTime': '7 days'}, {'material': 'Formwork Panels', 'spec': 'ISO-9001', 'leadTime': '21 days'}]"
+KATKUWA SUPPLIERS,"[{'material': 'Electrical Cables', 'spec': 'IEC-60502', 'leadTime': '10 days'}, {'material': 'Junction Boxes', 'spec': 'NEMA-4X', 'leadTime': '5 days'}]"
+Shivam Traders,"[{'material': 'PVC Pipes', 'spec': 'ASTM-D2241', 'leadTime': '7 days'}, {'material': 'Pipe Fittings', 'spec': 'ANSI-B16.9', 'leadTime': '3 days'}, {'material': 'Valves', 'spec': 'API-600', 'leadTime': '14 days'}, {'material': 'Flanges', 'spec': 'ASME-B16.5', 'leadTime': '10 days'}]"
+Yamauchi Gumi,"[{'material': 'Heavy Machinery', 'spec': 'JIS-B8100', 'leadTime': '45 days'}, {'material': 'Crane Parts', 'spec': 'OSHA-1910', 'leadTime': '30 days'}, {'material': 'Safety Equipment', 'spec': 'ANSI-Z89.1', 'leadTime': '14 days'}]"
+Kuwait Materials Co,"[{'material': 'Sand & Aggregate', 'spec': 'ASTM-C33', 'leadTime': '5 days'}, {'material': 'Cement', 'spec': 'ASTM-C150', 'leadTime': '7 days'}]"

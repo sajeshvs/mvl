@@ -1,0 +1,11 @@
+﻿Metric,Value
+source_file,PO_List_Jan-23-2026.xlsx
+extraction_date,2026-02-09
+total_records,3539
+version,1.0
+currencies,"['JPY', 'GBP', 'BHD', 'SAR', 'QAR', 'SGD', 'EURO', 'USD', 'NPR', 'AED', 'INR', 'KWD']"
+date_range,"{'earliest': '2012-09-06', 'latest': '2026-01-23'}"
+supplier_match_stats,"{'total_with_supplier': 3494, 'successfully_matched': 3457, 'match_rate': 98.9}"
+improvements,"{'project_codes_extracted': 56, 'statuses_calculated': 3539, 'categories_identified': 2704, 'delivery_dates_estimated': 178}"
+statistics,"{'by_status': {'recent': 44, 'active': 134, 'aging': 670, 'old': 2691}, 'by_currency': {'AED': 1217, 'USD': 1702, 'JPY': 1, 'EURO': 74, 'SGD': 5, 'SAR': 169, 'BHD': 1, 'QAR': 112, 'KWD': 35, 'INR': 31, 'NPR': 170, 'GBP': 22}, 'by_year': {'2026': 62, '2025': 860, '2024': 564, '2023': 482, '2022': 95, '2021': 252, '2020': 175, '2019': 119, '2018': 115, '2017': 87, '2016': 139, '2015': 298, '2014': 214, '2013': 76, '2012': 1}, 'total_value_by_currency': {'AED': 85141423.31277454, 'USD': 107107791.91909744, 'JPY': 2146477.0, 'EURO': 4936535.9406774985, 'SGD': 102968.06, 'SAR': 11641595.601800004, 'BHD': 3900.0, 'QAR': 12128457.585, 'KWD': 199952.27, 'INR': 16333467.93, 'NPR': 252204847.91181174, 'GBP': 351807.9346603822}}"
+last_improved,2026-02-09
