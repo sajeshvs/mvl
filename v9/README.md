@@ -1,54 +1,61 @@
-# V8 — MVL Supply Chain Intel Hub
+# V9 — MVL Supply Chain Intel Hub
 
-> **Live:** [https://sajeshvs.github.io/mvl/v8](https://sajeshvs.github.io/mvl/v8)  
-> **Data Source:** Feb 20, 2026 Excel export (PO List + Quotation Reports)  
+> **Live:** [https://sajeshvs.github.io/mvl/v9](https://sajeshvs.github.io/mvl/v9)  
+> **Data Source:** Feb 26, 2026 Excel export (PO List + Quotation Reports — with Tax fields)  
 > **Stack:** HTML + CSS + Vanilla JS + Chart.js + Leaflet.js 1.9.4  
-> **Architecture:** Single-page app, monolithic `scripts.js` (~5,545 lines)
+> **Architecture:** Single-page app, monolithic `scripts.js` (~5,990 lines)
 
 ---
 
-## What's New in V8
+## What's New in V9
 
-- **Excel-based data pipeline** — `build_v8_data.py` reads `.xls` files via `xlrd`, replaces API-based approach
-- **Change Order tracking** — 309 COs in 191 groups with CO/Base badges in GSA tab
-- **Order ID linkage** — RFQ→PO traceability via shared Order ID (441 linked records)
-- **Conversion time analytics** — Monthly average RFQ→PO conversion days
-- **Quotation revisions** — 219 letter-suffix revisions tracked in SM tab
-- **Unified data model** — `mainOrderId`, `orderId`, `isChangeOrder`, `changeOrderNumber` fields across all tabs
+- **Tax fields** — PO and Quotation data now include Tax and Net Total from new Excel source
+- **GSA workbench table** — Added sortable "Tax (US$)" column
+- **SM quotation table** — Added "TAX" column
+- **GSA "Total Spend" KPI** — Shows tax subtext: Tax: $1.7M
+- **SM "Quote Value" KPI** — Shows tax subtext: Tax: $1.6M
+- **New data source** — `Full data of Quotations and POs with TAX fields/` (6 XLS files, Feb 26 2026)
+- **Quotation corruption handling** — `xlrd` with `ignore_workbook_corruption=True`
+- **3-tier Change Order logic** — PO/RFPO revision 2-6 = CO, >6 = Independent, non-PO/RFPO = Standalone
+- **Supplier count from master list** — 2,189 suppliers from `suppliers.json`
 
 ---
 
 ## Folder Structure
 
 ```
-v8/
-├── index.html                  # Single-page app (3 tabs)
+v9/
+├── index.html                  # Single-page app (3 tabs, 1,066 lines)
+├── AGENT_INSTRUCTIONS.md       # Comprehensive development instructions
 ├── README.md                   # This file
-├── NEW_DATA_ANALYSIS.md        # Feb 20 data analysis report
-├── REVIEW_RESPONSE.md          # Stakeholder review (47 questions)
+├── REVIEW_RESPONSE.md          # Stakeholder review (47 questions ✅)
+├── NEW_DATA_ANALYSIS.md        # Data analysis report
 │
 ├── shared/
-│   ├── scripts.js              # All dashboard logic (~5,545 lines)
-│   └── styles.css              # Complete CSS with design tokens
+│   ├── scripts.js              # All dashboard logic (~5,990 lines)
+│   ├── styles.css              # Complete CSS with design tokens (~2,820 lines)
+│   └── images/                 # Logo and image assets
 │
 ├── data/
-│   ├── build_v8_data.py        # Python pipeline (1,118 lines)
-│   ├── sm_data.json            # 3,946 RFQ quotations
-│   ├── gsa_data.json           # 3,596 POs with change order data
-│   ├── md_data.json            # Combined RFQs + POs for M&D
-│   ├── change_orders.json      # 191 CO groups with details
-│   ├── conversion_times.json   # 441 RFQ→PO links, monthly averages
-│   └── data_metadata.json      # Build timestamp and source info
+│   ├── build_v8_data.py        # V9 Python pipeline (Tax + auto-detect Excel)
+│   ├── sm_data.json            # 3,941 RFQ quotations (with Tax)
+│   ├── gsa_data.json           # 3,620 POs (with Tax + change orders)
+│   ├── md_data.json            # Combined RFQs + POs (with Tax)
+│   ├── change_orders.json      # 193 CO groups with details
+│   ├── conversion_times.json   # 183 RFQ→PO links, monthly averages
+│   ├── client_country_map.json # Client→country mapping (1,098 entries)
+│   ├── suppliers.json          # 2,189 supplier details
+│   ├── employees.json          # 18 MVL employees
+│   └── data_metadata.json      # Build metadata and source info
 │
-├── Re_ Main order XLS and Export feature ready for use/
-│   ├── PO_List_Feb-20-2026.xls           # 3,613 POs
-│   ├── Quotation_Report_Feb-20-2026.xls  # Quotations batch 1
-│   ├── Quotation_Report_Feb-20-2026 (1).xls
-│   ├── Quotation_Report_Feb-20-2026 (2).xls
-│   ├── Quotation_Report_Feb-20-2026 (3).xls
-│   └── Quotation_Report_Feb-20-2026 (4).xls
+├── Full data of Quotations and POs with TAX fields/  # NEW: Tax source
+│   ├── PO_List_Feb-26-2026 (1).xls           # 3,637 POs (9 cols incl. Tax)
+│   ├── Quotation_Report_Feb-26-2026.xls       # Quotation fragment 1-5
+│   └── Quotation_Report_Feb-26-2026 (1-4).xls # (16 cols incl. Tax)
 │
-└── libs/                       # Chart.js, Leaflet.js (vendored)
+├── Re_ Main order XLS and.../  # Legacy source (V8 fallback)
+├── csv-exports/                # 52 CSV exports of all JSON data
+└── docs/                       # Historical documentation
 ```
 
 ---
@@ -56,22 +63,26 @@ v8/
 ## Dashboard Tabs
 
 ### 1. Supplier Marketplace (SM) — `#004578`
-- **Data:** 3,946 RFQ quotations from `sm_data.json`
-- **Charts:** Status distribution, material breakdown, entity comparison, monthly trends
-- **Features:** Win rate analysis (94.3%), revision tracking (219), supplier table with pagination
-- **Filters:** Entity, Material, Material Code, Status, Date Range
+- **Data:** 3,941 RFQ quotations from `sm_data.json`
+- **Table:** 7 columns — QUOTATION, STATUS, MATERIAL, PROJECT, VALUE, **TAX**, CONTACT
+- **KPIs:** RFQ Count, Quote Value (+Tax subtext), PO Count, PO Value, Win Rate, COs, CO Value
+- **Tax:** 872 quotations with tax, $1.58M total
+- **Features:** Win rate (91.7%), revision tracking (219), supplier map, entity comparison
+- **Filters:** Entity, Material, Material Code, Status, Supplier, Project
 
 ### 2. Global Spend Analysis (GSA) — `#d96f3c`
-- **Data:** 3,596 POs ($147.84M total spend) from `gsa_data.json`
-- **Charts:** Spend by entity, material, supplier, monthly trends
-- **Features:** Change order section (309 COs / $30.04M), CO/Base badges, group indicators
-- **Filters:** Entity, Material, Material Code, Supplier, Date Range
+- **Data:** 3,620 POs ($414.3M total spend) from `gsa_data.json`
+- **Table:** 9 columns — PO No., Type, Order ID, Project, PO Date, Supplier, Material, PO Value, **Tax (US$)**
+- **KPIs:** Total POs, Total Spend (+Tax subtext), COs, CO Amount, Suppliers (2,189), Entities
+- **Tax:** 870 POs with tax, $1.69M total
+- **Features:** 297 COs in 193 groups ($12.0M), CO/Base badges, annual spend trends
+- **Filters:** Entity, Material, Material Code, Supplier, PO Type, Year, Date Range
 
 ### 3. Materials & Disciplines (M&D) — `#0f3d5e`
 - **Data:** Combined RFQs + POs from `md_data.json`
-- **Charts:** Material code heatmap, RFQ→PO conversion rates (56.7%), conversion time trends
-- **Features:** 12 material codes, 33 materials, 1,103 suppliers, 27 entities
-- **Filters:** Material Code, Material, Entity, Supplier
+- **KPIs:** 33 Materials, 12 Material Codes, Spend, Active Projects
+- **Tax:** `taxUSD` and `netTotalUSD` fields present in PO and quotation records
+- **Features:** Material code spend comparison, supplier profiles, material distribution
 
 ---
 
@@ -79,45 +90,70 @@ v8/
 
 | Dataset | Records | Key Metric |
 |---------|---------|------------|
-| SM (RFQs) | 3,946 | 94.3% win rate |
-| GSA (POs) | 3,596 | $147.84M total spend |
-| Change Orders | 309 in 191 groups | $30.04M CO value |
-| Conversions | 441 linked | Monthly avg days |
-| M&D | 12 material codes | 56.7% conversion rate |
+| SM (RFQs) | 3,941 | 91.7% win rate |
+| GSA (POs) | 3,620 | $414.3M total spend |
+| Base POs | 3,323 | $373.2M value |
+| Change Orders | 297 in 193 groups | $12.0M CO value |
+| **POs with Tax** | **870** | **$1.69M total tax** |
+| **Quotations with Tax** | **872** | **$1.58M total tax** |
+| Conversions | 183 linked | 29.1 avg days |
+| Suppliers (master) | 2,189 | From suppliers.json |
+| Active Suppliers | 1,104 | In PO data |
+| Entities | 18 | Active in data |
+| Employees | 18 | MVL contacts |
 
 ---
 
 ## Data Rebuild
 
 ```bash
-cd v8/data
+cd v9/data
 & "C:\Users\Sajesh V S\AppData\Local\Programs\Python\Python312\python.exe" build_v8_data.py
 ```
 
-Reads all `.xls` files from the source folder and outputs 5 JSON data files + metadata.
+The pipeline reads XLS files from `Full data of Quotations and POs with TAX fields/` (preferred) or falls back to legacy source folders. Outputs 7 JSON files + metadata.
+
+**Key pipeline features:**
+- Auto-detects PO file via `glob.glob('PO_List_*.xls')`
+- Reads Tax/Net Total columns from new XLS format
+- Handles Quotation XLS corruption with `ignore_workbook_corruption=True`
+- Filters RFQ-only (removes 8,256 IQ records)
+- 3-tier change order detection (PO/RFPO revision-based)
+- Converts currencies to USD with embedded FX rates
+- Normalizes "Cancled" → "Cancelled", blanks → `(Blank)`
 
 ---
 
-## Key Technical Details
+## Local Development
 
-- **No build tools** — served as static files, no npm/webpack
-- **No ES6 modules** — all logic in single `scripts.js` (not modular)
-- **SearchableSelect** — custom dropdown component for filters with 10+ options
-- **Chart lifecycle** — `destroyChart(id)` before recreating Chart.js instances
-- **Currency formatting** — `formatCurrency()` and `formatCurrencyShort()` utilities
-- **Responsive** — CSS Grid/Flexbox layout, mobile-friendly cards
-
----
-
-## Documentation
-
-| File | Purpose |
-|------|---------|
-| [AGENT_INSTRUCTIONS.md](../AGENT_INSTRUCTIONS.md) | Full architecture guide, field schemas, function map |
-| [REVIEW_RESPONSE.md](REVIEW_RESPONSE.md) | 47 stakeholder review questions with status |
-| [NEW_DATA_ANALYSIS.md](NEW_DATA_ANALYSIS.md) | Feb 20 data analysis and findings |
-| [copilot-instructions.md](../.github/copilot-instructions.md) | GitHub Copilot workspace context |
+```bash
+cd v9
+python -m http.server 8090
+# Open http://localhost:8090
+```
 
 ---
 
-*V8 — February 2026*
+## Deployment
+
+```bash
+cd mvl-powerbi-dashboards
+git add v9/
+git commit -m "v9: <description>"
+git push origin main
+git push mvl main
+```
+
+---
+
+## Technical Notes
+
+- **Python:** System Python 3.12 (`C:\Users\Sajesh V S\AppData\Local\Programs\Python\Python312\python.exe`)
+- **No Build Tools:** Pure vanilla JS, no npm/webpack
+- **Cache-busting:** `?v=20260226a` on CSS/JS references
+- **FX Rates:** Embedded in pipeline; live rates from `open.er-api.com` in browser
+- See `AGENT_INSTRUCTIONS.md` for comprehensive architecture docs, field schemas, and development guides
+
+---
+
+*Updated: February 26, 2026*

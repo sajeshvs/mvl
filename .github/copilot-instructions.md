@@ -1,14 +1,16 @@
 # MVL Supply Chain Intel Hub — Copilot Instructions
 
-This is a **V8 unified dashboard** project built with vanilla JS (no build tools, no ES6 modules).
+This project has **V9** (current, with Tax fields) and **V8** (previous) dashboard versions, built with vanilla JS (no build tools, no ES6 modules).
 
 ## Quick Context
 - **Stack:** HTML + CSS + Vanilla JS + Chart.js + Leaflet.js 1.9.4
-- **Data pipeline:** Python 3.12 (`v8/data/build_v8_data.py`) — reads Excel .xls via xlrd, auto-detects files
+- **V9 Data pipeline:** Python 3.12 (`v9/data/build_v8_data.py`) — reads Excel .xls with Tax/Net Total via xlrd
+- **V8 Data pipeline:** Python 3.12 (`v8/data/build_v8_data.py`) — reads Excel .xls via xlrd, auto-detects files
 - **3 Tabs:** Supplier Marketplace (Blue), Global Spend Analysis (Orange), Materials & Disciplines (Dark Blue)
-- **Architecture:** Single `scripts.js` (~5,860 lines) — NOT modular ES6
+- **Architecture:** Single `scripts.js` (~5,990 lines in V9) — NOT modular ES6
 - **No npm/webpack:** Pure vanilla JS served as static files
 - **Data:** Dynamic — pipeline auto-detects PO/Quotation Excel files and computes all counts
+- **V9 Tax:** PO and Quotation records include `taxUSD`/`netTotalUSD` fields; Tax columns in GSA/SM tables
 - **Review Status:** All 47 stakeholder review items resolved
 
 ## Key Conventions
@@ -35,18 +37,21 @@ This is a **V8 unified dashboard** project built with vanilla JS (no build tools
 ## File Roles
 | File | Purpose |
 |------|---------|
-| `v8/index.html` | Single-page app with 3 tabs |
-| `v8/shared/scripts.js` | All dashboard logic (~5,860 lines) |
-| `v8/shared/styles.css` | Complete CSS with design tokens |
-| `v8/data/build_v8_data.py` | Dynamic Python pipeline — auto-detects Excel files, header-based column lookup |
-| `v8/data/gsa_data.json` | GSA: POs with change order data |
-| `v8/data/sm_data.json` | SM: RFQ quotations |
-| `v8/data/md_data.json` | M&D: combined RFQs + POs |
-| `v8/data/change_orders.json` | CO groups with details |
-| `v8/data/conversion_times.json` | RFQ→PO links, monthly averages |
-| `v8/data/client_country_map.json` | Client→country mapping (1,098 entries, multi-source) |
-| `v8/data/build_client_country_map.py` | Country mapping pipeline (address/phone/email/entity fallback) |
-| `v8/data/suppliers.json` | Supplier details (address, phone, email, rating) |
+| `v9/index.html` | V9 single-page app with 3 tabs (Tax columns) |
+| `v9/shared/scripts.js` | V9 dashboard logic (~5,990 lines, Tax KPIs + table columns) |
+| `v9/shared/styles.css` | V9 CSS with design tokens |
+| `v9/data/build_v8_data.py` | V9 pipeline — Tax fields + auto-detect Excel |
+| `v9/data/gsa_data.json` | V9 GSA: 3,620 POs with taxUSD/netTotalUSD |
+| `v9/data/sm_data.json` | V9 SM: 3,941 RFQ quotations with Tax/NetTotal |
+| `v9/data/md_data.json` | V9 M&D: combined RFQs + POs with tax fields |
+| `v9/AGENT_INSTRUCTIONS.md` | V9 comprehensive development instructions |
+| `v8/index.html` | V8 single-page app with 3 tabs |
+| `v8/shared/scripts.js` | V8 dashboard logic (~5,860 lines) |
+| `v8/shared/styles.css` | V8 CSS with design tokens |
+| `v8/data/build_v8_data.py` | V8 pipeline — auto-detect Excel, no Tax |
+| `v8/data/gsa_data.json` | V8 GSA: POs with change order data |
+| `v8/data/sm_data.json` | V8 SM: RFQ quotations |
+| `v8/data/md_data.json` | V8 M&D: combined RFQs + POs |
 
 ## Design Tokens
 - SM: `#004578`, GSA: `#d96f3c`, M&D: `#0f3d5e`
@@ -56,6 +61,11 @@ This is a **V8 unified dashboard** project built with vanilla JS (no build tools
 
 ## Data Rebuild
 ```bash
+# V9 (current — with Tax fields)
+cd v9/data
+& "C:\Users\Sajesh V S\AppData\Local\Programs\Python\Python312\python.exe" build_v8_data.py
+
+# V8 (previous — no Tax)
 cd v8/data
 & "C:\Users\Sajesh V S\AppData\Local\Programs\Python\Python312\python.exe" build_v8_data.py
 ```
@@ -68,4 +78,5 @@ cd v8/data
 - Approved Material card must stretch to match the other two bottom cards
 
 ## Detailed Instructions
-See `AGENT_INSTRUCTIONS.md` in the repo root for comprehensive architecture docs, field schemas, and development guides.
+See `v9/AGENT_INSTRUCTIONS.md` for V9 comprehensive architecture docs, field schemas, and development guides.
+See `AGENT_INSTRUCTIONS.md` in the repo root for V8 architecture docs.
