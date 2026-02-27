@@ -3287,6 +3287,13 @@ function renderEntityChartCanvas(data, viewType = 'quote') {
 
 // ============================================
 // RENDER: MATERIAL CHART (Chart.js - Multiple Types)
+// Raw material count per Material Code (from MATERIAL_CODE_MAP in pipeline)
+const MATERIAL_RAW_COUNTS = {
+    'Architectural': 8, 'Chemicals': 2, 'Electrical': 1, 'Fire': 7,
+    'Logistics': 4, 'Mechanical': 2, 'Office Assets': 1, 'Protection': 1,
+    'Rental': 1, 'Services': 5, 'Tools': 1, 'Various': 5
+};
+
 // ============================================
 function renderMaterialChartCanvas(data, chartType = 'bar') {
     const canvas = document.getElementById('materialChartCanvas');
@@ -3352,6 +3359,7 @@ function renderMaterialChartCanvas(data, chartType = 'bar') {
     // Customize based on chart type
     if (chartType === 'bar') {
         chartConfig.options.indexAxis = 'y';
+        chartConfig.options.layout = { padding: { right: 70 } };
         chartConfig.options.scales = {
             x: {
                 beginAtZero: true,
@@ -3361,6 +3369,29 @@ function renderMaterialChartCanvas(data, chartType = 'bar') {
             y: { grid: { display: false } }
         };
         chartConfig.data.datasets[0].borderRadius = 4;
+        // Custom plugin to draw "N materials" label at end of each bar
+        chartConfig.plugins = [{
+            id: 'materialCountLabels',
+            afterDatasetsDraw(chart) {
+                const { ctx: c, scales } = chart;
+                const dataset = chart.data.datasets[0];
+                const meta = chart.getDatasetMeta(0);
+                c.save();
+                c.font = '11px Segoe UI, sans-serif';
+                c.fillStyle = '#555';
+                c.textBaseline = 'middle';
+                meta.data.forEach((bar, i) => {
+                    const label = chart.data.labels[i];
+                    const rawCount = MATERIAL_RAW_COUNTS[label] || 0;
+                    if (rawCount > 0) {
+                        const x = bar.x + 6;
+                        const y = bar.y;
+                        c.fillText(rawCount + ' material' + (rawCount !== 1 ? 's' : ''), x, y);
+                    }
+                });
+                c.restore();
+            }
+        }];
     } else if (chartType === 'line') {
         chartConfig.data.datasets[0].fill = true;
         chartConfig.data.datasets[0].tension = 0.4;
