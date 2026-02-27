@@ -466,12 +466,13 @@ def build_document():
         ('3', 'Data Pipeline (9 Stages)'),
         ('4', 'Currency Conversion'),
         ('5', 'Change Order Classification Logic'),
-        ('6', 'Tab 1 — Supplier Marketplace (SM)'),
-        ('7', 'Tab 2 — Global Spend Analysis (GSA)'),
-        ('8', 'Tab 3 — Materials & Disciplines (M&D)'),
-        ('9', 'Data File Reference'),
-        ('10', 'Material Code Classification'),
-        ('11', 'Country Normalization'),
+        ('6', 'Tax Data Processing (V9 New)'),
+        ('7', 'Tab 1 — Supplier Marketplace (SM)'),
+        ('8', 'Tab 2 — Global Spend Analysis (GSA)'),
+        ('9', 'Tab 3 — Materials & Disciplines (M&D)'),
+        ('10', 'Data File Reference'),
+        ('11', 'Material Code Classification'),
+        ('12', 'Country Normalization'),
     ]
     
     for num, title_text in toc_items:
@@ -525,12 +526,14 @@ def build_document():
     add_styled_table(doc,
         ['Metric', 'Value', 'Source'],
         [
-            ['Total RFQ Records', '3,921', 'Quotation Excel export'],
-            ['Total Purchase Orders', '3,746', 'PO CSV export'],
+            ['Total RFQ Records', '3,941', 'Quotation XLS export (5 files, 12,276 raw rows)'],
+            ['Total Purchase Orders', '3,620', 'PO XLS export (3,637 raw rows, 9 columns)'],
             ['Total PO Spend (USD)', '~$481M', 'Converted via FX rates'],
+            ['Total PO Tax (USD)', '~$1.69M', '870 POs with tax data (V9 New)'],
+            ['Total Quotation Tax (USD)', '~$1.58M', '872 quotations with tax data (V9 New)'],
             ['Change Orders', '296 (192 groups)', 'PO/RFPO rev 2–6'],
             ['Master Supplier Count', '2,189', 'suppliers.json'],
-            ['Active Suppliers (in POs)', '1,133', 'Derived from PO data'],
+            ['Active Suppliers (in POs)', '~1,133', 'Derived from PO data'],
             ['Material Categories', '12', 'Code-based classification'],
             ['Raw Materials', '33', 'Distinct material names'],
         ],
@@ -754,10 +757,91 @@ def build_document():
     doc.add_page_break()
     
     # ════════════════════════════════════════════════════════════
-    # 6. SM TAB
+    # 6. TAX DATA PROCESSING (V9 NEW)
     # ════════════════════════════════════════════════════════════
     
-    add_section_header(doc, '6. Tab 1 — Supplier Marketplace (SM)', TAB_COLORS['SM']['rgb'], level=1)
+    add_section_header(doc, '6. Tax Data Processing (V9 New)', THEME['primary'], level=1)
+    
+    p = doc.add_paragraph(
+        'Version 9 introduces tax data processing for both Purchase Orders and Quotations. '
+        'Tax amounts are extracted from source Excel files, converted to USD, and displayed '
+        'across multiple dashboard tabs as KPI subtexts and table columns.'
+    )
+    
+    add_section_header(doc, '6.1 Source Data', THEME['primary'], level=2)
+    
+    p = doc.add_paragraph('Tax data is extracted from two source Excel (XLS) files:')
+    
+    add_styled_table(doc,
+        ['Source', 'File Pattern', 'Tax Column', 'Records with Tax'],
+        [
+            ['Purchase Orders', 'PO_List_*.xls', 'Tax (column 9)', '870 of 3,620 POs'],
+            ['Quotations', 'quotation_*.xls (5 files)', 'Tax (column 14)', '872 of 3,941 quotations'],
+        ],
+        header_color='004578'
+    )
+    
+    add_section_header(doc, '6.2 Pipeline Processing', THEME['primary'], level=2)
+    
+    p = doc.add_paragraph('The build_v8_data.py pipeline processes tax data in two functions:')
+    
+    items = [
+        ('load_po_xls_tax()', 'Reads PO XLS → extracts Tax column → converts to USD via FX rates → writes taxUSD and netTotalUSD fields to each PO record in gsa_data.json'),
+        ('load_quotation_xls_tax()', 'Reads Quotation XLS files → extracts Tax and Net Total columns → converts to USD → writes Tax and NetTotal fields to each quotation record in sm_data.json and md_data.json'),
+    ]
+    for title, desc in items:
+        p = doc.add_paragraph()
+        run = p.add_run(f'{title}: ')
+        run.bold = True
+        run.font.size = Pt(9)
+        p.add_run(desc).font.size = Pt(9)
+    
+    add_section_header(doc, '6.3 Tax KPIs — GSA Tab', THEME['primary'], level=2)
+    
+    add_styled_table(doc,
+        ['JSON Field', 'Value', 'Description'],
+        [
+            ['summary.totalTaxUSD', '~$1,689,813', 'Sum of all PO tax amounts in USD'],
+            ['summary.posWithTax', '870', 'Count of POs that have non-zero tax'],
+            ['summary.totalNetSpendUSD', '~$479M', 'Total spend minus tax (netTotalUSD)'],
+        ],
+        header_color='D96F3C'
+    )
+    
+    add_section_header(doc, '6.4 Tax KPIs — SM Tab', THEME['primary'], level=2)
+    
+    add_styled_table(doc,
+        ['JSON Field', 'Value', 'Description'],
+        [
+            ['summary.totalQuotationTaxUSD', '~$1,578,990', 'Sum of all quotation tax amounts in USD'],
+            ['summary.quotationsWithTax', '872', 'Count of quotations that have non-zero tax'],
+            ['summary.totalQuotationNetUSD', '~$118M', 'Total quotation value minus tax'],
+        ],
+        header_color='004578'
+    )
+    
+    add_section_header(doc, '6.5 Frontend Display', THEME['primary'], level=2)
+    
+    p = doc.add_paragraph('Tax data appears in the dashboard in three ways:')
+    items = [
+        ('KPI Subtext (GSA)', 'Total Spend KPI shows "Tax: $X.XM" below the main value'),
+        ('KPI Subtext (SM)', 'Quote Value KPI shows "Tax: $X.XM" below the main value'),
+        ('Table Columns', 'GSA PO Details table includes "Tax US$" column; SM Quotation Details table includes "TAX" column'),
+    ]
+    for title, desc in items:
+        p = doc.add_paragraph()
+        run = p.add_run(f'{title}: ')
+        run.bold = True
+        run.font.size = Pt(9)
+        p.add_run(desc).font.size = Pt(9)
+    
+    doc.add_page_break()
+    
+    # ════════════════════════════════════════════════════════════
+    # 7. SM TAB
+    # ════════════════════════════════════════════════════════════
+    
+    add_section_header(doc, '7. Tab 1 — Supplier Marketplace (SM)', TAB_COLORS['SM']['rgb'], level=1)
     
     p = doc.add_paragraph()
     run = p.add_run('Theme: Blue (#004578)  |  Focus: RFQ pipeline and supplier discovery')
@@ -765,7 +849,7 @@ def build_document():
     run.italic = True
     
     # SM Data Sources
-    add_section_header(doc, '6.1 Data Sources', TAB_COLORS['SM']['rgb'], level=2)
+    add_section_header(doc, '7.1 Data Sources', TAB_COLORS['SM']['rgb'], level=2)
     
     add_styled_table(doc,
         ['File', 'Variable', 'Content'],
@@ -780,7 +864,7 @@ def build_document():
     )
     
     # SM Filters
-    add_section_header(doc, '6.2 Filters (10 Controls)', TAB_COLORS['SM']['rgb'], level=2)
+    add_section_header(doc, '7.2 Filters (10 Controls)', TAB_COLORS['SM']['rgb'], level=2)
     
     add_styled_table(doc,
         ['#', 'Filter', 'HTML ID', 'Options Source', 'Matches Field'],
@@ -806,7 +890,8 @@ def build_document():
     run.font.size = Pt(9)
     
     # SM KPIs
-    add_section_header(doc, '6.3 KPI Cards (7 Metrics)', TAB_COLORS['SM']['rgb'], level=2)
+    add_section_header(doc, '7.3 KPI Cards (7 Metrics + Tax Subtext)', TAB_COLORS['SM']['rgb'], level=2)
+    
     
     chart_buf = create_sm_kpi_cards_chart()
     doc.add_picture(chart_buf, width=Inches(6))
@@ -819,6 +904,7 @@ def build_document():
         [
             ['1', 'Request for Quotation', 'COUNT(smData.workbench)', 'Yes'],
             ['2', 'Quote Value', 'SUM(convertToUSD(q.QuotationValue, q.Currency))', 'Yes'],
+            ['2a', 'Tax subtext (V9 New)', 'SUM(convertToUSD(q.Tax, q.Currency))', 'Yes'],
             ['3', 'Total Purchase Orders', 'COUNT(non_spo_pos) from pipeline', 'No — pre-calculated'],
             ['4', 'PO Values', 'SUM(po.poSpendUSD) for non-SPO POs', 'No — pre-calculated'],
             ['5', 'Win Rate', 'totalPOs / totalQuotations × 100', 'Yes'],
@@ -834,12 +920,12 @@ def build_document():
     run.bold = True
     run.font.color.rgb = RGBColor(0xE7, 0x4C, 0x3C)
     run = p.add_run('KPIs 3, 4, 6, 7 are sourced from PO/GSA data and remain constant regardless of SM quotation filters. '
-                     'Only KPIs 1, 2, 5 respond to filter changes.')
+                     'Only KPIs 1, 2, 2a, 5 respond to filter changes.')
     run.font.size = Pt(9)
     run.font.color.rgb = THEME['light']
     
     # SM Charts
-    add_section_header(doc, '6.4 Charts and Visualizations', TAB_COLORS['SM']['rgb'], level=2)
+    add_section_header(doc, '7.4 Charts and Visualizations', TAB_COLORS['SM']['rgb'], level=2)
     
     sm_charts = [
         ['Status Chart', 'Custom HTML bar list', 'statusChart', 'smData.statusSummary[] — {Status, Count, TotalValueUSD}',
@@ -872,7 +958,7 @@ def build_document():
     )
     
     # SM Supplier Profile
-    add_section_header(doc, '6.5 Supplier Profile Card', TAB_COLORS['SM']['rgb'], level=2)
+    add_section_header(doc, '7.5 Supplier Profile Card', TAB_COLORS['SM']['rgb'], level=2)
     
     add_styled_table(doc,
         ['Field', 'HTML ID', 'Data Source'],
@@ -889,7 +975,7 @@ def build_document():
     )
     
     # SM Employee List
-    add_section_header(doc, '6.6 Responsible MVL Employee', TAB_COLORS['SM']['rgb'], level=2)
+    add_section_header(doc, '7.6 Responsible MVL Employee', TAB_COLORS['SM']['rgb'], level=2)
     
     p = doc.add_paragraph()
     run = p.add_run('Data source: ')
@@ -898,13 +984,13 @@ def build_document():
                      'NOT vendor companies. Ranked list with gold/silver/bronze circles, togglable "By Spend" / "By Count" sort.')
     
     # SM Bottom Tables
-    add_section_header(doc, '6.7 Bottom Tables', TAB_COLORS['SM']['rgb'], level=2)
+    add_section_header(doc, '7.7 Bottom Tables', TAB_COLORS['SM']['rgb'], level=2)
     
     p = doc.add_paragraph()
     run = p.add_run('Quotation Details Table ')
     run.bold = True
     run = p.add_run('(default tab) — ')
-    run = p.add_run('Columns: Quotation Number, Status (color badge), Material, Project, Value (USD), Contact. '
+    run = p.add_run('Columns: Quotation Number, Status (color badge), Material, Project, Value (USD), TAX (V9 New), Contact. '
                      'Pagination: 25/50/100/200 rows per page.')
     
     p = doc.add_paragraph()
@@ -919,7 +1005,7 @@ def build_document():
     # 7. GSA TAB
     # ════════════════════════════════════════════════════════════
     
-    add_section_header(doc, '7. Tab 2 — Global Spend Analysis (GSA)', TAB_COLORS['GSA']['rgb'], level=1)
+    add_section_header(doc, '8. Tab 2 — Global Spend Analysis (GSA)', TAB_COLORS['GSA']['rgb'], level=1)
     
     p = doc.add_paragraph()
     run = p.add_run('Theme: Orange (#D96F3C)  |  Focus: PO spend analysis and change order tracking')
@@ -927,7 +1013,7 @@ def build_document():
     run.italic = True
     
     # GSA Data Sources
-    add_section_header(doc, '7.1 Data Sources', TAB_COLORS['GSA']['rgb'], level=2)
+    add_section_header(doc, '8.1 Data Sources', TAB_COLORS['GSA']['rgb'], level=2)
     
     add_styled_table(doc,
         ['File', 'Variable', 'Content'],
@@ -939,7 +1025,7 @@ def build_document():
     )
     
     # GSA Filters
-    add_section_header(doc, '7.2 Filters (10 Controls)', TAB_COLORS['GSA']['rgb'], level=2)
+    add_section_header(doc, '8.2 Filters (10 Controls)', TAB_COLORS['GSA']['rgb'], level=2)
     
     add_styled_table(doc,
         ['#', 'Filter', 'HTML ID', 'Options Source', 'Matches Field'],
@@ -959,7 +1045,8 @@ def build_document():
     )
     
     # GSA KPIs
-    add_section_header(doc, '7.3 KPI Cards (6 Metrics)', TAB_COLORS['GSA']['rgb'], level=2)
+    add_section_header(doc, '8.3 KPI Cards (6 Metrics + Tax Subtext)', TAB_COLORS['GSA']['rgb'], level=2)
+    
     
     chart_buf = create_gsa_kpi_cards_chart()
     doc.add_picture(chart_buf, width=Inches(6))
@@ -972,6 +1059,7 @@ def build_document():
         [
             ['1', 'Total No. of Purchase Orders', 'gsaData.summary.totalPOs', 'filteredPOs.length'],
             ['2', 'Total Spend', 'gsaData.summary.totalSpendUSD', 'SUM(convertToUSD(po.valueUSD, po.currency))'],
+            ['2a', 'Tax subtext (V9 New)', 'gsaData.summary.totalTaxUSD', 'SUM(po.taxUSD)'],
             ['3', 'Total No. of Change Orders', 'gsaData.summary.changeOrders', 'COUNT(po WHERE poType="Change Order")'],
             ['4', 'Total Amount of Change Orders', 'gsaData.summary.changeOrderValue', 'SUM(convertToUSD(co.valueUSD, co.currency))'],
             ['5', 'No. of Suppliers', 'gsaData.summary.supplierCount (2,189)', 'COUNT(DISTINCT po.supplier)'],
@@ -984,12 +1072,13 @@ def build_document():
     p.paragraph_format.space_before = Pt(6)
     run = p.add_run('Sub-labels: ')
     run.bold = True
-    run = p.add_run('KPI 3 shows "N groups" count. KPI 4 shows "X% of total spend" = (CO Value / Total Spend) × 100.')
+    run = p.add_run('KPI 3 shows "N groups" count. KPI 4 shows "X% of total spend" = (CO Value / Total Spend) × 100. '
+                     'KPI 2 shows Tax subtext: "Tax: $X.XM" (V9 New).')
     run.font.size = Pt(9)
     run.font.color.rgb = THEME['light']
     
     # GSA Charts
-    add_section_header(doc, '7.4 Charts and Visualizations', TAB_COLORS['GSA']['rgb'], level=2)
+    add_section_header(doc, '8.4 Charts and Visualizations', TAB_COLORS['GSA']['rgb'], level=2)
     
     gsa_charts = [
         ['Annual Spend Trend', 'Stacked bar + line combo', 'gsaSpendTrendChart',
@@ -1016,7 +1105,7 @@ def build_document():
     )
     
     # GSA Supplier Card
-    add_section_header(doc, '7.5 Supplier Details Card', TAB_COLORS['GSA']['rgb'], level=2)
+    add_section_header(doc, '8.5 Supplier Details Card', TAB_COLORS['GSA']['rgb'], level=2)
     
     add_styled_table(doc,
         ['Field', 'HTML ID', 'Data Source'],
@@ -1038,7 +1127,7 @@ def build_document():
     run.font.size = Pt(9)
     
     # GSA PO Table
-    add_section_header(doc, '7.6 PO Details Table', TAB_COLORS['GSA']['rgb'], level=2)
+    add_section_header(doc, '8.6 PO Details Table', TAB_COLORS['GSA']['rgb'], level=2)
     
     add_styled_table(doc,
         ['Column', 'Sort Key', 'Field', 'Format'],
@@ -1051,6 +1140,7 @@ def build_document():
             ['Supplier', 'supplier', 'po.supplier', 'Text'],
             ['Material', 'material', 'po.material', 'Text'],
             ['PO Value (US$)', 'po_value', 'convertToUSD(po.valueUSD, po.currency)', 'formatCurrency()'],
+            ['Tax US$ (V9 New)', 'tax', 'po.taxUSD', 'formatCurrency()'],
         ],
         header_color='D96F3C'
     )
@@ -1060,7 +1150,7 @@ def build_document():
     p.runs[0].font.size = Pt(9)
     
     # GSA Cross-filter
-    add_section_header(doc, '7.7 Cross-Filter Behavior', TAB_COLORS['GSA']['rgb'], level=2)
+    add_section_header(doc, '8.7 Cross-Filter Behavior', TAB_COLORS['GSA']['rgb'], level=2)
     
     add_styled_table(doc,
         ['Click Target', 'What Happens'],
@@ -1079,7 +1169,7 @@ def build_document():
     # 8. M&D TAB
     # ════════════════════════════════════════════════════════════
     
-    add_section_header(doc, '8. Tab 3 — Materials & Disciplines (M&D)', TAB_COLORS['MD']['rgb'], level=1)
+    add_section_header(doc, '9. Tab 3 — Materials & Disciplines (M&D)', TAB_COLORS['MD']['rgb'], level=1)
     
     p = doc.add_paragraph()
     run = p.add_run('Theme: Dark Blue (#0F3D5E)  |  Focus: Material categorization, discipline spend, and conversion analysis')
@@ -1087,7 +1177,7 @@ def build_document():
     run.italic = True
     
     # MD Data Sources
-    add_section_header(doc, '8.1 Data Sources', TAB_COLORS['MD']['rgb'], level=2)
+    add_section_header(doc, '9.1 Data Sources', TAB_COLORS['MD']['rgb'], level=2)
     
     add_styled_table(doc,
         ['File', 'Variable', 'Content'],
@@ -1099,7 +1189,7 @@ def build_document():
     )
     
     # MD Filters
-    add_section_header(doc, '8.2 Filters (8 Controls + Search)', TAB_COLORS['MD']['rgb'], level=2)
+    add_section_header(doc, '9.2 Filters (8 Controls + Search)', TAB_COLORS['MD']['rgb'], level=2)
     
     add_styled_table(doc,
         ['#', 'Filter', 'HTML ID', 'Options Source', 'Matches'],
@@ -1125,7 +1215,7 @@ def build_document():
     run.font.size = Pt(9)
     
     # MD KPIs
-    add_section_header(doc, '8.3 KPI Cards (5 Metrics)', TAB_COLORS['MD']['rgb'], level=2)
+    add_section_header(doc, '9.3 KPI Cards (5 Metrics)', TAB_COLORS['MD']['rgb'], level=2)
     
     add_styled_table(doc,
         ['#', 'KPI Title', 'Unfiltered Formula', 'Filtered Formula'],
@@ -1148,7 +1238,7 @@ def build_document():
     run.font.color.rgb = THEME['light']
     
     # MD Charts
-    add_section_header(doc, '8.4 Charts', TAB_COLORS['MD']['rgb'], level=2)
+    add_section_header(doc, '9.4 Charts', TAB_COLORS['MD']['rgb'], level=2)
     
     md_charts = [
         ['Total Spend by Material Code', 'Horizontal grouped bar', 'disciplineSpendChart',
@@ -1166,7 +1256,7 @@ def build_document():
     )
     
     # MD Supplier Profile
-    add_section_header(doc, '8.5 Supplier Profile Card', TAB_COLORS['MD']['rgb'], level=2)
+    add_section_header(doc, '9.5 Supplier Profile Card', TAB_COLORS['MD']['rgb'], level=2)
     
     add_styled_table(doc,
         ['Field', 'HTML ID', 'Source'],
@@ -1182,7 +1272,7 @@ def build_document():
     )
     
     # MD Supplier Table
-    add_section_header(doc, '8.6 Supplier Overview Table', TAB_COLORS['MD']['rgb'], level=2)
+    add_section_header(doc, '9.6 Supplier Overview Table', TAB_COLORS['MD']['rgb'], level=2)
     
     add_styled_table(doc,
         ['Column', 'Sort', 'Field'],
@@ -1201,7 +1291,7 @@ def build_document():
     p.runs[0].font.size = Pt(9)
     
     # MD PO Table
-    add_section_header(doc, '8.7 PO/Material Details Table', TAB_COLORS['MD']['rgb'], level=2)
+    add_section_header(doc, '9.7 PO/Material Details Table', TAB_COLORS['MD']['rgb'], level=2)
     
     add_styled_table(doc,
         ['Column', 'Field', 'Format'],
@@ -1221,7 +1311,7 @@ def build_document():
     p.runs[0].font.size = Pt(9)
     
     # MD Approved Materials
-    add_section_header(doc, '8.8 Approved Materials', TAB_COLORS['MD']['rgb'], level=2)
+    add_section_header(doc, '9.8 Approved Materials', TAB_COLORS['MD']['rgb'], level=2)
     
     p = doc.add_paragraph()
     run = p.add_run('Status: 🚧 Coming Soon ')
@@ -1235,7 +1325,7 @@ def build_document():
     # 9. DATA FILE REFERENCE
     # ════════════════════════════════════════════════════════════
     
-    add_section_header(doc, '9. Data File Reference', THEME['primary'], level=1)
+    add_section_header(doc, '10. Data File Reference', THEME['primary'], level=1)
     
     add_section_header(doc, 'Pipeline-Generated Files (7)', THEME['primary'], level=2)
     
@@ -1271,7 +1361,7 @@ def build_document():
     # 10. MATERIAL CODE CLASSIFICATION
     # ════════════════════════════════════════════════════════════
     
-    add_section_header(doc, '10. Material Code Classification', THEME['primary'], level=1)
+    add_section_header(doc, '11. Material Code Classification', THEME['primary'], level=1)
     
     p = doc.add_paragraph('The pipeline classifies ~35 raw material names into 12 standardized material categories:')
     
@@ -1317,7 +1407,7 @@ def build_document():
     # 11. COUNTRY NORMALIZATION
     # ════════════════════════════════════════════════════════════
     
-    add_section_header(doc, '11. Country Normalization', THEME['primary'], level=1)
+    add_section_header(doc, '12. Country Normalization', THEME['primary'], level=1)
     
     add_section_header(doc, 'Multi-Source Country Resolution', THEME['primary'], level=2)
     
