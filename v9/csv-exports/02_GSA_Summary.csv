@@ -1,2 +1,2 @@
-﻿totalSpendUSD,totalPOs,basePOs,changeOrders,changeOrderValue,basePOValue,supplierCount,activeSupplierCount,entityCount,changeOrderGroups
-481080918.05,3746,3450,296,12082912.89,439976493.09,2189,1133,18,192
+﻿totalSpendUSD,totalPOs,basePOs,changeOrders,changeOrderValue,basePOValue,supplierCount,activeSupplierCount,entityCount,changeOrderGroups,totalTaxUSD,totalNetSpendUSD,posWithTax
+414338922.77,3620,3323,297,11992654.18,373249235.74,2189,1104,18,193,1689813.5,415046354.32,870
