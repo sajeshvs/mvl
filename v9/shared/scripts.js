@@ -373,9 +373,8 @@ function enrichDashboardWithRealData() {
 
         // Material distribution from smData.materialsByDiscipline
         if (smData.materialsByDiscipline) {
-            const materialColors = ['#0066CC', '#3399FF', '#339933', '#66CC66', '#FF9900', '#FF6600', '#9966CC', '#CC6699'];
+            const materialColors = ['#0066CC', '#3399FF', '#339933', '#66CC66', '#FF9900', '#FF6600', '#9966CC', '#CC6699', '#2B4257', '#06B6D4', '#EF4444', '#8B5CF6'];
             dashboardData.supplierMarketplace.materialDistribution = smData.materialsByDiscipline
-                .slice(0, 8)
                 .map((m, i) => ({
                     material: m.MaterialCode,
                     value: m.QuotationValueUSD || 0,
@@ -1637,18 +1636,19 @@ function applyFilters() {
             if (material && material !== 'Unknown') {
                 const val = q.QuotationValue || 0;
                 const curr = q.Currency || 'USD';
-                if (!materialCounts[material]) materialCounts[material] = 0;
-                materialCounts[material] += convertToUSD(val, curr);
+                if (!materialCounts[material]) materialCounts[material] = { value: 0, count: 0 };
+                materialCounts[material].value += convertToUSD(val, curr);
+                materialCounts[material].count++;
             }
         });
 
-        const materialColors = ['#0066CC', '#3399FF', '#339933', '#66CC66', '#FF9900', '#FF6600', '#9966CC', '#CC6699'];
+        const materialColors = ['#0066CC', '#3399FF', '#339933', '#66CC66', '#FF9900', '#FF6600', '#9966CC', '#CC6699', '#2B4257', '#06B6D4', '#EF4444', '#8B5CF6'];
         const materialDist = Object.entries(materialCounts)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 8)
-            .map(([material, value], i) => ({
+            .sort((a, b) => b[1].value - a[1].value)
+            .map(([material, data], i) => ({
                 material,
-                value,
+                value: data.value,
+                count: data.count,
                 color: materialColors[i % materialColors.length]
             }));
 
@@ -1970,10 +1970,9 @@ function applyFilters() {
         }
     });
 
-    const materialColors = ['#0066CC', '#3399FF', '#339933', '#66CC66', '#FF9900', '#FF6600', '#9966CC', '#CC6699'];
+    const materialColors = ['#0066CC', '#3399FF', '#339933', '#66CC66', '#FF9900', '#FF6600', '#9966CC', '#CC6699', '#2B4257', '#06B6D4', '#EF4444', '#8B5CF6'];
     const materialDist = Object.entries(materialCounts)
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 8)
         .map(([material, count], i) => ({
             material,
             value: count * 10000000,
@@ -3299,9 +3298,22 @@ function renderMaterialChartCanvas(data, chartType = 'bar') {
         materialChartInstance = null;
     }
 
+    // Dynamic height for bar mode to fit all items with scroll
+    const container = document.getElementById('materialChartContainer');
+    if (container) {
+        if (chartType === 'bar') {
+            const barHeight = Math.max(300, data.length * 32);
+            canvas.style.height = barHeight + 'px';
+            canvas.height = barHeight;
+        } else {
+            canvas.style.height = '100%';
+        }
+    }
+
     const ctx = canvas.getContext('2d');
     const labels = data.map(d => d.material);
     const values = data.map(d => d.value);
+    const counts = data.map(d => d.count || 0);
     const colors = data.map(d => d.color);
 
     let chartConfig = {
@@ -3324,10 +3336,12 @@ function renderMaterialChartCanvas(data, chartType = 'bar') {
                 tooltip: {
                     callbacks: {
                         label: function (context) {
+                            const count = counts[context.dataIndex];
+                            const countLabel = count ? ` (${count} quotations)` : '';
                             if (chartType === 'pie') {
-                                return `${context.label}: ${formatCurrencyShort(context.raw)}`;
+                                return `${context.label}: ${formatCurrencyShort(context.raw)}${countLabel}`;
                             }
-                            return formatCurrencyShort(context.raw);
+                            return `${formatCurrencyShort(context.raw)}${countLabel}`;
                         }
                     }
                 }
@@ -5025,8 +5039,7 @@ function createMaterialDistributionChartFiltered() {
     const materials = Object.entries(materialMap)
         .map(([name, value]) => ({ name, value }))
         .filter(m => m.value > 0)
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 10);
+        .sort((a, b) => b.value - a.value);
 
     if (materials.length === 0) {
         const ctx = canvas.getContext('2d');
@@ -5038,7 +5051,7 @@ function createMaterialDistributionChartFiltered() {
         return;
     }
 
-    const colors = ['#2B4257', '#3D5A73', '#4F728E', '#6189A4', '#729FBA', '#84B5CF', '#95CBE5', '#A7E1FA', '#B9F0FF', '#CBFFFF'];
+    const colors = ['#2B4257', '#3B82F6', '#60A5FA', '#06B6D4', '#10B981', '#F59E0B', '#EF4444', '#1E3A5F', '#8B5CF6', '#22C55E', '#F97316', '#EC4899'];
     const ctx = canvas.getContext('2d');
     mdState.materialDistChartInstance = new Chart(ctx, {
         type: 'doughnut',
@@ -5455,24 +5468,25 @@ function createMaterialDistributionChart() {
         mdState.materialDistChartInstance.destroy();
     }
 
-    // Get top disciplines by spend for pie chart
+    // Get all disciplines by spend for pie chart
     const disciplines = mdData.disciplines
         .filter(d => d.orderedValue > 0)
-        .sort((a, b) => b.orderedValue - a.orderedValue)
-        .slice(0, 10);
+        .sort((a, b) => b.orderedValue - a.orderedValue);
 
-    // Colors matching the wireframe donut chart
+    // Colors for all 12 material codes
     const colors = [
-        '#2B4257', // Dark blue - Valves
-        '#3B82F6', // Blue - Pumps  
-        '#60A5FA', // Light blue - Motors
-        '#06B6D4', // Cyan/Teal - Cables
-        '#10B981', // Green - Switchgear
-        '#F59E0B', // Orange - Control Systems
-        '#EF4444', // Red - Steel
-        '#1E3A5F', // Navy - Beams
-        '#8B5CF6', // Purple - HVAC
-        '#22C55E', // Bright green - Electrical
+        '#2B4257', // Dark blue
+        '#3B82F6', // Blue
+        '#60A5FA', // Light blue
+        '#06B6D4', // Cyan/Teal
+        '#10B981', // Green
+        '#F59E0B', // Orange
+        '#EF4444', // Red
+        '#1E3A5F', // Navy
+        '#8B5CF6', // Purple
+        '#22C55E', // Bright green
+        '#F97316', // Deep orange
+        '#EC4899', // Pink
     ];
 
     const ctx = canvas.getContext('2d');
