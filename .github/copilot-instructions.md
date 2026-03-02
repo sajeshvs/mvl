@@ -7,10 +7,11 @@ This project has **V9** (current, with Tax fields) and **V8** (previous) dashboa
 - **V9 Data pipeline:** Python 3.12 (`v9/data/build_v8_data.py`) — reads Excel .xls with Tax/Net Total via xlrd
 - **V8 Data pipeline:** Python 3.12 (`v8/data/build_v8_data.py`) — reads Excel .xls via xlrd, auto-detects files
 - **3 Tabs:** Supplier Marketplace (Blue), Global Spend Analysis (Orange), Materials & Disciplines (Dark Blue)
-- **Architecture:** Single `scripts.js` (~5,990 lines in V9) — NOT modular ES6
+- **Architecture:** Single `scripts.js` (~6,030 lines in V9) — NOT modular ES6
 - **No npm/webpack:** Pure vanilla JS served as static files
 - **Data:** Dynamic — pipeline auto-detects PO/Quotation Excel files and computes all counts
 - **V9 Tax:** PO and Quotation records include `taxUSD`/`netTotalUSD` fields; Tax columns in GSA/SM tables
+- **V9 Docs:** DOCX generator (`v9/docs/generate_docx.py`), 52 CSV exports, tech doc MD
 - **Review Status:** All 47 stakeholder review items resolved
 
 ## Key Conventions
@@ -23,7 +24,11 @@ This project has **V9** (current, with Tax fields) and **V8** (previous) dashboa
 - Change orders identified by PO suffix: `-1` = Base, `-2`+ = Change Order
 - SearchableSelect component wraps all filter dropdowns with 10+ options (16 dropdowns total)
 - Material (30 names) and Material Code (12 categories) filters separated on all tabs
+- **All 12 material codes shown** in SM bar chart and M&D doughnut (no `.slice()` truncation)
+- **Material count labels:** SM Material Distribution bar chart shows "N materials" at end of each bar via custom Chart.js plugin `materialCountLabels`
+- **MATERIAL_RAW_COUNTS** constant maps each code to its raw material count (e.g., Architectural:8, Fire:7, Services:5)
 - `generateUniqueColors(count, sat, light)` for dynamic HSL chart colors
+- **12-color palette** for material codes: `['#0066CC', '#3399FF', '#339933', '#66CC66', '#FF9900', '#FF6600', '#9966CC', '#CC6699', '#2B4257', '#06B6D4', '#EF4444', '#8B5CF6']`
 - Rating property guards: handles both `{score: N}` object and plain number formats
 - **No hardcoded data counts** — all KPIs, summaries, and fallbacks are computed from data
 - **Pipeline auto-detects** PO file via `glob.glob('PO_List_*.xls')` and extracts export date from filename
@@ -38,12 +43,17 @@ This project has **V9** (current, with Tax fields) and **V8** (previous) dashboa
 | File | Purpose |
 |------|---------|
 | `v9/index.html` | V9 single-page app with 3 tabs (Tax columns) |
-| `v9/shared/scripts.js` | V9 dashboard logic (~5,990 lines, Tax KPIs + table columns) |
+| `v9/shared/scripts.js` | V9 dashboard logic (~6,030 lines, Tax KPIs + table columns) |
 | `v9/shared/styles.css` | V9 CSS with design tokens |
 | `v9/data/build_v8_data.py` | V9 pipeline — Tax fields + auto-detect Excel |
 | `v9/data/gsa_data.json` | V9 GSA: 3,620 POs with taxUSD/netTotalUSD |
 | `v9/data/sm_data.json` | V9 SM: 3,941 RFQ quotations with Tax/NetTotal |
 | `v9/data/md_data.json` | V9 M&D: combined RFQs + POs with tax fields |
+| `v9/csv-exports/` | V9: 52 CSV exports of all JSON data (with tax fields) |
+| `v9/csv-exports/export_all_csv.py` | V9: CSV export script — regenerates all 52 CSVs |
+| `v9/docs/generate_docx.py` | V9: DOCX generator (~1,530 lines, 12 sections with Tax) |
+| `v9/docs/MVL_Dashboard_Documentation.docx` | V9: Generated Word doc (~25+ pages) |
+| `v9/docs/MVL_Dashboard_Documentation.md` | V9: Technical documentation (~1,000 lines, 13 sections) |
 | `v9/AGENT_INSTRUCTIONS.md` | V9 comprehensive development instructions |
 | `v8/index.html` | V8 single-page app with 3 tabs |
 | `v8/shared/scripts.js` | V8 dashboard logic (~5,860 lines) |

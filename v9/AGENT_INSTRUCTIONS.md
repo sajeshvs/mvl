@@ -1,6 +1,6 @@
 # MVL Supply Chain Intel Hub — V9 Agent Instructions
 
-**Last Updated:** February 26, 2026  
+**Last Updated:** March 2, 2026  
 **Current Version:** V9 (Tax Fields + Dynamic Excel Pipeline)  
 **Previous Versions:** V8 (Dynamic Excel Pipeline), V7 (CSV Pipeline), V6 (Modular JS), V5 (Unified Dashboard)
 
@@ -17,6 +17,13 @@
 - **Pipeline updates:** `load_po_xls_tax()` and `load_quotation_xls_tax()` functions read Tax/Net Total fields
 - **Quotation corruption handling:** `xlrd` reads Quotation XLS with `ignore_workbook_corruption=True`
 - **IQ filtering:** 8,256 IQ records excluded — RFQ-only (3,941 records)
+- **Material chart display:** All 12 material codes shown in SM bar chart and M&D doughnut (no `.slice()` truncation)
+- **Material count labels:** SM Material Distribution bar chart shows "N materials" at end of each bar via custom Chart.js plugin `materialCountLabels`
+- **MATERIAL_RAW_COUNTS:** Constant mapping each code to its raw material count (Architectural:8, Fire:7, Services:5, etc.)
+- **12-color palette:** `['#0066CC', '#3399FF', '#339933', '#66CC66', '#FF9900', '#FF6600', '#9966CC', '#CC6699', '#2B4257', '#06B6D4', '#EF4444', '#8B5CF6']`
+- **CSV exports:** 52 CSV files in `v9/csv-exports/` covering all JSON data with tax fields
+- **DOCX documentation:** `v9/docs/generate_docx.py` generates ~25+ page Word doc with 12 sections including Tax Data Processing
+- **Technical documentation:** `v9/docs/MVL_Dashboard_Documentation.md` — ~1,000 lines, 13 sections
 
 ---
 
@@ -32,7 +39,7 @@ mvl-powerbi-dashboards/
 │   ├── NEW_DATA_ANALYSIS.md         # Feb 20 data analysis report
 │   │
 │   ├── shared/
-│   │   ├── scripts.js               # All dashboard logic (~5,990 lines)
+│   │   ├── scripts.js               # All dashboard logic (~6,030 lines)
 │   │   ├── styles.css               # Complete CSS with design tokens (~2,820 lines)
 │   │   ├── images/                  # Logo and image assets
 │   │   └── components/              # Component docs
@@ -61,7 +68,14 @@ mvl-powerbi-dashboards/
 │   │
 │   ├── Re_ Main order XLS and.../   # Legacy source Excel files (V8 fallback)
 │   ├── csv-exports/                 # 52 CSV exports of all JSON data
-│   └── docs/                        # Historical documentation
+│   │   ├── export_all_csv.py        # CSV export script — regenerates all 52 CSVs
+│   │   ├── README.md                # CSV export index and descriptions
+│   │   └── *.csv                    # 52 CSV files (GSA, SM, M&D, CO, Conversion, Suppliers)
+│   └── docs/                        # Documentation
+│       ├── generate_docx.py         # DOCX generator (~1,530 lines, 12 sections with Tax)
+│       ├── MVL_Dashboard_Documentation.docx  # Generated Word doc (~25+ pages)
+│       ├── MVL_Dashboard_Documentation.md    # Technical doc (~1,000 lines, 13 sections)
+│       └── *.md                     # Other historical docs
 │
 ├── v8/                              # Previous version (no Tax fields)
 ├── v8_backup_20260226_pre_tax_update/  # V8 backup before V9 work
@@ -217,7 +231,7 @@ git push mvl main
 
 ## V9 Architecture
 
-### Single-File JavaScript (scripts.js ~5,990 lines)
+### Single-File JavaScript (scripts.js ~6,030 lines)
 
 ```
 scripts.js
@@ -230,13 +244,14 @@ scripts.js
 ├── SM Filters (L1320-1550)             — initFilters(), applyFilters() with tax subtexts
 ├── SM Rendering (L1550-2100)           — updateKPIs() with tax, table rows with tax column
 ├── SM Top Suppliers & Map (L2100-2900) — renderTopSuppliers(), Leaflet map
-├── SM Charts (L2900-3100)              — renderEntityChartCanvas(), renderTrendChartLine()
-├── Country Normalization (L2980)       — normalizeCountry() (~150 entries)
-├── GSA Tab (L3100-4500)                — updateGSAKPIs() with tax subtext, table with tax column
-├── GSA/SM Clear Functions (L4500-4560)
-├── M&D Tab (L4560-5700)               — M&D with taxUSD/netTotalUSD in records
-├── SearchableSelect (L5700-5860)       — Reusable type-ahead dropdown component
-└── Exports (L5860)
+├── SM Charts (L2900-3300)              — renderEntityChartCanvas(), renderTrendChartLine()
+├── Material Chart (L3290-3400)         — MATERIAL_RAW_COUNTS, renderMaterialChartCanvas() with materialCountLabels plugin
+├── Country Normalization (L3400)       — normalizeCountry() (~150 entries)
+├── GSA Tab (L3500-4800)                — updateGSAKPIs() with tax subtext, table with tax column
+├── GSA/SM Clear Functions (L4800-4860)
+├── M&D Tab (L4860-5700)               — M&D with taxUSD/netTotalUSD in records
+├── SearchableSelect (L5700-5890)       — Reusable type-ahead dropdown component
+└── Exports (L5890-6028)
 ```
 
 ### Key Tax-Related Functions
@@ -256,6 +271,57 @@ scripts.js
 - `#gsaKpiTaxSubtext` — GSA Total Spend KPI tax subtext (line 562)
 - SM table TAX header (line 445)
 - GSA table Tax (US$) header with sort (line 728)
+
+### Material Chart Features (V9)
+
+**All 12 Material Codes Displayed:**
+- SM Material Distribution bar chart: shows all 12 codes (no `.slice()` truncation)
+- M&D Discipline Spend doughnut: shows all 12 codes (no `.slice()` truncation)
+- 12-color palette: `['#0066CC', '#3399FF', '#339933', '#66CC66', '#FF9900', '#FF6600', '#9966CC', '#CC6699', '#2B4257', '#06B6D4', '#EF4444', '#8B5CF6']`
+
+**Material Count Labels (Custom Chart.js Plugin):**
+- Plugin name: `materialCountLabels` (registered via `afterDatasetsDraw` lifecycle hook)
+- Displays "N materials" at end of each bar showing raw material count per code
+- `MATERIAL_RAW_COUNTS` constant: `{Architectural:8, Chemicals:2, Electrical:1, Fire:7, Logistics:4, Mechanical:2, 'Office Assets':1, Protection:1, Rental:1, Services:5, Tools:1, Various:5}`
+- Dynamic canvas height: 32px per bar for consistent spacing
+- Right padding: 70px so labels don't get clipped
+
+---
+
+## CSV Exports (52 Files)
+
+- Location: `v9/csv-exports/`
+- Script: `export_all_csv.py` — reads all JSON data files and generates 52 CSVs
+- README: `csv-exports/README.md` — index of all 52 CSV files with descriptions
+- Includes tax fields (taxUSD, netTotalUSD, Tax, NetTotal) in relevant CSVs
+- Categories: GSA (12), SM (8), M&D (7), CO (3), Conversion (3), Suppliers (2), Filters (17)
+
+### Regenerating CSVs
+```bash
+cd v9/csv-exports
+& "C:\Users\Sajesh V S\AppData\Local\Programs\Python\Python312\python.exe" export_all_csv.py
+```
+
+---
+
+## DOCX Documentation
+
+- Generator: `v9/docs/generate_docx.py` (~1,530 lines)
+- Output: `v9/docs/MVL_Dashboard_Documentation.docx` (~25+ pages)
+- Dependencies: `python-docx`, `matplotlib`
+- 12 sections: Executive Summary, Architecture, Pipeline, Currency, Change Orders, **Tax Data Processing (V9 New)**, SM Tab, GSA Tab, M&D Tab, Data File Reference, Material Codes, Country Normalization
+- Includes embedded matplotlib chart images, styled tables, formatted KPI references
+- Tax content: Section 6 (Tax Data Processing), tax KPI rows in SM/GSA sections, Tax columns in table descriptions
+
+### Technical Documentation (Markdown)
+- File: `v9/docs/MVL_Dashboard_Documentation.md` (~1,000 lines, 13 sections)
+- Covers all dashboard features, data schemas, filter logic, chart configurations
+
+### Regenerating DOCX
+```bash
+cd v9/docs
+& "C:\Users\Sajesh V S\AppData\Local\Programs\Python\Python312\python.exe" generate_docx.py
+```
 
 ---
 
@@ -365,7 +431,7 @@ python -m http.server 8090
 
 ## Critical Implementation Notes
 
-1. **Single JS File:** V9 uses monolithic `scripts.js` (~5,990 lines), not modular ES6
+1. **Single JS File:** V9 uses monolithic `scripts.js` (~6,030 lines), not modular ES6
 2. **No Build Tools:** Pure vanilla JS — no webpack, npm, or transpilation
 3. **Tax Source:** New XLS files with Tax/Net Total columns in `Full data of Quotations and POs with TAX fields/`
 4. **Quotation XLS Corruption:** Files require `ignore_workbook_corruption=True` for `xlrd` to open
@@ -407,4 +473,4 @@ See `v9/REVIEW_RESPONSE.md` for the complete question-by-question breakdown.
 
 ---
 
-*Updated: February 26, 2026*
+*Updated: March 2, 2026*
