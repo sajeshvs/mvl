@@ -1,0 +1,18 @@
+﻿Category,Metric,Value
+,total_suppliers,2189
+,geocoded_count,20
+,countries_standardized,1559
+,valid_phones,907
+quality_distribution,medium,1132
+quality_distribution,low,1046
+quality_distribution,high,11
+top_countries,United Arab Emirates,603
+top_countries,Afghanistan,182
+top_countries,United States,165
+top_countries,China,95
+top_countries,Qatar,91
+top_countries,Nepal,75
+top_countries,Saudi Arabia,64
+top_countries,Kuwait,54
+top_countries,India,36
+top_countries,Dubai,33

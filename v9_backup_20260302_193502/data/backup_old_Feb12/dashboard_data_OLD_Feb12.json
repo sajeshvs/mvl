@@ -1,0 +1,459 @@
+{
+    "_version": "5.0",
+    "_lastRefresh": "2026-02-12T06:08:00Z",
+    "_note": "Unified dashboard data for Supply Chain Intel Hub",
+    "summary": {
+        "rfqCount": 12532,
+        "quoteValue": 3600000000,
+        "poCount": 7697,
+        "poValue": 721300000,
+        "winRate": 97.7,
+        "coCount": 7697,
+        "coValue": 721300000,
+        "openQuotes": 4650,
+        "conversionRate": 97.7
+    },
+    "filters": {
+        "entities": [
+            "All Entities",
+            "Yamauchi Gumi",
+            "MACRO",
+            "MVL Nepal",
+            "FIRESTOP",
+            "MICRON",
+            "MV LLC",
+            "MVL USA, INC",
+            "MVL USA JV LLC"
+        ],
+        "projects": [
+            "All Projects"
+        ],
+        "suppliers": [
+            "All Suppliers"
+        ],
+        "statuses": [
+            "All Statuses",
+            "Order",
+            "Quotation",
+            "Waiting",
+            "Cancelled",
+            "Closed"
+        ],
+        "materials": [
+            "All Materials",
+            "Logistics",
+            "Tools",
+            "Various",
+            "Fire",
+            "Services",
+            "Electrical",
+            "Mechanical",
+            "Chemicals",
+            "Architectural"
+        ]
+    },
+    "supplierMarketplace": {
+        "statusChart": [
+            {
+                "status": "Order",
+                "count": 7697,
+                "color": "#c6f6d5"
+            },
+            {
+                "status": "Quotation",
+                "count": 4249,
+                "color": "#cce5ff"
+            },
+            {
+                "status": "Waiting",
+                "count": 150,
+                "color": "#fff4ce"
+            },
+            {
+                "status": "Cancelled",
+                "count": 86,
+                "color": "#ffe0e0"
+            },
+            {
+                "status": "Closed",
+                "count": 350,
+                "color": "#e5e5e5"
+            }
+        ],
+        "entityComparison": [
+            {
+                "entity": "Yamauchi Gumi",
+                "quoteValue": 1800000000,
+                "poSpend": 1200000000,
+                "color": "#0066CC"
+            },
+            {
+                "entity": "MACRO",
+                "quoteValue": 800000000,
+                "poSpend": 650000000,
+                "color": "#339933"
+            },
+            {
+                "entity": "MVL Nepal",
+                "quoteValue": 300000000,
+                "poSpend": 280000000,
+                "color": "#339933"
+            },
+            {
+                "entity": "FIRESTOP",
+                "quoteValue": 280000000,
+                "poSpend": 250000000,
+                "color": "#FF9900"
+            },
+            {
+                "entity": "MICRON",
+                "quoteValue": 120000000,
+                "poSpend": 110000000,
+                "color": "#CC3300"
+            },
+            {
+                "entity": "MV LLC",
+                "quoteValue": 100000000,
+                "poSpend": 85000000,
+                "color": "#9933CC"
+            },
+            {
+                "entity": "MVL USA, INC",
+                "quoteValue": 50000000,
+                "poSpend": 45000000,
+                "color": "#00CCCC"
+            },
+            {
+                "entity": "MVL USA JV LLC",
+                "quoteValue": 20000000,
+                "poSpend": 18000000,
+                "color": "#CC0000"
+            }
+        ],
+        "topSuppliers": [
+            {
+                "rank": 1,
+                "name": "Rastra Bhusan Construction and Suppliers",
+                "poCount": 21,
+                "spend": 74650000
+            },
+            {
+                "rank": 2,
+                "name": "KATKUWA SUPPLIERS",
+                "poCount": 10,
+                "spend": 49010000
+            },
+            {
+                "rank": 3,
+                "name": "Shivam Traders",
+                "poCount": 13,
+                "spend": 41260000
+            },
+            {
+                "rank": 4,
+                "name": "TATEKAN Constructions and Services",
+                "poCount": 2,
+                "spend": 19320000
+            },
+            {
+                "rank": 5,
+                "name": "GODAWARI STEEL PVT. LTD.",
+                "poCount": 3,
+                "spend": 14030000
+            },
+            {
+                "rank": 6,
+                "name": "Oman Cables Industry (SAOG)",
+                "poCount": 5,
+                "spend": 7630000
+            },
+            {
+                "rank": 7,
+                "name": "Fox Logistics and Construction",
+                "poCount": 1,
+                "spend": 7050000
+            },
+            {
+                "rank": 8,
+                "name": "J.M.T. GROUP PVT. LTD.",
+                "poCount": 5,
+                "spend": 6710000
+            },
+            {
+                "rank": 9,
+                "name": "Nepal Wire Industry",
+                "poCount": 8,
+                "spend": 5890000
+            },
+            {
+                "rank": 10,
+                "name": "Global Trading Co.",
+                "poCount": 4,
+                "spend": 4520000
+            }
+        ],
+        "materialDistribution": [
+            {
+                "material": "Logistics",
+                "value": 1900000000,
+                "color": "#0066CC"
+            },
+            {
+                "material": "Tools",
+                "value": 450000000,
+                "color": "#3399FF"
+            },
+            {
+                "material": "Various",
+                "value": 350000000,
+                "color": "#339933"
+            },
+            {
+                "material": "Fire",
+                "value": 250000000,
+                "color": "#FF9900"
+            },
+            {
+                "material": "Unknown",
+                "value": 150000000,
+                "color": "#CC3300"
+            },
+            {
+                "material": "Services",
+                "value": 150000000,
+                "color": "#9933CC"
+            },
+            {
+                "material": "Electrical",
+                "value": 80000000,
+                "color": "#00CCCC"
+            },
+            {
+                "material": "Mechanical",
+                "value": 80000000,
+                "color": "#CC0000"
+            },
+            {
+                "material": "Chemicals",
+                "value": 50000000,
+                "color": "#006666"
+            },
+            {
+                "material": "Architectural",
+                "value": 40000000,
+                "color": "#66CC66"
+            }
+        ],
+        "responsibleEmployees": [
+            {
+                "rank": 1,
+                "name": "Admin User",
+                "poCount": 1965,
+                "totalSpend": 503800000
+            },
+            {
+                "rank": 2,
+                "name": "Lince M.",
+                "poCount": 256,
+                "totalSpend": 41400000
+            },
+            {
+                "rank": 3,
+                "name": "Marman I.",
+                "poCount": 655,
+                "totalSpend": 32800000
+            },
+            {
+                "rank": 4,
+                "name": "Rahul N.",
+                "poCount": 584,
+                "totalSpend": 26500000
+            },
+            {
+                "rank": 5,
+                "name": "Cecil R.",
+                "poCount": 6,
+                "totalSpend": 16900000
+            },
+            {
+                "rank": 6,
+                "name": "Maricar I.",
+                "poCount": 289,
+                "totalSpend": 14800000
+            }
+        ],
+        "quotationToPOTime": [
+            {
+                "month": "Jan",
+                "avgDays": 12
+            },
+            {
+                "month": "Feb",
+                "avgDays": 15
+            },
+            {
+                "month": "Mar",
+                "avgDays": 10
+            },
+            {
+                "month": "Apr",
+                "avgDays": 18
+            },
+            {
+                "month": "May",
+                "avgDays": 14
+            },
+            {
+                "month": "Jun",
+                "avgDays": 11
+            },
+            {
+                "month": "Jul",
+                "avgDays": 16
+            },
+            {
+                "month": "Aug",
+                "avgDays": 13
+            },
+            {
+                "month": "Sep",
+                "avgDays": 9
+            },
+            {
+                "month": "Oct",
+                "avgDays": 17
+            },
+            {
+                "month": "Nov",
+                "avgDays": 12
+            },
+            {
+                "month": "Dec",
+                "avgDays": 14
+            }
+        ],
+        "monthlyTrend": [
+            {
+                "month": "Jan",
+                "quotes": 850,
+                "orders": 620,
+                "cos": 45
+            },
+            {
+                "month": "Feb",
+                "quotes": 920,
+                "orders": 710,
+                "cos": 52
+            },
+            {
+                "month": "Mar",
+                "quotes": 1050,
+                "orders": 820,
+                "cos": 68
+            },
+            {
+                "month": "Apr",
+                "quotes": 980,
+                "orders": 750,
+                "cos": 55
+            },
+            {
+                "month": "May",
+                "quotes": 1120,
+                "orders": 890,
+                "cos": 72
+            },
+            {
+                "month": "Jun",
+                "quotes": 1080,
+                "orders": 850,
+                "cos": 64
+            },
+            {
+                "month": "Jul",
+                "quotes": 1200,
+                "orders": 920,
+                "cos": 78
+            },
+            {
+                "month": "Aug",
+                "quotes": 1150,
+                "orders": 880,
+                "cos": 71
+            },
+            {
+                "month": "Sep",
+                "quotes": 1050,
+                "orders": 810,
+                "cos": 65
+            },
+            {
+                "month": "Oct",
+                "quotes": 1180,
+                "orders": 905,
+                "cos": 74
+            },
+            {
+                "month": "Nov",
+                "quotes": 1100,
+                "orders": 860,
+                "cos": 69
+            },
+            {
+                "month": "Dec",
+                "quotes": 852,
+                "orders": 681,
+                "cos": 54
+            }
+        ],
+        "approvedMaterials": [
+            { "supplier": "Rastra Bhusan Construction", "materials": [
+                { "material": "Steel Rebar", "spec": "ASTM-A615-GR60", "leadTime": "14 days" },
+                { "material": "Concrete Mix", "spec": "ACI-318-21", "leadTime": "7 days" },
+                { "material": "Formwork Panels", "spec": "ISO-9001", "leadTime": "21 days" }
+            ]},
+            { "supplier": "KATKUWA SUPPLIERS", "materials": [
+                { "material": "Electrical Cables", "spec": "IEC-60502", "leadTime": "10 days" },
+                { "material": "Junction Boxes", "spec": "NEMA-4X", "leadTime": "5 days" }
+            ]},
+            { "supplier": "Shivam Traders", "materials": [
+                { "material": "PVC Pipes", "spec": "ASTM-D2241", "leadTime": "7 days" },
+                { "material": "Pipe Fittings", "spec": "ANSI-B16.9", "leadTime": "3 days" },
+                { "material": "Valves", "spec": "API-600", "leadTime": "14 days" },
+                { "material": "Flanges", "spec": "ASME-B16.5", "leadTime": "10 days" }
+            ]},
+            { "supplier": "Yamauchi Gumi", "materials": [
+                { "material": "Heavy Machinery", "spec": "JIS-B8100", "leadTime": "45 days" },
+                { "material": "Crane Parts", "spec": "OSHA-1910", "leadTime": "30 days" },
+                { "material": "Safety Equipment", "spec": "ANSI-Z89.1", "leadTime": "14 days" }
+            ]},
+            { "supplier": "Kuwait Materials Co", "materials": [
+                { "material": "Sand & Aggregate", "spec": "ASTM-C33", "leadTime": "5 days" },
+                { "material": "Cement", "spec": "ASTM-C150", "leadTime": "7 days" }
+            ]}
+        ],
+        "supplierLocations": [
+            { "name": "Rastra Bhusan Construction", "lat": 27.7172, "lng": 85.3240, "country": "Nepal", "poCount": 21, "spend": 74650000 },
+            { "name": "KATKUWA SUPPLIERS", "lat": 27.6915, "lng": 85.3420, "country": "Nepal", "poCount": 10, "spend": 49010000 },
+            { "name": "Shivam Traders", "lat": 27.7050, "lng": 85.3145, "country": "Nepal", "poCount": 13, "spend": 41260000 },
+            { "name": "TATEKAN Constructions", "lat": 27.6854, "lng": 85.3155, "country": "Nepal", "poCount": 2, "spend": 19320000 },
+            { "name": "GODAWARI STEEL PVT. LTD.", "lat": 27.5912, "lng": 85.3852, "country": "Nepal", "poCount": 3, "spend": 14030000 },
+            { "name": "Oman Cables Industry (SAOG)", "lat": 23.5880, "lng": 58.3829, "country": "Oman", "poCount": 5, "spend": 7630000 },
+            { "name": "Fox Logistics and Construction", "lat": 27.7200, "lng": 85.3600, "country": "Nepal", "poCount": 1, "spend": 7050000 },
+            { "name": "J.M.T. GROUP PVT. LTD.", "lat": 27.7100, "lng": 85.3250, "country": "Nepal", "poCount": 5, "spend": 6710000 },
+            { "name": "Yamauchi Gumi", "lat": 35.6762, "lng": 139.6503, "country": "Japan", "poCount": 45, "spend": 125000000 },
+            { "name": "US Supplier Corp", "lat": 40.7128, "lng": -74.0060, "country": "USA", "poCount": 18, "spend": 35000000 },
+            { "name": "Kuwait Materials Co", "lat": 29.3759, "lng": 47.9774, "country": "Kuwait", "poCount": 28, "spend": 52000000 },
+            { "name": "Diego Garcia Logistics", "lat": -7.3195, "lng": 72.4229, "country": "Diego Garcia", "poCount": 12, "spend": 28000000 },
+            { "name": "Qatar Construction LLC", "lat": 25.2854, "lng": 51.5310, "country": "Qatar", "poCount": 15, "spend": 42000000 }
+        ]
+    },
+    "globalSpendAnalysis": {
+        "_status": "pending",
+        "_note": "Awaiting Visio wireframe extraction"
+    },
+    "materialsAndDisciplines": {
+        "_status": "pending",
+        "_note": "Awaiting Visio wireframe extraction"
+    }
+}

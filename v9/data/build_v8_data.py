@@ -1119,32 +1119,62 @@ def main():
     # ── 5. Enrich POs with material from quotation linkage ───
     print('\n[5/9] Enriching POs via quotation linkage...')
 
+    # Q16 fix: Use mainOrderId matching (orderId is empty for most quotations)
     q_by_order_id = defaultdict(list)
+    q_by_main_order_id = defaultdict(list)
     for q in clean_quotes:
         oid = q.get('orderId', '')
         if oid:
             q_by_order_id[oid].append(q)
+        moid = q.get('mainOrderId', '')
+        if moid:
+            q_by_main_order_id[moid].append(q)
 
     enriched_count = 0
+    enriched_project_count = 0
     for po in clean_pos:
+        # Try orderId match first (most specific)
+        matching_q = None
         oid = po.get('orderId', '')
         if oid and oid in q_by_order_id:
             matching_q = q_by_order_id[oid]
+
+        # Fallback to mainOrderId match (covers most PO→quotation links)
+        if not matching_q:
+            moid = po.get('mainOrderId', '')
+            if moid and moid in q_by_main_order_id:
+                matching_q = q_by_main_order_id[moid]
+
+        if matching_q:
+            # Enrich material from quotation if PO still has discipline-level value
             if po['material'] in PO_CODE_PREFIX_MAP.values():
-                q_mat = matching_q[0].get('Material', '')
+                # Prefer quotation whose materialCode matches the PO's discipline
+                best_q = None
+                for q in matching_q:
+                    if q.get('materialCode', '') == po['material']:
+                        best_q = q
+                        break
+                if not best_q:
+                    best_q = matching_q[0]
+
+                q_mat = best_q.get('Material', '')
                 if q_mat and q_mat != '(Blank)':
                     po['material'] = q_mat
                     po['materialCode'] = get_material_code(q_mat)
                     enriched_count += 1
+
+            # Enrich project name from quotation
             if not po.get('project') or po.get('project') == '':
                 q_proj = matching_q[0].get('ProjectName', '')
                 if q_proj and q_proj != '(Blank)':
                     po['project'] = q_proj
+                    enriched_project_count += 1
 
         if not po.get('project'):
             po['project'] = po.get('poName', '')
 
     print(f'  POs enriched with quotation material: {enriched_count}')
+    print(f'  POs enriched with quotation project: {enriched_project_count}')
 
     # ── 6. Build SM data (Supplier Marketplace) ──────────────
     print('\n[6/9] Building SM data...')

@@ -300,12 +300,14 @@ function enrichDashboardWithRealData() {
     if (smData && smData.summary) {
         console.log('📊 Using pre-calculated Supplier Marketplace data from smData');
 
-        // Summary KPIs from smData
+        // Summary KPIs from smData — PO/CO values sourced from gsaData to match GSA tab (Q1-Q3)
+        // Q4: Quote value includes tax
+        const quoteValueWithTax = (smData.summary.totalQuotationValueUSD || 0) + (smData.summary.totalQuotationTaxUSD || 0);
         dashboardData.summary = {
             rfqCount: smData.summary.totalQuotations || 0,
-            quoteValue: smData.summary.totalQuotationValueUSD || 0,
-            poCount: smData.summary.totalPOs || 0,
-            poValue: smData.summary.totalPOSpendUSD || 0,
+            quoteValue: quoteValueWithTax,
+            poCount: gsaData?.summary?.totalPOs || smData.summary.totalPOs || 0,
+            poValue: gsaData?.summary?.totalSpendUSD || smData.summary.totalPOSpendUSD || 0,
             winRate: smData.summary.winRate || 0,
             coCount: gsaData?.summary?.changeOrders || 0,
             coValue: gsaData?.summary?.changeOrderValue || 0,
@@ -1010,8 +1012,26 @@ function generateSupplierListRowsPaginated() {
     const allSuppliers = suppliersData.suppliers;
     const { searchTerm, materialFilter, countryFilter, currentPage, pageSize } = bottomTableState;
 
+    // Q9: Build set of supplier names matching top-level SM filters (entity/project/supplier/material)
+    const hasTopFilter = Object.values(currentFilters).some(v => v !== null && v !== '');
+    let topFilteredSupplierNames = null;
+    if (hasTopFilter && smData && smData.workbench) {
+        const filteredQuotes = smData.workbench.filter(q => {
+            if (currentFilters.entity && q.Entity !== currentFilters.entity) return false;
+            if (currentFilters.project && q.ProjectName !== currentFilters.project) return false;
+            if (currentFilters.supplier && q.Client !== currentFilters.supplier) return false;
+            if (currentFilters.material && q.Material !== currentFilters.material) return false;
+            if (currentFilters.materialCode && q.materialCode !== currentFilters.materialCode) return false;
+            if (currentFilters.status && q.Status !== currentFilters.status) return false;
+            return true;
+        });
+        topFilteredSupplierNames = new Set(filteredQuotes.map(q => q.Client).filter(Boolean));
+    }
+
     // Apply filters
     let filtered = allSuppliers.filter(s => {
+        // Q9: Cross-filter with top-level SM filters
+        if (topFilteredSupplierNames && !topFilteredSupplierNames.has(s.name)) return false;
         if (searchTerm) {
             const searchFields = [
                 s.name,
@@ -1513,18 +1533,25 @@ function applyFilters() {
         }
 
         // Calculate KPIs from filtered smData
-        // PO count/value from actual PO data (not quotation Status=Order)
-        const smTotalPOs = smData?.summary?.totalPOs || 0;
-        const smTotalPOSpend = smData?.summary?.totalPOSpendUSD || 0;
+        // PO count/value from GSA data to match GSA tab (Q1-Q3, Q7)
+        const smTotalPOs = gsaData?.summary?.totalPOs || 0;
+        const smTotalPOSpend = gsaData?.summary?.totalSpendUSD || 0;
         const totalQuoteValue = filtered.reduce((sum, q) => {
             const val = q.QuotationValue || 0;
             const curr = q.Currency || 'USD';
             return sum + convertToUSD(val, curr);
         }, 0);
+        // Q4: Include tax in quote value
+        const totalQuoteTax = filtered.reduce((sum, q) => {
+            const t = q.Tax || 0;
+            const c = q.Currency || 'USD';
+            return sum + convertToUSD(t, c);
+        }, 0);
+        const totalQuoteValueWithTax = totalQuoteValue + totalQuoteTax;
         const winRate = filtered.length > 0 ? (smTotalPOs / filtered.length * 100).toFixed(1) : 0;
 
         document.getElementById('kpiRfqCount').textContent = filtered.length.toLocaleString();
-        document.getElementById('kpiQuoteValue').textContent = formatCurrencyShort(totalQuoteValue);
+        document.getElementById('kpiQuoteValue').textContent = formatCurrencyShort(totalQuoteValueWithTax);
         document.getElementById('kpiPoCount').textContent = smTotalPOs.toLocaleString();
         document.getElementById('kpiPoValue').textContent = formatCurrencyShort(smTotalPOSpend);
         document.getElementById('kpiWinRate').textContent = winRate + '%';
@@ -1532,19 +1559,48 @@ function applyFilters() {
         // Tax subtext under Quote Value
         const quoteTaxEl = document.getElementById('kpiQuoteTaxSubtext');
         if (quoteTaxEl) {
-            const totalTax = filtered.reduce((sum, q) => {
-                const t = q.Tax || 0;
-                const c = q.Currency || 'USD';
-                return sum + convertToUSD(t, c);
-            }, 0);
-            quoteTaxEl.textContent = totalTax > 0 ? 'Tax: ' + formatCurrencyShort(totalTax) : '';
+            quoteTaxEl.textContent = totalQuoteTax > 0 ? 'Tax: ' + formatCurrencyShort(totalQuoteTax) : '';
         }
 
-        // CO Count/Value: Show actual change orders from GSA data
-        const gsaCOs = gsaData?.summary?.changeOrders || 0;
-        const gsaCOValue = gsaData?.summary?.changeOrderValue || 0;
-        document.getElementById('kpiCoCount').textContent = gsaCOs.toLocaleString();
-        document.getElementById('kpiCoValue').textContent = formatCurrencyShort(gsaCOValue);
+        // CO Count/Value: Cross-filter GSA PO data by active SM filters (Q7)
+        let filteredGSAPOs = gsaState?.allPOs || [];
+        if (hasActiveFilter && filteredGSAPOs.length > 0) {
+            filteredGSAPOs = filteredGSAPOs.filter(po => {
+                if (currentFilters.entity && (po.entity || '').trim() !== currentFilters.entity.trim()) return false;
+                if (currentFilters.project && po.project !== currentFilters.project) return false;
+                if (currentFilters.supplier && po.supplier !== currentFilters.supplier) return false;
+                if (currentFilters.material && po.material !== currentFilters.material) return false;
+                if (currentFilters.materialCode && po.materialCode !== currentFilters.materialCode) return false;
+                if (currentFilters.dateFrom || currentFilters.dateTo) {
+                    const poDate = new Date(po.poDate);
+                    if (isNaN(poDate)) return false;
+                    if (currentFilters.dateFrom && poDate < new Date(currentFilters.dateFrom)) return false;
+                    if (currentFilters.dateTo) {
+                        const toDate = new Date(currentFilters.dateTo);
+                        toDate.setHours(23, 59, 59, 999);
+                        if (poDate > toDate) return false;
+                    }
+                }
+                if (currentFilters.search) {
+                    const searchFields = [po.poNumber, po.project, po.supplier, po.material, po.entity].filter(Boolean).join(' ').toLowerCase();
+                    if (!searchFields.includes(currentFilters.search)) return false;
+                }
+                return true;
+            });
+            // Update PO KPIs from filtered GSA data
+            const filteredPOCount = filteredGSAPOs.length;
+            const filteredPOSpend = filteredGSAPOs.reduce((sum, po) => sum + (po.valueUSD || 0), 0);
+            document.getElementById('kpiPoCount').textContent = filteredPOCount.toLocaleString();
+            document.getElementById('kpiPoValue').textContent = formatCurrencyShort(filteredPOSpend);
+            // Recalculate win rate with filtered PO count
+            const filteredWinRate = filtered.length > 0 ? (filteredPOCount / filtered.length * 100).toFixed(1) : 0;
+            document.getElementById('kpiWinRate').textContent = filteredWinRate + '%';
+        }
+        const gsaCOs = filteredGSAPOs.filter(po => po.poType === 'Change Order');
+        document.getElementById('kpiCoCount').textContent = gsaCOs.length.toLocaleString();
+        document.getElementById('kpiCoValue').textContent = formatCurrencyShort(
+            gsaCOs.reduce((sum, po) => sum + (po.valueUSD || 0), 0)
+        );
 
         // Update status chart from filtered data
         const statusCounts = {};
@@ -1652,7 +1708,34 @@ function applyFilters() {
                 color: materialColors[i % materialColors.length]
             }));
 
-        renderMaterialChartCanvas(materialDist, currentMaterialChartType || 'bar');
+        renderMaterialChartCanvas(materialDist, 'pie');
+
+        // Q13: Update Submit & Order Quantity trend chart from filtered data
+        const trendMonthlyMap = {};
+        filtered.forEach(q => {
+            const qDate = q.Date ? new Date(q.Date) : null;
+            if (!qDate || isNaN(qDate)) return;
+            const monthKey = qDate.toLocaleString('en-US', { month: 'short', year: '2-digit' });
+            if (!trendMonthlyMap[monthKey]) {
+                trendMonthlyMap[monthKey] = { month: monthKey, quotes: 0, orders: 0, cos: 0, sortKey: qDate.getFullYear() * 100 + qDate.getMonth() };
+            }
+            trendMonthlyMap[monthKey].quotes++;
+            if (q.Status === 'Order') trendMonthlyMap[monthKey].orders++;
+        });
+        // Add CO counts from filtered GSA data
+        if (filteredGSAPOs && filteredGSAPOs.length > 0) {
+            filteredGSAPOs.filter(po => po.poType === 'Change Order').forEach(po => {
+                const poDate = po.poDate ? new Date(po.poDate) : null;
+                if (!poDate || isNaN(poDate)) return;
+                const monthKey = poDate.toLocaleString('en-US', { month: 'short', year: '2-digit' });
+                if (!trendMonthlyMap[monthKey]) {
+                    trendMonthlyMap[monthKey] = { month: monthKey, quotes: 0, orders: 0, cos: 0, sortKey: poDate.getFullYear() * 100 + poDate.getMonth() };
+                }
+                trendMonthlyMap[monthKey].cos++;
+            });
+        }
+        const trendData = Object.values(trendMonthlyMap).sort((a, b) => a.sortKey - b.sortKey);
+        renderTrendChartLine(trendData);
 
         // Update Supplier Location Map based on filtered data
         // Use clientCountryMap (loaded from JSON) or fall back to entity-based mapping
@@ -1797,13 +1880,42 @@ function applyFilters() {
 
         renderEmployeeList(employeeList);
 
-        // Update Quotation to PO Time chart from conversion_times.json if available
+        // Q12: Update Quotation to PO Time chart — filter by entity/project/supplier/material + date range
         const quotationTimeData = [];
-        if (window._conversionTimes && window._conversionTimes.monthlyAverage && window._conversionTimes.monthlyAverage.length > 0) {
-            const dateFrom = currentFilters.dateFrom ? currentFilters.dateFrom.substring(0, 7) : null; // YYYY-MM
+        if (window._conversionTimes && window._conversionTimes.records && window._conversionTimes.records.length > 0) {
+            // Build set of quotation numbers from filtered workbench data
+            const filteredQuotationNumbers = hasActiveFilter
+                ? new Set(filtered.map(q => q.QuotationNumber).filter(Boolean))
+                : null;
+
+            const dateFrom = currentFilters.dateFrom ? currentFilters.dateFrom.substring(0, 7) : null;
+            const dateTo = currentFilters.dateTo ? currentFilters.dateTo.substring(0, 7) : null;
+
+            // Filter conversion records
+            const filteredRecords = window._conversionTimes.records.filter(rec => {
+                if (dateFrom && rec.month < dateFrom) return false;
+                if (dateTo && rec.month > dateTo) return false;
+                // Cross-reference with filtered workbench quotations
+                if (filteredQuotationNumbers && !filteredQuotationNumbers.has(rec.quotationNumber)) return false;
+                return true;
+            });
+
+            // Recompute monthly averages from filtered records
+            const monthlyMap = {};
+            filteredRecords.forEach(rec => {
+                if (!monthlyMap[rec.month]) monthlyMap[rec.month] = { total: 0, count: 0 };
+                monthlyMap[rec.month].total += rec.daysToConvert || 0;
+                monthlyMap[rec.month].count++;
+            });
+            Object.keys(monthlyMap).sort().forEach(month => {
+                const { total, count } = monthlyMap[month];
+                quotationTimeData.push({ month, avgDays: count > 0 ? Math.round(total / count) : 0 });
+            });
+        } else if (window._conversionTimes && window._conversionTimes.monthlyAverage) {
+            // Fallback: use pre-calculated monthly averages (date range only)
+            const dateFrom = currentFilters.dateFrom ? currentFilters.dateFrom.substring(0, 7) : null;
             const dateTo = currentFilters.dateTo ? currentFilters.dateTo.substring(0, 7) : null;
             window._conversionTimes.monthlyAverage.forEach(item => {
-                // Filter by date range if set
                 if (dateFrom && item.month < dateFrom) return;
                 if (dateTo && item.month > dateTo) return;
                 quotationTimeData.push({ month: item.month, avgDays: item.avgDays });
@@ -2059,7 +2171,7 @@ function renderSupplierMarketplace() {
     renderStatusChart(data.statusChart);
     renderEntityChartCanvas(data.entityComparison, currentEntityView || 'quote');
     renderTopSuppliers(data.topSuppliers);
-    renderMaterialChartCanvas(data.materialDistribution, currentMaterialChartType || 'bar');
+    renderMaterialChartCanvas(data.materialDistribution, 'pie');
     renderEmployeeList(data.responsibleEmployees);
     renderQuotationTimeChart(data.quotationToPOTime);
     renderTrendChartLine(data.monthlyTrend);
@@ -2073,12 +2185,12 @@ function renderSupplierMarketplace() {
 
 function updateKPIs(summary) {
     document.getElementById('kpiRfqCount').textContent = formatNumber(summary.rfqCount);
-    document.getElementById('kpiQuoteValue').textContent = formatCurrency(summary.quoteValue);
+    document.getElementById('kpiQuoteValue').textContent = formatCurrencyShort(summary.quoteValue);
     document.getElementById('kpiPoCount').textContent = formatNumber(summary.poCount);
-    document.getElementById('kpiPoValue').textContent = formatCurrency(summary.poValue);
+    document.getElementById('kpiPoValue').textContent = formatCurrencyShort(summary.poValue);
     document.getElementById('kpiWinRate').textContent = summary.winRate + '%';
     document.getElementById('kpiCoCount').textContent = formatNumber(summary.coCount);
-    document.getElementById('kpiCoValue').textContent = formatCurrency(summary.coValue);
+    document.getElementById('kpiCoValue').textContent = formatCurrencyShort(summary.coValue);
     document.getElementById('conversionRate').textContent = summary.conversionRate + '%';
     document.getElementById('openQuotes').textContent = formatNumber(summary.openQuotes);
     // Tax subtext
@@ -2855,13 +2967,13 @@ function formatNumber(num) {
 function formatCurrency(value) {
     if (value === undefined || value === null) return '-';
     if (value >= 1000000000) {
-        return '$' + (value / 1000000000).toFixed(1) + 'B';
+        return '$' + (value / 1000000000).toFixed(2) + 'B';
     } else if (value >= 1000000) {
-        return '$' + (value / 1000000).toFixed(1) + 'M';
+        return '$' + (value / 1000000).toFixed(2) + 'M';
     } else if (value >= 1000) {
         return '$' + (value / 1000).toFixed(1) + 'K';
     }
-    return '$' + value.toFixed(0);
+    return '$' + value.toFixed(2);
 }
 
 // SM-Q8: Global normalizeCountry() for map lookup and cross-filtering
@@ -3099,11 +3211,11 @@ document.addEventListener('click', (e) => {
                 renderEntityChartCanvas(dashboardData.supplierMarketplace.entityComparison, currentEntityView);
             }
 
-            // Handle material chart toggle
+            // Handle material chart toggle — Q8: always force pie
             if (e.target.dataset.chartType) {
-                currentMaterialChartType = e.target.dataset.chartType;
-                console.log('📊 Switching material chart to:', currentMaterialChartType);
-                renderMaterialChartCanvas(dashboardData.supplierMarketplace.materialDistribution, currentMaterialChartType);
+                currentMaterialChartType = 'pie';
+                console.log('📊 Material chart fixed to pie (Q8)');
+                renderMaterialChartCanvas(dashboardData.supplierMarketplace.materialDistribution, 'pie');
             }
         }
     }
@@ -3295,7 +3407,7 @@ const MATERIAL_RAW_COUNTS = {
 };
 
 // ============================================
-function renderMaterialChartCanvas(data, chartType = 'bar') {
+function renderMaterialChartCanvas(data, chartType = 'pie') {
     const canvas = document.getElementById('materialChartCanvas');
     if (!canvas || !data || data.length === 0) return;
 
@@ -3720,22 +3832,11 @@ function createGSASpendTrendChart() {
         return;
     }
 
-    // Use pre-calculated monthly trend if not filtered
+    // Q14: Always calculate Base/CO breakdown from raw PO data (monthlyTrend has no CO split)
     let sortedMonths, labels, baseData, changeData;
 
-    if (!isFiltered && gsaData?.monthlyTrend) {
-        // Use the pre-calculated monthly trend data (last 12 months)
-        const monthlyTrend = gsaData.monthlyTrend.slice(-12);
-        sortedMonths = monthlyTrend.map(m => m.yearMonth);
-        labels = sortedMonths.map(m => {
-            const [y, mo] = m.split('-');
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return months[parseInt(mo) - 1] + ' ' + y.slice(2);
-        });
-        baseData = monthlyTrend.map(m => m.value || 0);
-        changeData = monthlyTrend.map(() => 0); // Monthly trend doesn't separate base/change
-    } else {
-        // Calculate from filtered data
+    {
+        // Calculate from PO data with Base/CO split
         const monthlyData = {};
         pos.forEach(po => {
             const monthKey = po.yearMonth || '';
@@ -3841,6 +3942,25 @@ function createGSASpendTrendChart() {
     });
 }
 
+// Q17: Helper — deduplicate CO groups: for each orderId group with multiple revisions,
+// only keep the latest version (highest poVersion). This prevents counting CO full face
+// values as separate spend entries in entity/project/supplier charts.
+function deduplicateCOGroups(pos) {
+    const groups = {};
+    const standalone = [];
+    pos.forEach(po => {
+        const oid = po.orderId || po.mainOrderId || '';
+        if (oid && po.changeOrderTotal > 1) {
+            if (!groups[oid] || (po.poVersion || 0) > (groups[oid].poVersion || 0)) {
+                groups[oid] = po;
+            }
+        } else {
+            standalone.push(po);
+        }
+    });
+    return [...standalone, ...Object.values(groups)];
+}
+
 // Create Entity Chart
 function createGSAEntityChart() {
     const ctx = document.getElementById('gsaEntityChart');
@@ -3872,9 +3992,10 @@ function createGSAEntityChart() {
             .slice(0, 8)
             .map(e => [e.name, e.valueUSD]);
     } else {
-        // Calculate from filtered data
+        // Calculate from filtered data — Q17: deduplicate CO groups
+        const dedupedPOs = deduplicateCOGroups(pos);
         const entitySpend = {};
-        pos.forEach(po => {
+        dedupedPOs.forEach(po => {
             const entity = po.entity || 'Unknown';
             if (!entitySpend[entity]) entitySpend[entity] = 0;
             entitySpend[entity] += po.valueUSD || 0;
@@ -3966,9 +4087,10 @@ function createGSAProjectChart() {
         return;
     }
 
-    // Calculate from filtered data using correct field names
+    // Calculate from filtered data using correct field names — Q17: deduplicate CO groups
+    const dedupedPOs = deduplicateCOGroups(pos);
     const projectSpend = {};
-    pos.forEach(po => {
+    dedupedPOs.forEach(po => {
         const name = po.project || 'Unknown';
         if (!projectSpend[name]) projectSpend[name] = 0;
         projectSpend[name] += po.valueUSD || 0;
@@ -4063,6 +4185,12 @@ function createGSASupplierCharts() {
     const pos = gsaState.filteredData;
     const isFiltered = pos.length !== gsaState.allPOs.length;
 
+    // Q15: Hide Most Inactive Suppliers chart when any filter is active
+    const bottomCard = document.getElementById('gsaBottomSuppliersCard');
+    if (bottomCard) {
+        bottomCard.style.display = isFiltered ? 'none' : '';
+    }
+
     // Empty state handling
     if (pos.length === 0) {
         const topCtx = document.getElementById('gsaTopSuppliersChart');
@@ -4086,9 +4214,10 @@ function createGSASupplierCharts() {
         topSuppliers = ranking.slice(0, 10).map(s => ({ name: s.name, spend: s.valueUSD }));
         bottomSuppliers = ranking.slice(-10).reverse().map(s => ({ name: s.name, spend: s.valueUSD }));
     } else {
-        // Calculate from filtered data
+        // Calculate from filtered data — Q17: deduplicate CO groups
+        const dedupedPOs = deduplicateCOGroups(pos);
         const supplierSpend = {};
-        pos.forEach(po => {
+        dedupedPOs.forEach(po => {
             const name = po.supplier || 'Unknown';
             if (!supplierSpend[name]) {
                 supplierSpend[name] = { name, spend: 0, count: 0 };
@@ -4409,6 +4538,8 @@ function updateGSATable() {
         // Convert to USD using FX rates
         const valueInUSD = convertToUSD(poValue, currency);
         const taxUSD = po.taxUSD || 0;
+        // Q18: PO VALUE includes tax
+        const valueWithTax = valueInUSD + taxUSD;
         // Change order group indicator
         const coGroup = po.changeOrderTotal > 1
             ? `<span class="co-badge" title="${po.changeOrderTotal} POs in this order group">${po.poVersion} of ${po.changeOrderTotal}</span>`
@@ -4425,7 +4556,7 @@ function updateGSATable() {
                 <td>${formattedDate}</td>
                 <td>${po.supplier || '-'}</td>
                 <td>${po.material || '-'}</td>
-                <td>${formatCurrency(valueInUSD)}</td>
+                <td>${formatCurrency(valueWithTax)}</td>
                 <td>${taxUSD > 0 ? formatCurrency(taxUSD) : '-'}</td>
             </tr>
         `;
@@ -4675,6 +4806,9 @@ function clearMdFilters() {
     const mdSearchEl = document.getElementById('mdSearchInput');
     if (mdSearchEl) mdSearchEl.value = '';
 
+    // Q20: Reset material dropdown to show all materials
+    updateMdMaterialDropdown();
+
     mdState.filteredPOs = [...mdState.allPOs];
     mdState.filteredQuotations = [...mdState.allQuotations];
     mdState.currentPage = 1;
@@ -4786,13 +4920,36 @@ function initMdFilters() {
     mdState.filteredPOs = [...mdState.allPOs];
     mdState.filteredQuotations = [...mdState.allQuotations];
 
-    // Populate material code filter (was discipline)
+    // Q20: Build discipline→materials mapping from actual data for cascading filter
+    const disciplineToMaterials = {};
+    const allItems = [...(mdState.allPOs || []), ...(mdState.allQuotations || [])];
+    allItems.forEach(item => {
+        const disc = item.materialCode || item.discipline;
+        const mat = item.material;
+        if (disc && mat) {
+            if (!disciplineToMaterials[disc]) disciplineToMaterials[disc] = new Set();
+            disciplineToMaterials[disc].add(mat);
+        }
+    });
+    // Convert Sets to sorted arrays
+    Object.keys(disciplineToMaterials).forEach(k => {
+        disciplineToMaterials[k] = [...disciplineToMaterials[k]].sort();
+    });
+    // Store for use in cascading filter
+    mdState.disciplineToMaterials = disciplineToMaterials;
+    mdState.allMaterials = (filters.materials || filters.disciplines || []).slice().sort();
+
+    // Populate discipline filter (Q19: renamed from Material Code)
     const disciplineSelect = document.getElementById('filterMdDiscipline');
     if (disciplineSelect && (filters.materialCodes || filters.disciplines)) {
         const codes = filters.materialCodes || filters.disciplines || [];
-        disciplineSelect.innerHTML = '<option>All Material Codes</option>' +
+        disciplineSelect.innerHTML = '<option>All Disciplines</option>' +
             codes.map(d => `<option>${d}</option>`).join('');
-        disciplineSelect.addEventListener('change', applyMdFilters);
+        // Q20: On discipline change, cascade to material dropdown then apply filters
+        disciplineSelect.addEventListener('change', function() {
+            updateMdMaterialDropdown();
+            applyMdFilters();
+        });
     }
 
     // Populate entity filter (MD-Q3: with trim normalization)
@@ -4858,6 +5015,41 @@ function initMdFilters() {
     console.log('📋 MD filters initialized with materialCodes, materials, project, supplier, search');
 }
 
+// Q20: Cascading Material dropdown — repopulate based on selected Discipline
+function updateMdMaterialDropdown() {
+    const disciplineSelect = document.getElementById('filterMdDiscipline');
+    const materialSelect = document.getElementById('filterMdMaterial');
+    if (!materialSelect) return;
+
+    const selectedDiscipline = disciplineSelect?.value;
+    let materialsToShow;
+
+    if (!selectedDiscipline || selectedDiscipline === 'All Disciplines') {
+        // Show all materials
+        materialsToShow = mdState.allMaterials || [];
+    } else {
+        // Show only materials belonging to the selected discipline
+        materialsToShow = (mdState.disciplineToMaterials || {})[selectedDiscipline] || [];
+    }
+
+    // Preserve current material selection if still valid
+    const currentMaterial = materialSelect.value;
+    materialSelect.innerHTML = '<option>All Materials</option>' +
+        materialsToShow.map(m => `<option>${m}</option>`).join('');
+
+    // Restore selection if still in the list, otherwise reset
+    if (currentMaterial && currentMaterial !== 'All Materials' && materialsToShow.includes(currentMaterial)) {
+        materialSelect.value = currentMaterial;
+    } else {
+        materialSelect.value = 'All Materials';
+    }
+
+    // Update SearchableSelect wrapper if present
+    if (materialSelect._searchableSelect) {
+        materialSelect._searchableSelect.refresh();
+    }
+}
+
 // Apply MD filters across all components
 function applyMdFilters() {
     const discipline = document.getElementById('filterMdDiscipline')?.value;
@@ -4872,7 +5064,7 @@ function applyMdFilters() {
 
     // Filter POs
     mdState.filteredPOs = mdState.allPOs.filter(po => {
-        if (discipline && discipline !== 'All Material Codes' && (po.materialCode || po.discipline) !== discipline) return false;
+        if (discipline && discipline !== 'All Disciplines' && (po.materialCode || po.discipline) !== discipline) return false;
         if (entity && entity !== 'All Entities' && po.entity !== entity) return false;
         if (material && material !== 'All Materials' && po.material !== material) return false;
         if (project && project !== 'All Projects' && po.project !== project) return false;
@@ -4898,7 +5090,7 @@ function applyMdFilters() {
 
     // Filter quotations
     mdState.filteredQuotations = mdState.allQuotations.filter(q => {
-        if (discipline && discipline !== 'All Material Codes' && (q.materialCode || q.discipline) !== discipline) return false;
+        if (discipline && discipline !== 'All Disciplines' && (q.materialCode || q.discipline) !== discipline) return false;
         if (entity && entity !== 'All Entities' && q.entity !== entity) return false;
         if (material && material !== 'All Materials' && q.material !== material) return false;
         if (project && project !== 'All Projects' && q.project !== project) return false;
@@ -5900,6 +6092,7 @@ class SearchableSelect {
         if (!selectElement || selectElement.dataset.searchableInit) return;
         this.select = selectElement;
         this.select.dataset.searchableInit = 'true';
+        this.select._searchableSelect = this; // Q20: store reference for cascading refresh
         this.options = [];
         this.wrapper = null;
         this.input = null;

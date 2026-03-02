@@ -1,0 +1,29 @@
+{
+  "sourceFiles": {
+    "po": "PO_List_Feb-26-2026 (1).xls",
+    "quotations": [
+      "Quotation_Report_Feb-20-2026 (1).xls",
+      "Quotation_Report_Feb-20-2026 (2).xls",
+      "Quotation_Report_Feb-20-2026 (3).xls",
+      "Quotation_Report_Feb-20-2026 (4).xls",
+      "Quotation_Report_Feb-20-2026.xls"
+    ]
+  },
+  "exportDate": "Feb-26-2026 (1)",
+  "buildDate": "2026-02-26 17:29:03",
+  "counts": {
+    "rawPOs": 3637,
+    "cleanPOs": 3620,
+    "rawQuotations": 12239,
+    "cleanRFQs": 3941,
+    "removedIQ": 8256,
+    "basePOs": 3323,
+    "changeOrders": 297,
+    "changeOrderGroups": 193,
+    "revisions": 219,
+    "employees": 18,
+    "conversionLinks": 183,
+    "posWithTax": 870,
+    "hasTax": true
+  }
+}

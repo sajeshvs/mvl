@@ -253,21 +253,13 @@
                             </div>
                         </div>
 
-                        <!-- 5.2.2 Material Distribution -->
+                        <!-- 5.2.2 Discipline Distribution (Q8) -->
                         <div class="chart-card" id="materialChartCard">
                             <div class="chart-header">
                                 <h3 class="chart-title">
                                     <span class="chart-title-icon">📊</span>
-                                    Material Distribution
+                                    Discipline Distribution
                                 </h3>
-                                <div class="chart-actions">
-                                    <div class="chart-toggle" id="materialChartToggle">
-                                        <button class="chart-toggle-btn active" data-chart-type="bar">Bar</button>
-                                        <button class="chart-toggle-btn" data-chart-type="pie">Pie</button>
-                                        <button class="chart-toggle-btn" data-chart-type="line">Line</button>
-                                        <button class="chart-toggle-btn" data-chart-type="radar">Radar</button>
-                                    </div>
-                                </div>
                             </div>
                             <div class="chart-body">
                                 <div id="materialChartContainer">
@@ -668,7 +660,7 @@
                             <canvas id="gsaTopSuppliersChart" height="280"></canvas>
                         </div>
                     </div>
-                    <div class="gsa-chart-card gsa-half">
+                    <div class="gsa-chart-card gsa-half" id="gsaBottomSuppliersCard">
                         <div class="chart-header">
                             <h3 class="chart-title">
                                 <span class="chart-title-icon">⬇️</span>
@@ -757,9 +749,9 @@
                 <!-- FILTER ROW (Tab 3) -->
                 <div class="filter-row md-filter-row">
                     <div class="filter-group">
-                        <label class="filter-label">MATERIAL CODE</label>
-                        <select class="filter-select" id="filterMdDiscipline" title="Material Code filter">
-                            <option>All Material Codes</option>
+                        <label class="filter-label">DISCIPLINE</label>
+                        <select class="filter-select" id="filterMdDiscipline" title="Discipline filter">
+                            <option>All Disciplines</option>
                         </select>
                     </div>
                     <div class="filter-group">
@@ -844,7 +836,7 @@
                             </svg>
                         </div>
                         <div class="md-kpi-content">
-                            <span class="md-kpi-label md-kpi-label-green">Material Codes</span>
+                            <span class="md-kpi-label md-kpi-label-green">Disciplines</span>
                             <span class="md-kpi-value" id="kpiMdDisciplines">12</span>
                             <span class="md-kpi-sub">All records</span>
                         </div>
@@ -862,7 +854,7 @@
                         <span class="kpi-info-icon" data-kpi="md-disciplineSpend"
                             title="View calculation details">i</span>
                         <div class="md-kpi-content">
-                            <span class="md-kpi-label">Total Material Code Spend</span>
+                            <span class="md-kpi-label">Total Discipline Spend</span>
                             <span class="md-kpi-value md-kpi-value-blue" id="kpiMdDisciplineSpend">$7.9M</span>
                             <span class="md-kpi-sub md-kpi-sub-util" id="kpiMdDiscUtil">88% conversion</span>
                         </div>
@@ -882,7 +874,7 @@
                     <!-- Total Spend by Discipline Chart -->
                     <div class="md-chart-card md-chart-large">
                         <div class="md-chart-header">
-                            <h3 class="md-chart-title">Total Spend by Material Code</h3>
+                            <h3 class="md-chart-title">Total Spend by Discipline</h3>
                             <span class="md-chart-subtitle">Quoted vs Ordered spend comparison</span>
                         </div>
                         <div class="md-chart-body">
@@ -1025,7 +1017,7 @@
                                         <th>PO Number</th>
                                         <th>PO Date</th>
                                         <th>Material</th>
-                                        <th>Material Code</th>
+                                        <th>Discipline</th>
                                         <th>PO Value (USD)</th>
                                         <th>Currency</th>
                                         <th>Project</th>

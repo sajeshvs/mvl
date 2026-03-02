@@ -1,0 +1,1867 @@
+{
+  "records": [
+    {
+      "quotationNumber": "RFQ-5153-V4351",
+      "quotationDate": "2022-10-26",
+      "poDate": "2022-10-26",
+      "daysToConvert": 0,
+      "month": "2022-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5410-V40001",
+      "quotationDate": "2022-10-19",
+      "poDate": "2022-10-19",
+      "daysToConvert": 0,
+      "month": "2022-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5503-V4351",
+      "quotationDate": "2022-09-21",
+      "poDate": "2022-09-21",
+      "daysToConvert": 0,
+      "month": "2022-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5327-S9073",
+      "quotationDate": "2022-08-01",
+      "poDate": "2022-08-02",
+      "daysToConvert": 1,
+      "month": "2022-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5342-M4101",
+      "quotationDate": "2022-05-20",
+      "poDate": "2022-05-20",
+      "daysToConvert": 0,
+      "month": "2022-05",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5270-O1",
+      "quotationDate": "2022-03-02",
+      "poDate": "2022-03-02",
+      "daysToConvert": 0,
+      "month": "2022-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5213-S9082",
+      "quotationDate": "2021-11-09",
+      "poDate": "2021-11-09",
+      "daysToConvert": 0,
+      "month": "2021-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-4814-M4101",
+      "quotationDate": "2021-11-08",
+      "poDate": "2021-11-08",
+      "daysToConvert": 0,
+      "month": "2021-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2623-E6801",
+      "quotationDate": "2020-08-27",
+      "poDate": "2020-08-27",
+      "daysToConvert": 0,
+      "month": "2020-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3734-V4251",
+      "quotationDate": "2020-08-12",
+      "poDate": "2020-08-12",
+      "daysToConvert": 0,
+      "month": "2020-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3734-S9031",
+      "quotationDate": "2020-08-12",
+      "poDate": "2020-08-12",
+      "daysToConvert": 0,
+      "month": "2020-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3734-S9089",
+      "quotationDate": "2020-07-28",
+      "poDate": "2020-08-12",
+      "daysToConvert": 15,
+      "month": "2020-07",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3734-S9085",
+      "quotationDate": "2020-05-06",
+      "poDate": "2020-08-12",
+      "daysToConvert": 98,
+      "month": "2020-05",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3734-S9084",
+      "quotationDate": "2020-04-16",
+      "poDate": "2020-08-12",
+      "daysToConvert": 118,
+      "month": "2020-04",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3728-M4101",
+      "quotationDate": "2020-03-10",
+      "poDate": "2020-03-12",
+      "daysToConvert": 2,
+      "month": "2020-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3734-S9080A",
+      "quotationDate": "2020-01-28",
+      "poDate": "2020-08-12",
+      "daysToConvert": 197,
+      "month": "2020-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3734-S9080",
+      "quotationDate": "2020-01-28",
+      "poDate": "2020-08-12",
+      "daysToConvert": 197,
+      "month": "2020-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3734-S9079",
+      "quotationDate": "2020-01-23",
+      "poDate": "2020-08-12",
+      "daysToConvert": 202,
+      "month": "2020-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3734-S9078",
+      "quotationDate": "2020-01-21",
+      "poDate": "2020-08-12",
+      "daysToConvert": 204,
+      "month": "2020-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3734-S9077",
+      "quotationDate": "2020-01-05",
+      "poDate": "2020-08-12",
+      "daysToConvert": 220,
+      "month": "2020-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3742-S9078",
+      "quotationDate": "2019-12-31",
+      "poDate": "2020-01-08",
+      "daysToConvert": 8,
+      "month": "2019-12",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3742-S9077",
+      "quotationDate": "2019-12-22",
+      "poDate": "2020-01-08",
+      "daysToConvert": 17,
+      "month": "2019-12",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3734-S9076",
+      "quotationDate": "2019-12-11",
+      "poDate": "2020-08-12",
+      "daysToConvert": 245,
+      "month": "2019-12",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3742-S9074",
+      "quotationDate": "2019-11-12",
+      "poDate": "2020-01-08",
+      "daysToConvert": 57,
+      "month": "2019-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3742-S9072",
+      "quotationDate": "2019-11-10",
+      "poDate": "2020-01-08",
+      "daysToConvert": 59,
+      "month": "2019-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3728-S9072",
+      "quotationDate": "2019-10-16",
+      "poDate": "2020-03-12",
+      "daysToConvert": 148,
+      "month": "2019-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3550-R1500",
+      "quotationDate": "2019-08-18",
+      "poDate": "2019-08-19",
+      "daysToConvert": 1,
+      "month": "2019-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2797-V4351",
+      "quotationDate": "2019-07-16",
+      "poDate": "2019-07-16",
+      "daysToConvert": 0,
+      "month": "2019-07",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2797-S9075",
+      "quotationDate": "2019-07-08",
+      "poDate": "2019-07-16",
+      "daysToConvert": 8,
+      "month": "2019-07",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3473-S9071",
+      "quotationDate": "2019-06-27",
+      "poDate": "2019-06-27",
+      "daysToConvert": 0,
+      "month": "2019-06",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-3427-S9071",
+      "quotationDate": "2019-05-29",
+      "poDate": "2019-07-22",
+      "daysToConvert": 54,
+      "month": "2019-05",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2952-V4251A",
+      "quotationDate": "2019-03-24",
+      "poDate": "2019-03-24",
+      "daysToConvert": 0,
+      "month": "2019-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2797-S9074",
+      "quotationDate": "2019-03-13",
+      "poDate": "2019-07-16",
+      "daysToConvert": 125,
+      "month": "2019-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2951-V4252",
+      "quotationDate": "2019-03-10",
+      "poDate": "2019-03-11",
+      "daysToConvert": 1,
+      "month": "2019-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2797-S9073",
+      "quotationDate": "2019-02-13",
+      "poDate": "2019-07-16",
+      "daysToConvert": 153,
+      "month": "2019-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2797-S9072",
+      "quotationDate": "2019-02-04",
+      "poDate": "2019-07-16",
+      "daysToConvert": 162,
+      "month": "2019-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2953-E6800",
+      "quotationDate": "2019-01-07",
+      "poDate": "2019-01-07",
+      "daysToConvert": 0,
+      "month": "2019-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2797-S9071",
+      "quotationDate": "2018-11-29",
+      "poDate": "2019-07-16",
+      "daysToConvert": 229,
+      "month": "2018-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2953-S9071",
+      "quotationDate": "2018-11-14",
+      "poDate": "2019-01-07",
+      "daysToConvert": 54,
+      "month": "2018-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2952-S9071",
+      "quotationDate": "2018-11-14",
+      "poDate": "2019-03-24",
+      "daysToConvert": 130,
+      "month": "2018-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2951-S9071",
+      "quotationDate": "2018-11-14",
+      "poDate": "2019-03-11",
+      "daysToConvert": 117,
+      "month": "2018-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2569-O2",
+      "quotationDate": "2018-10-02",
+      "poDate": "2018-10-02",
+      "daysToConvert": 0,
+      "month": "2018-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2569-O1",
+      "quotationDate": "2018-10-02",
+      "poDate": "2018-10-02",
+      "daysToConvert": 0,
+      "month": "2018-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2555-M4101",
+      "quotationDate": "2018-06-28",
+      "poDate": "2018-07-01",
+      "daysToConvert": 3,
+      "month": "2018-06",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2394-T1000",
+      "quotationDate": "2018-06-20",
+      "poDate": "2018-06-20",
+      "daysToConvert": 0,
+      "month": "2018-06",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2532-M4102",
+      "quotationDate": "2018-05-09",
+      "poDate": "2018-05-09",
+      "daysToConvert": 0,
+      "month": "2018-05",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2532-S9071A",
+      "quotationDate": "2018-05-06",
+      "poDate": "2018-05-09",
+      "daysToConvert": 3,
+      "month": "2018-05",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2394-S9077",
+      "quotationDate": "2018-03-19",
+      "poDate": "2018-06-20",
+      "daysToConvert": 93,
+      "month": "2018-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2394-S9076",
+      "quotationDate": "2018-03-12",
+      "poDate": "2018-06-20",
+      "daysToConvert": 100,
+      "month": "2018-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1613-M4103",
+      "quotationDate": "2018-03-04",
+      "poDate": "2018-03-06",
+      "daysToConvert": 2,
+      "month": "2018-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1613-M4102",
+      "quotationDate": "2018-03-04",
+      "poDate": "2018-03-06",
+      "daysToConvert": 2,
+      "month": "2018-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2152-V4351",
+      "quotationDate": "2018-02-27",
+      "poDate": "2018-02-28",
+      "daysToConvert": 1,
+      "month": "2018-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2394-S9073",
+      "quotationDate": "2018-02-27",
+      "poDate": "2018-06-20",
+      "daysToConvert": 113,
+      "month": "2018-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2394-S9072",
+      "quotationDate": "2018-02-25",
+      "poDate": "2018-06-20",
+      "daysToConvert": 115,
+      "month": "2018-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-2394-S9071",
+      "quotationDate": "2018-02-25",
+      "poDate": "2018-06-20",
+      "daysToConvert": 115,
+      "month": "2018-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1094-V4352",
+      "quotationDate": "2017-04-26",
+      "poDate": "2017-04-26",
+      "daysToConvert": 0,
+      "month": "2017-04",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1581-V4251",
+      "quotationDate": "2017-03-30",
+      "poDate": "2017-04-02",
+      "daysToConvert": 3,
+      "month": "2017-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1593-M4102",
+      "quotationDate": "2017-01-29",
+      "poDate": "2017-01-29",
+      "daysToConvert": 0,
+      "month": "2017-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1595-V4251",
+      "quotationDate": "2016-12-20",
+      "poDate": "2016-12-22",
+      "daysToConvert": 2,
+      "month": "2016-12",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1608-V4251",
+      "quotationDate": "2016-12-15",
+      "poDate": "2016-12-15",
+      "daysToConvert": 0,
+      "month": "2016-12",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1569-V4351",
+      "quotationDate": "2016-12-14",
+      "poDate": "2016-12-14",
+      "daysToConvert": 0,
+      "month": "2016-12",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1592-V4251",
+      "quotationDate": "2016-11-30",
+      "poDate": "2016-11-30",
+      "daysToConvert": 0,
+      "month": "2016-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1592-T1000",
+      "quotationDate": "2016-11-30",
+      "poDate": "2016-11-30",
+      "daysToConvert": 0,
+      "month": "2016-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1592-S9074",
+      "quotationDate": "2016-10-15",
+      "poDate": "2016-11-30",
+      "daysToConvert": 46,
+      "month": "2016-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1614-V4251",
+      "quotationDate": "2016-10-09",
+      "poDate": "2016-10-09",
+      "daysToConvert": 0,
+      "month": "2016-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1428-V4253",
+      "quotationDate": "2016-03-13",
+      "poDate": "2016-03-13",
+      "daysToConvert": 0,
+      "month": "2016-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1428-V4252",
+      "quotationDate": "2016-03-13",
+      "poDate": "2016-03-13",
+      "daysToConvert": 0,
+      "month": "2016-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1005-M6985",
+      "quotationDate": "2015-12-20",
+      "poDate": "2015-12-20",
+      "daysToConvert": 0,
+      "month": "2015-12",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1005-F7045",
+      "quotationDate": "2015-11-22",
+      "poDate": "2015-12-20",
+      "daysToConvert": 28,
+      "month": "2015-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1005-F7044",
+      "quotationDate": "2015-11-22",
+      "poDate": "2015-12-20",
+      "daysToConvert": 28,
+      "month": "2015-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1192-V4251",
+      "quotationDate": "2015-10-27",
+      "poDate": "2015-10-27",
+      "daysToConvert": 0,
+      "month": "2015-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-982-1614",
+      "quotationDate": "2015-04-20",
+      "poDate": "2015-04-20",
+      "daysToConvert": 0,
+      "month": "2015-04",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-982-1597",
+      "quotationDate": "2015-04-13",
+      "poDate": "2015-04-20",
+      "daysToConvert": 7,
+      "month": "2015-04",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-982-1592",
+      "quotationDate": "2015-04-12",
+      "poDate": "2015-04-20",
+      "daysToConvert": 8,
+      "month": "2015-04",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-566-1557",
+      "quotationDate": "2015-03-29",
+      "poDate": "2015-03-29",
+      "daysToConvert": 0,
+      "month": "2015-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-566-1501",
+      "quotationDate": "2015-03-04",
+      "poDate": "2015-03-29",
+      "daysToConvert": 25,
+      "month": "2015-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-566-1428",
+      "quotationDate": "2015-01-28",
+      "poDate": "2015-03-29",
+      "daysToConvert": 60,
+      "month": "2015-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-637-1411",
+      "quotationDate": "2015-01-18",
+      "poDate": "2015-01-19",
+      "daysToConvert": 1,
+      "month": "2015-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-781-1401",
+      "quotationDate": "2015-01-11",
+      "poDate": "2015-01-11",
+      "daysToConvert": 0,
+      "month": "2015-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-637-1262",
+      "quotationDate": "2014-11-10",
+      "poDate": "2015-01-19",
+      "daysToConvert": 70,
+      "month": "2014-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-637-1260",
+      "quotationDate": "2014-11-09",
+      "poDate": "2015-01-19",
+      "daysToConvert": 71,
+      "month": "2014-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-637-1259",
+      "quotationDate": "2014-11-09",
+      "poDate": "2015-01-19",
+      "daysToConvert": 71,
+      "month": "2014-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-637-1258",
+      "quotationDate": "2014-11-09",
+      "poDate": "2015-01-19",
+      "daysToConvert": 71,
+      "month": "2014-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-566-1217",
+      "quotationDate": "2014-10-26",
+      "poDate": "2015-03-29",
+      "daysToConvert": 154,
+      "month": "2014-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-637-1178",
+      "quotationDate": "2014-10-08",
+      "poDate": "2015-01-19",
+      "daysToConvert": 103,
+      "month": "2014-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-637-1169",
+      "quotationDate": "2014-10-01",
+      "poDate": "2015-01-19",
+      "daysToConvert": 110,
+      "month": "2014-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-637-1161",
+      "quotationDate": "2014-09-29",
+      "poDate": "2015-01-19",
+      "daysToConvert": 112,
+      "month": "2014-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-637-1154",
+      "quotationDate": "2014-09-28",
+      "poDate": "2015-01-19",
+      "daysToConvert": 113,
+      "month": "2014-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-566-1097",
+      "quotationDate": "2014-08-31",
+      "poDate": "2015-03-29",
+      "daysToConvert": 210,
+      "month": "2014-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-566-1049",
+      "quotationDate": "2014-08-11",
+      "poDate": "2015-03-29",
+      "daysToConvert": 230,
+      "month": "2014-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-573-1005",
+      "quotationDate": "2014-07-20",
+      "poDate": "2014-07-21",
+      "daysToConvert": 1,
+      "month": "2014-07",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-573-1004",
+      "quotationDate": "2014-07-20",
+      "poDate": "2014-07-21",
+      "daysToConvert": 1,
+      "month": "2014-07",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-573-1003",
+      "quotationDate": "2014-07-20",
+      "poDate": "2014-07-21",
+      "daysToConvert": 1,
+      "month": "2014-07",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-497-886",
+      "quotationDate": "2014-04-03",
+      "poDate": "2014-04-03",
+      "daysToConvert": 0,
+      "month": "2014-04",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-158-714",
+      "quotationDate": "2014-01-14",
+      "poDate": "2014-01-14",
+      "daysToConvert": 0,
+      "month": "2014-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-158-713",
+      "quotationDate": "2014-01-14",
+      "poDate": "2014-01-14",
+      "daysToConvert": 0,
+      "month": "2014-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-158-711",
+      "quotationDate": "2014-01-14",
+      "poDate": "2014-01-14",
+      "daysToConvert": 0,
+      "month": "2014-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-158-710",
+      "quotationDate": "2014-01-14",
+      "poDate": "2014-01-14",
+      "daysToConvert": 0,
+      "month": "2014-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-258-700",
+      "quotationDate": "2014-01-07",
+      "poDate": "2014-01-07",
+      "daysToConvert": 0,
+      "month": "2014-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-256-606",
+      "quotationDate": "2013-11-04",
+      "poDate": "2013-11-04",
+      "daysToConvert": 0,
+      "month": "2013-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-256-605",
+      "quotationDate": "2013-11-04",
+      "poDate": "2013-11-04",
+      "daysToConvert": 0,
+      "month": "2013-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-256-603",
+      "quotationDate": "2013-11-04",
+      "poDate": "2013-11-04",
+      "daysToConvert": 0,
+      "month": "2013-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-256-602",
+      "quotationDate": "2013-11-04",
+      "poDate": "2013-11-04",
+      "daysToConvert": 0,
+      "month": "2013-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1013-546",
+      "quotationDate": "2013-10-03",
+      "poDate": "2013-10-03",
+      "daysToConvert": 0,
+      "month": "2013-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1013-544",
+      "quotationDate": "2013-10-03",
+      "poDate": "2013-10-03",
+      "daysToConvert": 0,
+      "month": "2013-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-1013-543",
+      "quotationDate": "2013-10-02",
+      "poDate": "2013-10-03",
+      "daysToConvert": 1,
+      "month": "2013-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-913-536",
+      "quotationDate": "2013-09-30",
+      "poDate": "2013-09-30",
+      "daysToConvert": 0,
+      "month": "2013-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-913-535",
+      "quotationDate": "2013-09-30",
+      "poDate": "2013-09-30",
+      "daysToConvert": 0,
+      "month": "2013-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-913-534",
+      "quotationDate": "2013-09-30",
+      "poDate": "2013-09-30",
+      "daysToConvert": 0,
+      "month": "2013-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-913-533",
+      "quotationDate": "2013-09-30",
+      "poDate": "2013-09-30",
+      "daysToConvert": 0,
+      "month": "2013-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-913-526",
+      "quotationDate": "2013-09-25",
+      "poDate": "2013-09-30",
+      "daysToConvert": 5,
+      "month": "2013-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-913-512",
+      "quotationDate": "2013-09-19",
+      "poDate": "2013-09-30",
+      "daysToConvert": 11,
+      "month": "2013-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-913-511",
+      "quotationDate": "2013-09-19",
+      "poDate": "2013-09-30",
+      "daysToConvert": 11,
+      "month": "2013-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-913-510",
+      "quotationDate": "2013-09-18",
+      "poDate": "2013-09-30",
+      "daysToConvert": 12,
+      "month": "2013-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-913-509",
+      "quotationDate": "2013-09-18",
+      "poDate": "2013-09-30",
+      "daysToConvert": 12,
+      "month": "2013-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-8133-M4000",
+      "quotationDate": "2026-02-24",
+      "poDate": "2026-02-26",
+      "daysToConvert": 2,
+      "month": "2026-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7932-V40003",
+      "quotationDate": "2026-02-10",
+      "poDate": "2026-02-10",
+      "daysToConvert": 0,
+      "month": "2026-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7932-V40002",
+      "quotationDate": "2026-02-10",
+      "poDate": "2026-02-10",
+      "daysToConvert": 0,
+      "month": "2026-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7932-V40001",
+      "quotationDate": "2026-02-10",
+      "poDate": "2026-02-10",
+      "daysToConvert": 0,
+      "month": "2026-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7932-V40000",
+      "quotationDate": "2026-02-10",
+      "poDate": "2026-02-10",
+      "daysToConvert": 0,
+      "month": "2026-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-8206-O1",
+      "quotationDate": "2025-12-24",
+      "poDate": "2025-12-24",
+      "daysToConvert": 0,
+      "month": "2025-12",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7616-M4000",
+      "quotationDate": "2025-10-27",
+      "poDate": "2025-10-28",
+      "daysToConvert": 1,
+      "month": "2025-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7878-V40000",
+      "quotationDate": "2025-10-24",
+      "poDate": "2025-10-24",
+      "daysToConvert": 0,
+      "month": "2025-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7864-V40000",
+      "quotationDate": "2025-08-20",
+      "poDate": "2025-08-20",
+      "daysToConvert": 0,
+      "month": "2025-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5828-O1",
+      "quotationDate": "2025-07-09",
+      "poDate": "2025-07-09",
+      "daysToConvert": 0,
+      "month": "2025-07",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7505-V40000",
+      "quotationDate": "2025-07-07",
+      "poDate": "2025-07-09",
+      "daysToConvert": 2,
+      "month": "2025-07",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7414-P4800",
+      "quotationDate": "2025-06-04",
+      "poDate": "2025-06-04",
+      "daysToConvert": 0,
+      "month": "2025-06",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7044-V40000",
+      "quotationDate": "2025-04-28",
+      "poDate": "2025-04-28",
+      "daysToConvert": 0,
+      "month": "2025-04",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7212-V40000",
+      "quotationDate": "2025-03-18",
+      "poDate": "2025-03-19",
+      "daysToConvert": 1,
+      "month": "2025-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7073-V40000",
+      "quotationDate": "2025-02-13",
+      "poDate": "2025-02-18",
+      "daysToConvert": 5,
+      "month": "2025-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7120-V40001",
+      "quotationDate": "2025-02-07",
+      "poDate": "2025-02-07",
+      "daysToConvert": 0,
+      "month": "2025-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7120-V40000",
+      "quotationDate": "2025-02-06",
+      "poDate": "2025-02-07",
+      "daysToConvert": 1,
+      "month": "2025-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7208-V40000",
+      "quotationDate": "2025-02-03",
+      "poDate": "2025-02-03",
+      "daysToConvert": 0,
+      "month": "2025-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7098-V40000",
+      "quotationDate": "2024-11-20",
+      "poDate": "2025-01-10",
+      "daysToConvert": 51,
+      "month": "2024-11",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7204-S9073",
+      "quotationDate": "2024-10-15",
+      "poDate": "2024-10-15",
+      "daysToConvert": 0,
+      "month": "2024-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7198-S9072",
+      "quotationDate": "2024-10-15",
+      "poDate": "2024-10-15",
+      "daysToConvert": 0,
+      "month": "2024-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7205-S9073",
+      "quotationDate": "2024-10-15",
+      "poDate": "2024-10-15",
+      "daysToConvert": 0,
+      "month": "2024-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7039-V40000",
+      "quotationDate": "2024-09-10",
+      "poDate": "2024-09-11",
+      "daysToConvert": 1,
+      "month": "2024-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6841-M4101",
+      "quotationDate": "2024-09-06",
+      "poDate": "2024-09-09",
+      "daysToConvert": 3,
+      "month": "2024-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7103-E6800",
+      "quotationDate": "2024-08-29",
+      "poDate": "2024-09-05",
+      "daysToConvert": 7,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6481-S9100",
+      "quotationDate": "2024-08-29",
+      "poDate": "2024-08-29",
+      "daysToConvert": 0,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7027-M4000",
+      "quotationDate": "2024-08-26",
+      "poDate": "2024-08-26",
+      "daysToConvert": 0,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6746-V40001",
+      "quotationDate": "2024-08-21",
+      "poDate": "2024-08-21",
+      "daysToConvert": 0,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6952-V40000",
+      "quotationDate": "2024-08-21",
+      "poDate": "2024-08-21",
+      "daysToConvert": 0,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-7010-V40000",
+      "quotationDate": "2024-08-08",
+      "poDate": "2024-08-29",
+      "daysToConvert": 21,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6746-M4101",
+      "quotationDate": "2024-08-08",
+      "poDate": "2024-08-21",
+      "daysToConvert": 13,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5429-V40000",
+      "quotationDate": "2024-08-08",
+      "poDate": "2024-08-08",
+      "daysToConvert": 0,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6718-V40001B",
+      "quotationDate": "2024-08-06",
+      "poDate": "2024-08-07",
+      "daysToConvert": 1,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6718-V40002A",
+      "quotationDate": "2024-08-06",
+      "poDate": "2024-08-07",
+      "daysToConvert": 1,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6852-V40001",
+      "quotationDate": "2024-08-03",
+      "poDate": "2024-08-07",
+      "daysToConvert": 4,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6852-V40000",
+      "quotationDate": "2024-08-02",
+      "poDate": "2024-08-07",
+      "daysToConvert": 5,
+      "month": "2024-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6680-V40000",
+      "quotationDate": "2024-07-23",
+      "poDate": "2024-07-23",
+      "daysToConvert": 0,
+      "month": "2024-07",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6542-V40003",
+      "quotationDate": "2024-06-24",
+      "poDate": "2024-06-24",
+      "daysToConvert": 0,
+      "month": "2024-06",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6542-V40002",
+      "quotationDate": "2024-06-24",
+      "poDate": "2024-06-24",
+      "daysToConvert": 0,
+      "month": "2024-06",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6542-V40001",
+      "quotationDate": "2024-06-24",
+      "poDate": "2024-06-24",
+      "daysToConvert": 0,
+      "month": "2024-06",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6542-E6800",
+      "quotationDate": "2024-06-24",
+      "poDate": "2024-06-24",
+      "daysToConvert": 0,
+      "month": "2024-06",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6542-V40000",
+      "quotationDate": "2024-06-24",
+      "poDate": "2024-06-24",
+      "daysToConvert": 0,
+      "month": "2024-06",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6424-V40000",
+      "quotationDate": "2024-04-03",
+      "poDate": "2024-04-03",
+      "daysToConvert": 0,
+      "month": "2024-04",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6069-V40000",
+      "quotationDate": "2024-03-25",
+      "poDate": "2024-03-25",
+      "daysToConvert": 0,
+      "month": "2024-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6505-V40000",
+      "quotationDate": "2024-02-15",
+      "poDate": "2024-02-15",
+      "daysToConvert": 0,
+      "month": "2024-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6645-S9100",
+      "quotationDate": "2024-02-07",
+      "poDate": "2024-02-07",
+      "daysToConvert": 0,
+      "month": "2024-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6646-R1500",
+      "quotationDate": "2024-02-01",
+      "poDate": "2024-02-01",
+      "daysToConvert": 0,
+      "month": "2024-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6544-V40000",
+      "quotationDate": "2024-01-15",
+      "poDate": "2024-01-15",
+      "daysToConvert": 0,
+      "month": "2024-01",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6408-V40001",
+      "quotationDate": "2023-10-12",
+      "poDate": "2023-10-17",
+      "daysToConvert": 5,
+      "month": "2023-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6408-V40000",
+      "quotationDate": "2023-10-12",
+      "poDate": "2023-10-17",
+      "daysToConvert": 5,
+      "month": "2023-10",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6424-E6800",
+      "quotationDate": "2023-09-25",
+      "poDate": "2024-04-03",
+      "daysToConvert": 191,
+      "month": "2023-09",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6168-A5201",
+      "quotationDate": "2023-08-11",
+      "poDate": "2023-08-14",
+      "daysToConvert": 3,
+      "month": "2023-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6168-V40004",
+      "quotationDate": "2023-08-10",
+      "poDate": "2023-08-14",
+      "daysToConvert": 4,
+      "month": "2023-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6168-V40003",
+      "quotationDate": "2023-08-10",
+      "poDate": "2023-08-14",
+      "daysToConvert": 4,
+      "month": "2023-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6168-V40002",
+      "quotationDate": "2023-08-10",
+      "poDate": "2023-08-14",
+      "daysToConvert": 4,
+      "month": "2023-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-6168-V40000A",
+      "quotationDate": "2023-08-10",
+      "poDate": "2023-08-14",
+      "daysToConvert": 4,
+      "month": "2023-08",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5695-V40000",
+      "quotationDate": "2023-07-19",
+      "poDate": "2023-07-19",
+      "daysToConvert": 0,
+      "month": "2023-07",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5581-T1000",
+      "quotationDate": "2023-05-17",
+      "poDate": "2023-05-17",
+      "daysToConvert": 0,
+      "month": "2023-05",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5581-V40001",
+      "quotationDate": "2023-05-17",
+      "poDate": "2023-05-17",
+      "daysToConvert": 0,
+      "month": "2023-05",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5684-S9031A",
+      "quotationDate": "2023-04-17",
+      "poDate": "2023-04-17",
+      "daysToConvert": 0,
+      "month": "2023-04",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5622-V40000",
+      "quotationDate": "2023-03-01",
+      "poDate": "2023-03-02",
+      "daysToConvert": 1,
+      "month": "2023-03",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5655-V40000",
+      "quotationDate": "2023-02-27",
+      "poDate": "2023-03-08",
+      "daysToConvert": 9,
+      "month": "2023-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5683-V40000",
+      "quotationDate": "2023-02-27",
+      "poDate": "2023-02-27",
+      "daysToConvert": 0,
+      "month": "2023-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5657-V40000",
+      "quotationDate": "2023-02-27",
+      "poDate": "2023-03-13",
+      "daysToConvert": 14,
+      "month": "2023-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5626-V40001",
+      "quotationDate": "2023-02-27",
+      "poDate": "2023-02-27",
+      "daysToConvert": 0,
+      "month": "2023-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5626-V40000",
+      "quotationDate": "2023-02-21",
+      "poDate": "2023-02-27",
+      "daysToConvert": 6,
+      "month": "2023-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5532-M4000",
+      "quotationDate": "2023-02-01",
+      "poDate": "2023-02-02",
+      "daysToConvert": 1,
+      "month": "2023-02",
+      "orderId": ""
+    },
+    {
+      "quotationNumber": "RFQ-5829-R1500",
+      "quotationDate": "2023-01-16",
+      "poDate": "2023-01-16",
+      "daysToConvert": 0,
+      "month": "2023-01",
+      "orderId": ""
+    }
+  ],
+  "monthlyAverage": [
+    {
+      "month": "2013-09",
+      "avgDays": 5.7,
+      "count": 9
+    },
+    {
+      "month": "2013-10",
+      "avgDays": 0.3,
+      "count": 3
+    },
+    {
+      "month": "2013-11",
+      "avgDays": 0.0,
+      "count": 4
+    },
+    {
+      "month": "2014-01",
+      "avgDays": 0.0,
+      "count": 5
+    },
+    {
+      "month": "2014-04",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2014-07",
+      "avgDays": 1.0,
+      "count": 3
+    },
+    {
+      "month": "2014-08",
+      "avgDays": 220.0,
+      "count": 2
+    },
+    {
+      "month": "2014-09",
+      "avgDays": 112.5,
+      "count": 2
+    },
+    {
+      "month": "2014-10",
+      "avgDays": 122.3,
+      "count": 3
+    },
+    {
+      "month": "2014-11",
+      "avgDays": 70.8,
+      "count": 4
+    },
+    {
+      "month": "2015-01",
+      "avgDays": 20.3,
+      "count": 3
+    },
+    {
+      "month": "2015-03",
+      "avgDays": 12.5,
+      "count": 2
+    },
+    {
+      "month": "2015-04",
+      "avgDays": 5.0,
+      "count": 3
+    },
+    {
+      "month": "2015-10",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2015-11",
+      "avgDays": 28.0,
+      "count": 2
+    },
+    {
+      "month": "2015-12",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2016-03",
+      "avgDays": 0.0,
+      "count": 2
+    },
+    {
+      "month": "2016-10",
+      "avgDays": 23.0,
+      "count": 2
+    },
+    {
+      "month": "2016-11",
+      "avgDays": 0.0,
+      "count": 2
+    },
+    {
+      "month": "2016-12",
+      "avgDays": 0.7,
+      "count": 3
+    },
+    {
+      "month": "2017-01",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2017-03",
+      "avgDays": 3.0,
+      "count": 1
+    },
+    {
+      "month": "2017-04",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2018-02",
+      "avgDays": 86.0,
+      "count": 4
+    },
+    {
+      "month": "2018-03",
+      "avgDays": 49.2,
+      "count": 4
+    },
+    {
+      "month": "2018-05",
+      "avgDays": 1.5,
+      "count": 2
+    },
+    {
+      "month": "2018-06",
+      "avgDays": 1.5,
+      "count": 2
+    },
+    {
+      "month": "2018-10",
+      "avgDays": 0.0,
+      "count": 2
+    },
+    {
+      "month": "2018-11",
+      "avgDays": 132.5,
+      "count": 4
+    },
+    {
+      "month": "2019-01",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2019-02",
+      "avgDays": 157.5,
+      "count": 2
+    },
+    {
+      "month": "2019-03",
+      "avgDays": 42.0,
+      "count": 3
+    },
+    {
+      "month": "2019-05",
+      "avgDays": 54.0,
+      "count": 1
+    },
+    {
+      "month": "2019-06",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2019-07",
+      "avgDays": 4.0,
+      "count": 2
+    },
+    {
+      "month": "2019-08",
+      "avgDays": 1.0,
+      "count": 1
+    },
+    {
+      "month": "2019-10",
+      "avgDays": 148.0,
+      "count": 1
+    },
+    {
+      "month": "2019-11",
+      "avgDays": 58.0,
+      "count": 2
+    },
+    {
+      "month": "2019-12",
+      "avgDays": 90.0,
+      "count": 3
+    },
+    {
+      "month": "2020-01",
+      "avgDays": 204.0,
+      "count": 5
+    },
+    {
+      "month": "2020-03",
+      "avgDays": 2.0,
+      "count": 1
+    },
+    {
+      "month": "2020-04",
+      "avgDays": 118.0,
+      "count": 1
+    },
+    {
+      "month": "2020-05",
+      "avgDays": 98.0,
+      "count": 1
+    },
+    {
+      "month": "2020-07",
+      "avgDays": 15.0,
+      "count": 1
+    },
+    {
+      "month": "2020-08",
+      "avgDays": 0.0,
+      "count": 3
+    },
+    {
+      "month": "2021-11",
+      "avgDays": 0.0,
+      "count": 2
+    },
+    {
+      "month": "2022-03",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2022-05",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2022-08",
+      "avgDays": 1.0,
+      "count": 1
+    },
+    {
+      "month": "2022-09",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2022-10",
+      "avgDays": 0.0,
+      "count": 2
+    },
+    {
+      "month": "2023-01",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2023-02",
+      "avgDays": 5.0,
+      "count": 6
+    },
+    {
+      "month": "2023-03",
+      "avgDays": 1.0,
+      "count": 1
+    },
+    {
+      "month": "2023-04",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2023-05",
+      "avgDays": 0.0,
+      "count": 2
+    },
+    {
+      "month": "2023-07",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2023-08",
+      "avgDays": 3.8,
+      "count": 5
+    },
+    {
+      "month": "2023-09",
+      "avgDays": 191.0,
+      "count": 1
+    },
+    {
+      "month": "2023-10",
+      "avgDays": 5.0,
+      "count": 2
+    },
+    {
+      "month": "2024-01",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2024-02",
+      "avgDays": 0.0,
+      "count": 3
+    },
+    {
+      "month": "2024-03",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2024-04",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2024-06",
+      "avgDays": 0.0,
+      "count": 5
+    },
+    {
+      "month": "2024-07",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2024-08",
+      "avgDays": 4.3,
+      "count": 12
+    },
+    {
+      "month": "2024-09",
+      "avgDays": 2.0,
+      "count": 2
+    },
+    {
+      "month": "2024-10",
+      "avgDays": 0.0,
+      "count": 3
+    },
+    {
+      "month": "2024-11",
+      "avgDays": 51.0,
+      "count": 1
+    },
+    {
+      "month": "2025-02",
+      "avgDays": 1.5,
+      "count": 4
+    },
+    {
+      "month": "2025-03",
+      "avgDays": 1.0,
+      "count": 1
+    },
+    {
+      "month": "2025-04",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2025-06",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2025-07",
+      "avgDays": 1.0,
+      "count": 2
+    },
+    {
+      "month": "2025-08",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2025-10",
+      "avgDays": 0.5,
+      "count": 2
+    },
+    {
+      "month": "2025-12",
+      "avgDays": 0.0,
+      "count": 1
+    },
+    {
+      "month": "2026-02",
+      "avgDays": 0.4,
+      "count": 5
+    }
+  ],
+  "totalLinked": 183,
+  "avgDays": 29.1
+}

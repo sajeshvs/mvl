@@ -1,0 +1,9 @@
+﻿Metric,Value
+source_file,MVL_Suppliers_List_ENRICHED.xlsx
+extraction_date,2026-02-09
+total_records,2189
+version,1.0
+has_location_data,True
+geocoded_count,20
+last_improved,2026-02-09
+improvements,"{'emails_cleaned': 156, 'phones_standardized': 788, 'contacts_parsed': 1957, 'geocoded_new': 0, 'scores_calculated': 2189}"
